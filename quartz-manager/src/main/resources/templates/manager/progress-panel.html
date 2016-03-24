@@ -1,0 +1,31 @@
+<div class="progress" ng-show="progress.percentage >= 0">
+  <div class="progress-bar" 
+  		role="progressbar" 
+  		aria-valuenow="{{progress.percentage}}" 
+  		aria-valuemin="0" aria-valuemax="100" 
+  		ng-style="{width: percentageStr}">
+    {{percentageStr}}
+  </div>
+</div>
+
+<span class="label label-info">counter</span> 
+&nbsp; {{progress.timesTriggered}} <span ng-show="progress.repeatCount > 0">/ {{progress.repeatCount}} </span>
+
+<br/><br/>
+
+<span class="label label-info">job key</span>&nbsp; {{progress.jobKey}}
+<br/>
+<span class="label label-info">job class</span>&nbsp; {{progress.jobClass}}
+<br/>
+
+<br/><br/>
+
+<span class="label label-info">prev fire time</span>&nbsp; {{progress.previousFireTime|date:'dd-MM-yyyy HH:mm:ss'}}
+<br/>
+<span class="label label-info">next fire time</span>&nbsp; {{progress.nextFireTime|date:'dd-MM-yyyy HH:mm:ss'}}
+<br/>
+<span class="label label-info">final fire time</span>&nbsp; {{progress.finalFireTime|date:'dd-MM-yyyy HH:mm:ss'}}
+<br/>
+
+
+

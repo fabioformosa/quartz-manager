@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html 
+		xmlns:th="http://www.thymeleaf.org"
+		xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+		>
+		
+<head lang="en">
+    <title>Quartz Manager - Panel View</title>
+	<!--/*/ <th:block th:include="fragments/headerinc :: head"></th:block> /*/-->
+</head>
+
+<body ng-app="schedulerApp">
+
+	<nav class="navbar navbar-inverse navbar-fixed-top">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" th:href="@{/}">Quartz Manager</a>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+          <ul class="nav navbar-nav navbar-right">
+            <li th:inline="text">
+            	<span class="infoInNavbar">Hello [[${#httpServletRequest.remoteUser}]]! </span>
+            </li>
+            <li><a href="#">Settings</a></li>
+            <li>
+            	<a th:href="@{/logout}">Logout</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+    
+    <div class="container-fluid">
+    	<div class="row">
+    		
+    		<!-- sidebar -->
+    		<div class="col-sm-3 col-md-2 sidebar">
+	          <ul class="nav nav-sidebar">
+	            <li class="active"><a href="#">Manager <span class="sr-only">(current)</span></a></li>
+	          </ul>
+	        </div> <!-- /sidebar -->
+    	
+    		<!-- CONTENT-CONTAINER -->
+    		<div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+		          <h1 class="page-header">JOB DASHBOARD</h1>
+		          <div class="row" layout:fragment="content">
+						<p>Page content goes here</p>
+		          </div>
+    		</div><!-- /CONTENT-CONTAINER -->
+    		
+    		<th:block layout:fragment="script"></th:block>
+		 </div><!-- row -->
+    </div> <!-- container-fluid -->
+</body>
+</html>

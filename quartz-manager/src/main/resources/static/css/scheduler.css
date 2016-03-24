@@ -1,0 +1,31 @@
+.infoInNavbar{
+	color: white;
+    line-height: 20px;
+    display: block;
+    padding: 13px 15px;
+    font-size: 14px;
+}
+
+.widget-panel{
+	padding: 0;
+}
+
+.center{
+	text-align: center;	
+}
+
+.green{
+	color: green;
+}
+
+.red{
+	color: red;
+}
+
+#schedulerControllerBtn{
+	cursor: pointer;
+}
+
+.large-btn{
+	width: 200px;
+}

@@ -1,0 +1,1 @@
+var starterModule = angular.module('configurator', []);
