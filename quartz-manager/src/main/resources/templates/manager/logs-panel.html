@@ -1,0 +1,15 @@
+<div id="logs">
+
+	<table id="logTable">
+		 <tr data-ng-repeat="log in logs">
+		 	<td data-ng-class="{'animated zoomIn firstLog': $first}">[{{log.time|date:'medium'}}]</td>
+		 	<td>&nbsp;&nbsp;&nbsp;</td>
+		 	<td data-ng-class="{'animated zoomIn firstLog' : $first}">{{log.msg}}</td>
+		 </tr>
+	</table>
+
+</div>
+
+
+
+

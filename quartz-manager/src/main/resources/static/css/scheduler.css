@@ -29,3 +29,8 @@
 .large-btn{
 	width: 200px;
 }
+
+.firstLog{
+  -webkit-animation-duration: .25s;
+  -moz-animation-duration: .25s;
+}

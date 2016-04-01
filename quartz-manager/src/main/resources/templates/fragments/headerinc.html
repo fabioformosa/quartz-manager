@@ -7,6 +7,7 @@
     <link href="http://cdn.jsdelivr.net/webjars/bootstrap/3.3.4/css/bootstrap.min.css"
           rel="stylesheet" media="screen" />
 
+	<link th:href="@{css/animate.css}" rel="stylesheet" />
 	<link th:href="@{css/dashboard-bootstrap.css}" rel="stylesheet" media="screen" />
 	<link th:href="@{css/scheduler.css}" rel="stylesheet" media="screen" />
 
@@ -15,13 +16,23 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css"/>
     
     <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.5.0/angular.min.js"></script>
+
+    <script th:src="@{/js/lib/sockjs-0.3.4.js}"></script>
+    <script th:src="@{/js/lib/stomp.js}"></script>
             
     <script th:src="@{/js/app/components/starter/starter-module.js}"></script>        
     <script th:src="@{/js/app/components/starter/starter-directives.js}"></script>        
     <script th:src="@{/js/app/components/configurator/configurator-module.js}"></script>        
     <script th:src="@{/js/app/components/configurator/configurator-directives.js}"></script>        
+
+    <script th:src="@{/js/app/components/websocket/websocket-module.js}"></script>        
+    <script th:src="@{/js/app/components/websocket/websocket-factory.js}"></script>        
+    
     <script th:src="@{/js/app/components/progress/progress-module.js}"></script>        
-    <script th:src="@{/js/app/components/progress/progress-directives.js}"></script>        
+    <script th:src="@{/js/app/components/progress/progress-service.js}"></script>        
+    <script th:src="@{/js/app/components/progress/progress-directive.js}"></script>
+    <script th:src="@{/js/app/components/progress/logs-service.js}"></script>        
+    <script th:src="@{/js/app/components/progress/logs-directive.js}"></script>        
     <script th:src="@{/js/app/app.js}"></script>
             
 </head>

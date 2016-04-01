@@ -9,23 +9,28 @@
 </div>
 
 <span class="label label-info">counter</span> 
-&nbsp; {{progress.timesTriggered}} <span ng-show="progress.repeatCount > 0">/ {{progress.repeatCount}} </span>
+&nbsp; 
+<span class="animated pulse">{{progress.timesTriggered}}</span> <span ng-show="progress.repeatCount > 0">/ {{progress.repeatCount}} </span>
 
 <br/><br/>
 
-<span class="label label-info">job key</span>&nbsp; {{progress.jobKey}}
+<span class="label label-info">job key</span>&nbsp; <span class="animated pulse">{{progress.jobKey}}</span>
 <br/>
-<span class="label label-info">job class</span>&nbsp; {{progress.jobClass}}
+<span class="label label-info">job class</span>&nbsp; <span class="animated pulse">{{progress.jobClass}}</span>
 <br/>
 
 <br/><br/>
 
-<span class="label label-info">prev fire time</span>&nbsp; {{progress.previousFireTime|date:'dd-MM-yyyy HH:mm:ss'}}
+<span class="label label-info">prev fire time</span>&nbsp; <span class="animated pulse">{{progress.previousFireTime|date:'dd-MM-yyyy HH:mm:ss'}}</span>
 <br/>
-<span class="label label-info">next fire time</span>&nbsp; {{progress.nextFireTime|date:'dd-MM-yyyy HH:mm:ss'}}
+<span class="label label-info">next fire time</span>&nbsp; <span class="animated pulse">{{progress.nextFireTime|date:'dd-MM-yyyy HH:mm:ss'}}</span>
 <br/>
-<span class="label label-info">final fire time</span>&nbsp; {{progress.finalFireTime|date:'dd-MM-yyyy HH:mm:ss'}}
+<span class="label label-info">final fire time</span>&nbsp; <span class="animated pulse">{{progress.finalFireTime|date:'dd-MM-yyyy HH:mm:ss'}}</span>
 <br/>
+
+<div id="lista">
+</div>
+
 
 
 

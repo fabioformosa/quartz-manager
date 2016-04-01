@@ -70,6 +70,15 @@
 		</dependency>
 		
 		<dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-websocket</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-messaging</artifactId>
+        </dependency>
+		
+		<dependency>
 			<groupId>org.webjars</groupId>
 			<artifactId>bootstrap</artifactId>
 			<version>3.3.6</version>
@@ -92,6 +101,29 @@
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-tx</artifactId>
    		</dependency>
+   		
+   		<!-- Reactor -->
+		<dependency>
+        <groupId>io.projectreactor</groupId>
+        <artifactId>reactor-core</artifactId>
+	    </dependency>
+	    <dependency>
+	        <groupId>io.projectreactor</groupId>
+	        <artifactId>reactor-net</artifactId>
+	    </dependency>
+	    <dependency>
+	        <groupId>io.projectreactor.spring</groupId>
+	        <artifactId>reactor-spring-context</artifactId>
+	    </dependency>
+	    <dependency>
+	        <groupId>io.netty</groupId>
+	        <artifactId>netty-all</artifactId>
+	        <version>4.0.31.Final</version>
+	    </dependency>
+	    <dependency>
+	    	<groupId>org.springframework.boot</groupId>
+	    	<artifactId>spring-boot-starter-aop</artifactId>
+	    </dependency>
 	</dependencies>
 	
 	

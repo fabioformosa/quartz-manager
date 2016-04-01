@@ -1,7 +1,5 @@
 package it.fabioformosa.quartzmanager.configuration;
 
-import nz.net.ultraq.thymeleaf.LayoutDialect;
-
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.ViewResolver;
@@ -10,6 +8,8 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 import org.thymeleaf.spring4.SpringTemplateEngine;
 import org.thymeleaf.spring4.templateresolver.SpringResourceTemplateResolver;
 import org.thymeleaf.spring4.view.ThymeleafViewResolver;
+
+import nz.net.ultraq.thymeleaf.LayoutDialect;
 
 @Configuration
 public class MVCConfig extends WebMvcConfigurerAdapter {
@@ -23,6 +23,8 @@ public class MVCConfig extends WebMvcConfigurerAdapter {
 				.setViewName("manager/config-form");
 		registry.addViewController("/templates/manager/progress-panel.html")
 				.setViewName("manager/progress-panel");
+		registry.addViewController("/templates/manager/logs-panel.html")
+				.setViewName("manager/logs-panel");
 
 	}
 

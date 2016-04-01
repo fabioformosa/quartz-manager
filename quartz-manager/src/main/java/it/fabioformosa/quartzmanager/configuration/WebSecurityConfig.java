@@ -16,20 +16,29 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Configuration
 	@Order(1)
-	public static class ApiWebSecurityConfig extends
-			WebSecurityConfigurerAdapter {
+	public static class ApiWebSecurityConfig
+			extends WebSecurityConfigurerAdapter {
 		@Override
 		protected void configure(HttpSecurity http) throws Exception {
-			http.csrf().disable().antMatcher("/notifications")
-					.authorizeRequests().anyRequest().hasAnyRole("ADMIN").and()
-					.httpBasic();
+			http.csrf().disable() //
+					.antMatcher("/notifications").authorizeRequests()
+					.anyRequest().hasAnyRole("ADMIN").and().httpBasic();
+
+			//			http.antMatcher("/logs/**").authorizeRequests().anyRequest()
+			//					.permitAll();
 		}
 	}
 
 	@Configuration
 	@Order(2)
-	public static class FormWebSecurityConfig extends
-			WebSecurityConfigurerAdapter {
+	public static class FormWebSecurityConfig
+			extends WebSecurityConfigurerAdapter {
+
+		@Override
+		public void configure(WebSecurity web) throws Exception {
+			web.ignoring().antMatchers("/css/**", "/js/**", "/img/**",
+					"/lib/**");
+		}
 
 		@Override
 		protected void configure(HttpSecurity http) throws Exception {
@@ -38,12 +47,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 					.permitAll().and().logout()
 					.logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
 					.logoutSuccessUrl("/manager");
-		}
-
-		@Override
-		public void configure(WebSecurity web) throws Exception {
-			web.ignoring().antMatchers("/css/**", "/js/**", "/img/**",
-					"/lib/**");
 		}
 	}
 
