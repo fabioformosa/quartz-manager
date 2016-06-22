@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.Properties;
 
 import org.quartz.JobDetail;
-import org.quartz.SimpleTrigger;
 import org.quartz.Trigger;
 import org.quartz.spi.JobFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -40,8 +39,8 @@ public class SchedulerConfig {
 		factoryBean.setStartDelay(0L);
 		factoryBean.setRepeatInterval(pollFrequencyMs);
 		factoryBean.setRepeatCount(repeatCount);
-		factoryBean.setMisfireInstruction(
-				SimpleTrigger.MISFIRE_INSTRUCTION_RESCHEDULE_NEXT_WITH_REMAINING_COUNT);// in case of misfire, ignore all missed triggers and continue
+		//		factoryBean.setMisfireInstruction(
+		//				SimpleTrigger.MISFIRE_INSTRUCTION_RESCHEDULE_NEXT_WITH_REMAINING_COUNT);// in case of misfire, ignore all missed triggers and continue
 		return factoryBean;
 	}
 
