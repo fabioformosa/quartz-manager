@@ -1,12 +1,10 @@
 package it.fabioformosa.quartzmanager.configuration;
 
-import it.fabioformosa.quartzmanager.jobs.SampleJob;
-import it.fabioformosa.quartzmanager.scheduler.AutowiringSpringBeanJobFactory;
-
 import java.io.IOException;
 import java.util.Properties;
 
 import org.quartz.JobDetail;
+import org.quartz.SimpleTrigger;
 import org.quartz.Trigger;
 import org.quartz.spi.JobFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -20,6 +18,9 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.scheduling.quartz.JobDetailFactoryBean;
 import org.springframework.scheduling.quartz.SchedulerFactoryBean;
 import org.springframework.scheduling.quartz.SimpleTriggerFactoryBean;
+
+import it.fabioformosa.quartzmanager.jobs.SampleJob;
+import it.fabioformosa.quartzmanager.scheduler.AutowiringSpringBeanJobFactory;
 
 @Configuration
 @ConditionalOnProperty(name = "quartz.enabled")
@@ -39,6 +40,8 @@ public class SchedulerConfig {
 		factoryBean.setStartDelay(0L);
 		factoryBean.setRepeatInterval(pollFrequencyMs);
 		factoryBean.setRepeatCount(repeatCount);
+		factoryBean.setMisfireInstruction(
+				SimpleTrigger.MISFIRE_INSTRUCTION_RESCHEDULE_NEXT_WITH_REMAINING_COUNT);// in case of misfire, ignore all missed triggers and continue
 		return factoryBean;
 	}
 
@@ -57,8 +60,8 @@ public class SchedulerConfig {
 	@Bean
 	public Properties quartzProperties() throws IOException {
 		PropertiesFactoryBean propertiesFactoryBean = new PropertiesFactoryBean();
-		propertiesFactoryBean.setLocation(new ClassPathResource(
-				"/quartz.properties"));
+		propertiesFactoryBean
+				.setLocation(new ClassPathResource("/quartz.properties"));
 		propertiesFactoryBean.afterPropertiesSet();
 		return propertiesFactoryBean.getObject();
 	}
