@@ -17,13 +17,14 @@ angular.module('progress')
 			
 			$scope.logs = new Array();
 			
-			LogService.receive().then(null, null, function(logMsg){
+			LogService.receive().then(null, null, function(logRecord){
 				if($scope.logs.length > MAX_LOGS)
 					$scope.logs.pop();
 				
 				var logItem = {};
 				logItem.time = new Date();
-				logItem.msg = logMsg;
+				logItem.type = logRecord.type;
+				logItem.msg = logRecord.message;
 				
 				$scope.logs.unshift(logItem);
 			})

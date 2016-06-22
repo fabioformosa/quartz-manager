@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
 
 import it.fabioformosa.quartzmanager.aspects.ProgressUpdater;
+import it.fabioformosa.quartzmanager.jobs.entities.LogRecord;
 
 public abstract class AbstractLoggingJob implements Job {
 
@@ -28,12 +29,12 @@ public abstract class AbstractLoggingJob implements Job {
 	 * @param jobExecutionContext
 	 * @return final log
 	 */
-	public abstract String doIt(JobExecutionContext jobExecutionContext);
+	public abstract LogRecord doIt(JobExecutionContext jobExecutionContext);
 
 	@Override
 	public final void execute(JobExecutionContext jobExecutionContext) {
 		try {
-			String logMsg = doIt(jobExecutionContext);
+			LogRecord logMsg = doIt(jobExecutionContext);
 			logAndSend(logMsg);
 			progressUpdater.update();
 		} catch (SchedulerException e) {
@@ -41,9 +42,9 @@ public abstract class AbstractLoggingJob implements Job {
 		}
 	}
 
-	public void logAndSend(String logMsg) {
-		log.info(logMsg);
-		messagingTemplate.convertAndSend("/topic/logs", logMsg);
+	public void logAndSend(LogRecord logRecord) {
+		log.info(logRecord.getMessage());
+		messagingTemplate.convertAndSend("/topic/logs", logRecord);
 	}
 
 }
