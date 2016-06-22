@@ -6,8 +6,6 @@ import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.SimpleTrigger;
 import org.quartz.impl.triggers.SimpleTriggerImpl;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.stereotype.Component;
@@ -17,9 +15,6 @@ import it.fabioformosa.quartzmanager.dto.TriggerProgress;
 //@Aspect
 @Component
 public class ProgressUpdaterImpl implements ProgressUpdater {
-
-	private static final Logger log = LoggerFactory
-			.getLogger(ProgressUpdaterImpl.class);
 
 	@Autowired
 	private SimpMessageSendingOperations messagingTemplate;
@@ -46,7 +41,7 @@ public class ProgressUpdaterImpl implements ProgressUpdater {
 			progress.setJobKey(jobTrigger.getJobKey().getName());
 			progress.setJobClass(jobTrigger.getClass().getSimpleName());
 			progress.setTimesTriggered(jobTrigger.getTimesTriggered());
-			progress.setRepeatCount(jobTrigger.getRepeatCount());
+			progress.setRepeatCount(jobTrigger.getRepeatCount() + 1);
 			progress.setFinalFireTime(jobTrigger.getFinalFireTime());
 			progress.setNextFireTime(jobTrigger.getNextFireTime());
 			progress.setPreviousFireTime(jobTrigger.getPreviousFireTime());

@@ -1,8 +1,5 @@
 package it.fabioformosa.quartzmanager.controllers;
 
-import it.fabioformosa.quartzmanager.dto.SchedulerConfigParam;
-import it.fabioformosa.quartzmanager.dto.TriggerProgress;
-
 import javax.annotation.Resource;
 
 import org.quartz.Scheduler;
@@ -19,11 +16,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import it.fabioformosa.quartzmanager.dto.SchedulerConfigParam;
+import it.fabioformosa.quartzmanager.dto.TriggerProgress;
+
 @RestController
 @RequestMapping("/scheduler")
 public class SchedulerController {
 
 	private static final int MILLS_IN_A_DAY = 1000 * 60 * 60 * 24;
+	private static final int SEC_IN_A_DAY = 60 * 60 * 24;
 
 	private final Logger log = LoggerFactory
 			.getLogger(SchedulerController.class);
@@ -35,19 +36,25 @@ public class SchedulerController {
 	private SimpleTrigger jobTrigger = null;
 
 	private long fromMillsIntervalToTriggerPerDay(long repeatIntervalInMills) {
-		return Math.round(MILLS_IN_A_DAY / repeatIntervalInMills);
+		return (int) Math.ceil(MILLS_IN_A_DAY / repeatIntervalInMills);
 	}
 
+	private int fromTriggerPerDayToMillSecInterval(long triggerPerDay) {
+		return (int) Math.ceil(Long.valueOf(MILLS_IN_A_DAY) / triggerPerDay); //with ceil the triggerPerDay is a max value
+	}
+
+	@SuppressWarnings("unused")
 	private int fromTriggerPerDayToSecInterval(long triggerPerDay) {
-		return Math.round((MILLS_IN_A_DAY / triggerPerDay) / 1000);
+		return (int) Math.ceil(Long.valueOf(SEC_IN_A_DAY) / triggerPerDay);
 	}
 
 	@RequestMapping(value = "/config", method = RequestMethod.GET)
 	public SchedulerConfigParam getConfig() {
 		SchedulerConfigParam config = new SchedulerConfigParam();
-		config.setMaxCount(jobTrigger.getRepeatCount());
+		config.setMaxCount(jobTrigger.getRepeatCount() + 1);
 		long repeatIntervalInMills = jobTrigger.getRepeatInterval();
-		config.setTriggerPerDay(fromMillsIntervalToTriggerPerDay(repeatIntervalInMills));
+		config.setTriggerPerDay(
+				fromMillsIntervalToTriggerPerDay(repeatIntervalInMills));
 		return config;
 	}
 
@@ -77,20 +84,22 @@ public class SchedulerController {
 
 	@RequestMapping(value = "/config", method = RequestMethod.POST)
 	public SchedulerConfigParam postConfig(
-			@RequestBody SchedulerConfigParam config) throws SchedulerException {
+			@RequestBody SchedulerConfigParam config)
+			throws SchedulerException {
 
 		TriggerBuilder<SimpleTrigger> triggerBuilder = jobTrigger
 				.getTriggerBuilder();
 
-		int intervalInSeconds = fromTriggerPerDayToSecInterval(config
-				.getTriggerPerDay());
-		Trigger newTrigger = triggerBuilder.withSchedule(
-				SimpleScheduleBuilder.simpleSchedule()
-						.withIntervalInSeconds(intervalInSeconds)
-						.withRepeatCount(config.getMaxCount())).build();
+		int intervalInSeconds = fromTriggerPerDayToMillSecInterval(
+				config.getTriggerPerDay());
+		Trigger newTrigger = triggerBuilder
+				.withSchedule(SimpleScheduleBuilder.simpleSchedule()
+						.withIntervalInMilliseconds(intervalInSeconds)
+						.withRepeatCount(config.getMaxCount() - 1))
+				.build();
 
 		scheduler.rescheduleJob(jobTrigger.getKey(), newTrigger);
-		this.jobTrigger = (SimpleTrigger) newTrigger;
+		jobTrigger = (SimpleTrigger) newTrigger;
 		return config;
 	}
 
