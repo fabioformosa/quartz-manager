@@ -5,7 +5,9 @@
 	  	</div>
 	  	<div class="col-xs-2">
 	  		<span data-ng-class="{'animated zoomIn firstLog': $first}">
-	  		  <i data-ng-class="{'fa fa-check-circle green': log.type == 'INFO', 'fa fa-times-circle red': log.type == 'ERROR'}"></i>	  		  
+	  		  <i data-ng-class="{'fa fa-check-circle green': log.type == 'INFO',
+	  		  					  'fa fa-exclamation-triangle dark-yellow': log.type == 'WARN',	
+	  		  					 'fa fa-times-circle red': log.type == 'ERROR'}"></i>	  		  
 	  		 </span>
 	  	</div>
 	  	<div class="col-xs-7">

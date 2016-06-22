@@ -3,7 +3,7 @@ package it.fabioformosa.quartzmanager.jobs.entities;
 public class LogRecord {
 
 	public enum LogType {
-		INFO, ERROR;
+		INFO, WARN, ERROR;
 	}
 
 	private LogType type;

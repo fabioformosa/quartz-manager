@@ -22,6 +22,10 @@
 	color: red;
 }
 
+.dark-yellow{
+	color: #d8dc25;
+}
+
 #schedulerControllerBtn{
 	cursor: pointer;
 }
