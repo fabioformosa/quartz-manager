@@ -22,7 +22,7 @@ angular.module('progress')
 					$scope.logs.pop();
 				
 				var logItem = {};
-				logItem.time = new Date();
+				logItem.time = logRecord.date;
 				logItem.type = logRecord.type;
 				logItem.msg = logRecord.message;
 				

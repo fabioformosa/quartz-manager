@@ -1,18 +1,27 @@
 package it.fabioformosa.quartzmanager.jobs.entities;
 
+import java.util.Date;
+
 public class LogRecord {
 
 	public enum LogType {
 		INFO, WARN, ERROR;
 	}
 
+	private Date date;
 	private LogType type;
+
 	private String message;
 
 	public LogRecord(LogType type, String msg) {
 		super();
 		this.type = type;
 		message = msg;
+		date = new Date();
+	}
+
+	public Date getDate() {
+		return date;
 	}
 
 	public String getMessage() {
@@ -21,6 +30,10 @@ public class LogRecord {
 
 	public LogType getType() {
 		return type;
+	}
+
+	public void setDate(Date date) {
+		this.date = date;
 	}
 
 	public void setMessage(String msg) {
@@ -33,7 +46,8 @@ public class LogRecord {
 
 	@Override
 	public String toString() {
-		return "LogRecord [type=" + type + ", message=" + message + "]";
+		return "LogRecord [date=" + date + ", type=" + type + ", message="
+				+ message + "]";
 	}
 
 }
