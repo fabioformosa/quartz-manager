@@ -14,14 +14,14 @@ GUI Manager for Quartz Scheduler
 1. Open quartz-manager at the link: [http://localhost:9000/quartz-manager/manager](http://localhost:9000/quartz-manager/manager)
 1. Log in with default credentials: `admin/admin`
 
-## HOW RUN YOUR JOB
+## HOW TO RUN YOUR JOB
 By default, quartz-manager executes the dummy job that logs "hello world!".
 Replace the dummy job (class: `it.fabioformosa.quartzmanager.jobs.SampleJob`) with yours. Follow these steps:
 
 1. Let extend the super class `it.fabioformosa.quartzmanager.jobs.AbstractLoggingJob`
 1. Change the scheduler settings, providing the class name of your job. Open class `it.fabioformosa.quartzmanager.configuration.SchedulerConfig` and for the method `jobDetail` replace SampleJob.class with YourJob.class
 
-## HOW CHANGE SETTINGS
+## HOW TO CHANGE SETTINGS
 * Num of Threads: `/quartz-manager/src/main/resources/quartz.properties`
 * Credentials: `it.fabioformosa.quartzmanager.configuration.WebSecurityConfig`
 * Server context path (default `/quartz-manager`) and port (default `9000`): `/quartz-manager/src/main/resources/application.properties`
