@@ -28,12 +28,12 @@ Replace the dummy job (class: `it.fabioformosa.quartzmanager.jobs.SampleJob`) wi
 
 ## Tech Overview
 
-**Backend Stack** Java 8, Spring Boot 1.3.2 (Spring MVC 4.2.4, Spring Security 4.0.3), Quartz Scheduler 2.2.2
+**Backend Stack** Java 8, Spring Boot 1.3.2 (Spring MVC 4.2.4, Spring Security 4.0.3, Spring AOP), Quartz Scheduler 2.2.2
 
 **Application Server** Tomcat (embedded)
 
 **Frontend** Angularjs 1.5.0, Thymeleaf 2.1.4, Web-Socket (sockjs 0.3.4, stompjs)
 
-**Style** Bootstrap 3.3.4
+**Style** Bootstrap 3.3.4, animated.css, FontAwesome
 
 
