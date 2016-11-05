@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.Properties;
 
 import org.quartz.JobDetail;
+import org.quartz.SimpleTrigger;
 import org.quartz.Trigger;
 import org.quartz.spi.JobFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -32,15 +33,15 @@ public class SchedulerConfig {
 		return factoryBean;
 	}
 
-	private static SimpleTriggerFactoryBean createTrigger(JobDetail jobDetail,
-			long pollFrequencyMs, int repeatCount) {
+	private static SimpleTriggerFactoryBean createTrigger(JobDetail jobDetail, long pollFrequencyMs,
+			int repeatCount) {
 		SimpleTriggerFactoryBean factoryBean = new SimpleTriggerFactoryBean();
 		factoryBean.setJobDetail(jobDetail);
 		factoryBean.setStartDelay(0L);
 		factoryBean.setRepeatInterval(pollFrequencyMs);
 		factoryBean.setRepeatCount(repeatCount);
-		//		factoryBean.setMisfireInstruction(
-		//				SimpleTrigger.MISFIRE_INSTRUCTION_RESCHEDULE_NEXT_WITH_REMAINING_COUNT);// in case of misfire, ignore all missed triggers and continue
+		factoryBean
+				.setMisfireInstruction(SimpleTrigger.MISFIRE_INSTRUCTION_RESCHEDULE_NEXT_WITH_EXISTING_COUNT);// in case of misfire, ignore all missed triggers and continue
 		return factoryBean;
 	}
 
@@ -59,24 +60,20 @@ public class SchedulerConfig {
 	@Bean
 	public Properties quartzProperties() throws IOException {
 		PropertiesFactoryBean propertiesFactoryBean = new PropertiesFactoryBean();
-		propertiesFactoryBean
-				.setLocation(new ClassPathResource("/quartz.properties"));
+		propertiesFactoryBean.setLocation(new ClassPathResource("/quartz.properties"));
 		propertiesFactoryBean.afterPropertiesSet();
 		return propertiesFactoryBean.getObject();
 	}
 
 	@Bean(name = "jobTrigger")
-	public SimpleTriggerFactoryBean sampleJobTrigger(
-			@Qualifier("jobDetail") JobDetail jobDetail,
-			@Value("${job.frequency}") long frequency,
-			@Value("${job.repeatCount}") int repeatCount) {
+	public SimpleTriggerFactoryBean sampleJobTrigger(@Qualifier("jobDetail") JobDetail jobDetail,
+			@Value("${job.frequency}") long frequency, @Value("${job.repeatCount}") int repeatCount) {
 		return createTrigger(jobDetail, frequency, repeatCount);
 	}
 
 	@Bean(name = "scheduler")
 	public SchedulerFactoryBean schedulerFactoryBean(JobFactory jobFactory,
-			@Qualifier("jobTrigger") Trigger sampleJobTrigger)
-			throws IOException {
+			@Qualifier("jobTrigger") Trigger sampleJobTrigger) throws IOException {
 		SchedulerFactoryBean factory = new SchedulerFactoryBean();
 		factory.setJobFactory(jobFactory);
 		factory.setQuartzProperties(quartzProperties());
