@@ -1,5 +1,6 @@
 # quartz-manager
-GUI Manager for Quartz Scheduler
+GUI Manager for Quartz Scheduler.
+Through this webapp you can launch and control your scheduled job.
 
 ## SCREENSHOT
 ![Alt text](http://www.fabioformosa.it/quartz-manager/quartz-manager-screenshot_800.png "Quartz Manager Screenshot")
