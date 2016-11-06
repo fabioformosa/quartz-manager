@@ -25,6 +25,7 @@ angular.module('progress')
 				logItem.time = logRecord.date;
 				logItem.type = logRecord.type;
 				logItem.msg = logRecord.message;
+				logItem.threadName = logRecord.threadName;
 				
 				$scope.logs.unshift(logItem);
 			})

@@ -15,8 +15,7 @@ import it.fabioformosa.quartzmanager.jobs.entities.LogRecord;
 
 public abstract class AbstractLoggingJob implements Job {
 
-	private static final Logger log = LoggerFactory
-			.getLogger(AbstractLoggingJob.class);
+	private static final Logger log = LoggerFactory.getLogger(AbstractLoggingJob.class);
 
 	@Autowired
 	private SimpMessageSendingOperations messagingTemplate;
@@ -44,6 +43,7 @@ public abstract class AbstractLoggingJob implements Job {
 
 	public void logAndSend(LogRecord logRecord) {
 		log.info(logRecord.getMessage());
+		logRecord.setThreadName(Thread.currentThread().getName());
 		messagingTemplate.convertAndSend("/topic/logs", logRecord);
 	}
 

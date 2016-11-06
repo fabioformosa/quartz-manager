@@ -12,6 +12,7 @@ public class LogRecord {
 	private LogType type;
 
 	private String message;
+	private String threadName;
 
 	public LogRecord(LogType type, String msg) {
 		super();
@@ -28,6 +29,10 @@ public class LogRecord {
 		return message;
 	}
 
+	public String getThreadName() {
+		return threadName;
+	}
+
 	public LogType getType() {
 		return type;
 	}
@@ -40,14 +45,17 @@ public class LogRecord {
 		message = msg;
 	}
 
+	public void setThreadName(String threadName) {
+		this.threadName = threadName;
+	}
+
 	public void setType(LogType type) {
 		this.type = type;
 	}
 
 	@Override
 	public String toString() {
-		return "LogRecord [date=" + date + ", type=" + type + ", message="
-				+ message + "]";
+		return "LogRecord [date=" + date + ", type=" + type + ", message=" + message + "]";
 	}
 
 }

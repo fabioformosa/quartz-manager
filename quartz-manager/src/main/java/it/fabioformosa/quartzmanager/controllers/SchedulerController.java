@@ -26,8 +26,7 @@ public class SchedulerController {
 	private static final int MILLS_IN_A_DAY = 1000 * 60 * 60 * 24;
 	private static final int SEC_IN_A_DAY = 60 * 60 * 24;
 
-	private final Logger log = LoggerFactory
-			.getLogger(SchedulerController.class);
+	private final Logger log = LoggerFactory.getLogger(SchedulerController.class);
 
 	@Resource
 	private Scheduler scheduler;
@@ -53,16 +52,14 @@ public class SchedulerController {
 		SchedulerConfigParam config = new SchedulerConfigParam();
 		config.setMaxCount(jobTrigger.getRepeatCount() + 1);
 		long repeatIntervalInMills = jobTrigger.getRepeatInterval();
-		config.setTriggerPerDay(
-				fromMillsIntervalToTriggerPerDay(repeatIntervalInMills));
+		config.setTriggerPerDay(fromMillsIntervalToTriggerPerDay(repeatIntervalInMills));
 		return config;
 	}
 
 	@RequestMapping("/progress")
 	public TriggerProgress getProgressInfo() throws SchedulerException {
 
-		SimpleTriggerImpl jobTrigger = ((SimpleTriggerImpl) scheduler
-				.getTrigger(this.jobTrigger.getKey()));
+		SimpleTriggerImpl jobTrigger = ((SimpleTriggerImpl) scheduler.getTrigger(this.jobTrigger.getKey()));
 
 		TriggerProgress progress = new TriggerProgress();
 		if (jobTrigger != null && jobTrigger.getJobKey() != null) {
@@ -83,19 +80,14 @@ public class SchedulerController {
 	}
 
 	@RequestMapping(value = "/config", method = RequestMethod.POST)
-	public SchedulerConfigParam postConfig(
-			@RequestBody SchedulerConfigParam config)
+	public SchedulerConfigParam postConfig(@RequestBody SchedulerConfigParam config)
 			throws SchedulerException {
 
-		TriggerBuilder<SimpleTrigger> triggerBuilder = jobTrigger
-				.getTriggerBuilder();
+		TriggerBuilder<SimpleTrigger> triggerBuilder = jobTrigger.getTriggerBuilder();
 
-		int intervalInSeconds = fromTriggerPerDayToMillSecInterval(
-				config.getTriggerPerDay());
-		Trigger newTrigger = triggerBuilder
-				.withSchedule(SimpleScheduleBuilder.simpleSchedule()
-						.withIntervalInMilliseconds(intervalInSeconds)
-						.withRepeatCount(config.getMaxCount() - 1))
+		int intervalInSeconds = fromTriggerPerDayToMillSecInterval(config.getTriggerPerDay());
+		Trigger newTrigger = triggerBuilder.withSchedule(SimpleScheduleBuilder.simpleSchedule()
+				.withIntervalInMilliseconds(intervalInSeconds).withRepeatCount(config.getMaxCount() - 1))
 				.build();
 
 		scheduler.rescheduleJob(jobTrigger.getKey(), newTrigger);
