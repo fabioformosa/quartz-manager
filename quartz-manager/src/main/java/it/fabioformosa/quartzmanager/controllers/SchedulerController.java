@@ -2,6 +2,7 @@ package it.fabioformosa.quartzmanager.controllers;
 
 import javax.annotation.Resource;
 
+import org.quartz.DailyTimeIntervalTrigger;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.SimpleScheduleBuilder;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import it.fabioformosa.quartzmanager.dto.SchedulerConfigParam;
 import it.fabioformosa.quartzmanager.dto.TriggerProgress;
+import it.fabioformosa.quartzmanager.scheduler.TriggerMonitor;
 
 @RestController
 @RequestMapping("/scheduler")
@@ -32,8 +34,9 @@ public class SchedulerController {
 	private Scheduler scheduler;
 
 	@Resource
-	private SimpleTrigger jobTrigger = null;
+	private TriggerMonitor triggerMonitor;
 
+	@SuppressWarnings("unused")
 	private long fromMillsIntervalToTriggerPerDay(long repeatIntervalInMills) {
 		return (int) Math.ceil(MILLS_IN_A_DAY / repeatIntervalInMills);
 	}
@@ -42,7 +45,6 @@ public class SchedulerController {
 		return (int) Math.ceil(Long.valueOf(MILLS_IN_A_DAY) / triggerPerDay); //with ceil the triggerPerDay is a max value
 	}
 
-	@SuppressWarnings("unused")
 	private int fromTriggerPerDayToSecInterval(long triggerPerDay) {
 		return (int) Math.ceil(Long.valueOf(SEC_IN_A_DAY) / triggerPerDay);
 	}
@@ -50,16 +52,31 @@ public class SchedulerController {
 	@RequestMapping(value = "/config", method = RequestMethod.GET)
 	public SchedulerConfigParam getConfig() {
 		SchedulerConfigParam config = new SchedulerConfigParam();
-		config.setMaxCount(jobTrigger.getRepeatCount() + 1);
-		long repeatIntervalInMills = jobTrigger.getRepeatInterval();
-		config.setTriggerPerDay(fromMillsIntervalToTriggerPerDay(repeatIntervalInMills));
+
+		int maxCount = 0;
+		long repeatIntervalInMills = 0;
+		if (triggerMonitor.getTrigger() instanceof SimpleTrigger) {
+			SimpleTrigger simpleTrigger = (SimpleTrigger) triggerMonitor.getTrigger();
+			maxCount = simpleTrigger.getRepeatCount() + 1;
+			repeatIntervalInMills = fromTriggerPerDayToMillSecInterval(simpleTrigger.getRepeatInterval());
+		} else if (triggerMonitor.getTrigger() instanceof DailyTimeIntervalTrigger) {
+			DailyTimeIntervalTrigger dailyTimeIntervalTrigger = (DailyTimeIntervalTrigger) triggerMonitor
+					.getTrigger();
+			maxCount = dailyTimeIntervalTrigger.getRepeatCount() + 1;
+			repeatIntervalInMills = fromTriggerPerDayToSecInterval(
+					dailyTimeIntervalTrigger.getRepeatInterval());
+		}
+
+		config.setMaxCount(maxCount);
+		config.setTriggerPerDay(repeatIntervalInMills);
 		return config;
 	}
 
 	@RequestMapping("/progress")
 	public TriggerProgress getProgressInfo() throws SchedulerException {
 
-		SimpleTriggerImpl jobTrigger = ((SimpleTriggerImpl) scheduler.getTrigger(this.jobTrigger.getKey()));
+		SimpleTriggerImpl jobTrigger = ((SimpleTriggerImpl) scheduler
+				.getTrigger(triggerMonitor.getTrigger().getKey()));
 
 		TriggerProgress progress = new TriggerProgress();
 		if (jobTrigger != null && jobTrigger.getJobKey() != null) {
@@ -83,15 +100,16 @@ public class SchedulerController {
 	public SchedulerConfigParam postConfig(@RequestBody SchedulerConfigParam config)
 			throws SchedulerException {
 
-		TriggerBuilder<SimpleTrigger> triggerBuilder = jobTrigger.getTriggerBuilder();
+		SimpleTrigger trigger = (SimpleTrigger) triggerMonitor.getTrigger();
+		TriggerBuilder<SimpleTrigger> triggerBuilder = trigger.getTriggerBuilder();
 
 		int intervalInSeconds = fromTriggerPerDayToMillSecInterval(config.getTriggerPerDay());
 		Trigger newTrigger = triggerBuilder.withSchedule(SimpleScheduleBuilder.simpleSchedule()
 				.withIntervalInMilliseconds(intervalInSeconds).withRepeatCount(config.getMaxCount() - 1))
 				.build();
 
-		scheduler.rescheduleJob(jobTrigger.getKey(), newTrigger);
-		jobTrigger = (SimpleTrigger) newTrigger;
+		scheduler.rescheduleJob(triggerMonitor.getTrigger().getKey(), newTrigger);
+		triggerMonitor.setTrigger(newTrigger);
 		return config;
 	}
 

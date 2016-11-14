@@ -21,6 +21,8 @@ import org.springframework.scheduling.quartz.SimpleTriggerFactoryBean;
 
 import it.fabioformosa.quartzmanager.jobs.SampleJob;
 import it.fabioformosa.quartzmanager.scheduler.AutowiringSpringBeanJobFactory;
+import it.fabioformosa.quartzmanager.scheduler.TriggerMonitor;
+import it.fabioformosa.quartzmanager.scheduler.TriggerMonitorImpl;
 
 @Configuration
 @ConditionalOnProperty(name = "quartz.enabled")
@@ -43,6 +45,13 @@ public class SchedulerConfig {
 		factoryBean
 				.setMisfireInstruction(SimpleTrigger.MISFIRE_INSTRUCTION_RESCHEDULE_NEXT_WITH_EXISTING_COUNT);// in case of misfire, ignore all missed triggers and continue
 		return factoryBean;
+	}
+
+	@Bean(name = "triggerMonitor")
+	public TriggerMonitor createTriggerMonitor(@Qualifier("jobTrigger") Trigger trigger) {
+		TriggerMonitor triggerMonitor = new TriggerMonitorImpl();
+		triggerMonitor.setTrigger(trigger);
+		return triggerMonitor;
 	}
 
 	@Bean
