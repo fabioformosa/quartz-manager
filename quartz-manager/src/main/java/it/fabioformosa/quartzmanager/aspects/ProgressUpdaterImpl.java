@@ -35,7 +35,12 @@ public class ProgressUpdaterImpl implements ProgressUpdater {
 
 	@Override
 	public void update() throws SchedulerException {
+		TriggerProgress progress = new TriggerProgress();
+
 		Trigger trigger = scheduler.getTrigger(triggerMonitor.getTrigger().getKey());
+		progress.setFinalFireTime(trigger.getFinalFireTime());
+		progress.setNextFireTime(trigger.getNextFireTime());
+		progress.setPreviousFireTime(trigger.getPreviousFireTime());
 
 		int timesTriggered = 0;
 		int repeatCount = 0;
@@ -50,16 +55,12 @@ public class ProgressUpdaterImpl implements ProgressUpdater {
 			repeatCount = dailyTrigger.getRepeatCount();
 		}
 
-		TriggerProgress progress = new TriggerProgress();
 		Trigger jobTrigger = triggerMonitor.getTrigger();
 		if (jobTrigger != null && jobTrigger.getJobKey() != null) {
 			progress.setJobKey(jobTrigger.getJobKey().getName());
 			progress.setJobClass(jobTrigger.getClass().getSimpleName());
 			progress.setTimesTriggered(timesTriggered);
 			progress.setRepeatCount(repeatCount + 1);
-			progress.setFinalFireTime(jobTrigger.getFinalFireTime());
-			progress.setNextFireTime(jobTrigger.getNextFireTime());
-			progress.setPreviousFireTime(jobTrigger.getPreviousFireTime());
 		}
 
 		messagingTemplate.convertAndSend("/topic/progress", progress);
