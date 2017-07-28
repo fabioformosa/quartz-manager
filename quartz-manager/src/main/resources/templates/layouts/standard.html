@@ -57,5 +57,21 @@
     		<th:block layout:fragment="script"></th:block>
 		 </div><!-- row -->
     </div> <!-- container-fluid -->
+    
+    <!-- REFRESH SESSION DIALOG -->
+	<div id="refreshSessionBox" 
+		data-session-refresh="active"
+		data-ajax-login-server='/' 
+		th:attr="data-username=${#authentication.name}"
+		data-title="Session Expired"
+		data-common-error-label="authentication failed!"
+		data-wrong-password-msg="Wrong password! Please, re-try."
+		data-server-connection-failed-msg="Unexpected error! Server connection failed. Please, try later."
+		data-relogin-failed-msg="Session refreshing failed! Please, refresh current page to continue"
+		data-relogin-label="Authentication"
+		style="display:none;"
+		>
+		
+	</div>
 </body>
 </html>

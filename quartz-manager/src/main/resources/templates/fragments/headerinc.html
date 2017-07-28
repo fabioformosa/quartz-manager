@@ -4,7 +4,7 @@
 <head lang="en" th:fragment="head">
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     
-    <link href="http://cdn.jsdelivr.net/webjars/bootstrap/3.3.4/css/bootstrap.min.css"
+    <link href="http://cdn.jsdelivr.net/webjars/bootstrap/3.3.7/css/bootstrap.min.css"
           rel="stylesheet" media="screen" />
 
 	<link th:href="@{css/animate.css}" rel="stylesheet" />
@@ -15,10 +15,16 @@
             
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css"/>
     
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <script src="http://cdn.jsdelivr.net/webjars/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    
     <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.5.0/angular.min.js"></script>
 
+    <script th:src="@{/js/lib/bootbox.min.js}"></script>
+    
     <script th:src="@{/js/lib/sockjs-0.3.4.js}"></script>
     <script th:src="@{/js/lib/stomp.js}"></script>
+    <script th:src="@{/js/lib/http-auth-interceptor.min.js}"></script>
             
     <script th:src="@{/js/app/components/starter/starter-module.js}"></script>        
     <script th:src="@{/js/app/components/starter/starter-directives.js}"></script>        
@@ -33,6 +39,9 @@
     <script th:src="@{/js/app/components/progress/progress-directive.js}"></script>
     <script th:src="@{/js/app/components/progress/logs-service.js}"></script>        
     <script th:src="@{/js/app/components/progress/logs-directive.js}"></script>        
+    
+    <script th:src="@{/js/app/components/authentication/authentication.js}"></script>        
+    
     <script th:src="@{/js/app/app.js}"></script>
             
 </head>

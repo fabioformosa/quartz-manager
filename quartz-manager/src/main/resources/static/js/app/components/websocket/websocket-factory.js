@@ -29,6 +29,7 @@ angular.module('ff-websocket')
 		
 		var getMessage = function(data) {
 			var out = {};
+			out.type = 'SUCCESS';
 			out.message = JSON.parse(data.body);
 			out.headers = {};
 			out.headers.messageId = data.headers["message-id"];
@@ -40,24 +41,42 @@ angular.module('ff-websocket')
 			return out;
 		};
 
-		that.reconnect = function() {
-			$timeout(function() {
-				initialize();
+		that.reconnectionPromise = null;
+		
+		that.scheduleReconnection = function() {
+			that.reconnectionPromise = $timeout(function() {
+				console.log("Socket reconnecting... (if it fails, next attempt in " + that.options.RECONNECT_TIMEOUT + " msec)");
+				_initialize();
 			}, that.options.RECONNECT_TIMEOUT);
+		};
+		
+		that.reconnectNow = function(){
+			_socket.stomp.disconnect();
+			if(that.reconnectionPromise && that.reconnectionPromise.cancel)
+				that.reconnectionPromise.cancel();
+			_initialize();
+		};
+		
+		var _errorCallback = function(errorMsg){
+			var out = {};
+			out.type = 'ERROR';
+			out.message = errorMsg;
+			_deferred.notify(out);
+			that.scheduleReconnection();
 		};
 
 		var _startListener = function(frame){
 			console.log('Connected: ' + frame);
 			_socket.stomp.subscribe(that.options.TOPIC_NAME, function(data){
-				_deferred.notify(getMessage(data).message);
+				_deferred.notify(getMessage(data));
 			});
 		};
 		
 		var _initialize = function(){
 			_socket.client = new SockJS(that.options.SOCKET_URL);
 			_socket.stomp = Stomp.over(_socket.client);
-			_socket.stomp.connect({}, _startListener);
-			_socket.stomp.onclose = that.reconnect;
+			_socket.stomp.connect({}, _startListener, _errorCallback);
+			_socket.stomp.onclose = that.scheduleReconnection;
 		};
 
 		that.receive = function(){

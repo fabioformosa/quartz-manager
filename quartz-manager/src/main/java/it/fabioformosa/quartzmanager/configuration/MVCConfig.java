@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+import org.thymeleaf.extras.springsecurity4.dialect.SpringSecurityDialect;
 import org.thymeleaf.spring4.SpringTemplateEngine;
 import org.thymeleaf.spring4.templateresolver.SpringResourceTemplateResolver;
 import org.thymeleaf.spring4.view.ThymeleafViewResolver;
@@ -19,12 +20,10 @@ public class MVCConfig extends WebMvcConfigurerAdapter {
 		registry.addViewController("/login").setViewName("login");
 		registry.addViewController("/").setViewName("redirect:/manager");
 
-		registry.addViewController("/templates/manager/config-form.html")
-				.setViewName("manager/config-form");
+		registry.addViewController("/templates/manager/config-form.html").setViewName("manager/config-form");
 		registry.addViewController("/templates/manager/progress-panel.html")
 				.setViewName("manager/progress-panel");
-		registry.addViewController("/templates/manager/logs-panel.html")
-				.setViewName("manager/logs-panel");
+		registry.addViewController("/templates/manager/logs-panel.html").setViewName("manager/logs-panel");
 
 	}
 
@@ -33,6 +32,7 @@ public class MVCConfig extends WebMvcConfigurerAdapter {
 		final SpringTemplateEngine springTemplateEngine = new SpringTemplateEngine();
 		springTemplateEngine.addTemplateResolver(templateResolver());
 		springTemplateEngine.addDialect(new LayoutDialect());
+		springTemplateEngine.addDialect(new SpringSecurityDialect());
 		return springTemplateEngine;
 	}
 
