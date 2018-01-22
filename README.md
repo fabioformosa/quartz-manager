@@ -34,7 +34,7 @@ Replace the dummy job (class: `it.fabioformosa.quartzmanager.jobs.SampleJob`) wi
 
 **Application Server** Tomcat (embedded)
 
-**Frontend** Angularjs 1.5.0, Thymeleaf 2.1.4, Web-Socket (sockjs 0.3.4, stompjs)
+**Frontend** Angularjs 1.6.7, Thymeleaf 2.1.4, Web-Socket (sockjs 0.3.4, stompjs)
 
 **Style** Bootstrap 3.3.4, animated.css, FontAwesome
 
