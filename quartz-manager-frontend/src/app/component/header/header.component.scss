@@ -1,0 +1,59 @@
+:host {
+  position: relative;
+  z-index: 10;
+  color: #fff;
+}
+
+// The menu popup is rendered outside the header component
+// so we will restyle a couple things inside a global /deep/ selector
+
+.app-navbar {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+
+  .right {
+    margin-left: auto;
+    float: right;
+  }
+}
+
+.app-navbar span {
+  text-transform: uppercase !important;
+}
+
+.app-angular-logo {
+  margin: 0 4px 3px 0;
+  height: 26px;
+}
+
+.greeting-hamburger {
+  display: none;
+}
+
+
+/deep/ {
+  .app-header-accountMenu.mat-menu-panel {
+    border-radius: 3px;
+    max-width: initial;
+    overflow: visible;
+
+    .mat-menu-content {
+      max-width: initial;
+      padding: 0;
+      overflow: hidden;
+      display: inline-block;
+      margin-bottom: -6px;
+    }
+  }
+}
+@media screen and (max-width: 600px) {
+  .greeting-hamburger {
+    display: block;
+  }
+  .greeting-button {
+    display: none;
+  }
+}
+
+
