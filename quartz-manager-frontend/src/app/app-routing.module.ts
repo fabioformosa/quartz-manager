@@ -10,11 +10,19 @@ import { NotFoundComponent } from './not-found';
 import { ChangePasswordComponent } from './change-password';
 import { ForbiddenComponent } from './forbidden';
 import { SignupComponent } from './signup';
+
+import { ManagerComponent } from './manager'; 
  
 export const routes: Routes = [
   {
     path: '',
     component: HomeComponent,
+    pathMatch: 'full'
+  },
+  {
+    path: 'manager',
+    component: ManagerComponent,
+    canActivate: [AdminGuard],
     pathMatch: 'full'
   },
   {

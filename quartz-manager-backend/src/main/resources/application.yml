@@ -1,0 +1,30 @@
+server:
+  context-path: /quartz-manager
+  port: 8080
+  session.timeout : 28800
+
+spring:
+  thymeleaf: 
+    cache: false
+    mode: LEGACYHTML5
+
+quartz:
+  enabled: true
+
+job: 
+  frequency: 4000
+  repeatCount: 19
+
+logging:
+  level:
+    org.springframework.web: WARN
+    it.fabioformosa: INFO
+
+app:
+  name: quartz-manager
+
+jwt:
+  header: Authorization
+  expires_in: 600 # 10 minutes
+  secret: queenvictoria
+  cookie: AUTH-TOKEN

@@ -3,6 +3,7 @@ import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { RouterTestingModule } from '@angular/router/testing';
 import { AppComponent } from './app.component';
 import { HomeComponent } from './home';
+import { ManagerComponent } from './manager';
 import { LoginComponent } from './login';
 import { MockApiService } from './service/mocks/api.service.mock';
 

@@ -20,15 +20,20 @@ import { FlexLayoutModule } from '@angular/flex-layout';
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 import { HomeComponent } from './home';
+import { ManagerComponent } from './manager';
 import { LoginComponent } from './login';
 import { LoginGuard, GuestGuard, AdminGuard } from './guard';
 import { NotFoundComponent } from './not-found';
 import { AccountMenuComponent } from './component/header/account-menu/account-menu.component';
+
 import {
   HeaderComponent,
   ApiCardComponent,
   FooterComponent,
-  GithubComponent
+  GithubComponent,
+  SchedulerConfigComponent,
+  LogsPanelComponent,
+  ProgressPanelComponent
 } from './component';
 
 import {
@@ -54,10 +59,14 @@ export function initUserFactory(userService: UserService) {
     FooterComponent,
     ApiCardComponent,
     HomeComponent,
+    ManagerComponent,
     GithubComponent,
     LoginComponent,
     NotFoundComponent,
     AccountMenuComponent,
+    SchedulerConfigComponent,
+    LogsPanelComponent,
+    ProgressPanelComponent,
     ChangePasswordComponent,
     ForbiddenComponent,
     AdminComponent,
