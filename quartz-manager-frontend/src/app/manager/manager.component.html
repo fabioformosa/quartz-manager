@@ -1,21 +1,18 @@
 <div class="content" fxLayout="row" fxLayoutAlign="center none">
 
-  <div fxFlex="1 1 auto" style="border: 1px solid blue">
-	  <scheduler-config>
-	  </scheduler-config>
+  <div fxFlex="1 1 30%" fxFill>
+		<div fxLayout="column">
+			<scheduler-control></scheduler-control>
+			<br/>
+			<scheduler-config></scheduler-config>	
+		</div>
   </div>  
-
-  <div fxFlex="1 1 auto" style="border: 1px solid blue">
-  	<div fxLayout="column">
-  	  <div fxFlex="1 1 auto" style="border: 1px solid green">
-		  <progress-panel>
-		  </progress-panel>
-  	  </div>
-	  
-  	  <div fxFlex="1 1 auto" style="border: 1px solid green">
-		  <logs-panel>
-		  </logs-panel>
-  	  </div>
+	
+  <div fxFlex="1 1 70%" style="margin-left: 20px">
+		<div fxLayout="column">
+			<div fxFlex="1 1 100%"><progress-panel></progress-panel></div>
+			<br/>
+  	  <div fxFlex="1 1 100%"><logs-panel></logs-panel></div>
   	</div>
   </div>	
    	  

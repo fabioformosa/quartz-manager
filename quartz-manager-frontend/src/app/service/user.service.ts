@@ -13,7 +13,7 @@ export class UserService {
     private config: ConfigService
   ) { }
 
-  initUser() {
+  jwtInitUser() {
     const promise = this.apiService.get(this.config.refresh_token_url).toPromise()
     .then(res => {
       if (res.access_token !== null) {
@@ -25,6 +25,15 @@ export class UserService {
     })
     .catch(() => null);
     return promise;
+  }
+
+  jsessionInitUser() {
+    return this.getMyInfo().toPromise()
+        .then(user => {
+          this.currentUser = user;
+        }, err => {
+          //not logged
+        });
   }
 
   resetCredentials() {

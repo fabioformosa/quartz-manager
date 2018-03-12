@@ -1,1 +1,29 @@
-LOGS PANEL HERE!!!
+<mat-card>
+    <mat-card-header>
+        <mat-card-title><b>JOB LOGS</b></mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+            <div id="logs">
+                <div *ngFor = "let log of logs" fxLayout="row" fxLayout.xs="column">
+                    <div fxFlex="1 1 20%">
+                        <span [ngClass]="{'animated zoomIn firstLog': $first}"> [{{log.time|date:'medium'}}]</span>
+                    </div>
+                    <div fxFlex="1 1 10%">
+                        <span [ngClass]="{'animated zoomIn firstLog': $first}">
+                        <i class = "fas" [ngClass]="{'fa-check-circle green': log.type == 'INFO',
+                                                     'fa-exclamation-triangle yellow': log.type == 'WARN',	
+                                                     'fa-times-circle red': log.type == 'ERROR'}"></i>	  		  
+                        </span>
+                    </div>
+                    <div fxFlex="1 1 20%">
+                        <span [ngClass]="{'animated zoomIn firstLog': $first}">
+                        {{log.threadName}}		  
+                        </span>
+                    </div>
+                    <div fxFlex="1 1 50%">
+                        <span [ngClass]="{'animated zoomIn firstLog': $first}"> {{log.msg}}</span>
+                    </div>
+                </div>
+            </div>
+    </mat-card-content>
+</mat-card>

@@ -7,7 +7,6 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
 
 import it.fabioformosa.quartzmanager.security.model.Authority;
 import it.fabioformosa.quartzmanager.security.model.User;
@@ -16,11 +15,7 @@ import it.fabioformosa.quartzmanager.security.repository.UserRepository;
 import it.fabioformosa.quartzmanager.security.service.AuthorityService;
 import it.fabioformosa.quartzmanager.security.service.UserService;
 
-/**
- * Created by fan.jin on 2016-10-15.
- */
-
-@Service
+//@Service
 public class UserServiceImpl implements UserService {
 
 	@Autowired

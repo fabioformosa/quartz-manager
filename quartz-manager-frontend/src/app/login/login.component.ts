@@ -19,7 +19,7 @@ import { Subject } from 'rxjs/SUbject';
 })
 export class LoginComponent implements OnInit, OnDestroy {
   title = 'Login';
-  githubLink = 'https://github.com/bfwg/angular-spring-starter';
+  githubLink = 'https://github.com/fabioformosa/quartz-manager';
   form: FormGroup;
 
   /**
@@ -67,17 +67,17 @@ export class LoginComponent implements OnInit, OnDestroy {
     this.ngUnsubscribe.complete();
   }
 
-  onResetCredentials() {
-    this.userService.resetCredentials()
-    .takeUntil(this.ngUnsubscribe)
-    .subscribe(res => {
-      if (res.result === 'success') {
-        alert('Password has been reset to 123 for all accounts');
-      } else {
-        alert('Server error');
-      }
-    });
-  }
+  // onResetCredentials() {
+  //   this.userService.resetCredentials()
+  //   .takeUntil(this.ngUnsubscribe)
+  //   .subscribe(res => {
+  //     if (res.result === 'success') {
+  //       alert('Password has been reset to 123 for all accounts');
+  //     } else {
+  //       alert('Server error');
+  //     }
+  //   });
+  // }
 
   repository() {
     window.location.href = this.githubLink;

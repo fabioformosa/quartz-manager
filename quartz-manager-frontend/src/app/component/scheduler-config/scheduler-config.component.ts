@@ -1,4 +1,6 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { SchedulerService } from '../../service';
+import { SchedulerConfig } from '../../model/schedulerConfig.model'
 
 @Component({
   selector: 'scheduler-config',
@@ -7,10 +9,32 @@ import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 })
 export class SchedulerConfigComponent implements OnInit {
 
+  constructor(
+    private schedulerService: SchedulerService
+  ) { }
 
-  constructor() { }
+  config : SchedulerConfig = new SchedulerConfig()
+  configBackup : SchedulerConfig = new SchedulerConfig()
 
   ngOnInit() {
+    this.retrieveConfig()
   }
+
+  retrieveConfig = () => {
+    this.schedulerService.getConfig()
+      .subscribe(res => {
+        this.config = new SchedulerConfig(res.triggerPerDay, res.maxCount)
+        this.configBackup = res.maxCount
+      })
+  }
+
+  submitConfig = () => {
+    this.schedulerService.updateConfig(this.config)
+      .subscribe(res => {
+        this.configBackup = this.config;
+      }, error => {
+        this.config = this.configBackup;
+      });
+  };
 
 }

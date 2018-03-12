@@ -1,1 +1,38 @@
-SCHEDULER CONFIG HERE!!!
+<mat-card>
+	<mat-card-header>
+		<mat-card-title><b>SCHEDULER CONFIG</b></mat-card-title>
+	</mat-card-header>
+	<mat-card-content>
+		<div fxLayout="column">
+			<form name="configForm" fxFlex="1 1 100%" #configForm="ngForm">
+				<mat-form-field>
+					<input matInput placeholder="Freq [Num per day]" [(ngModel)]="config.triggerPerDay" name="triggerPerDay" type="number">
+				</mat-form-field>
+				<mat-form-field>
+					<input matInput placeholder="Max Occurrences" [(ngModel)]="config.maxCount" name="maxCount" type="number">
+				</mat-form-field>
+			
+				<br>
+
+				<div>
+					<h5>Misfire Policy</h5>
+					<div>RESCHEDULE NEXT WITH EXISTING COUNT</div>
+					<div class="small">
+						In case of misfire event, the trigger is re-scheduled to the next scheduled time after 'now' with the repeat count left unchanged (missed events are definitively lost). 
+						<br/>
+						<strong>Warning:</strong> This policy could cause the trigger to go directly to the complete state if the end-time of the trigger has arrived,
+						so this misfire instruction doesn't guarantee that the repeat counter reaches your max value, but it guarantees that the end-time doesn't go over the expected final fire time.	
+					</div>
+				</div>
+				
+				<br>
+
+				<button mat-raised-button
+					 	type="button" 
+						(click)="submitConfig()">
+						Submit
+				</button>
+			</form>
+		</div>
+	</mat-card-content>
+</mat-card>

@@ -5,9 +5,6 @@ import java.util.List;
 import it.fabioformosa.quartzmanager.security.model.User;
 import it.fabioformosa.quartzmanager.security.model.UserRequest;
 
-/**
- * Created by fan.jin on 2016-10-15.
- */
 public interface UserService {
 	List<User> findAll();
 

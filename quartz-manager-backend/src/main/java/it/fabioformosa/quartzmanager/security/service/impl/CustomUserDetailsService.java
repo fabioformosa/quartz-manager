@@ -11,16 +11,12 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
 
 import it.fabioformosa.quartzmanager.security.model.User;
 import it.fabioformosa.quartzmanager.security.repository.UserRepository;
 
-/**
- * Created by fan.jin on 2016-10-31.
- */
 
-@Service
+//@Service
 public class CustomUserDetailsService implements UserDetailsService {
 
 	protected final Log LOGGER = LogFactory.getLog(getClass());

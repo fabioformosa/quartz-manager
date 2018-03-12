@@ -51,9 +51,9 @@ export class ApiService {
     return this.request(path, body, RequestMethod.Delete);
   }
 
-  private request(path: string, body: any, method = RequestMethod.Post, custemHeaders?: HttpHeaders): Observable<any> {
+  private request(path: string, body: any, method = RequestMethod.Post, customHeaders?: HttpHeaders): Observable<any> {
     const req = new HttpRequest(method, path, body, {
-      headers: custemHeaders || this.headers,
+      headers: customHeaders || this.headers,
       withCredentials: true
     });
 

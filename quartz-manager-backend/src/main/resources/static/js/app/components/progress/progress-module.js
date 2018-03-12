@@ -1,1 +1,0 @@
-var starterModule = angular.module('progress', []);

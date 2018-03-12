@@ -24,9 +24,6 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import it.fabioformosa.quartzmanager.security.TokenHelper;
 
-/**
- * Created by fan.jin on 2016-10-19.
- */
 public class TokenAuthenticationFilter extends OncePerRequestFilter {
 
 	/*

@@ -1,0 +1,15 @@
+<mat-card>
+	<mat-card-header>
+		<mat-card-title><b>SCHEDULER CONTROLLER</b></mat-card-title>
+	</mat-card-header>
+	<mat-card-content>
+		<button id="schedulerControllerBtn1" mat-raised-button class="btn btn-default large-btn" (click)="startOrPause()">
+			<span *ngIf = "schedulerState === 'running'">
+				<i class="fas fa-pause red"></i>
+			</span>
+			<span *ngIf = "schedulerState === 'stopped' || schedulerState === 'paused'">
+				<i class="fas fa-play green"></i>
+			</span>
+		</button>
+	</mat-card-content>
+</mat-card>

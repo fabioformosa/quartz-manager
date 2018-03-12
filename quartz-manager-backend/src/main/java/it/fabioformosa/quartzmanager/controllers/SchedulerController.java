@@ -1,5 +1,8 @@
 package it.fabioformosa.quartzmanager.controllers;
 
+import java.util.Collections;
+import java.util.Map;
+
 import javax.annotation.Resource;
 
 import org.quartz.DailyTimeIntervalTrigger;
@@ -12,11 +15,15 @@ import org.quartz.TriggerBuilder;
 import org.quartz.impl.triggers.SimpleTriggerImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import it.fabioformosa.quartzmanager.controllers.ManagerController.SchedulerStates;
 import it.fabioformosa.quartzmanager.dto.SchedulerConfigParam;
 import it.fabioformosa.quartzmanager.dto.TriggerProgress;
 import it.fabioformosa.quartzmanager.scheduler.TriggerMonitor;
@@ -35,19 +42,6 @@ public class SchedulerController {
 
 	@Resource
 	private TriggerMonitor triggerMonitor;
-
-	@SuppressWarnings("unused")
-	private long fromMillsIntervalToTriggerPerDay(long repeatIntervalInMills) {
-		return (int) Math.ceil(MILLS_IN_A_DAY / repeatIntervalInMills);
-	}
-
-	private int fromTriggerPerDayToMillSecInterval(long triggerPerDay) {
-		return (int) Math.ceil(Long.valueOf(MILLS_IN_A_DAY) / triggerPerDay); //with ceil the triggerPerDay is a max value
-	}
-
-	private int fromTriggerPerDayToSecInterval(long triggerPerDay) {
-		return (int) Math.ceil(Long.valueOf(SEC_IN_A_DAY) / triggerPerDay);
-	}
 
 	@RequestMapping(value = "/config", method = RequestMethod.GET)
 	public SchedulerConfigParam getConfig() {
@@ -75,8 +69,8 @@ public class SchedulerController {
 	@RequestMapping("/progress")
 	public TriggerProgress getProgressInfo() throws SchedulerException {
 
-		SimpleTriggerImpl jobTrigger = ((SimpleTriggerImpl) scheduler
-				.getTrigger(triggerMonitor.getTrigger().getKey()));
+		SimpleTriggerImpl jobTrigger = (SimpleTriggerImpl) scheduler
+				.getTrigger(triggerMonitor.getTrigger().getKey());
 
 		TriggerProgress progress = new TriggerProgress();
 		if (jobTrigger != null && jobTrigger.getJobKey() != null) {
@@ -91,7 +85,20 @@ public class SchedulerController {
 		return progress;
 	}
 
+	@GetMapping(produces = "application/json")
+	public Map<String, String> getStatus() throws SchedulerException {
+		String schedulerState = "";
+		if (scheduler.isShutdown() || !scheduler.isStarted())
+			schedulerState = SchedulerStates.STOPPED.toString();
+		else if (scheduler.isStarted() && scheduler.isInStandbyMode())
+			schedulerState = SchedulerStates.PAUSED.toString();
+		else
+			schedulerState = SchedulerStates.RUNNING.toString();
+		return Collections.singletonMap("data", schedulerState.toLowerCase());
+	}
+
 	@RequestMapping("/pause")
+	@ResponseStatus(HttpStatus.NO_CONTENT)
 	public void pause() throws SchedulerException {
 		scheduler.standby();
 	}
@@ -114,20 +121,36 @@ public class SchedulerController {
 	}
 
 	@RequestMapping("/resume")
+	@ResponseStatus(HttpStatus.NO_CONTENT)
 	public void resume() throws SchedulerException {
 		scheduler.start();
 	}
 
 	@RequestMapping("/run")
+	@ResponseStatus(HttpStatus.NO_CONTENT)
 	public void run() throws SchedulerException {
 		log.info("Starting scheduler...");
 		scheduler.start();
 	}
 
+	@ResponseStatus(HttpStatus.NO_CONTENT)
 	@RequestMapping("/stop")
 	public void stop() throws SchedulerException {
 		log.info("Stopping scheduler...");
 		scheduler.shutdown(true);
+	}
+
+	@SuppressWarnings("unused")
+	private long fromMillsIntervalToTriggerPerDay(long repeatIntervalInMills) {
+		return (int) Math.ceil(MILLS_IN_A_DAY / repeatIntervalInMills);
+	}
+
+	private int fromTriggerPerDayToMillSecInterval(long triggerPerDay) {
+		return (int) Math.ceil(Long.valueOf(MILLS_IN_A_DAY) / triggerPerDay); //with ceil the triggerPerDay is a max value
+	}
+
+	private int fromTriggerPerDayToSecInterval(long triggerPerDay) {
+		return (int) Math.ceil(Long.valueOf(SEC_IN_A_DAY) / triggerPerDay);
 	}
 
 }

@@ -4,13 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import it.fabioformosa.quartzmanager.security.model.Authority;
 import it.fabioformosa.quartzmanager.security.repository.AuthorityRepository;
 import it.fabioformosa.quartzmanager.security.service.AuthorityService;
 
-@Service
+//@Service
 public class AuthorityServiceImpl implements AuthorityService {
 
 	@Autowired

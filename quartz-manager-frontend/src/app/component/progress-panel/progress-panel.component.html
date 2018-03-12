@@ -1,1 +1,36 @@
-PROGRESS PANEL HERE!!!
+<!-- <div class="progress" [hidden]="progress.percentage < 0">
+    <div class="progress-bar" 
+            role="progressbar" 
+            [ngStyle]="{width: percentageStr}">
+        {{percentageStr}}
+    </div>
+</div> -->
+
+<mat-card>
+    <mat-card-header>
+        <mat-card-title><b>JOB PROGRESS</b></mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+                <div>
+                    <mat-progress-bar mode="determinate" value="{{progress.percentage}}"></mat-progress-bar>
+                    {{percentageStr}}
+                </div>
+                
+                <br>
+
+                <div>
+                    <mat-chip>counter</mat-chip>&nbsp; 
+                    <span class="animated pulse">{{progress.timesTriggered}}</span> <span ng-show="progress.repeatCount > 0">/ {{progress.repeatCount}} </span>
+                    
+                    <br/><br/>
+                    
+                    <mat-chip>job key</mat-chip> <span class="animated pulse">{{progress.jobKey}}</span><br>
+                    <mat-chip>job class</mat-chip> <span class="animated pulse">{{progress.jobClass}}</span><br/>
+                    
+                    <br/>
+                    <mat-chip>prev fire time</mat-chip> <span class="animated pulse">{{progress.previousFireTime|date:'dd-MM-yyyy HH:mm:ss'}}</span><br/>
+                    <mat-chip>next fire time</mat-chip> <span class="animated pulse">{{progress.nextFireTime|date:'dd-MM-yyyy HH:mm:ss'}}</span><br/>
+                    <mat-chip>final fire time</mat-chip> <span class="animated pulse">{{progress.finalFireTime|date:'dd-MM-yyyy HH:mm:ss'}}</span><br/>
+                </div>
+    </mat-card-content>
+</mat-card>

@@ -11,15 +11,16 @@ import {
   MatToolbarModule,
   MatTooltipModule,
   MatCardModule,
+  MatChipsModule,
   MatInputModule,
   MatIconRegistry,
-  MatProgressSpinnerModule
+  MatProgressSpinnerModule,
+  MatProgressBarModule,
 } from '@angular/material';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
-import { HomeComponent } from './home';
 import { ManagerComponent } from './manager';
 import { LoginComponent } from './login';
 import { LoginGuard, GuestGuard, AdminGuard } from './guard';
@@ -28,10 +29,10 @@ import { AccountMenuComponent } from './component/header/account-menu/account-me
 
 import {
   HeaderComponent,
-  ApiCardComponent,
   FooterComponent,
   GithubComponent,
   SchedulerConfigComponent,
+  SchedulerControlComponent,
   LogsPanelComponent,
   ProgressPanelComponent
 } from './component';
@@ -41,36 +42,58 @@ import {
   AuthService,
   UserService,
   FooService,
-  ConfigService
+  SchedulerService,
+  ConfigService,
+  ProgressWebsocketService,
+  LogsWebsocketService
 } from './service';
 import { ChangePasswordComponent } from './change-password/change-password.component';
 import { ForbiddenComponent } from './forbidden/forbidden.component';
-import { AdminComponent } from './admin/admin.component';
-import { SignupComponent } from './signup/signup.component';
 
 export function initUserFactory(userService: UserService) {
-    return () => userService.initUser();
+    return () => userService.jsessionInitUser();
 }
+
+// const stompConfig: StompConfig = {
+//   // Which server?
+//   url: 'ws://localhost:8080/quartz-manager/progress',
+
+//   // Headers
+//   // Typical keys: login, passcode, host
+//   headers: {
+//     login: 'admin',
+//     passcode: 'admin'
+//   },
+
+//   // How often to heartbeat?
+//   // Interval in milliseconds, set to 0 to disable
+//   heartbeat_in: 0, // Typical value 0 - disabled
+//   heartbeat_out: 20000, // Typical value 20000 - every 20 seconds
+//   // Wait in milliseconds before attempting auto reconnect
+//   // Set to 0 to disable
+//   // Typical value 5000 (5 seconds)
+//   reconnect_delay: 5000,
+
+//   // Will log diagnostics on console
+//   debug: true
+// };
 
 @NgModule({
   declarations: [
     AppComponent,
     HeaderComponent,
     FooterComponent,
-    ApiCardComponent,
-    HomeComponent,
     ManagerComponent,
     GithubComponent,
     LoginComponent,
     NotFoundComponent,
     AccountMenuComponent,
     SchedulerConfigComponent,
+    SchedulerControlComponent,
     LogsPanelComponent,
     ProgressPanelComponent,
     ChangePasswordComponent,
-    ForbiddenComponent,
-    AdminComponent,
-    SignupComponent
+    ForbiddenComponent
   ],
   imports: [
     BrowserAnimationsModule,
@@ -83,11 +106,13 @@ export function initUserFactory(userService: UserService) {
     MatMenuModule,
     MatTooltipModule,
     MatButtonModule,
+    MatChipsModule,
     MatIconModule,
     MatInputModule,
     MatToolbarModule,
     MatCardModule,
     MatProgressSpinnerModule,
+    MatProgressBarModule,
     FlexLayoutModule
   ],
   providers: [
@@ -95,6 +120,9 @@ export function initUserFactory(userService: UserService) {
     GuestGuard,
     AdminGuard,
     FooService,
+    SchedulerService,
+    ProgressWebsocketService,
+    LogsWebsocketService,
     AuthService,
     ApiService,
     UserService,
@@ -106,6 +134,12 @@ export function initUserFactory(userService: UserService) {
       'deps': [UserService],
       'multi': true
     }
+    // StompService,
+    // ServerSocket
+    // {
+    //   provide: StompConfig,
+    //   useValue: stompConfig
+    // }
   ],
   bootstrap: [AppComponent]
 })
