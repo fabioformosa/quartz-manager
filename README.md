@@ -4,7 +4,7 @@ GUI Manager for Quartz Scheduler.
 Through this webapp you can launch and control your scheduled job. The GUI Console is composed by a managament panel to set trigger, start/stop scheduler and a log panel with a progress bar to display the job output. 
 
 ## SCREENSHOT
-![Alt text](http://www.fabioformosa.it/quartz-manager/quartz-manager-2-screenshot_800.png "Quartz Manager Screenshot")
+![](https://github.com/fabioformosa/quartz-manager/blob/master/quartz-manager-backend/src/main/resources/quartz-manager-2-screenshot_800.PNG)
 
 ## HOW IT WORKS
 * Set up the trigger into the left sidebar in terms of: daily frequency and and max occurrences.
