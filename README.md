@@ -1,22 +1,43 @@
-# quartz-manager
+#QUARTZ MANAGER
 GUI Manager for Quartz Scheduler.
-Through this webapp you can launch and control your scheduled job.
-GUI Console is composed by a managament panel to set trigger, start/stop scheduler and by a log panel with progress bar to get job output.
+
+Through this webapp you can launch and control your scheduled job. The GUI Console is composed by a managament panel to set trigger, start/stop scheduler and a log panel with a progress bar to display the job output. 
 
 ## SCREENSHOT
-![Alt text](http://www.fabioformosa.it/quartz-manager/quartz-manager-screenshot_800.png "Quartz Manager Screenshot")
+![Alt text](http://www.fabioformosa.it/quartz-manager/quartz-manager-2-screenshot_800.png "Quartz Manager Screenshot")
 
 ## HOW IT WORKS
 * Set up the trigger into the left sidebar in terms of: daily frequency and and max occurrences.
 * Press the start button
 * The GUI manager updates the progress bar and reports all logs of your quartz job.
 
-## HOW IT RUNS
-1. Quartz-Manager is a Spring Boot Application. To run by CLI  `mvn spring-boot:run` or through your IDE. For more details [spring boot ref.](http://docs.spring.io/spring-boot/docs/current/reference/html/using-boot-running-your-application.html)
-1. Open quartz-manager at the link: [http://localhost:9000/quartz-manager/manager](http://localhost:9000/quartz-manager/manager)
-1. Log in with default credentials: `admin/admin`
+## QUICK START
+**[requirements]** Make sure you have installed
+* [Java 8](https://java.com/download/) or greater
+* [Maven](https://maven.apache.org/)
+* [npm](https://www.npmjs.com/get-npm), [node](https://nodejs.org) and [angular-cli](https://cli.angular.io/)
 
-## HOW TO RUN YOUR JOB
+```
+#CLONE REPOSITORY
+git clone https://github.com/fabioformosa/quartz-manager.git
+
+# START QUARTZ-MANAGER-BACKEND
+cd quartz-manager/quartz-manager-backend
+mvn spring-boot:run
+
+# START QUARTZ-MANAGER-FRONTEND
+cd quartz-manager/quartz-manager-backend
+npm install
+npm start
+
+```
+
+1. Open browser at [http://localhost:4200](http://localhost:4200)
+1. Log in with **default credentials**: `admin/admin`
+
+If you are not confident with maven CLI, you can start it by your IDE. For more details [spring boot ref.](http://docs.spring.io/spring-boot/docs/current/reference/html/using-boot-running-your-application.html)
+
+## HOW TO RUN YOUR SCHEDULED JOB
 By default, quartz-manager executes the dummy job that logs "hello world!".
 Replace the dummy job (class: `it.fabioformosa.quartzmanager.jobs.SampleJob`) with yours. Follow these steps:
 
@@ -26,7 +47,7 @@ Replace the dummy job (class: `it.fabioformosa.quartzmanager.jobs.SampleJob`) wi
 ## HOW TO CHANGE SETTINGS
 * Num of Threads: `/quartz-manager/src/main/resources/quartz.properties`
 * Credentials: `it.fabioformosa.quartzmanager.configuration.WebSecurityConfig`
-* Server context path (default `/quartz-manager`) and port (default `9000`): `/quartz-manager/src/main/resources/application.properties`
+* quartz-manager backend context path (default `/quartz-manager`) and port (default `8080`): `/quartz-manager/src/main/resources/application.properties`
 
 ## Tech Overview
 
@@ -34,8 +55,18 @@ Replace the dummy job (class: `it.fabioformosa.quartzmanager.jobs.SampleJob`) wi
 
 **Application Server** Tomcat (embedded)
 
-**Frontend** Angularjs 1.6.7, Thymeleaf 2.1.4, Web-Socket (sockjs 0.3.4, stompjs)
+**Frontend** Angular 5.2.0, Web-Socket (stompjs 2.3.3)
 
-**Style** Bootstrap 3.3.4, animated.css, FontAwesome
+**Style** angular material, FontAwesome 5
+
+From quartz manager ver 2.x.x, the new structure of project is:
+ * REST backend (java based, using [http://www.quartz-scheduler.org/](http://www.quartz-scheduler.org/)
+ * Single Page Application frontend (angular 5)
+
+(The previous version of quartz manager was a monolithic backend that provided also frontend developed with angularjs 1.6.x. You can find it at the branch 1.x.x)
+
+## Credits
+
+* this project has been created from [angular-spring-starter](https://github.com/bfwg/angular-spring-starter)
 
 
