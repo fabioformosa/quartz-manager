@@ -11,39 +11,45 @@ import org.springframework.security.core.GrantedAuthority;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+/**
+ * Temporary enabled only inMemoryAuthentication
+ * 
+ * @author Fabio.Formosa
+ *
+ */
 @Entity
 @Table(name="Authority")
 public class Authority implements GrantedAuthority {
 
-	@Id
-	@Column(name="id")
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	Long id;
+  @Id
+  @Column(name="id")
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  Long id;
 
-	@Column(name="name")
-	String name;
+  @Column(name="name")
+  String name;
 
-	@Override
-	public String getAuthority() {
-		return name;
-	}
+  @Override
+  public String getAuthority() {
+    return name;
+  }
 
-	@JsonIgnore
-	public Long getId() {
-		return id;
-	}
+  @JsonIgnore
+  public Long getId() {
+    return id;
+  }
 
-	@JsonIgnore
-	public String getName() {
-		return name;
-	}
+  @JsonIgnore
+  public String getName() {
+    return name;
+  }
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+  public void setId(Long id) {
+    this.id = id;
+  }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+  public void setName(String name) {
+    this.name = name;
+  }
 
 }

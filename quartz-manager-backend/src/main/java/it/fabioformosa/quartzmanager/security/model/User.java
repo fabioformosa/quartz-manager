@@ -21,109 +21,115 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+/**
+ * Temporary enabled only inMemoryAuthentication
+ * 
+ * @author Fabio.Formosa
+ *
+ */
 @Entity
 @Table(name = "USER")
 public class User implements UserDetails, Serializable {
-	@Id
-	@Column(name = "id")
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
+  @Id
+  @Column(name = "id")
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
 
-	@Column(name = "username")
-	private String username;
+  @Column(name = "username")
+  private String username;
 
-	@JsonIgnore
-	@Column(name = "password")
-	private String password;
+  @JsonIgnore
+  @Column(name = "password")
+  private String password;
 
-	@Column(name = "firstname")
-	private String firstname;
+  @Column(name = "firstname")
+  private String firstname;
 
-	@Column(name = "lastname")
-	private String lastname;
+  @Column(name = "lastname")
+  private String lastname;
 
 
-	@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-	@JoinTable(name = "user_authority",
-	joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
-	inverseJoinColumns = @JoinColumn(name = "authority_id", referencedColumnName = "id"))
-	private List<Authority> authorities;
+  @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+  @JoinTable(name = "user_authority",
+  joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
+  inverseJoinColumns = @JoinColumn(name = "authority_id", referencedColumnName = "id"))
+  private List<Authority> authorities;
 
-	@Override
-	public Collection<? extends GrantedAuthority> getAuthorities() {
-		return this.authorities;
-	}
+  @Override
+  public Collection<? extends GrantedAuthority> getAuthorities() {
+    return authorities;
+  }
 
-	public String getFirstname() {
-		return firstname;
-	}
+  public String getFirstname() {
+    return firstname;
+  }
 
-	public Long getId() {
-		return id;
-	}
+  public Long getId() {
+    return id;
+  }
 
-	public String getLastname() {
-		return lastname;
-	}
+  public String getLastname() {
+    return lastname;
+  }
 
-	@Override
-	public String getPassword() {
-		return password;
-	}
+  @Override
+  public String getPassword() {
+    return password;
+  }
 
-	@Override
-	public String getUsername() {
-		return username;
-	}
+  @Override
+  public String getUsername() {
+    return username;
+  }
 
-	// We can add the below fields in the users table.
-	// For now, they are hardcoded.
-	@JsonIgnore
-	@Override
-	public boolean isAccountNonExpired() {
-		return true;
-	}
+  // We can add the below fields in the users table.
+  // For now, they are hardcoded.
+  @JsonIgnore
+  @Override
+  public boolean isAccountNonExpired() {
+    return true;
+  }
 
-	@JsonIgnore
-	@Override
-	public boolean isAccountNonLocked() {
-		return true;
-	}
+  @JsonIgnore
+  @Override
+  public boolean isAccountNonLocked() {
+    return true;
+  }
 
-	@JsonIgnore
-	@Override
-	public boolean isCredentialsNonExpired() {
-		return true;
-	}
+  @JsonIgnore
+  @Override
+  public boolean isCredentialsNonExpired() {
+    return true;
+  }
 
-	@JsonIgnore
-	@Override
-	public boolean isEnabled() {
-		return true;
-	}
+  @JsonIgnore
+  @Override
+  public boolean isEnabled() {
+    return true;
+  }
 
-	public void setAuthorities(List<Authority> authorities) {
-		this.authorities = authorities;
-	}
+  public void setAuthorities(List<Authority> authorities) {
+    this.authorities = authorities;
+  }
 
-	public void setFirstname(String firstname) {
-		this.firstname = firstname;
-	}
+  public void setFirstname(String firstname) {
+    this.firstname = firstname;
+  }
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+  public void setId(Long id) {
+    this.id = id;
+  }
 
-	public void setLastname(String lastname) {
+  public void setLastname(String lastname) {
 
-		this.lastname = lastname;
-	}
+    this.lastname = lastname;
+  }
 
-	public void setPassword(String password) {
-		this.password = password;
-	}
+  public void setPassword(String password) {
+    this.password = password;
+  }
 
-	public void setUsername(String username) {
-		this.username = username;
-	}
+  public void setUsername(String username) {
+    this.username = username;
+  }
 }

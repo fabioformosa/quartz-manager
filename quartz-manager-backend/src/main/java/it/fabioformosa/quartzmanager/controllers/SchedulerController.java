@@ -5,7 +5,6 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
-import org.quartz.DailyTimeIntervalTrigger;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.SimpleScheduleBuilder;
@@ -23,134 +22,131 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import it.fabioformosa.quartzmanager.controllers.ManagerController.SchedulerStates;
 import it.fabioformosa.quartzmanager.dto.SchedulerConfigParam;
 import it.fabioformosa.quartzmanager.dto.TriggerProgress;
+import it.fabioformosa.quartzmanager.enums.SchedulerStates;
 import it.fabioformosa.quartzmanager.scheduler.TriggerMonitor;
 
+/**
+ * This controller provides scheduler info about config and status. It provides
+ * also methods to set new config and start/stop/resume the scheduler.
+ * 
+ * @author Fabio.Formosa
+ *
+ */
 @RestController
 @RequestMapping("/scheduler")
 public class SchedulerController {
 
-	private static final int MILLS_IN_A_DAY = 1000 * 60 * 60 * 24;
-	private static final int SEC_IN_A_DAY = 60 * 60 * 24;
+  private static final int MILLS_IN_A_DAY = 1000 * 60 * 60 * 24;
+  private static final int SEC_IN_A_DAY = 60 * 60 * 24;
 
-	private final Logger log = LoggerFactory.getLogger(SchedulerController.class);
+  private final Logger log = LoggerFactory.getLogger(SchedulerController.class);
 
-	@Resource
-	private Scheduler scheduler;
+  @Resource
+  private Scheduler scheduler;
 
-	@Resource
-	private TriggerMonitor triggerMonitor;
+  @Resource
+  private TriggerMonitor triggerMonitor;
 
-	@RequestMapping(value = "/config", method = RequestMethod.GET)
-	public SchedulerConfigParam getConfig() {
-		SchedulerConfigParam config = new SchedulerConfigParam();
+  @RequestMapping(value = "/config", method = RequestMethod.GET)
+  public SchedulerConfigParam getConfig() {
+    log.debug("SCHEDULER - GET CONFIG params");
+    SimpleTrigger simpleTrigger = (SimpleTrigger) triggerMonitor.getTrigger();
 
-		int maxCount = 0;
-		long repeatIntervalInMills = 0;
-		if (triggerMonitor.getTrigger() instanceof SimpleTrigger) {
-			SimpleTrigger simpleTrigger = (SimpleTrigger) triggerMonitor.getTrigger();
-			maxCount = simpleTrigger.getRepeatCount() + 1;
-			repeatIntervalInMills = fromTriggerPerDayToMillSecInterval(simpleTrigger.getRepeatInterval());
-		} else if (triggerMonitor.getTrigger() instanceof DailyTimeIntervalTrigger) {
-			DailyTimeIntervalTrigger dailyTimeIntervalTrigger = (DailyTimeIntervalTrigger) triggerMonitor
-					.getTrigger();
-			maxCount = dailyTimeIntervalTrigger.getRepeatCount() + 1;
-			repeatIntervalInMills = fromTriggerPerDayToSecInterval(
-					dailyTimeIntervalTrigger.getRepeatInterval());
-		}
+    int maxCount = simpleTrigger.getRepeatCount() + 1;
+    long triggersPerDay = fromMillsIntervalToTriggerPerDay(simpleTrigger.getRepeatInterval());
 
-		config.setMaxCount(maxCount);
-		config.setTriggerPerDay(repeatIntervalInMills);
-		return config;
-	}
+    return new SchedulerConfigParam(triggersPerDay, maxCount);
+  }
 
-	@RequestMapping("/progress")
-	public TriggerProgress getProgressInfo() throws SchedulerException {
+  @RequestMapping("/progress")
+  public TriggerProgress getProgressInfo() throws SchedulerException {
+    log.trace("SCHEDULER - GET PROGRESS INFO");
+    TriggerProgress progress = new TriggerProgress();
 
-		SimpleTriggerImpl jobTrigger = (SimpleTriggerImpl) scheduler
-				.getTrigger(triggerMonitor.getTrigger().getKey());
+    SimpleTriggerImpl jobTrigger = (SimpleTriggerImpl) scheduler.getTrigger(triggerMonitor.getTrigger().getKey());
+    if (jobTrigger != null && jobTrigger.getJobKey() != null) {
+      progress.setJobKey(jobTrigger.getJobKey().getName());
+      progress.setJobClass(jobTrigger.getClass().getSimpleName());
+      progress.setTimesTriggered(jobTrigger.getTimesTriggered());
+      progress.setRepeatCount(jobTrigger.getRepeatCount());
+      progress.setFinalFireTime(jobTrigger.getFinalFireTime());
+      progress.setNextFireTime(jobTrigger.getNextFireTime());
+      progress.setPreviousFireTime(jobTrigger.getPreviousFireTime());
+    }
 
-		TriggerProgress progress = new TriggerProgress();
-		if (jobTrigger != null && jobTrigger.getJobKey() != null) {
-			progress.setJobKey(jobTrigger.getJobKey().getName());
-			progress.setJobClass(jobTrigger.getClass().getSimpleName());
-			progress.setTimesTriggered(jobTrigger.getTimesTriggered());
-			progress.setRepeatCount(jobTrigger.getRepeatCount());
-			progress.setFinalFireTime(jobTrigger.getFinalFireTime());
-			progress.setNextFireTime(jobTrigger.getNextFireTime());
-			progress.setPreviousFireTime(jobTrigger.getPreviousFireTime());
-		}
-		return progress;
-	}
+    return progress;
+  }
 
-	@GetMapping(produces = "application/json")
-	public Map<String, String> getStatus() throws SchedulerException {
-		String schedulerState = "";
-		if (scheduler.isShutdown() || !scheduler.isStarted())
-			schedulerState = SchedulerStates.STOPPED.toString();
-		else if (scheduler.isStarted() && scheduler.isInStandbyMode())
-			schedulerState = SchedulerStates.PAUSED.toString();
-		else
-			schedulerState = SchedulerStates.RUNNING.toString();
-		return Collections.singletonMap("data", schedulerState.toLowerCase());
-	}
+  @GetMapping(produces = "application/json")
+  public Map<String, String> getStatus() throws SchedulerException {
+    log.trace("SCHEDULER - GET STATUS");
+    String schedulerState = "";
+    if (scheduler.isShutdown() || !scheduler.isStarted())
+      schedulerState = SchedulerStates.STOPPED.toString();
+    else if (scheduler.isStarted() && scheduler.isInStandbyMode())
+      schedulerState = SchedulerStates.PAUSED.toString();
+    else
+      schedulerState = SchedulerStates.RUNNING.toString();
+    return Collections.singletonMap("data", schedulerState.toLowerCase());
+  }
 
-	@RequestMapping("/pause")
-	@ResponseStatus(HttpStatus.NO_CONTENT)
-	public void pause() throws SchedulerException {
-		scheduler.standby();
-	}
+  @RequestMapping("/pause")
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  public void pause() throws SchedulerException {
+    log.info("SCHEDULER - PAUSE COMMAND");
+    scheduler.standby();
+  }
 
-	@RequestMapping(value = "/config", method = RequestMethod.POST)
-	public SchedulerConfigParam postConfig(@RequestBody SchedulerConfigParam config)
-			throws SchedulerException {
+  @RequestMapping(value = "/config", method = RequestMethod.POST)
+  public SchedulerConfigParam postConfig(@RequestBody SchedulerConfigParam config) throws SchedulerException {
+    log.info("SCHEDULER - NEW CONFIG {}", config);
+    SimpleTrigger trigger = (SimpleTrigger) triggerMonitor.getTrigger();
 
-		SimpleTrigger trigger = (SimpleTrigger) triggerMonitor.getTrigger();
-		TriggerBuilder<SimpleTrigger> triggerBuilder = trigger.getTriggerBuilder();
+    TriggerBuilder<SimpleTrigger> triggerBuilder = trigger.getTriggerBuilder();
 
-		int intervalInSeconds = fromTriggerPerDayToMillSecInterval(config.getTriggerPerDay());
-		Trigger newTrigger = triggerBuilder.withSchedule(SimpleScheduleBuilder.simpleSchedule()
-				.withIntervalInMilliseconds(intervalInSeconds).withRepeatCount(config.getMaxCount() - 1))
-				.build();
+    int intervalInMills = fromTriggerPerDayToMillsInterval(config.getTriggerPerDay());
+    Trigger newTrigger = triggerBuilder.withSchedule(SimpleScheduleBuilder.simpleSchedule()
+        .withIntervalInMilliseconds(intervalInMills).withRepeatCount(config.getMaxCount() - 1)).build();
 
-		scheduler.rescheduleJob(triggerMonitor.getTrigger().getKey(), newTrigger);
-		triggerMonitor.setTrigger(newTrigger);
-		return config;
-	}
+    scheduler.rescheduleJob(triggerMonitor.getTrigger().getKey(), newTrigger);
+    triggerMonitor.setTrigger(newTrigger);
+    return config;
+  }
 
-	@RequestMapping("/resume")
-	@ResponseStatus(HttpStatus.NO_CONTENT)
-	public void resume() throws SchedulerException {
-		scheduler.start();
-	}
+  @RequestMapping("/resume")
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  public void resume() throws SchedulerException {
+    log.info("SCHEDULER - RESUME COMMAND");
+    scheduler.start();
+  }
 
-	@RequestMapping("/run")
-	@ResponseStatus(HttpStatus.NO_CONTENT)
-	public void run() throws SchedulerException {
-		log.info("Starting scheduler...");
-		scheduler.start();
-	}
+  @RequestMapping("/run")
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  public void run() throws SchedulerException {
+    log.info("SCHEDULER - START COMMAND");
+    scheduler.start();
+  }
 
-	@ResponseStatus(HttpStatus.NO_CONTENT)
-	@RequestMapping("/stop")
-	public void stop() throws SchedulerException {
-		log.info("Stopping scheduler...");
-		scheduler.shutdown(true);
-	}
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  @RequestMapping("/stop")
+  public void stop() throws SchedulerException {
+    log.info("SCHEDULER - STOP COMMAND");
+    scheduler.shutdown(true);
+  }
 
-	@SuppressWarnings("unused")
-	private long fromMillsIntervalToTriggerPerDay(long repeatIntervalInMills) {
-		return (int) Math.ceil(MILLS_IN_A_DAY / repeatIntervalInMills);
-	}
+  private long fromMillsIntervalToTriggerPerDay(long repeatIntervalInMills) {
+    return (int) Math.ceil(MILLS_IN_A_DAY / repeatIntervalInMills);
+  }
 
-	private int fromTriggerPerDayToMillSecInterval(long triggerPerDay) {
-		return (int) Math.ceil(Long.valueOf(MILLS_IN_A_DAY) / triggerPerDay); //with ceil the triggerPerDay is a max value
-	}
+  private int fromTriggerPerDayToMillsInterval(long triggerPerDay) {
+    return (int) Math.ceil(Long.valueOf(MILLS_IN_A_DAY) / triggerPerDay); // with ceil the triggerPerDay is a max value
+  }
 
-	private int fromTriggerPerDayToSecInterval(long triggerPerDay) {
-		return (int) Math.ceil(Long.valueOf(SEC_IN_A_DAY) / triggerPerDay);
-	}
+  @SuppressWarnings("unused")
+  private int fromTriggerPerDayToSecInterval(long triggerPerDay) {
+    return (int) Math.ceil(Long.valueOf(SEC_IN_A_DAY) / triggerPerDay);
+  }
 
 }

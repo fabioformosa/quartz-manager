@@ -2,60 +2,66 @@ package it.fabioformosa.quartzmanager.jobs.entities;
 
 import java.util.Date;
 
+/**
+ * Log record produced by a job at the end of each run
+ * 
+ * @author Fabio.Formosa
+ *
+ */
 public class LogRecord {
 
-	public enum LogType {
-		INFO, WARN, ERROR;
-	}
+  public enum LogType {
+    INFO, WARN, ERROR;
+  }
 
-	private Date date;
-	private LogType type;
+  private Date date;
+  private LogType type;
 
-	private String message;
-	private String threadName;
+  private String message;
+  private String threadName;
 
-	public LogRecord(LogType type, String msg) {
-		super();
-		this.type = type;
-		message = msg;
-		date = new Date();
-	}
+  public LogRecord(LogType type, String msg) {
+    super();
+    this.type = type;
+    message = msg;
+    date = new Date();
+  }
 
-	public Date getDate() {
-		return date;
-	}
+  public Date getDate() {
+    return date;
+  }
 
-	public String getMessage() {
-		return message;
-	}
+  public String getMessage() {
+    return message;
+  }
 
-	public String getThreadName() {
-		return threadName;
-	}
+  public String getThreadName() {
+    return threadName;
+  }
 
-	public LogType getType() {
-		return type;
-	}
+  public LogType getType() {
+    return type;
+  }
 
-	public void setDate(Date date) {
-		this.date = date;
-	}
+  public void setDate(Date date) {
+    this.date = date;
+  }
 
-	public void setMessage(String msg) {
-		message = msg;
-	}
+  public void setMessage(String msg) {
+    message = msg;
+  }
 
-	public void setThreadName(String threadName) {
-		this.threadName = threadName;
-	}
+  public void setThreadName(String threadName) {
+    this.threadName = threadName;
+  }
 
-	public void setType(LogType type) {
-		this.type = type;
-	}
+  public void setType(LogType type) {
+    this.type = type;
+  }
 
-	@Override
-	public String toString() {
-		return "LogRecord [date=" + date + ", type=" + type + ", message=" + message + "]";
-	}
+  @Override
+  public String toString() {
+    return "LogRecord [date=" + date + ", type=" + type + ", message=" + message + "]";
+  }
 
 }

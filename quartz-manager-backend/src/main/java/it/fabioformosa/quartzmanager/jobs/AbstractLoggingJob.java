@@ -13,38 +13,45 @@ import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import it.fabioformosa.quartzmanager.aspects.ProgressUpdater;
 import it.fabioformosa.quartzmanager.jobs.entities.LogRecord;
 
+/**
+ * Extends this class to create a job that produces LogRecord to be displayed
+ * into the GUI panel
+ * 
+ * @author Fabio.Formosa
+ *
+ */
 public abstract class AbstractLoggingJob implements Job {
 
-	private static final Logger log = LoggerFactory.getLogger(AbstractLoggingJob.class);
+  private static final Logger log = LoggerFactory.getLogger(AbstractLoggingJob.class);
 
-	@Autowired
-	private SimpMessageSendingOperations messagingTemplate;
+  @Autowired
+  private SimpMessageSendingOperations messagingTemplate;
 
-	@Resource
-	private ProgressUpdater progressUpdater;
+  @Resource
+  private ProgressUpdater progressUpdater;
 
-	/**
-	 *
-	 * @param jobExecutionContext
-	 * @return final log
-	 */
-	public abstract LogRecord doIt(JobExecutionContext jobExecutionContext);
+  /**
+   *
+   * @param jobExecutionContext
+   * @return final log
+   */
+  public abstract LogRecord doIt(JobExecutionContext jobExecutionContext);
 
-	@Override
-	public final void execute(JobExecutionContext jobExecutionContext) {
-		try {
-			LogRecord logMsg = doIt(jobExecutionContext);
-			logAndSend(logMsg);
-			progressUpdater.update();
-		} catch (SchedulerException e) {
-			log.error("Error updating progress " + e.getMessage());
-		}
-	}
+  @Override
+  public final void execute(JobExecutionContext jobExecutionContext) {
+    try {
+      LogRecord logMsg = doIt(jobExecutionContext);
+      logAndSend(logMsg);
+      progressUpdater.update();
+    } catch (SchedulerException e) {
+      log.error("Error updating progress " + e.getMessage());
+    }
+  }
 
-	public void logAndSend(LogRecord logRecord) {
-		log.info(logRecord.getMessage());
-		logRecord.setThreadName(Thread.currentThread().getName());
-		messagingTemplate.convertAndSend("/topic/logs", logRecord);
-	}
+  public void logAndSend(LogRecord logRecord) {
+    log.info(logRecord.getMessage());
+    logRecord.setThreadName(Thread.currentThread().getName());
+    messagingTemplate.convertAndSend("/topic/logs", logRecord);
+  }
 
 }
