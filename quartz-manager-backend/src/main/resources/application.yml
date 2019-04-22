@@ -1,7 +1,8 @@
 server:
-  context-path: /quartz-manager
+  servlet:
+    context-path: /quartz-manager
+    session.timeout : 28800
   port: 8080
-  session.timeout : 28800
 
 spring:
   thymeleaf: 
