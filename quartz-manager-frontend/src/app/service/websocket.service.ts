@@ -1,7 +1,7 @@
 import { Injectable, OnInit } from '@angular/core';
 import { Headers } from '@angular/http';
 
-import { Observable } from 'rxjs/Observable';
+import { Observable } from 'rxjs';
 
 import { ApiService } from './api.service';
 

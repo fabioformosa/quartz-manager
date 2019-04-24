@@ -3,14 +3,15 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { DisplayMessage } from '../shared/models/display-message';
-import { Subscription } from 'rxjs/Subscription';
+import { Subscription } from 'rxjs';
+import { takeUntil, delay } from 'rxjs/operators'
 import {
   UserService,
   AuthService
 } from '../service';
 
-import { Observable } from 'rxjs/Observable';
-import { Subject } from 'rxjs/SUbject';
+import { Observable } from 'rxjs';
+import { Subject } from 'rxjs';
 
 @Component({
   selector: 'app-signup',
@@ -49,8 +50,9 @@ export class SignupComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.route.params
-    .takeUntil(this.ngUnsubscribe)
+    this.route.params.pipe(
+        takeUntil(this.ngUnsubscribe)
+    )
     .subscribe((params: DisplayMessage) => {
       this.notification = params;
     });
@@ -82,7 +84,7 @@ export class SignupComponent implements OnInit, OnDestroy {
 
     this.authService.signup(this.form.value)
     // show me the animation
-    .delay(1000)
+    .pipe(delay(1000))
     .subscribe(data => {
       console.log(data);
       this.authService.login(this.form.value).subscribe(data =>{

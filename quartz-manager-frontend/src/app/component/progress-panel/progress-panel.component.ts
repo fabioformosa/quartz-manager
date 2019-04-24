@@ -1,7 +1,7 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core'
 import {  ProgressWebsocketService } from '../../service';
 
-import { Observable } from 'rxjs/Observable';
+import { Observable } from 'rxjs';
 // import {Message} from '@stomp/stompjs';
 
 // import { Subscription } from 'rxjs/Subscription';

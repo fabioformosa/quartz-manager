@@ -3,7 +3,8 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AuthService } from 'app/service';
 import { Router } from '@angular/router';
 import { DisplayMessage } from '../shared/models/display-message';
-
+import { delay, mergeMap } from 'rxjs/operators';
+ 
 @Component({
   selector: 'app-change-password',
   templateUrl: './change-password.component.html',
@@ -50,9 +51,7 @@ export class ChangePasswordComponent implements OnInit {
     this.submitted = true;
 
     this.authService.changePassowrd(this.form.value)
-    // show me the animation
-    .delay(1000)
-    .mergeMap(() => this.authService.logout())
+    .pipe(delay(1000), mergeMap(() => this.authService.logout()))
     .subscribe(() => {
       this.router.navigate(['/login', { msgType: 'success', msgBody: 'Success! Please sign in with your new password.'}]);
     }, error => {

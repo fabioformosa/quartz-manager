@@ -1,8 +1,7 @@
 import { HttpClient, HttpHeaders, HttpResponse, HttpRequest, HttpEventType, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs/Observable';
-import 'rxjs/Rx';
-import 'rxjs/add/observable/throw';
+import { Observable } from 'rxjs';
+import { catchError, map, filter } from 'rxjs/operators'
 import { serialize } from 'app/shared/utilities/serialize';
 
 export enum RequestMethod {
@@ -36,7 +35,7 @@ export class ApiService {
     }
 
     return this.http.get(path, options)
-      .catch(this.checkError.bind(this));
+      .pipe(catchError(this.checkError.bind(this)));
   }
 
   post(path: string, body: any, customHeaders?: HttpHeaders): Observable<any> {
@@ -58,9 +57,11 @@ export class ApiService {
     });
 
     return this.http.request(req)
-      .filter(response => response instanceof HttpResponse)
-      .map((response: HttpResponse<any>) => response.body)
-      .catch(error => this.checkError(error));
+      .pipe(
+              filter(response => response instanceof HttpResponse),
+              map((response: HttpResponse<any>) => response.body),
+              catchError(error => this.checkError(error))
+      )
   }
 
   // Display error if logged in, otherwise redirect to IDP
