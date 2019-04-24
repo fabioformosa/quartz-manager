@@ -51,7 +51,7 @@ Replace the dummy job (class: `it.fabioformosa.quartzmanager.jobs.SampleJob`) wi
 
 ## Tech Overview
 
-**Backend Stack** Java 8, Spring Boot 1.5.9 (Spring MVC 4.3.13, Spring Security 4.2.3, Spring AOP 4.3.13), Quartz Scheduler 2.2.2
+**Backend Stack** Java 8, Spring Boot 2.1.4 (Spring MVC 5.1.6, Spring Security 5.1.5, Spring AOP 5.1.6), Quartz Scheduler 2.3.1
 
 **Application Server** Tomcat (embedded)
 
