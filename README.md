@@ -55,7 +55,7 @@ Replace the dummy job (class: `it.fabioformosa.quartzmanager.jobs.SampleJob`) wi
 
 **Application Server** Tomcat (embedded)
 
-**Frontend** Angular 5.2.0, Web-Socket (stompjs 2.3.3)
+**Frontend** Angular 7.2.13, Web-Socket (stompjs 2.3.3)
 
 **Style** angular material, FontAwesome 5
 
