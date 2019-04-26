@@ -55,13 +55,13 @@ Replace the dummy job (class: `it.fabioformosa.quartzmanager.jobs.SampleJob`) wi
 
 **Application Server** Tomcat (embedded)
 
-**Frontend** Angular 5.2.0, Web-Socket (stompjs 2.3.3)
+**Frontend** Angular 7.2.13, Web-Socket (stompjs 2.3.3)
 
 **Style** angular material, FontAwesome 5
 
 From quartz manager ver 2.x.x, the new structure of project is:
  * REST backend (java based, using [http://www.quartz-scheduler.org/](http://www.quartz-scheduler.org/)
- * Single Page Application frontend (angular 5)
+ * Single Page Application frontend (angular 7)
 
 (The previous version of quartz manager was a monolithic backend that provided also frontend developed with angularjs 1.6.x. You can find it at the branch 1.x.x)
 
