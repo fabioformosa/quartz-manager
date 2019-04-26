@@ -46,7 +46,7 @@ Replace the dummy job (class: `it.fabioformosa.quartzmanager.jobs.SampleJob`) wi
 
 ## HOW TO CHANGE SETTINGS
 * Num of Threads: `/quartz-manager/src/main/resources/quartz.properties`
-* Credentials: `it.fabioformosa.quartzmanager.configuration.WebSecurityConfig`
+* Credentials: To change admin's password, set ENV var `quartz-manager.account.pwd`
 * quartz-manager backend context path (default `/quartz-manager`) and port (default `8080`): `/quartz-manager/src/main/resources/application.properties`
 
 ## Tech Overview
