@@ -1,7 +1,7 @@
-<div class="content" fxLayout="row" fxLayoutAlign="center">
+<div class="content" fxLayout="row" fxLayoutAlign="center" style="padding-bottom:160px;">
 
     <mat-card elevation="5" fxFlex>
-
+		
       <mat-card-subtitle>
         <h2>Quartz Manager</h2>
       </mat-card-subtitle>
@@ -23,20 +23,10 @@
           </mat-form-field>
           <button type="submit" [disabled]="!loginForm.form.valid" mat-raised-button color="primary">Login</button>
         </form>
-        <!-- <br>
-        <div *ngIf="!submitted" >
-          <button matTooltip="Reset password if someone has changed it already!" (click)="onResetCredentials()" mat-raised-button color="accent">Reset Credentials</button>
-        </div> -->
 
         <mat-spinner *ngIf="submitted" mode="indeterminate"></mat-spinner>
         <br>
-        <hr>
-        
-        <br>
-        <p>Default credentials are admin/admin</p>
-        <br>
-        <button (click)="repository()" mat-raised-button color="accent" style="color: black">GitHub Repository</button>
-        <p style="font-size: 0.7em"><i>Created by <a href="https://github.com/fabioformosa" style="color: black;" >Fabio Formosa</a></i></p>
+        <p> <i style="color: #b5b5b5; font-size: 10px">(Default credentials are admin/admin)</i></p>
 
       </mat-card-content>
 
