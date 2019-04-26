@@ -4,6 +4,9 @@ server:
     session.timeout : 28800
   port: 8080
 
+app:
+  name: quartz-manager
+  
 spring:
   thymeleaf: 
     cache: false
@@ -16,16 +19,19 @@ job:
   frequency: 4000
   repeatCount: 19
 
-logging:
-  level:
-    org.springframework.web: WARN
-    it.fabioformosa: INFO
-
-app:
-  name: quartz-manager
-
 jwt:
   header: Authorization
   expires_in: 600 # 10 minutes
   secret: queenvictoria
   cookie: AUTH-TOKEN
+
+logging:
+  level:
+    org.springframework.web: WARN
+    it.fabioformosa: INFO
+    
+quartz-manager:
+  account:
+    user: admin
+    pwd: admin
+      

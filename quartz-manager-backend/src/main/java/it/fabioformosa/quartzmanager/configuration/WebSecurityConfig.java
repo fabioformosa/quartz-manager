@@ -3,6 +3,7 @@ package it.fabioformosa.quartzmanager.configuration;
 import javax.annotation.Resource;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -69,10 +70,17 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	}
 
 
+	@Value("${quartz-manager.account.user}")
+	private String adminUser;
+
+	@Value("${quartz-manager.account.pwd}")
+	private String adminPwd;
+
+
 	@Autowired
 	public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
 		PasswordEncoder encoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
-		auth.inMemoryAuthentication().withUser("admin").password(encoder.encode("admin")).roles("ADMIN");
+		auth.inMemoryAuthentication().withUser(adminUser).password(encoder.encode(adminPwd)).roles("ADMIN");
 	}
 
 }
