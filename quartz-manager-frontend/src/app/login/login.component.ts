@@ -24,17 +24,8 @@ export class LoginComponent implements OnInit, OnDestroy {
   githubLink = 'https://github.com/fabioformosa/quartz-manager';
   form: FormGroup;
 
-  /**
-   * Boolean used in telling the UI
-   * that the form has been submitted
-   * and is awaiting a response
-   */
   submitted = false;
 
-  /**
-   * Notification message from received
-   * form request or router
-   */
   notification: DisplayMessage;
 
   returnUrl: string;
@@ -56,7 +47,6 @@ export class LoginComponent implements OnInit, OnDestroy {
     .subscribe((params: DisplayMessage) => {
       this.notification = params;
     });
-    // get return url from route parameters or default to '/'
     this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
     this.form = this.formBuilder.group({
       username: ['', Validators.compose([Validators.required, Validators.minLength(3), Validators.maxLength(64)])],
@@ -86,14 +76,10 @@ export class LoginComponent implements OnInit, OnDestroy {
   }
 
   onSubmit() {
-    /**
-     * Innocent until proven guilty
-     */
     this.notification = undefined;
     this.submitted = true;
 
     this.authService.login(this.form.value)
-    // show me the animation
     .pipe(delay(1000))
     .subscribe(data => {
       this.userService.getMyInfo().subscribe();
