@@ -41,7 +41,7 @@ If you are not confident with maven CLI, you can start it by your IDE. For more 
 By default, quartz-manager executes the dummy job that logs "hello world!".
 Replace the dummy job (class: `it.fabioformosa.quartzmanager.jobs.SampleJob`) with yours. Follow these steps:
 
-1. Let extend the super class `it.fabioformosa.quartzmanager.jobs.AbstractLoggingJob`
+1. Extend the super class `it.fabioformosa.quartzmanager.jobs.AbstractLoggingJob`
 1. Change the scheduler settings, providing the class name of your job. Open class `it.fabioformosa.quartzmanager.configuration.SchedulerConfig` and for the method `jobDetail` replace SampleJob.class with YourJob.class
 
 ## HOW TO CHANGE SETTINGS
