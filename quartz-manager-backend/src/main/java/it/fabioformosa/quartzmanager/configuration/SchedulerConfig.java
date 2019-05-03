@@ -20,7 +20,6 @@ import org.springframework.scheduling.quartz.JobDetailFactoryBean;
 import org.springframework.scheduling.quartz.SchedulerFactoryBean;
 import org.springframework.scheduling.quartz.SimpleTriggerFactoryBean;
 
-import it.fabioformosa.quartzmanager.jobs.myjobs.SampleJob;
 import it.fabioformosa.quartzmanager.scheduler.AutowiringSpringBeanJobFactory;
 import it.fabioformosa.quartzmanager.scheduler.TriggerMonitor;
 import it.fabioformosa.quartzmanager.scheduler.TriggerMonitorImpl;
@@ -48,6 +47,9 @@ public class SchedulerConfig {
 		return factoryBean;
 	}
 
+	@Value("${quartz-manager.jobClass}")
+	private String jobClassname;
+
 	@Bean(name = "triggerMonitor")
 	public TriggerMonitor createTriggerMonitor(@Qualifier("jobTrigger") Trigger trigger) {
 		TriggerMonitor triggerMonitor = new TriggerMonitorImpl();
@@ -56,8 +58,10 @@ public class SchedulerConfig {
 	}
 
 	@Bean
-	public JobDetailFactoryBean jobDetail() {
-		return createJobDetail(SampleJob.class);
+	@SuppressWarnings("unchecked")
+	public JobDetailFactoryBean jobDetail() throws ClassNotFoundException {
+		Class<? extends Job> JobClass = (Class<? extends Job>) Class.forName(jobClassname);
+		return createJobDetail(JobClass);
 	}
 
 	@Bean
