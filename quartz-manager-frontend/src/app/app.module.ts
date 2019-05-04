@@ -21,11 +21,11 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
-import { ManagerComponent } from './manager';
-import { LoginComponent } from './login';
-import { LoginGuard, GuestGuard, AdminGuard } from './guard';
-import { NotFoundComponent } from './not-found';
-import { AccountMenuComponent } from './component/header/account-menu/account-menu.component';
+import { ManagerComponent } from './views/manager';
+import { LoginComponent } from './views/login';
+import { LoginGuard, GuestGuard, AdminGuard } from './guards';
+import { NotFoundComponent } from './views/not-found';
+import { AccountMenuComponent } from './components/header/account-menu/account-menu.component';
 
 import {
   HeaderComponent,
@@ -35,7 +35,7 @@ import {
   SchedulerControlComponent,
   LogsPanelComponent,
   ProgressPanelComponent
-} from './component';
+} from './components';
 
 import {
   ApiService,
@@ -45,9 +45,9 @@ import {
   ConfigService,
   ProgressWebsocketService,
   LogsWebsocketService
-} from './service';
-import { ChangePasswordComponent } from './change-password/change-password.component';
-import { ForbiddenComponent } from './forbidden/forbidden.component';
+} from './services';
+import { ChangePasswordComponent } from './views/change-password/change-password.component';
+import { ForbiddenComponent } from './views/forbidden/forbidden.component';
 
 export function initUserFactory(userService: UserService) {
     return () => userService.jsessionInitUser();

@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { UserService, SchedulerService } from '../../service';
+import { UserService, SchedulerService } from '../../services';
 
 @Component({
   selector: 'scheduler-control',

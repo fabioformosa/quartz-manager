@@ -1,6 +1,6 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 
-import { LogsWebsocketService, ApiService } from '../../service';
+import { LogsWebsocketService, ApiService } from '../../services';
 import { Observable } from 'rxjs';
 
 @Component({

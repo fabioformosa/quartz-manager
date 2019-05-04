@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import {
   ConfigService,
   UserService
-} from '../service';
+} from '../../services';
 
 @Component({
   selector: 'manager',

@@ -9,13 +9,13 @@ import { RouterTestingModule } from '@angular/router/testing';
 import {
     MockUserService,
     MockApiService
-  } from 'app/service/mocks';
+  } from 'app/services/mocks';
 import {
       UserService,
       AuthService,
       ApiService,
       ConfigService
-    } from 'app/service';
+    } from 'app/services';
 
 describe('SignupComponent', () => {
   let component: SignupComponent;

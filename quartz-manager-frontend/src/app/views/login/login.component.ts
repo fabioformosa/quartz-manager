@@ -2,14 +2,14 @@ import { Inject } from '@angular/core';
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
-import { DisplayMessage } from '../shared/models/display-message';
+import { DisplayMessage } from '../../shared/models/display-message';
 import { Subscription } from 'rxjs';
 import { takeUntil, delay } from 'rxjs/operators'
 
 import {
   UserService,
   AuthService
-} from '../service';
+} from '../../services';
 
 import { Observable } from 'rxjs';
 import { Subject } from 'rxjs';

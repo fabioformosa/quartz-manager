@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import {
   UserService,
   AuthService
-} from '../../service';
+} from '../../services';
 import { Router } from '@angular/router';
 
 @Component({

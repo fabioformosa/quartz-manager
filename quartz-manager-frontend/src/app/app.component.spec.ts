@@ -2,16 +2,16 @@ import { TestBed, async } from '@angular/core/testing';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { RouterTestingModule } from '@angular/router/testing';
 import { AppComponent } from './app.component';
-import { ManagerComponent } from './manager';
-import { LoginComponent } from './login';
-import { MockApiService } from './service/mocks/api.service.mock';
+import { ManagerComponent } from './views/manager';
+import { LoginComponent } from './views/login';
+import { MockApiService } from './services/mocks/api.service.mock';
 
-import { LoginGuard } from './guard';
-import { NotFoundComponent } from './not-found';
+import { LoginGuard } from './guards';
+import { NotFoundComponent } from './views/not-found';
 import {
   FooterComponent,
   GithubComponent,
-} from './component';
+} from './components';
 
 import {
   MatToolbarModule,
@@ -24,7 +24,7 @@ import {
   AuthService,
   UserService,
   ConfigService
-} from './service';
+} from './services';
 
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 

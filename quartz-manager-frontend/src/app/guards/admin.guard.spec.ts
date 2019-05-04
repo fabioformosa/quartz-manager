@@ -1,8 +1,8 @@
 import { TestBed, async, inject } from '@angular/core/testing';
 import { Router } from '@angular/router';
-import { UserService } from '../service';
+import { UserService } from '../services';
 import { AdminGuard } from './admin.guard';
-import { MockUserService } from '../service/mocks';
+import { MockUserService } from '../services/mocks';
 
 export class RouterStub {
   navigate(commands?: any[], extras?: any) {}

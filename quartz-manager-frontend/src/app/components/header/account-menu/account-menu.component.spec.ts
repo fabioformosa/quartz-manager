@@ -7,11 +7,11 @@ import {
   ConfigService,
   ApiService,
   UserService
-} from '../../../service';
+} from '../../../services';
 import {
   MockUserService,
   MockApiService
-} from '../../../service/mocks';
+} from '../../../services/mocks';
 import { AccountMenuComponent } from './account-menu.component';
 
 describe('AccountMenuComponent', () => {

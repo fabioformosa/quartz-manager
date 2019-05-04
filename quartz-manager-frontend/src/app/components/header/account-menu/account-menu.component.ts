@@ -3,7 +3,7 @@ import {
   ConfigService,
   AuthService,
   UserService
-} from '../../../service';
+} from '../../../services';
 import { Router } from '@angular/router';
 
 @Component({

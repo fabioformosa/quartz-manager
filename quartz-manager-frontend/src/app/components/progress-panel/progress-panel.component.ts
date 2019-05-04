@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core'
-import {  ProgressWebsocketService } from '../../service';
+import {  ProgressWebsocketService } from '../../services';
 
 import { Observable } from 'rxjs';
 // import {Message} from '@stomp/stompjs';
@@ -10,7 +10,7 @@ import { Observable } from 'rxjs';
 // import { QueueingSubject } from 'queueing-subject'
 // import websocketConnect from 'rxjs-websockets'
 // import 'rxjs/add/operator/share'
-// import {ServerSocket} from '../../service/qz.socket.service'
+// import {ServerSocket} from '../../services/qz.socket.service'
 
 @Component({
   selector: 'progress-panel',

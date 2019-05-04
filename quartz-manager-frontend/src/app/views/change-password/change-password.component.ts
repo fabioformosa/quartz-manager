@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { AuthService } from 'app/service';
+import { AuthService } from 'app/services';
 import { Router } from '@angular/router';
-import { DisplayMessage } from '../shared/models/display-message';
+import { DisplayMessage } from '../../shared/models/display-message';
 import { delay, mergeMap } from 'rxjs/operators';
  
 @Component({
