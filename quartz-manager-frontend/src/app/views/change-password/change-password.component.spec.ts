@@ -7,8 +7,8 @@ import {
   AuthService,
   UserService,
   ConfigService
-} from '../services';
-import { MockApiService } from '../services/mocks';
+} from '../../services';
+import { MockApiService } from '../../services/mocks';
 
 import { ChangePasswordComponent } from './change-password.component';
 

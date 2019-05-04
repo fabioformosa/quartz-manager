@@ -2,7 +2,7 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { LoginComponent } from './login.component';
 import { RouterTestingModule } from '@angular/router/testing';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-import { MockApiService } from '../services/mocks/api.service.mock';
+import { MockApiService } from '../../services/mocks/api.service.mock';
 import { ReactiveFormsModule } from '@angular/forms';
 
 import {
@@ -10,7 +10,7 @@ import {
   AuthService,
   UserService,
   ConfigService
-} from '../services';
+} from '../../services';
 
 describe('LoginComponent', () => {
   let component: LoginComponent;
