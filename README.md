@@ -42,7 +42,7 @@ By default, quartz-manager executes the dummy job that logs "hello world!".
 Replace the dummy job (class: `it.fabioformosa.quartzmanager.jobs.SampleJob`) with yours. Follow these steps:
 
 1. Extend the super class `it.fabioformosa.quartzmanager.jobs.AbstractLoggingJob`
-1. Change the scheduler settings, providing the class name of your job. Open class `it.fabioformosa.quartzmanager.configuration.SchedulerConfig` and for the method `jobDetail` replace SampleJob.class with YourJob.class
+1. set property `quartz-manager.jobClass` with qualified name of your custom Job Class (default job is SampleJob.class)
 
 ## HOW TO CHANGE SETTINGS
 * Num of Threads: `/quartz-manager/src/main/resources/quartz.properties`
