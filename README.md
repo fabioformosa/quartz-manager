@@ -21,12 +21,12 @@ Through this webapp you can launch and control your scheduled job. The GUI Conso
 #CLONE REPOSITORY
 git clone https://github.com/fabioformosa/quartz-manager.git
 
-# START QUARTZ-MANAGER-BACKEND
-cd quartz-manager/quartz-manager-backend
+# START QUARTZ-MANAGER-API
+cd quartz-manager/quartz-manager-api
 mvn spring-boot:run
 
 # START QUARTZ-MANAGER-FRONTEND
-cd quartz-manager/quartz-manager-backend
+cd quartz-manager/quartz-manager-frontend
 npm install
 npm start
 
