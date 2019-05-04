@@ -23,7 +23,6 @@ import {
   ApiService,
   AuthService,
   UserService,
-  FooService,
   ConfigService
 } from './service';
 
@@ -48,7 +47,6 @@ describe('AppComponent', () => {
         },
         AuthService,
         UserService,
-        FooService,
         ConfigService
       ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]

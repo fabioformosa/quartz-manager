@@ -22,8 +22,6 @@ export class ConfigService {
 
   private _reset_credentials_url = this._user_url + '/reset-credentials';
 
-  private _foo_url = this._api_url + '/foo';
-  
   private _signup_url = this._api_url + '/signup';
 
   get reset_credentials_url(): string {
@@ -52,10 +50,6 @@ export class ConfigService {
 
   get change_password_url(): string {
       return this._change_password_url;
-  }
-
-  get foo_url(): string {
-      return this._foo_url;
   }
 
   get signup_url():string {

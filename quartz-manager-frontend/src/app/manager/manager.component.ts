@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import {
-  FooService,
   ConfigService,
   UserService
 } from '../service';
@@ -12,12 +11,10 @@ import {
 })
 export class ManagerComponent implements OnInit {
 
-  fooResponse = {};
   whoamIResponse = {};
   allUserResponse = {};
   constructor(
     private config: ConfigService,
-    private fooService: FooService,
     private userService: UserService
   ) { }
 

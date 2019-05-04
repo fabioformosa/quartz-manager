@@ -9,7 +9,6 @@ import {
   ApiService,
   AuthService,
   UserService,
-  FooService,
   ConfigService
 } from '../service';
 

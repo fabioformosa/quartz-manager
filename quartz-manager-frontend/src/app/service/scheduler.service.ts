@@ -36,9 +36,4 @@ export class SchedulerService {
   updateConfig = (config: Object) => {
     return this.apiService.post('/quartz-manager/scheduler/config', config)
   }
-
-  // getFoo() {
-  //   return this.apiService.get(this.config.foo_url);
-  // }
-
 }
