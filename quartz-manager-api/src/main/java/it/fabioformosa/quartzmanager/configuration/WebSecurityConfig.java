@@ -29,13 +29,19 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	@Order(1)
 	public static class ApiWebSecurityConfig extends WebSecurityConfigurerAdapter {
 		@Override
+		public void configure(WebSecurity web) throws Exception {
+			web.ignoring().antMatchers("/","/v2/api-docs",
+					"/swagger-resources/**",
+					"/swagger-ui.html",
+					"/webjars/**",
+					"/csrf");
+		}
+
+		@Override
 		protected void configure(HttpSecurity http) throws Exception {
 			http.csrf().disable() //
 			.antMatcher("/notifications").authorizeRequests().anyRequest().hasAnyRole("ADMIN").and()
 			.httpBasic();
-
-			//			http.antMatcher("/logs/**").authorizeRequests().anyRequest()
-			//					.permitAll();
 		}
 	}
 
@@ -54,28 +60,27 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 		@Override
 		public void configure(WebSecurity web) throws Exception {
-			web.ignoring().antMatchers("/css/**", "/js/**", "/img/**", "/lib/**");
+			web.ignoring().antMatchers("/css/**", "/js/**", "/img/**", "/lib/**", "/webjars/**");
 		}
 
 		@Override
 		protected void configure(HttpSecurity http) throws Exception {
 			//			http.csrf().ignoringAntMatchers("/api/login", "/api/signup").and() //
-			http.cors().and().csrf().disable()
-			.exceptionHandling().authenticationEntryPoint(comboEntryPoint).and()//
+			http.cors().and().csrf().disable().exceptionHandling().authenticationEntryPoint(comboEntryPoint)
+			.and()//
 			.authorizeRequests().anyRequest().authenticated().and()//
-			.formLogin().loginPage("/api/login").successHandler(authenticationSuccessHandler).failureHandler(authenticationFailureHandler).and().logout()
+			.formLogin().loginPage("/api/login").successHandler(authenticationSuccessHandler)
+			.failureHandler(authenticationFailureHandler).and().logout()
 			.logoutRequestMatcher(new AntPathRequestMatcher("/api/logout"))
 			.logoutSuccessUrl("/manager");
 		}
 	}
-
 
 	@Value("${quartz-manager.account.user}")
 	private String adminUser;
 
 	@Value("${quartz-manager.account.pwd}")
 	private String adminPwd;
-
 
 	@Autowired
 	public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
