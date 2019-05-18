@@ -1,5 +1,6 @@
 package it.fabioformosa.quartzmanager.configuration;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -11,6 +12,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupp
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
 import springfox.documentation.service.ApiInfo;
+import springfox.documentation.service.BasicAuth;
 import springfox.documentation.service.Contact;
 import springfox.documentation.service.VendorExtension;
 import springfox.documentation.spi.DocumentationType;
@@ -23,12 +25,12 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 public class SwaggerConfig extends WebMvcConfigurationSupport {
 
 	@Bean
-	public Docket productApi() {
+	public Docket api() {
 		return new Docket(DocumentationType.SWAGGER_2).select()
 				.apis(RequestHandlerSelectors.basePackage("it.fabioformosa.quartzmanager.controllers")) //
 				.build() //
 				.apiInfo(apiInfo()) //
-				//				.securitySchemes(Arrays.asList(new BasicAuth("basicAuth")))
+				.securitySchemes(Arrays.asList(new BasicAuth("basicAuth")))
 				.securityContexts(Collections.singletonList(securityContext()));
 	}
 
@@ -53,9 +55,5 @@ public class SwaggerConfig extends WebMvcConfigurationSupport {
 	protected void addResourceHandlers(ResourceHandlerRegistry registry) {
 		registry.addResourceHandler("swagger-ui.html").addResourceLocations("classpath:/META-INF/resources/");
 		registry.addResourceHandler("/webjars/**").addResourceLocations("classpath:/META-INF/resources/webjars/");
-
-		// registry.addResourceHandler("/api/swagger-ui.html**")
-		// .addResourceLocations("classpath:/META-INF/resources/swagger-ui.html");
-		// registry.addResourceHandler("/api/webjars/**").addResourceLocations("classpath:/META-INF/resources/webjars/");
 	}
 }
