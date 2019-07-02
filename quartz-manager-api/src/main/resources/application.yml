@@ -21,14 +21,16 @@ job:
 
 jwt:
   header: Authorization
-  expires_in: 600 # 10 minutes
+  expires_in_sec: 600 # 10 minutes
   secret: queenvictoria
   cookie: AUTH-TOKEN
 
 logging:
   level:
     org.springframework.web: WARN
-    it.fabioformosa: INFO
+    org.springframework.security: INFO
+    org.springframework.boot.autoconfigure.security: INFO
+    it.fabioformosa: DEBUG
     
 quartz-manager:
   jobClass: it.fabioformosa.quartzmanager.jobs.myjobs.SampleJob

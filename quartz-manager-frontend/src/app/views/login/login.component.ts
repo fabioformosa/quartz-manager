@@ -43,15 +43,15 @@ export class LoginComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.route.params
-    .pipe(takeUntil(this.ngUnsubscribe))
-    .subscribe((params: DisplayMessage) => {
-      this.notification = params;
-    });
-    this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
-    this.form = this.formBuilder.group({
-      username: ['', Validators.compose([Validators.required, Validators.minLength(3), Validators.maxLength(64)])],
-      password: ['', Validators.compose([Validators.required, Validators.minLength(3), Validators.maxLength(32)])]
-    });
+        .pipe(takeUntil(this.ngUnsubscribe))
+        .subscribe((params: DisplayMessage) => {
+          this.notification = params;
+        });
+        this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
+        this.form = this.formBuilder.group({
+          username: ['', Validators.compose([Validators.required, Validators.minLength(3), Validators.maxLength(64)])],
+          password: ['', Validators.compose([Validators.required, Validators.minLength(3), Validators.maxLength(48)])]
+        });
   }
 
   ngOnDestroy() {

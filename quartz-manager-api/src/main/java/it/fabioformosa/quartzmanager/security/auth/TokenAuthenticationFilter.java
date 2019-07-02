@@ -10,8 +10,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -23,28 +21,27 @@ import org.springframework.util.Assert;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import it.fabioformosa.quartzmanager.security.TokenHelper;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class TokenAuthenticationFilter extends OncePerRequestFilter {
 
-	/*
-	 * The below paths will get ignored by the filter
-	 */
 	public static final String ROOT_MATCHER = "/";
-
 	public static final String FAVICON_MATCHER = "/favicon.ico";
-
 	public static final String HTML_MATCHER = "/**/*.html";
-
 	public static final String CSS_MATCHER = "/**/*.css";
 	public static final String JS_MATCHER = "/**/*.js";
 	public static final String IMG_MATCHER = "/images/*";
 	public static final String LOGIN_MATCHER = "/auth/login";
 	public static final String LOGOUT_MATCHER = "/auth/logout";
-	private final Log logger = LogFactory.getLog(this.getClass());
+
+	//	private final Log logger = LogFactory.getLog(this.getClass());
+
 	@Autowired
-	TokenHelper tokenHelper;
+	private TokenHelper tokenHelper;
+
 	@Autowired
-	UserDetailsService userDetailsService;
+	private UserDetailsService userDetailsService;
 
 	private List<String> pathsToSkip = Arrays.asList(
 			ROOT_MATCHER,
@@ -60,13 +57,10 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
 	@Override
 	public void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
 
-
 		String authToken = tokenHelper.getToken(request);
 		if (authToken != null && !skipPathRequest(request, pathsToSkip))
-			// get username from token
 			try {
 				String username = tokenHelper.getUsernameFromToken(authToken);
-				// get user
 				UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 				// create authentication
 				TokenBasedAuthentication authentication = new TokenBasedAuthentication(userDetails);
@@ -74,6 +68,8 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
 				SecurityContextHolder.getContext().setAuthentication(authentication);
 			} catch (Exception e) {
 				SecurityContextHolder.getContext().setAuthentication(new AnonAuthentication());
+				log.error("Switched to Anonimous Authentication, "
+						+ "because an error occurred setting authentication in security context holder due to " + e.getMessage(), e);
 			}
 		else
 			SecurityContextHolder.getContext().setAuthentication(new AnonAuthentication());

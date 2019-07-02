@@ -3,6 +3,7 @@ package it.fabioformosa.quartzmanager.security.auth;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 
 public class AnonAuthentication extends AbstractAuthenticationToken {
+	private static final long serialVersionUID = 1L;
 
 	public AnonAuthentication() {
 		super( null );

@@ -24,7 +24,7 @@ export class SchedulerConfigComponent implements OnInit {
     this.schedulerService.getConfig()
       .subscribe(res => {
         this.config = new SchedulerConfig(res.triggerPerDay, res.maxCount)
-        this.configBackup = res.maxCount
+        this.configBackup = res
       })
   }
 
