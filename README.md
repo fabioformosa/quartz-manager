@@ -11,6 +11,11 @@ Through this webapp you can launch and control your scheduled job. The GUI Conso
 * Press the start button
 * The GUI manager updates the progress bar and reports all logs of your quartz job.
 
+## ROADMAP
+Open the [Projects Section](https://github.com/fabioformosa/quartz-manager/projects) to glance at the roadmap of Quartz Manager.
+This project was born in 2016 when I needed a visual panel to monitor a scheduled job that fulfilled a mailing campaign to my customers.
+It is currently under development, regarding: frontend, backend and CI/CD.
+
 ## QUICK START
 **[requirements]** Make sure you have installed
 * [Java 8](https://java.com/download/) or greater
@@ -64,6 +69,10 @@ From quartz manager ver 2.x.x, the new structure of project is:
  * Single Page Application frontend (angular 7)
 
 (The previous version of quartz manager was a monolithic backend that provided also frontend developed with angularjs 1.6.x. You can find it at the branch 1.x.x)
+
+## Contributes
+
+Every contribution is welcome. Open a issue, so we can discuss about new features and implement them. 
 
 ## Credits
 
