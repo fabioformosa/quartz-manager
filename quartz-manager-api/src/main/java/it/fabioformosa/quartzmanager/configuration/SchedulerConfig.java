@@ -39,7 +39,7 @@ public class SchedulerConfig {
 			int repeatCount) {
 		SimpleTriggerFactoryBean factoryBean = new SimpleTriggerFactoryBean();
 		factoryBean.setJobDetail(jobDetail);
-		factoryBean.setStartDelay(0L);
+		factoryBean.setStartDelay(3000L);
 		factoryBean.setRepeatInterval(pollFrequencyMs);
 		factoryBean.setRepeatCount(repeatCount);
 		factoryBean
