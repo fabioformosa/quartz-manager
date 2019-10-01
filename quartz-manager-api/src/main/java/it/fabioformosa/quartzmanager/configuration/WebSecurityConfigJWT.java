@@ -27,7 +27,6 @@ import it.fabioformosa.quartzmanager.security.auth.RestAuthenticationEntryPoint;
 import it.fabioformosa.quartzmanager.security.auth.TokenAuthenticationFilter;
 
 /**
- * JWT Temporary disabled
  *
  * @author Fabio.Formosa
  *
