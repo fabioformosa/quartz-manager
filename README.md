@@ -54,6 +54,9 @@ Replace the dummy job (class: `it.fabioformosa.quartzmanager.jobs.SampleJob`) wi
 * Credentials: To change admin's password, set ENV var `quartz-manager.account.pwd`
 * quartz-manager backend context path (default `/quartz-manager`) and port (default `8080`): `/quartz-manager/src/main/resources/application.properties`
 
+## HOW TO BROWSE REST API DOC
+Swagger has been added as library. So, you can get REST API doc opening: [http://localhost:8080/quartz-manager/swagger-ui.html](http://localhost:8080/quartz-manager/swagger-ui.html)
+
 ## Tech Overview
 
 **Backend Stack** Java 8, Spring Boot 2.1.4 (Spring MVC 5.1.6, Spring Security 5.1.5, Spring AOP 5.1.6), Quartz Scheduler 2.3.1
