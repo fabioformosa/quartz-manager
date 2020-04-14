@@ -10,7 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
 
-import it.fabioformosa.quartzmanager.aspects.ProgressUpdater;
+import it.fabioformosa.quartzmanager.aspects.ProgressNotifier;
 import it.fabioformosa.quartzmanager.jobs.entities.LogRecord;
 
 /**
@@ -28,7 +28,7 @@ public abstract class AbstractLoggingJob implements Job {
   private SimpMessageSendingOperations messagingTemplate;
 
   @Resource
-  private ProgressUpdater progressUpdater;
+  private ProgressNotifier progressNotifier;
 
   /**
    *
@@ -42,7 +42,7 @@ public abstract class AbstractLoggingJob implements Job {
     try {
       LogRecord logMsg = doIt(jobExecutionContext);
       logAndSend(logMsg);
-      progressUpdater.update();
+      progressNotifier.send();
     } catch (SchedulerException e) {
       log.error("Error updating progress " + e.getMessage());
     }

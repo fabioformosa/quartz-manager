@@ -15,11 +15,11 @@ import lombok.extern.slf4j.Slf4j;
 @Api(value = "Healthy Check")
 public class QuartzManagerController {
 
-	@ResponseStatus(code = HttpStatus.OK)
-	@GetMapping("/")
-	public void healthyCheck() {
-		log.debug("Healthy check called");
-	}
+  @ResponseStatus(code = HttpStatus.OK)
+  @GetMapping("/")
+  public void healthyCheck() {
+    log.debug("Healthy check called");
+  }
 
 
 }

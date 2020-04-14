@@ -2,7 +2,7 @@ package it.fabioformosa.quartzmanager.dto;
 
 import java.util.Date;
 
-public class TriggerProgress {
+public class TriggerStatus {
 
 	private int timesTriggered;
 

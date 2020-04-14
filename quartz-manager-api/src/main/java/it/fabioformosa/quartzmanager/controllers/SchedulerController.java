@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.annotations.Api;
 import it.fabioformosa.quartzmanager.dto.SchedulerConfigParam;
-import it.fabioformosa.quartzmanager.dto.TriggerProgress;
+import it.fabioformosa.quartzmanager.dto.TriggerStatus;
 import it.fabioformosa.quartzmanager.enums.SchedulerStates;
 import it.fabioformosa.quartzmanager.scheduler.TriggerMonitor;
 
@@ -63,9 +63,9 @@ public class SchedulerController {
 	}
 
 	@GetMapping("/progress")
-	public TriggerProgress getProgressInfo() throws SchedulerException {
+	public TriggerStatus getProgressInfo() throws SchedulerException {
 		log.trace("SCHEDULER - GET PROGRESS INFO");
-		TriggerProgress progress = new TriggerProgress();
+		TriggerStatus progress = new TriggerStatus();
 
 		SimpleTriggerImpl jobTrigger = (SimpleTriggerImpl) scheduler.getTrigger(triggerMonitor.getTrigger().getKey());
 		if (jobTrigger != null && jobTrigger.getJobKey() != null) {

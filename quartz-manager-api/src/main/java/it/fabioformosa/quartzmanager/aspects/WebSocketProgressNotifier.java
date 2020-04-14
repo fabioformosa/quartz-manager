@@ -11,12 +11,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.stereotype.Component;
 
-import it.fabioformosa.quartzmanager.dto.TriggerProgress;
+import it.fabioformosa.quartzmanager.dto.TriggerStatus;
 import it.fabioformosa.quartzmanager.scheduler.TriggerMonitor;
 
+/**
+ *
+ * Notify the progress of the trigger through websocket
+ *
+ * @author Fabio Formosa
+ *
+ */
 //@Aspect
 @Component
-public class ProgressUpdaterImpl implements ProgressUpdater {
+public class WebSocketProgressNotifier implements ProgressNotifier {
 
 	@Autowired
 	private SimpMessageSendingOperations messagingTemplate;
@@ -34,13 +41,13 @@ public class ProgressUpdaterImpl implements ProgressUpdater {
 	//	}
 
 	@Override
-	public void update() throws SchedulerException {
-		TriggerProgress progress = new TriggerProgress();
+	public void send() throws SchedulerException {
+		TriggerStatus currTriggerStatus = new TriggerStatus();
 
 		Trigger trigger = scheduler.getTrigger(triggerMonitor.getTrigger().getKey());
-		progress.setFinalFireTime(trigger.getFinalFireTime());
-		progress.setNextFireTime(trigger.getNextFireTime());
-		progress.setPreviousFireTime(trigger.getPreviousFireTime());
+		currTriggerStatus.setFinalFireTime(trigger.getFinalFireTime());
+		currTriggerStatus.setNextFireTime(trigger.getNextFireTime());
+		currTriggerStatus.setPreviousFireTime(trigger.getPreviousFireTime());
 
 		int timesTriggered = 0;
 		int repeatCount = 0;
@@ -57,13 +64,13 @@ public class ProgressUpdaterImpl implements ProgressUpdater {
 
 		Trigger jobTrigger = triggerMonitor.getTrigger();
 		if (jobTrigger != null && jobTrigger.getJobKey() != null) {
-			progress.setJobKey(jobTrigger.getJobKey().getName());
-			progress.setJobClass(jobTrigger.getClass().getSimpleName());
-			progress.setTimesTriggered(timesTriggered);
-			progress.setRepeatCount(repeatCount + 1);
+			currTriggerStatus.setJobKey(jobTrigger.getJobKey().getName());
+			currTriggerStatus.setJobClass(jobTrigger.getClass().getSimpleName());
+			currTriggerStatus.setTimesTriggered(timesTriggered);
+			currTriggerStatus.setRepeatCount(repeatCount + 1);
 		}
 
-		messagingTemplate.convertAndSend("/topic/progress", progress);
+		messagingTemplate.convertAndSend("/topic/progress", currTriggerStatus);
 	}
 
 }

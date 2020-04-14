@@ -15,6 +15,9 @@
 	<logger name="org.springframework" level="WARN" additivity="false">
 		<appender-ref ref="STDOUT" />
 	</logger>
+	<logger name="org.quartz" level="WARN" additivity="false">
+		<appender-ref ref="STDOUT" />
+	</logger>
 
 	<root level="WARN">
 		<appender-ref ref="STDOUT" />
