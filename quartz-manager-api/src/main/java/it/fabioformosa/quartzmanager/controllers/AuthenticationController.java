@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import it.fabioformosa.quartzmanager.security.TokenHelper;
+import it.fabioformosa.quartzmanager.security.JwtTokenHelper;
 import it.fabioformosa.quartzmanager.security.model.UserTokenState;
 import it.fabioformosa.quartzmanager.security.service.impl.CustomUserDetailsService;
 
@@ -39,12 +39,12 @@ public class AuthenticationController {
 	private CustomUserDetailsService userDetailsService;
 
 	@Autowired
-	TokenHelper tokenHelper;
+	JwtTokenHelper tokenHelper;
 
-	@Value("${jwt.expires_in_sec}")
+	@Value("${quartz-manager.security.jwt.expiration-in-sec}")
 	private int EXPIRES_IN_SEC;
 
-	@Value("${jwt.cookie}")
+	@Value("${quartz-manager.security.jwt.cookie}")
 	private String TOKEN_COOKIE;
 
 	@RequestMapping(value = "/changePassword", method = RequestMethod.POST)

@@ -20,7 +20,7 @@ import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.util.Assert;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import it.fabioformosa.quartzmanager.security.TokenHelper;
+import it.fabioformosa.quartzmanager.security.JwtTokenHelper;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -38,7 +38,7 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
 	//	private final Log logger = LogFactory.getLog(this.getClass());
 
 	@Autowired
-	private TokenHelper tokenHelper;
+	private JwtTokenHelper tokenHelper;
 
 	@Autowired
 	private UserDetailsService userDetailsService;

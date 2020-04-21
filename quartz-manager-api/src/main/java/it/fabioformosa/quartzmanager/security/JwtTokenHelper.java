@@ -1,22 +1,26 @@
 package it.fabioformosa.quartzmanager.security;
 
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.Date;
 import java.util.Map;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.joda.time.DateTime;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import it.fabioformosa.quartzmanager.configuration.properties.JwtSecurityProperties;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * JWT Temporary disabled
  *
  * @author Fabio.Formosa
  *
@@ -24,25 +28,32 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Component
-public class TokenHelper {
+public class JwtTokenHelper {
+
+  private static String base64EncodeSecretKey(String secretKey) {
+    return Base64.getEncoder().encodeToString(secretKey.getBytes(StandardCharsets.UTF_8));
+  }
 
   @Value("${app.name}")
   private String APP_NAME;
 
-  @Value("${jwt.secret}")
-  private String SECRET;
-
-  @Value("${jwt.expires_in_sec}")
-  private int EXPIRES_IN_SEC;
-
-  @Value("${jwt.header}")
-  private String AUTH_HEADER;
-
-  @Value("${jwt.cookie}")
-  private String AUTH_COOKIE;
+  //  @Value("${jwt.secret}")
+  //  private String SECRET;
+  //
+  //  @Value("${jwt.expires_in_sec}")
+  //  private int EXPIRES_IN_SEC;
+  //
+  //  @Value("${jwt.header}")
+  //  private String AUTH_HEADER;
 
   //	@Autowired
   //	UserDetailsService userDetailsService;
+  //
+  //  @Value("${jwt.cookie}")
+  //  private String AUTH_COOKIE;
+
+  @Autowired
+  private JwtSecurityProperties jwtSecurityProps;
 
   private SignatureAlgorithm SIGNATURE_ALGORITHM = SignatureAlgorithm.HS512;
 
@@ -62,14 +73,14 @@ public class TokenHelper {
   }
 
   private Date generateExpirationDate() {
-    return new Date(getCurrentTimeMillis() + EXPIRES_IN_SEC * 1000);
+    return new Date(getCurrentTimeMillis() + jwtSecurityProps.getExpirationInSec() * 1000);
   }
 
-  String generateToken(Map<String, Object> claims) {
+  private String generateToken(Map<String, Object> claims) {
     return Jwts.builder()
         .setClaims(claims)
         .setExpiration(generateExpirationDate())
-        .signWith( SIGNATURE_ALGORITHM, SECRET )
+        .signWith( SIGNATURE_ALGORITHM, base64EncodeSecretKey(jwtSecurityProps.getSecret()))
         .compact();
   }
 
@@ -79,7 +90,7 @@ public class TokenHelper {
         .setSubject(username)
         .setIssuedAt(generateCurrentDate())
         .setExpiration(generateExpirationDate())
-        .signWith(SIGNATURE_ALGORITHM, SECRET)
+        .signWith(SIGNATURE_ALGORITHM, base64EncodeSecretKey(jwtSecurityProps.getSecret()))
         .compact();
   }
 
@@ -87,7 +98,7 @@ public class TokenHelper {
     Claims claims;
     try {
       claims = Jwts.parser()
-          .setSigningKey(SECRET)
+          .setSigningKey(base64EncodeSecretKey(jwtSecurityProps.getSecret()))
           .parseClaimsJws(token)
           .getBody();
     } catch (Exception e) {
@@ -119,12 +130,12 @@ public class TokenHelper {
     return DateTime.now().getMillis();
   }
 
-  public String getToken( HttpServletRequest request ) {
-    Cookie authCookie = getCookieValueByName( request, AUTH_COOKIE );
+  public String getToken(HttpServletRequest request) {
+    Cookie authCookie = getCookieValueByName(request, jwtSecurityProps.getCookie());
     if ( authCookie != null )
       return authCookie.getValue();
 
-    String authHeader = request.getHeader(AUTH_HEADER);
+    String authHeader = request.getHeader(jwtSecurityProps.getHeader());
     if ( authHeader != null && authHeader.startsWith("Bearer "))
       return authHeader.substring(7);
 
@@ -154,5 +165,9 @@ public class TokenHelper {
       refreshedToken = null;
     }
     return refreshedToken;
+  }
+
+  public void setHeader(HttpServletResponse response, String token) {
+    response.addHeader(jwtSecurityProps.getHeader(), "Bearer " + token);
   }
 }
