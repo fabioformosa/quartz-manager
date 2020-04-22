@@ -1,5 +1,6 @@
 package it.fabioformosa.quartzmanager.configuration.helpers.impl;
 
+import it.fabioformosa.quartzmanager.security.auth.JwtAuthenticationSuccessHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.http.HttpMethod;
@@ -23,8 +24,11 @@ public class UsernamePasswordFiterLoginConfig implements LoginConfig {
   @Autowired
   private JwtTokenHelper jwtTokenHelper;
 
+  @Autowired
+  private JwtAuthenticationSuccessHandler jwtAuthenticationSuccessHandler;
+
   public GenericFilterBean authenticationProcessingFilter(AuthenticationManager authenticationManager) throws Exception {
-    JwtAuthenticationFilter authenticationProcessingFilter = new JwtAuthenticationFilter(authenticationManager, jwtTokenHelper);
+    JwtAuthenticationFilter authenticationProcessingFilter = new JwtAuthenticationFilter(authenticationManager, jwtTokenHelper, jwtAuthenticationSuccessHandler);
     authenticationProcessingFilter.setRequiresAuthenticationRequestMatcher(new RegexRequestMatcher(API_LOGIN, HttpMethod.POST.name(), false));
     return authenticationProcessingFilter;
   }

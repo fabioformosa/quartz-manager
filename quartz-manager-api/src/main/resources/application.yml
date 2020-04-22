@@ -36,7 +36,13 @@ quartz-manager:
       secret: "bibidibobidiboo"
       expiration-in-sec: 28800  # 8 hours
       header: "Authorization"
-      cookie: AUTH-TOKEN      
+      cookie: AUTH-TOKEN
+      header-strategy:
+        enabled: false
+        header: "Authorization"
+      cookie-strategy:
+        enabled: true
+        cookie: AUTH-TOKEN
   jobClass: it.fabioformosa.quartzmanager.jobs.myjobs.SampleJob
   accounts:
     in-memory:
