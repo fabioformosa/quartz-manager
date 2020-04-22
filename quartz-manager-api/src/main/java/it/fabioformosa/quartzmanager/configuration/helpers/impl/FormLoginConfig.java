@@ -23,7 +23,7 @@ public class FormLoginConfig implements LoginConfig {
   private AuthenticationFailureHandler authenticationFailureHandler;
 
   @Override
-  public HttpSecurity configureLoginHandler(
+  public HttpSecurity login(
       HttpSecurity http, AuthenticationManager authenticationManager) throws Exception {
     return http.formLogin().loginPage(API_LOGIN).successHandler(authenticationSuccessHandler).failureHandler(authenticationFailureHandler).and();
   }

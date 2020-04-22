@@ -1,26 +1,26 @@
 package it.fabioformosa.quartzmanager.security.auth;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import it.fabioformosa.quartzmanager.security.JwtTokenHelper;
-import it.fabioformosa.quartzmanager.security.model.UserTokenState;
+import java.io.IOException;
+
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Component;
 
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import it.fabioformosa.quartzmanager.configuration.properties.JwtSecurityProperties;
+import it.fabioformosa.quartzmanager.security.JwtTokenHelper;
+import it.fabioformosa.quartzmanager.security.model.UserTokenState;
 
 @Component
 public class JwtAuthenticationSuccessHandlerImpl implements JwtAuthenticationSuccessHandler {
 
-  @Value("${quartz-manager.security.jwt.expiration-in-sec}")
-  private int EXPIRES_IN_SEC;
-
-  @Value("${quartz-manager.security.jwt.cookie}")
-  private String TOKEN_COOKIE;
+  @Autowired
+  private JwtSecurityProperties jwtSecurityProps;
 
   private final JwtTokenHelper jwtTokenHelper;
 
@@ -28,7 +28,7 @@ public class JwtAuthenticationSuccessHandlerImpl implements JwtAuthenticationSuc
 
   @Autowired
   public JwtAuthenticationSuccessHandlerImpl(JwtTokenHelper tokenHelper, ObjectMapper objectMapper) {
-    this.jwtTokenHelper = tokenHelper;
+    jwtTokenHelper = tokenHelper;
     this.objectMapper = objectMapper;
   }
 
@@ -36,17 +36,20 @@ public class JwtAuthenticationSuccessHandlerImpl implements JwtAuthenticationSuc
   public void onSuccess(Authentication authentication, HttpServletResponse response) throws IOException {
     User user = (User) authentication.getPrincipal();
 
-    String jws = jwtTokenHelper.generateToken(user.getUsername());
+    String jwtToken = jwtTokenHelper.generateToken(user.getUsername());
 
-    //set cookie or set header?
-    Cookie authCookie = new Cookie(TOKEN_COOKIE, jws);
-    authCookie.setHttpOnly(true);
-    authCookie.setMaxAge(EXPIRES_IN_SEC);
-    authCookie.setPath("/quartz-manager");
-    response.addCookie(authCookie);
+    if(jwtSecurityProps.getCookieStrategy().isEnabled()) {
+      Cookie authCookie = new Cookie(jwtSecurityProps.getCookieStrategy().getCookie(), jwtToken);
+      authCookie.setHttpOnly(true);
+      authCookie.setMaxAge((int) jwtSecurityProps.getExpirationInSec());
+      authCookie.setPath("/quartz-manager");
+      response.addCookie(authCookie);
+    }
 
-    // JWT is also in the response
-    UserTokenState userTokenState = new UserTokenState(jws, EXPIRES_IN_SEC);
+    if(jwtSecurityProps.getHeaderStrategy().isEnabled())
+      jwtTokenHelper.setHeader(response, jwtToken);
+
+    UserTokenState userTokenState = new UserTokenState(jwtToken, jwtSecurityProps.getExpirationInSec());
     String jwtResponse = objectMapper.writeValueAsString(userTokenState);
     response.setContentType("application/json");
     response.getWriter().write(jwtResponse);

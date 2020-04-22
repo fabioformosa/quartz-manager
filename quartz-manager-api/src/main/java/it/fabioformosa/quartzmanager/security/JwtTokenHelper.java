@@ -37,20 +37,6 @@ public class JwtTokenHelper {
   @Value("${app.name}")
   private String APP_NAME;
 
-  //  @Value("${jwt.secret}")
-  //  private String SECRET;
-  //
-  //  @Value("${jwt.expires_in_sec}")
-  //  private int EXPIRES_IN_SEC;
-  //
-  //  @Value("${jwt.header}")
-  //  private String AUTH_HEADER;
-
-  //	@Autowired
-  //	UserDetailsService userDetailsService;
-  //
-  //  @Value("${jwt.cookie}")
-  //  private String AUTH_COOKIE;
 
   @Autowired
   private JwtSecurityProperties jwtSecurityProps;
@@ -131,11 +117,11 @@ public class JwtTokenHelper {
   }
 
   public String getToken(HttpServletRequest request) {
-    Cookie authCookie = getCookieValueByName(request, jwtSecurityProps.getCookie());
+    Cookie authCookie = getCookieValueByName(request, jwtSecurityProps.getCookieStrategy().getCookie());
     if ( authCookie != null )
       return authCookie.getValue();
 
-    String authHeader = request.getHeader(jwtSecurityProps.getHeader());
+    String authHeader = request.getHeader(jwtSecurityProps.getHeaderStrategy().getHeader());
     if ( authHeader != null && authHeader.startsWith("Bearer "))
       return authHeader.substring(7);
 
@@ -168,6 +154,6 @@ public class JwtTokenHelper {
   }
 
   public void setHeader(HttpServletResponse response, String token) {
-    response.addHeader(jwtSecurityProps.getHeader(), "Bearer " + token);
+    response.addHeader(jwtSecurityProps.getHeaderStrategy().getHeader(), "Bearer " + token);
   }
 }

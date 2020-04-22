@@ -5,6 +5,6 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 
 public interface LoginConfig {
 
-  HttpSecurity configureLoginHandler(HttpSecurity http, AuthenticationManager authenticationManager) throws Exception;
+  HttpSecurity login(HttpSecurity http, AuthenticationManager authenticationManager) throws Exception;
 
 }

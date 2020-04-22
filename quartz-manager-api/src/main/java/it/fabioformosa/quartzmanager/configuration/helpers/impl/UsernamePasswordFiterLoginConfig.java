@@ -1,6 +1,5 @@
 package it.fabioformosa.quartzmanager.configuration.helpers.impl;
 
-import it.fabioformosa.quartzmanager.security.auth.JwtAuthenticationSuccessHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.http.HttpMethod;
@@ -12,8 +11,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.GenericFilterBean;
 
 import it.fabioformosa.quartzmanager.configuration.helpers.LoginConfig;
-import it.fabioformosa.quartzmanager.security.JwtTokenHelper;
 import it.fabioformosa.quartzmanager.security.auth.JwtAuthenticationFilter;
+import it.fabioformosa.quartzmanager.security.auth.JwtAuthenticationSuccessHandler;
 
 @Component
 @ConditionalOnProperty(prefix = "quartz-manager.security.login-model", name = "userpwd-filter-enabled", havingValue = "true", matchIfMissing = false)
@@ -22,19 +21,16 @@ public class UsernamePasswordFiterLoginConfig implements LoginConfig {
   private static final String API_LOGIN = "/api/login";
 
   @Autowired
-  private JwtTokenHelper jwtTokenHelper;
-
-  @Autowired
   private JwtAuthenticationSuccessHandler jwtAuthenticationSuccessHandler;
 
   public GenericFilterBean authenticationProcessingFilter(AuthenticationManager authenticationManager) throws Exception {
-    JwtAuthenticationFilter authenticationProcessingFilter = new JwtAuthenticationFilter(authenticationManager, jwtTokenHelper, jwtAuthenticationSuccessHandler);
+    JwtAuthenticationFilter authenticationProcessingFilter = new JwtAuthenticationFilter(authenticationManager, jwtAuthenticationSuccessHandler);
     authenticationProcessingFilter.setRequiresAuthenticationRequestMatcher(new RegexRequestMatcher(API_LOGIN, HttpMethod.POST.name(), false));
     return authenticationProcessingFilter;
   }
 
   @Override
-  public HttpSecurity configureLoginHandler(HttpSecurity http, AuthenticationManager authenticationManager) throws Exception {
+  public HttpSecurity login(HttpSecurity http, AuthenticationManager authenticationManager) throws Exception {
     return http.addFilterAfter(authenticationProcessingFilter(authenticationManager), AbstractPreAuthenticatedProcessingFilter.class);
   }
 

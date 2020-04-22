@@ -35,7 +35,6 @@ import it.fabioformosa.quartzmanager.security.auth.TokenAuthenticationFilter;
  * @author Fabio.Formosa
  *
  */
-
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
@@ -53,7 +52,7 @@ public class WebSecurityConfigJWT extends WebSecurityConfigurerAdapter {
   private LogoutSuccess logoutSuccess;
 
   @Autowired
-  private LoginConfig loginConfigurer;
+  private LoginConfig loginConfig;
 
   @Autowired
   private InMemoryAccountProperties inMemoryAccountProps;
@@ -75,13 +74,14 @@ public class WebSecurityConfigJWT extends WebSecurityConfigurerAdapter {
   protected void configure(HttpSecurity http) throws Exception {
     //		http.csrf().ignoringAntMatchers("/api/login", "/api/signup") //
     //		.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()) //
+
     http.csrf().disable() //
     .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and() //
-    .exceptionHandling().authenticationEntryPoint(restAuthEntryPoint()).and()
-    .addFilterBefore(jwtAuthenticationTokenFilter(), BasicAuthenticationFilter.class)
+    .exceptionHandling().authenticationEntryPoint(restAuthEntryPoint()).and() //
+    .addFilterBefore(jwtAuthenticationTokenFilter(), BasicAuthenticationFilter.class) //
     .authorizeRequests().anyRequest().authenticated();
 
-    loginConfigurer.configureLoginHandler(http, authenticationManager()).logout().logoutRequestMatcher(new AntPathRequestMatcher("/api/logout"))
+    loginConfig.login(http, authenticationManager()).logout().logoutRequestMatcher(new AntPathRequestMatcher("/api/logout"))
     .logoutSuccessHandler(logoutSuccess).deleteCookies(TOKEN_COOKIE);
 
   }
