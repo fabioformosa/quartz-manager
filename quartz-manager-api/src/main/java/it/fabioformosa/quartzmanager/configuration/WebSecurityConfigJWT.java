@@ -1,5 +1,6 @@
 package it.fabioformosa.quartzmanager.configuration;
 
+import it.fabioformosa.quartzmanager.configuration.helpers.impl.QuartzManagerHttpSecurity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -42,7 +43,7 @@ public class WebSecurityConfigJWT extends WebSecurityConfigurerAdapter {
 
   private static final String[] PATTERNS_SWAGGER_UI = {"/swagger-ui.html", "/v2/api-docs", "/swagger-resources/**", "/webjars/**"};
 
-  @Value("${quartz-manager.security.jwt.cookie}")
+  @Value("${quartz-manager.security.jwt.cookie-strategy.cookie}")
   private String TOKEN_COOKIE;
 
   //	@Autowired
@@ -81,9 +82,8 @@ public class WebSecurityConfigJWT extends WebSecurityConfigurerAdapter {
     .addFilterBefore(jwtAuthenticationTokenFilter(), BasicAuthenticationFilter.class) //
     .authorizeRequests().anyRequest().authenticated();
 
-    loginConfig.login(http, authenticationManager()).logout().logoutRequestMatcher(new AntPathRequestMatcher("/api/logout"))
-    .logoutSuccessHandler(logoutSuccess).deleteCookies(TOKEN_COOKIE);
-
+    QuartzManagerHttpSecurity.from(http).login(authenticationManager()).logout().logoutRequestMatcher(new AntPathRequestMatcher("/api/logout"))
+        .logoutSuccessHandler(logoutSuccess).deleteCookies(TOKEN_COOKIE);
   }
 
   @Override

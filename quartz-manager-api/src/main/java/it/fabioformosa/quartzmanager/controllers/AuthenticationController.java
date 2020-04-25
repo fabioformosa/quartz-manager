@@ -44,7 +44,7 @@ public class AuthenticationController {
 	@Value("${quartz-manager.security.jwt.expiration-in-sec}")
 	private int EXPIRES_IN_SEC;
 
-	@Value("${quartz-manager.security.jwt.cookie}")
+	@Value("${quartz-manager.security.jwt.cookie-strategy-cookie}")
 	private String TOKEN_COOKIE;
 
 	@RequestMapping(value = "/changePassword", method = RequestMethod.POST)
