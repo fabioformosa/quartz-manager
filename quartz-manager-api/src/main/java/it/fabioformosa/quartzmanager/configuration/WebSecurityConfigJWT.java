@@ -1,6 +1,6 @@
 package it.fabioformosa.quartzmanager.configuration;
 
-import it.fabioformosa.quartzmanager.configuration.helpers.impl.QuartzManagerHttpSecurity;
+import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -21,15 +21,25 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import it.fabioformosa.quartzmanager.configuration.helpers.LoginConfig;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import it.fabioformosa.quartzmanager.configuration.helpers.LoginConfigurer;
+import it.fabioformosa.quartzmanager.configuration.helpers.impl.FormLoginConfig;
+import it.fabioformosa.quartzmanager.configuration.helpers.impl.QuartzManagerHttpSecurity;
+import it.fabioformosa.quartzmanager.configuration.helpers.impl.UsernamePasswordFiterLoginConfig;
 import it.fabioformosa.quartzmanager.configuration.properties.InMemoryAccountProperties;
+import it.fabioformosa.quartzmanager.configuration.properties.JwtSecurityProperties;
+import it.fabioformosa.quartzmanager.security.JwtTokenHelper;
+import it.fabioformosa.quartzmanager.security.auth.AuthenticationFailureHandler;
+import it.fabioformosa.quartzmanager.security.auth.AuthenticationSuccessHandler;
+import it.fabioformosa.quartzmanager.security.auth.JwtAuthenticationSuccessHandler;
+import it.fabioformosa.quartzmanager.security.auth.JwtAuthenticationSuccessHandlerImpl;
+import it.fabioformosa.quartzmanager.security.auth.JwtTokenAuthenticationFilter;
 import it.fabioformosa.quartzmanager.security.auth.LogoutSuccess;
-import it.fabioformosa.quartzmanager.security.auth.TokenAuthenticationFilter;
 
 /**
  *
@@ -43,17 +53,31 @@ public class WebSecurityConfigJWT extends WebSecurityConfigurerAdapter {
 
   private static final String[] PATTERNS_SWAGGER_UI = {"/swagger-ui.html", "/v2/api-docs", "/swagger-resources/**", "/webjars/**"};
 
-  @Value("${quartz-manager.security.jwt.cookie-strategy.cookie}")
-  private String TOKEN_COOKIE;
+  private static final String LOGIN_PATH = "/api/login";
+  private static final String LOGOUT_PATH = "/api/logout";
+
+  @Value("${server.servlet.context-path}")
+  private String contextPath;
+
+  @Value("${app.name}")
+  private String APP_NAME;
+
+  @Value("${quartz-manager.security.login-model.form-login-enabled}")
+  private Boolean formLoginEnabled;
+  @Value("${quartz-manager.security.login-model.userpwd-filter-enabled}")
+  private Boolean userpwdFilterEnabled;
+
+  @Autowired
+  private JwtSecurityProperties jwtSecurityProps;
+
+  @Autowired
+  private ObjectMapper objectMapper;
+
+  @Autowired
+  private UserDetailsService userDetailsService;
 
   //	@Autowired
   //	private CustomUserDetailsService jwtUserDetailsService;
-
-  @Autowired
-  private LogoutSuccess logoutSuccess;
-
-  @Autowired
-  private LoginConfig loginConfig;
 
   @Autowired
   private InMemoryAccountProperties inMemoryAccountProps;
@@ -82,8 +106,7 @@ public class WebSecurityConfigJWT extends WebSecurityConfigurerAdapter {
     .addFilterBefore(jwtAuthenticationTokenFilter(), BasicAuthenticationFilter.class) //
     .authorizeRequests().anyRequest().authenticated();
 
-    QuartzManagerHttpSecurity.from(http).login(authenticationManager()).logout().logoutRequestMatcher(new AntPathRequestMatcher("/api/logout"))
-        .logoutSuccessHandler(logoutSuccess).deleteCookies(TOKEN_COOKIE);
+    QuartzManagerHttpSecurity.from(http).loginConfig(loginConfigurer(), logoutConfigurer()).login(LOGIN_PATH, authenticationManager()).logout(LOGOUT_PATH);
   }
 
   @Override
@@ -113,8 +136,49 @@ public class WebSecurityConfigJWT extends WebSecurityConfigurerAdapter {
   }
 
   @Bean
-  public TokenAuthenticationFilter jwtAuthenticationTokenFilter() throws Exception {
-    return new TokenAuthenticationFilter();
+  public LoginConfigurer formLoginConfigurer() {
+    JwtAuthenticationSuccessHandler jwtAuthenticationSuccessHandler = jwtAuthenticationSuccessHandler();
+    AuthenticationSuccessHandler authenticationSuccessHandler = new AuthenticationSuccessHandler(jwtAuthenticationSuccessHandler);
+    AuthenticationFailureHandler authenticationFailureHandler = new AuthenticationFailureHandler();
+    LoginConfigurer loginConfigurer = new FormLoginConfig(authenticationSuccessHandler, authenticationFailureHandler);
+    return loginConfigurer;
+  }
+
+  @Bean
+  public JwtAuthenticationSuccessHandler jwtAuthenticationSuccessHandler() {
+    JwtTokenHelper jwtTokenHelper = jwtTokenHelper();
+    JwtAuthenticationSuccessHandler jwtAuthenticationSuccessHandler = new JwtAuthenticationSuccessHandlerImpl(contextPath, jwtSecurityProps, jwtTokenHelper, objectMapper);
+    return jwtAuthenticationSuccessHandler;
+  }
+
+  @Bean
+  public JwtTokenAuthenticationFilter jwtAuthenticationTokenFilter() throws Exception {
+    return new JwtTokenAuthenticationFilter(jwtTokenHelper(), userDetailsService);
+  }
+
+  @Bean
+  public JwtTokenHelper jwtTokenHelper() {
+    JwtTokenHelper jwtTokenHelper = new JwtTokenHelper(APP_NAME, jwtSecurityProps);
+    return jwtTokenHelper;
+  }
+
+  @Bean
+  public LoginConfigurer loginConfigurer() {
+    if(BooleanUtils.isTrue(userpwdFilterEnabled))
+      return userpwdFilterLoginConfigurer();
+    if(BooleanUtils.isNotFalse(formLoginEnabled))
+      return formLoginConfigurer();
+    throw new RuntimeException("No login configurer enabled!");
+  }
+
+  @Bean
+  public LogoutSuccess logoutConfigurer() {
+    return new LogoutSuccess(objectMapper);
+  }
+
+  @Bean
+  public AuthenticationEntryPoint restAuthEntryPoint() {
+    return new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED);
   }
 
   //	@Bean
@@ -123,14 +187,15 @@ public class WebSecurityConfigJWT extends WebSecurityConfigurerAdapter {
   //	}
 
   @Bean
-  public AuthenticationEntryPoint restAuthEntryPoint() {
-    return new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED);
-  }
-
-  @Bean
   @Override
   public UserDetailsService userDetailsServiceBean() throws Exception {
     return super.userDetailsServiceBean();
+  }
+
+  @Bean
+  public LoginConfigurer userpwdFilterLoginConfigurer() {
+    LoginConfigurer loginConfigurer = new UsernamePasswordFiterLoginConfig(jwtAuthenticationSuccessHandler());
+    return loginConfigurer;
   }
 
 }

@@ -1,31 +1,37 @@
 package it.fabioformosa.quartzmanager.configuration.helpers.impl;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.stereotype.Component;
 
-import it.fabioformosa.quartzmanager.configuration.helpers.LoginConfig;
+import it.fabioformosa.quartzmanager.configuration.helpers.LoginConfigurer;
 import it.fabioformosa.quartzmanager.security.auth.AuthenticationFailureHandler;
 import it.fabioformosa.quartzmanager.security.auth.AuthenticationSuccessHandler;
 
-@Component
-@ConditionalOnProperty(prefix = "quartz-manager.security.login-model", name = "form-login-enabled", havingValue = "true", matchIfMissing = true)
-public class FormLoginConfig implements LoginConfig {
+//@Component
+//@ConditionalOnProperty(prefix = "quartz-manager.security.login-model", name = "form-login-enabled", havingValue = "true", matchIfMissing = true)
+public class FormLoginConfig implements LoginConfigurer {
 
-  private static final String API_LOGIN = "/api/login";
+  private final AuthenticationSuccessHandler authenticationSuccessHandler;
 
-  @Autowired
-  private AuthenticationSuccessHandler authenticationSuccessHandler;
+  private final AuthenticationFailureHandler authenticationFailureHandler;
 
-  @Autowired
-  private AuthenticationFailureHandler authenticationFailureHandler;
+  //  @Autowired
+  public FormLoginConfig(AuthenticationSuccessHandler authenticationSuccessHandler,
+      AuthenticationFailureHandler authenticationFailureHandler) {
+    super();
+    this.authenticationSuccessHandler = authenticationSuccessHandler;
+    this.authenticationFailureHandler = authenticationFailureHandler;
+  }
 
   @Override
-  public HttpSecurity login(
+  public String cookieMustBeDeletedAtLogout() {
+    return authenticationSuccessHandler.cookieMustBeDeletedAtLogout();
+  }
+
+  @Override
+  public HttpSecurity login(String loginPath,
       HttpSecurity http, AuthenticationManager authenticationManager) throws Exception {
-    return http.formLogin().loginPage(API_LOGIN).successHandler(authenticationSuccessHandler).failureHandler(authenticationFailureHandler).and();
+    return http.formLogin().loginPage(loginPath).successHandler(authenticationSuccessHandler).failureHandler(authenticationFailureHandler).and();
   }
 
 }

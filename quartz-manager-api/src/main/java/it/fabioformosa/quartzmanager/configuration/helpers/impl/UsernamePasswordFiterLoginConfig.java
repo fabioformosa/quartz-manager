@@ -1,37 +1,42 @@
 package it.fabioformosa.quartzmanager.configuration.helpers.impl;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.authentication.preauth.AbstractPreAuthenticatedProcessingFilter;
 import org.springframework.security.web.util.matcher.RegexRequestMatcher;
-import org.springframework.stereotype.Component;
 import org.springframework.web.filter.GenericFilterBean;
 
-import it.fabioformosa.quartzmanager.configuration.helpers.LoginConfig;
+import it.fabioformosa.quartzmanager.configuration.helpers.LoginConfigurer;
 import it.fabioformosa.quartzmanager.security.auth.JwtAuthenticationFilter;
 import it.fabioformosa.quartzmanager.security.auth.JwtAuthenticationSuccessHandler;
 
-@Component
-@ConditionalOnProperty(prefix = "quartz-manager.security.login-model", name = "userpwd-filter-enabled", havingValue = "true", matchIfMissing = false)
-public class UsernamePasswordFiterLoginConfig implements LoginConfig {
+//@Component
+//@ConditionalOnProperty(prefix = "quartz-manager.security.login-model", name = "userpwd-filter-enabled", havingValue = "true", matchIfMissing = false)
+public class UsernamePasswordFiterLoginConfig implements LoginConfigurer {
 
-  private static final String API_LOGIN = "/api/login";
+  //  @Autowired
+  private final JwtAuthenticationSuccessHandler jwtAuthenticationSuccessHandler;
 
-  @Autowired
-  private JwtAuthenticationSuccessHandler jwtAuthenticationSuccessHandler;
+  public UsernamePasswordFiterLoginConfig(JwtAuthenticationSuccessHandler jwtAuthenticationSuccessHandler) {
+    super();
+    this.jwtAuthenticationSuccessHandler = jwtAuthenticationSuccessHandler;
+  }
 
-  public GenericFilterBean authenticationProcessingFilter(AuthenticationManager authenticationManager) throws Exception {
+  public GenericFilterBean authenticationProcessingFilter(String loginPath, AuthenticationManager authenticationManager) throws Exception {
     JwtAuthenticationFilter authenticationProcessingFilter = new JwtAuthenticationFilter(authenticationManager, jwtAuthenticationSuccessHandler);
-    authenticationProcessingFilter.setRequiresAuthenticationRequestMatcher(new RegexRequestMatcher(API_LOGIN, HttpMethod.POST.name(), false));
+    authenticationProcessingFilter.setRequiresAuthenticationRequestMatcher(new RegexRequestMatcher(loginPath, HttpMethod.POST.name(), false));
     return authenticationProcessingFilter;
   }
 
   @Override
-  public HttpSecurity login(HttpSecurity http, AuthenticationManager authenticationManager) throws Exception {
-    return http.addFilterAfter(authenticationProcessingFilter(authenticationManager), AbstractPreAuthenticatedProcessingFilter.class);
+  public String cookieMustBeDeletedAtLogout() {
+    return jwtAuthenticationSuccessHandler.cookieMustBeDeletedAtLogout();
+  }
+
+  @Override
+  public HttpSecurity login(String loginPath, HttpSecurity http, AuthenticationManager authenticationManager) throws Exception {
+    return http.addFilterAfter(authenticationProcessingFilter(loginPath, authenticationManager), AbstractPreAuthenticatedProcessingFilter.class);
   }
 
 }

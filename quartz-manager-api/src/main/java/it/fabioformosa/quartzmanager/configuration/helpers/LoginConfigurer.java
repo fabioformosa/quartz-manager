@@ -3,8 +3,10 @@ package it.fabioformosa.quartzmanager.configuration.helpers;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 
-public interface LoginConfig {
+public interface LoginConfigurer {
 
-  HttpSecurity login(HttpSecurity http, AuthenticationManager authenticationManager) throws Exception;
+  String cookieMustBeDeletedAtLogout();
+
+  HttpSecurity login(String loginPath, HttpSecurity http, AuthenticationManager authenticationManager) throws Exception;
 
 }

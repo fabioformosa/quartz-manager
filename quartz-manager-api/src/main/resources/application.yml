@@ -39,7 +39,7 @@ quartz-manager:
         enabled: true
         header: "Authorization"
       cookie-strategy:
-        enabled: true
+        enabled: false
         cookie: AUTH-TOKEN
   jobClass: it.fabioformosa.quartzmanager.jobs.myjobs.SampleJob
   accounts:

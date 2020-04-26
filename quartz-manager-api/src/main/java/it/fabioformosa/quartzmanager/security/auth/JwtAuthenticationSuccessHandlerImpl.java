@@ -8,7 +8,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.User;
-import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -16,20 +15,32 @@ import it.fabioformosa.quartzmanager.configuration.properties.JwtSecurityPropert
 import it.fabioformosa.quartzmanager.security.JwtTokenHelper;
 import it.fabioformosa.quartzmanager.security.model.UserTokenState;
 
-@Component
+//@Component
 public class JwtAuthenticationSuccessHandlerImpl implements JwtAuthenticationSuccessHandler {
 
-  @Autowired
-  private JwtSecurityProperties jwtSecurityProps;
+  //  @Autowired
+  private final JwtSecurityProperties jwtSecurityProps;
 
   private final JwtTokenHelper jwtTokenHelper;
 
   private final ObjectMapper objectMapper;
 
+  //  @Value("${server.servlet.context-path}")
+  private final String contextPath;
+
   @Autowired
-  public JwtAuthenticationSuccessHandlerImpl(JwtTokenHelper tokenHelper, ObjectMapper objectMapper) {
-    jwtTokenHelper = tokenHelper;
+  public JwtAuthenticationSuccessHandlerImpl(String contextPath, JwtSecurityProperties jwtSecurityProps, JwtTokenHelper jwtTokenHelper, ObjectMapper objectMapper) {
+    this.contextPath = contextPath;
+    this.jwtSecurityProps = jwtSecurityProps;
+    this.jwtTokenHelper = jwtTokenHelper;
     this.objectMapper = objectMapper;
+  }
+
+  @Override
+  public String cookieMustBeDeletedAtLogout() {
+    if(!jwtSecurityProps.getCookieStrategy().isEnabled())
+      return null;
+    return jwtSecurityProps.getCookieStrategy().getCookie();
   }
 
   @Override
@@ -42,7 +53,7 @@ public class JwtAuthenticationSuccessHandlerImpl implements JwtAuthenticationSuc
       Cookie authCookie = new Cookie(jwtSecurityProps.getCookieStrategy().getCookie(), jwtToken);
       authCookie.setHttpOnly(true);
       authCookie.setMaxAge((int) jwtSecurityProps.getExpirationInSec());
-      authCookie.setPath("/quartz-manager");
+      authCookie.setPath(contextPath);
       response.addCookie(authCookie);
     }
 

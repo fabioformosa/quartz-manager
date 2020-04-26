@@ -59,7 +59,7 @@ public class AuthenticationController {
 	@RequestMapping(value = "/refresh", method = RequestMethod.GET)
 	public ResponseEntity<?> refreshAuthenticationToken(HttpServletRequest request, HttpServletResponse response) {
 
-		String authToken = tokenHelper.getToken( request );
+		String authToken = tokenHelper.retrieveToken( request );
 		if (authToken != null && tokenHelper.canTokenBeRefreshed(authToken)) {
 			// TODO check user password last update
 			String refreshedToken = tokenHelper.refreshToken(authToken);

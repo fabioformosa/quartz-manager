@@ -22,7 +22,13 @@ export class ApiService {
     'Content-Type': 'application/json'
   });
 
+  private jwtToken: string;
+
   constructor( private http: HttpClient) { }
+
+  setToken(token: string) {
+    this.jwtToken = token;
+  }
 
   get(path: string, args?: any): Observable<any> {
     const options = {
@@ -55,6 +61,9 @@ export class ApiService {
       headers: customHeaders || this.headers,
       withCredentials: true
     });
+
+    if(this.jwtToken)
+      req.headers.append('Authorization', `Bearer ${this.jwtToken}`);
 
     return this.http.request(req)
       .pipe(
