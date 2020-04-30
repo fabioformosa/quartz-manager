@@ -15,16 +15,6 @@ export class AuthService {
     private config: ConfigService,
   ) { }
 
-  private static extractTokenFromHttpResponse(res: HttpResponse<any>): string {
-    let authorization: string = null;
-    let headers: HttpHeaders = res.headers;
-    if (headers.has('Authorization'))
-      authorization = headers.get('Authorization');
-      if(authorization.startsWith('Bearer '))
-      authorization = authorization.substring(7);
-    return authorization;
-  } 
-
   login(user) {
     const loginHeaders = new HttpHeaders({
       'Accept': 'application/json',
@@ -33,10 +23,6 @@ export class AuthService {
     const body = `username=${user.username}&password=${user.password}`;
     return this.apiService.post(this.config.login_url, body, loginHeaders)
 						  .pipe(
-                tap((resp: HttpResponse<any>) => {
-                  let jwtToken = AuthService.extractTokenFromHttpResponse(resp);
-                  this.apiService.setToken(jwtToken);
-                }),
 								map(() => {
                     console.log("Login success");
 							      this.userService.getMyInfo().subscribe();
@@ -57,6 +43,7 @@ export class AuthService {
   logout() {
     return this.apiService.post(this.config.logout_url, {})
       .pipe(map(() => {
+        this.apiService.setToken(null);
         this.userService.currentUser = null;
       }));
   }
