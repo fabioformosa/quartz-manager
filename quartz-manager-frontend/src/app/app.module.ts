@@ -2,20 +2,22 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule, APP_INITIALIZER} from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
+
+import {JWT_OPTIONS, JwtModule} from "@auth0/angular-jwt";
+
 // material
-import {
-  MatButtonModule,
-  MatMenuModule,
-  MatIconModule,
-  MatToolbarModule,
-  MatTooltipModule,
-  MatCardModule,
-  MatChipsModule,
-  MatInputModule,
-  MatIconRegistry,
-  MatProgressSpinnerModule,
-  MatProgressBarModule,
-} from '@angular/material';
+import {MatIconRegistry} from '@angular/material/icon';
+import {MatInputModule} from '@angular/material/input';
+import {MatChipsModule} from '@angular/material/chips';
+import {MatTooltipModule} from '@angular/material/tooltip';
+import {MatProgressBarModule} from '@angular/material/progress-bar';
+import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
+import {MatMenuModule} from '@angular/material/menu';
+import {MatToolbarModule} from '@angular/material/toolbar';
+import {MatIconModule} from '@angular/material/icon';
+import {MatButtonModule} from '@angular/material/button';
+import {MatCardModule} from '@angular/material/card';
+
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { AppComponent } from './app.component';
@@ -76,6 +78,15 @@ export function initUserFactory(userService: UserService) {
 //   debug: true
 // };
 
+export function jwtOptionsFactory(apiService: ApiService) {
+  return {
+    tokenGetter: () => {
+      return apiService.getToken();
+    },
+    whitelistedDomains: ['localhost:8080', 'localhost:4200']
+  }
+}
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -100,6 +111,13 @@ export function initUserFactory(userService: UserService) {
     ReactiveFormsModule,
     HttpClientModule,
     AppRoutingModule,
+    JwtModule.forRoot({
+      jwtOptionsProvider: {
+        provide: JWT_OPTIONS,
+        useFactory: jwtOptionsFactory,
+        deps: [ApiService]
+      }
+    }),
     MatMenuModule,
     MatTooltipModule,
     MatButtonModule,
