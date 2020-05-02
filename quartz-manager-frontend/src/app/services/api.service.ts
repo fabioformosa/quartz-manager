@@ -70,20 +70,23 @@ export class ApiService {
   }
 
   private request(path: string, body: any, method = RequestMethod.Post, customHeaders?: HttpHeaders): Observable<any> {
-    const req = new HttpRequest(method, path, body, {
+    const options = {
       headers: customHeaders || this.headers,
       withCredentials: true
-    });
+    }    
 
     if(this.jwtToken)
-      req.headers.append('Authorization', `Bearer ${this.jwtToken}`);
+      options.headers = options.headers.append('Authorization', `Bearer ${this.jwtToken}`);
+
+    const req = new HttpRequest(method, path, body, options);
 
     return this.http.request(req)
       .pipe(
               filter(response => response instanceof HttpResponse),
               tap((resp: HttpResponse<any>) => {
                 let jwtToken = ApiService.extractTokenFromHttpResponse(resp);
-                this.setToken(jwtToken);
+                if(jwtToken)
+                  this.setToken(jwtToken);
               }),
               map((response: HttpResponse<any>) => response.body),
               catchError(error => this.checkError(error))
