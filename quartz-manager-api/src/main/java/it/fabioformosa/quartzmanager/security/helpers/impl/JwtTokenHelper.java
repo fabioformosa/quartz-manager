@@ -1,4 +1,4 @@
-package it.fabioformosa.quartzmanager.security;
+package it.fabioformosa.quartzmanager.security.helpers.impl;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
@@ -10,12 +10,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import it.fabioformosa.quartzmanager.configuration.properties.JwtSecurityProperties;
-import lombok.extern.slf4j.Slf4j;
 
 /**
  *
@@ -23,9 +24,9 @@ import lombok.extern.slf4j.Slf4j;
  *
  */
 
-@Slf4j
-//@Component
 public class JwtTokenHelper {
+
+  private static final Logger log = LoggerFactory.getLogger(JwtTokenHelper.class);
 
   private static String base64EncodeSecretKey(String secretKey) {
     return Base64.getEncoder().encodeToString(secretKey.getBytes(StandardCharsets.UTF_8));
@@ -33,6 +34,7 @@ public class JwtTokenHelper {
 
   //  @Value("${app.name}")
   private final String appName;
+
   //  @Autowired
   private final JwtSecurityProperties jwtSecurityProps;
 
@@ -117,6 +119,7 @@ public class JwtTokenHelper {
     } catch (Exception e) {
       username = null;
       log.error("Error getting claims from jwt token due to " + e.getMessage(), e);
+      throw e;
     }
     return username;
   }

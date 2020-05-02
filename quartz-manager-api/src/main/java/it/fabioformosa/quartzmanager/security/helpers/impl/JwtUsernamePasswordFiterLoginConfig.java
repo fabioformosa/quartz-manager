@@ -1,5 +1,7 @@
-package it.fabioformosa.quartzmanager.configuration.helpers.impl;
+package it.fabioformosa.quartzmanager.security.helpers.impl;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -7,18 +9,19 @@ import org.springframework.security.web.authentication.preauth.AbstractPreAuthen
 import org.springframework.security.web.util.matcher.RegexRequestMatcher;
 import org.springframework.web.filter.GenericFilterBean;
 
-import it.fabioformosa.quartzmanager.configuration.helpers.LoginConfigurer;
-import it.fabioformosa.quartzmanager.security.auth.JwtAuthenticationFilter;
-import it.fabioformosa.quartzmanager.security.auth.JwtAuthenticationSuccessHandler;
+import it.fabioformosa.quartzmanager.security.helpers.LoginConfigurer;
 
-//@Component
-//@ConditionalOnProperty(prefix = "quartz-manager.security.login-model", name = "userpwd-filter-enabled", havingValue = "true", matchIfMissing = false)
-public class UsernamePasswordFiterLoginConfig implements LoginConfigurer {
+/**
+ * It adds a new filter @JwtAuthenticationFilter after @AbstractPreAuthenticatedProcessingFilter that match login path
+ *
+ */
+public class JwtUsernamePasswordFiterLoginConfig implements LoginConfigurer {
 
-  //  @Autowired
+  private static final Logger log = LoggerFactory.getLogger(JwtUsernamePasswordFiterLoginConfig.class);
+
   private final JwtAuthenticationSuccessHandler jwtAuthenticationSuccessHandler;
 
-  public UsernamePasswordFiterLoginConfig(JwtAuthenticationSuccessHandler jwtAuthenticationSuccessHandler) {
+  public JwtUsernamePasswordFiterLoginConfig(JwtAuthenticationSuccessHandler jwtAuthenticationSuccessHandler) {
     super();
     this.jwtAuthenticationSuccessHandler = jwtAuthenticationSuccessHandler;
   }
@@ -36,6 +39,7 @@ public class UsernamePasswordFiterLoginConfig implements LoginConfigurer {
 
   @Override
   public HttpSecurity login(String loginPath, HttpSecurity http, AuthenticationManager authenticationManager) throws Exception {
+    log.debug("Configuring login through JwtAuthenticationFilter...");
     return http.addFilterAfter(authenticationProcessingFilter(loginPath, authenticationManager), AbstractPreAuthenticatedProcessingFilter.class);
   }
 

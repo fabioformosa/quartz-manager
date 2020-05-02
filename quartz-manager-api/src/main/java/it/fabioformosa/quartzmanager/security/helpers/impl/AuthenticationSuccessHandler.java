@@ -1,4 +1,4 @@
-package it.fabioformosa.quartzmanager.security.auth;
+package it.fabioformosa.quartzmanager.security.helpers.impl;
 
 import java.io.IOException;
 
@@ -29,7 +29,7 @@ public class AuthenticationSuccessHandler extends SimpleUrlAuthenticationSuccess
   public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
       Authentication authentication ) throws IOException, ServletException {
     clearAuthenticationAttributes(request);
-    jwtAuthenticationSuccessHandler.onSuccess(authentication, response);
+    jwtAuthenticationSuccessHandler.onLoginSuccess(authentication, response);
   }
 
 }

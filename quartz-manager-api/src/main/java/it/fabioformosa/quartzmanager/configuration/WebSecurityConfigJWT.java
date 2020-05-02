@@ -27,19 +27,19 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import it.fabioformosa.quartzmanager.configuration.helpers.LoginConfigurer;
-import it.fabioformosa.quartzmanager.configuration.helpers.impl.FormLoginConfig;
-import it.fabioformosa.quartzmanager.configuration.helpers.impl.QuartzManagerHttpSecurity;
-import it.fabioformosa.quartzmanager.configuration.helpers.impl.UsernamePasswordFiterLoginConfig;
 import it.fabioformosa.quartzmanager.configuration.properties.InMemoryAccountProperties;
 import it.fabioformosa.quartzmanager.configuration.properties.JwtSecurityProperties;
-import it.fabioformosa.quartzmanager.security.JwtTokenHelper;
-import it.fabioformosa.quartzmanager.security.auth.AuthenticationFailureHandler;
-import it.fabioformosa.quartzmanager.security.auth.AuthenticationSuccessHandler;
-import it.fabioformosa.quartzmanager.security.auth.JwtAuthenticationSuccessHandler;
-import it.fabioformosa.quartzmanager.security.auth.JwtAuthenticationSuccessHandlerImpl;
-import it.fabioformosa.quartzmanager.security.auth.JwtTokenAuthenticationFilter;
-import it.fabioformosa.quartzmanager.security.auth.LogoutSuccess;
+import it.fabioformosa.quartzmanager.security.helpers.LoginConfigurer;
+import it.fabioformosa.quartzmanager.security.helpers.impl.AuthenticationFailureHandler;
+import it.fabioformosa.quartzmanager.security.helpers.impl.AuthenticationSuccessHandler;
+import it.fabioformosa.quartzmanager.security.helpers.impl.FormLoginConfig;
+import it.fabioformosa.quartzmanager.security.helpers.impl.JwtAuthenticationSuccessHandler;
+import it.fabioformosa.quartzmanager.security.helpers.impl.JwtAuthenticationSuccessHandlerImpl;
+import it.fabioformosa.quartzmanager.security.helpers.impl.JwtTokenAuthenticationFilter;
+import it.fabioformosa.quartzmanager.security.helpers.impl.JwtTokenHelper;
+import it.fabioformosa.quartzmanager.security.helpers.impl.QuartzManagerHttpSecurity;
+import it.fabioformosa.quartzmanager.security.helpers.impl.JwtUsernamePasswordFiterLoginConfig;
+import it.fabioformosa.quartzmanager.security.helpers.impl.LogoutSuccess;
 
 /**
  *
@@ -76,37 +76,29 @@ public class WebSecurityConfigJWT extends WebSecurityConfigurerAdapter {
   @Autowired
   private UserDetailsService userDetailsService;
 
-  //	@Autowired
-  //	private CustomUserDetailsService jwtUserDetailsService;
-
   @Autowired
   private InMemoryAccountProperties inMemoryAccountProps;
 
-  //	@Bean
-  //	@Override
-  //	public AuthenticationManager authenticationManagerBean() throws Exception {
-  //		return super.authenticationManagerBean();
-  //	}
 
   @Override
   public void configure(AuthenticationManagerBuilder authenticationManagerBuilder)throws Exception {
     configureInMemoryAuthentication(authenticationManagerBuilder);
-    //		authenticationManagerBuilder.userDetailsService(jwtUserDetailsService)
-    //		.passwordEncoder(passwordEncoder());
   }
 
   @Override
   protected void configure(HttpSecurity http) throws Exception {
-    //		http.csrf().ignoringAntMatchers("/api/login", "/api/signup") //
-    //		.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()) //
-
     http.csrf().disable() //
     .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and() //
     .exceptionHandling().authenticationEntryPoint(restAuthEntryPoint()).and() //
     .addFilterBefore(jwtAuthenticationTokenFilter(), BasicAuthenticationFilter.class) //
     .authorizeRequests().anyRequest().authenticated();
 
-    QuartzManagerHttpSecurity.from(http).loginConfig(loginConfigurer(), logoutConfigurer()).login(LOGIN_PATH, authenticationManager()).logout(LOGOUT_PATH);
+    QuartzManagerHttpSecurity.from(http).withLoginConfigurer(loginConfigurer(), logoutConfigurer()) //
+    .login(LOGIN_PATH, authenticationManager()).logout(LOGOUT_PATH);
+
+    // temporary disabled csfr
+    //    http.csrf().ignoringAntMatchers("/api/login", "/api/signup") //
+    //    .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()) //
   }
 
   @Override
@@ -158,8 +150,7 @@ public class WebSecurityConfigJWT extends WebSecurityConfigurerAdapter {
 
   @Bean
   public JwtTokenHelper jwtTokenHelper() {
-    JwtTokenHelper jwtTokenHelper = new JwtTokenHelper(APP_NAME, jwtSecurityProps);
-    return jwtTokenHelper;
+    return new JwtTokenHelper(APP_NAME, jwtSecurityProps);
   }
 
   @Bean
@@ -181,11 +172,6 @@ public class WebSecurityConfigJWT extends WebSecurityConfigurerAdapter {
     return new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED);
   }
 
-  //	@Bean
-  //	public PasswordEncoder passwordEncoder() {
-  //		return new BCryptPasswordEncoder();
-  //	}
-
   @Bean
   @Override
   public UserDetailsService userDetailsServiceBean() throws Exception {
@@ -194,8 +180,13 @@ public class WebSecurityConfigJWT extends WebSecurityConfigurerAdapter {
 
   @Bean
   public LoginConfigurer userpwdFilterLoginConfigurer() {
-    LoginConfigurer loginConfigurer = new UsernamePasswordFiterLoginConfig(jwtAuthenticationSuccessHandler());
+    LoginConfigurer loginConfigurer = new JwtUsernamePasswordFiterLoginConfig(jwtAuthenticationSuccessHandler());
     return loginConfigurer;
   }
+
+  // @Bean
+  //  public PasswordEncoder passwordEncoder() {
+  //    return new BCryptPasswordEncoder();
+  //  }
 
 }

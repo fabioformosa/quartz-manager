@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import it.fabioformosa.quartzmanager.security.JwtTokenHelper;
+import it.fabioformosa.quartzmanager.security.helpers.impl.JwtTokenHelper;
 import it.fabioformosa.quartzmanager.security.model.UserTokenState;
 import it.fabioformosa.quartzmanager.security.service.impl.CustomUserDetailsService;
 

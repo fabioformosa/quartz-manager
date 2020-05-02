@@ -1,4 +1,4 @@
-package it.fabioformosa.quartzmanager.security.auth;
+package it.fabioformosa.quartzmanager.security.helpers.impl;
 
 import java.io.IOException;
 
@@ -9,8 +9,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
 
-//@Component
-//@ConditionalOnProperty(prefix = "quartz-manager.security.login-model", name = "form-login-enabled", havingValue = "true", matchIfMissing = true)
 public class AuthenticationFailureHandler extends SimpleUrlAuthenticationFailureHandler {
 
   @Override

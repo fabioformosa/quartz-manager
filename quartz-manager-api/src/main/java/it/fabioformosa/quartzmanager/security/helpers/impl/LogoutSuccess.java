@@ -1,4 +1,4 @@
-package it.fabioformosa.quartzmanager.security.auth;
+package it.fabioformosa.quartzmanager.security.helpers.impl;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -17,7 +17,6 @@ public class LogoutSuccess implements LogoutSuccessHandler {
 
   private final ObjectMapper objectMapper;
 
-  //  @Autowired
   public LogoutSuccess(ObjectMapper objectMapper) {
     super();
     this.objectMapper = objectMapper;

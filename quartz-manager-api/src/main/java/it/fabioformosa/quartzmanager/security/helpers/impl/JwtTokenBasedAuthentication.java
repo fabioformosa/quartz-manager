@@ -1,4 +1,4 @@
-package it.fabioformosa.quartzmanager.security.auth;
+package it.fabioformosa.quartzmanager.security.helpers.impl;
 
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;

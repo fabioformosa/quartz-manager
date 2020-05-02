@@ -1,4 +1,4 @@
-package it.fabioformosa.quartzmanager.security.auth;
+package it.fabioformosa.quartzmanager.security.helpers.impl;
 
 import java.io.IOException;
 
@@ -7,7 +7,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.security.core.Authentication;
 
 public interface JwtAuthenticationSuccessHandler {
-  void onSuccess(Authentication authentication, HttpServletResponse response) throws IOException;
 
   String cookieMustBeDeletedAtLogout();
+
+  void onLoginSuccess(Authentication authentication, HttpServletResponse response) throws IOException;
 }

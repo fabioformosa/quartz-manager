@@ -1,4 +1,4 @@
-package it.fabioformosa.quartzmanager.security.auth;
+package it.fabioformosa.quartzmanager.security.helpers.impl;
 
 import javax.servlet.FilterChain;
 import javax.servlet.http.HttpServletRequest;
@@ -10,6 +10,10 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 import lombok.SneakyThrows;
 
+/**
+ * It extends the @UsernamePasswordAuthenticationFilter and it overrides the successfulAuthentication method to put jwtToken in the response
+ *
+ */
 public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
   private JwtAuthenticationSuccessHandler jwtAuthenticationSuccessHandler;
@@ -25,6 +29,6 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
       HttpServletResponse res,
       FilterChain chain,
       Authentication auth) {
-    jwtAuthenticationSuccessHandler.onSuccess(auth, res);
+    jwtAuthenticationSuccessHandler.onLoginSuccess(auth, res);
   }
 }

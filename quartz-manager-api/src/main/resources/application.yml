@@ -11,6 +11,7 @@ spring:
   thymeleaf: 
     cache: false
     mode: LEGACYHTML5
+  jpa.open-in-view: false
 
 quartz:
   enabled: true
@@ -36,10 +37,10 @@ quartz-manager:
       secret: "bibidibobidiboo"
       expiration-in-sec: 28800  # 8 hours
       header-strategy:
-        enabled: true
+        enabled: false
         header: "Authorization"
       cookie-strategy:
-        enabled: false
+        enabled: true
         cookie: AUTH-TOKEN
   jobClass: it.fabioformosa.quartzmanager.jobs.myjobs.SampleJob
   accounts:

@@ -1,4 +1,4 @@
-package it.fabioformosa.quartzmanager.security;
+package it.fabioformosa.quartzmanager.security.helpers.impl;
 
 import javax.servlet.http.HttpServletRequest;
 
