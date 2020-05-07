@@ -1,50 +1,51 @@
-package it.fabioformosa.quartzmanager.security;
+package it.fabioformosa.quartzmanager.security.helpers.impl;
 
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.Date;
 import java.util.Map;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.joda.time.DateTime;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import lombok.extern.slf4j.Slf4j;
+import it.fabioformosa.quartzmanager.configuration.properties.JwtSecurityProperties;
 
 /**
- * JWT Temporary disabled
  *
  * @author Fabio.Formosa
  *
  */
 
-@Slf4j
-@Component
-public class TokenHelper {
+public class JwtTokenHelper {
 
-  @Value("${app.name}")
-  private String APP_NAME;
+  private static final Logger log = LoggerFactory.getLogger(JwtTokenHelper.class);
 
-  @Value("${jwt.secret}")
-  private String SECRET;
+  private static String base64EncodeSecretKey(String secretKey) {
+    return Base64.getEncoder().encodeToString(secretKey.getBytes(StandardCharsets.UTF_8));
+  }
 
-  @Value("${jwt.expires_in_sec}")
-  private int EXPIRES_IN_SEC;
+  //  @Value("${app.name}")
+  private final String appName;
 
-  @Value("${jwt.header}")
-  private String AUTH_HEADER;
-
-  @Value("${jwt.cookie}")
-  private String AUTH_COOKIE;
-
-  //	@Autowired
-  //	UserDetailsService userDetailsService;
+  //  @Autowired
+  private final JwtSecurityProperties jwtSecurityProps;
 
   private SignatureAlgorithm SIGNATURE_ALGORITHM = SignatureAlgorithm.HS512;
+
+  //  @Autowired
+  public JwtTokenHelper(String appName, JwtSecurityProperties jwtSecurityProps) {
+    super();
+    this.appName = appName;
+    this.jwtSecurityProps = jwtSecurityProps;
+  }
 
   public Boolean canTokenBeRefreshed(String token) {
     try {
@@ -62,34 +63,25 @@ public class TokenHelper {
   }
 
   private Date generateExpirationDate() {
-    return new Date(getCurrentTimeMillis() + EXPIRES_IN_SEC * 1000);
+    return new Date(getCurrentTimeMillis() + jwtSecurityProps.getExpirationInSec() * 1000);
   }
 
-  String generateToken(Map<String, Object> claims) {
-    return Jwts.builder()
-        .setClaims(claims)
-        .setExpiration(generateExpirationDate())
-        .signWith( SIGNATURE_ALGORITHM, SECRET )
-        .compact();
+  private String generateToken(Map<String, Object> claims) {
+    return Jwts.builder().setClaims(claims).setExpiration(generateExpirationDate())
+        .signWith(SIGNATURE_ALGORITHM, base64EncodeSecretKey(jwtSecurityProps.getSecret())).compact();
   }
 
   public String generateToken(String username) {
-    return Jwts.builder()
-        .setIssuer(APP_NAME)
-        .setSubject(username)
-        .setIssuedAt(generateCurrentDate())
+    return Jwts.builder().setIssuer(appName).setSubject(username).setIssuedAt(generateCurrentDate())
         .setExpiration(generateExpirationDate())
-        .signWith(SIGNATURE_ALGORITHM, SECRET)
-        .compact();
+        .signWith(SIGNATURE_ALGORITHM, base64EncodeSecretKey(jwtSecurityProps.getSecret())).compact();
   }
 
   private Claims getClaimsFromToken(String token) {
     Claims claims;
     try {
-      claims = Jwts.parser()
-          .setSigningKey(SECRET)
-          .parseClaimsJws(token)
-          .getBody();
+      claims = Jwts.parser().setSigningKey(base64EncodeSecretKey(jwtSecurityProps.getSecret()))
+          .parseClaimsJws(token).getBody();
     } catch (Exception e) {
       claims = null;
       log.error("Error getting claims from jwt token due to " + e.getMessage(), e);
@@ -101,9 +93,9 @@ public class TokenHelper {
    * Find a specific HTTP cookie in a request.
    *
    * @param request
-   *            The HTTP request object.
+   *          The HTTP request object.
    * @param name
-   *            The cookie name to look for.
+   *          The cookie name to look for.
    * @return The cookie, or <code>null</code> if not found.
    */
   public Cookie getCookieValueByName(HttpServletRequest request, String name) {
@@ -119,18 +111,6 @@ public class TokenHelper {
     return DateTime.now().getMillis();
   }
 
-  public String getToken( HttpServletRequest request ) {
-    Cookie authCookie = getCookieValueByName( request, AUTH_COOKIE );
-    if ( authCookie != null )
-      return authCookie.getValue();
-
-    String authHeader = request.getHeader(AUTH_HEADER);
-    if ( authHeader != null && authHeader.startsWith("Bearer "))
-      return authHeader.substring(7);
-
-    return null;
-  }
-
   public String getUsernameFromToken(String token) {
     String username;
     try {
@@ -139,6 +119,7 @@ public class TokenHelper {
     } catch (Exception e) {
       username = null;
       log.error("Error getting claims from jwt token due to " + e.getMessage(), e);
+      throw e;
     }
     return username;
   }
@@ -154,5 +135,28 @@ public class TokenHelper {
       refreshedToken = null;
     }
     return refreshedToken;
+  }
+
+  public String retrieveToken(HttpServletRequest request) {
+    if (jwtSecurityProps.getCookieStrategy().isEnabled() == true) {
+      Cookie authCookie = getCookieValueByName(request, jwtSecurityProps.getCookieStrategy().getCookie());
+      if (authCookie != null)
+        return authCookie.getValue();
+    }
+
+    if (jwtSecurityProps.getHeaderStrategy().isEnabled()) {
+      String authHeader = request.getHeader(jwtSecurityProps.getHeaderStrategy().getHeader());
+      if (authHeader != null && authHeader.startsWith("Bearer "))
+        return authHeader.substring(7);
+    }
+
+    if(request.getParameter("access_token") != null)
+      return request.getParameter("access_token");
+
+    return null;
+  }
+
+  public void setHeader(HttpServletResponse response, String token) {
+    response.addHeader(jwtSecurityProps.getHeaderStrategy().getHeader(), "Bearer " + token);
   }
 }

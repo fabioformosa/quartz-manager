@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
-import { HttpHeaders } from '@angular/common/http';
+import { HttpHeaders, HttpResponse } from '@angular/common/http';
 import { ApiService } from './api.service';
 import { UserService } from './user.service';
 import { ConfigService } from './config.service';
 import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { map, tap } from 'rxjs/operators';
 
 @Injectable()
 export class AuthService {
@@ -21,10 +21,13 @@ export class AuthService {
       'Content-Type': 'application/x-www-form-urlencoded'
     });
     const body = `username=${user.username}&password=${user.password}`;
-    return this.apiService.post(this.config.login_url, body, loginHeaders).pipe(map(() => {
-      console.log("Login success");
-      this.userService.getMyInfo().subscribe();
-    }));
+    return this.apiService.post(this.config.login_url, body, loginHeaders)
+						  .pipe(
+								map(() => {
+                    console.log("Login success");
+							      this.userService.getMyInfo().subscribe();
+							    })
+						  );
   }
 
   signup(user){
@@ -40,6 +43,7 @@ export class AuthService {
   logout() {
     return this.apiService.post(this.config.logout_url, {})
       .pipe(map(() => {
+        this.apiService.setToken(null);
         this.userService.currentUser = null;
       }));
   }
@@ -47,5 +51,6 @@ export class AuthService {
   changePassword(passwordChanger) {
     return this.apiService.post(this.config.change_password_url, passwordChanger);
   }
+
 
 }

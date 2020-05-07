@@ -7,3 +7,5 @@
 /mvnw
 /mvnw.cmd
 /.classpath
+/.idea/
+/quartz-manager.iml

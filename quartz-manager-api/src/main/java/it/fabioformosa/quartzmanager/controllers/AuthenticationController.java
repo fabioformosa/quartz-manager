@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import it.fabioformosa.quartzmanager.security.TokenHelper;
+import it.fabioformosa.quartzmanager.security.helpers.impl.JwtTokenHelper;
 import it.fabioformosa.quartzmanager.security.model.UserTokenState;
 import it.fabioformosa.quartzmanager.security.service.impl.CustomUserDetailsService;
 
@@ -39,12 +39,12 @@ public class AuthenticationController {
 	private CustomUserDetailsService userDetailsService;
 
 	@Autowired
-	TokenHelper tokenHelper;
+	JwtTokenHelper tokenHelper;
 
-	@Value("${jwt.expires_in_sec}")
+	@Value("${quartz-manager.security.jwt.expiration-in-sec}")
 	private int EXPIRES_IN_SEC;
 
-	@Value("${jwt.cookie}")
+	@Value("${quartz-manager.security.jwt.cookie-strategy-cookie}")
 	private String TOKEN_COOKIE;
 
 	@RequestMapping(value = "/changePassword", method = RequestMethod.POST)
@@ -59,7 +59,7 @@ public class AuthenticationController {
 	@RequestMapping(value = "/refresh", method = RequestMethod.GET)
 	public ResponseEntity<?> refreshAuthenticationToken(HttpServletRequest request, HttpServletResponse response) {
 
-		String authToken = tokenHelper.getToken( request );
+		String authToken = tokenHelper.retrieveToken( request );
 		if (authToken != null && tokenHelper.canTokenBeRefreshed(authToken)) {
 			// TODO check user password last update
 			String refreshedToken = tokenHelper.refreshToken(authToken);
