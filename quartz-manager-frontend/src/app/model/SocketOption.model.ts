@@ -4,11 +4,14 @@ export class SocketOption{
     brokerName : string;
     reconnectionTimeout : number = 30000
 
-    constructor(socketUrl : string, topicName : string, brokerName : string = null, reconnectionTimeout : number = 30000){
+    getAccessToken: Function = () => null;
+
+    constructor(socketUrl : string, topicName : string, getAccessToken?: Function, brokerName : string = null, reconnectionTimeout : number = 30000){
         this.socketUrl = socketUrl;
         this.topicName = topicName;
         this.brokerName = brokerName;
         this.reconnectionTimeout = reconnectionTimeout;
+        this.getAccessToken = getAccessToken || (() => null);
     }
 
 }
