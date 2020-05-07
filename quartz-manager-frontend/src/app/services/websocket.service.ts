@@ -109,7 +109,12 @@ export class WebsocketService {
 
     connect = () => {
         const headers = {};
-        this._socket.client = new SockJS(this._options.socketUrl);
+        
+        let socketUrl = this._options.socketUrl;
+        if(this._options.getAccessToken())
+            socketUrl += `?access_token=${this._options.getAccessToken()}`
+        
+        this._socket.client = new SockJS(socketUrl);
         this._socket.stomp = Stomp.over(this._socket.client);
         this._socket.stomp.connect(headers, this._socketListener, this._onSocketError);
         this._socket.stomp.onclose = this.scheduleReconnection;
