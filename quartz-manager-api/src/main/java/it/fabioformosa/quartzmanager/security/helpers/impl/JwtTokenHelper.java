@@ -150,6 +150,9 @@ public class JwtTokenHelper {
         return authHeader.substring(7);
     }
 
+    if(request.getParameter("access_token") != null)
+      return request.getParameter("access_token");
+
     return null;
   }
 
