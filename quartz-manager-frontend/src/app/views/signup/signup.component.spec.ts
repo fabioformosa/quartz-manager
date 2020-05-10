@@ -1,8 +1,11 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import {
-    MatCardModule, MatInputModule, MatProgressSpinnerModule, MatProgressBarModule
-  } from '@angular/material';
+
+import { MatCardModule} from '@angular/material/card';
+import { MatInputModule} from '@angular/material/input';
+import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
+
 import { SignupComponent } from './signup.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { RouterTestingModule } from '@angular/router/testing';
