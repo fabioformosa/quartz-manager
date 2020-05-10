@@ -63,7 +63,7 @@ Swagger has been added as library. So, you can get REST API doc opening: [http:/
 
 **Application Server** Tomcat (embedded)
 
-**Frontend** Angular 7.2.13, Web-Socket (stompjs 2.3.3)
+**Frontend** Angular 9.1.4, Web-Socket (stompjs 2.3.3)
 
 **Style** angular material, FontAwesome 5
 
