@@ -68,8 +68,8 @@ Swagger has been added as library. So, you can get REST API doc opening: [http:/
 **Style** angular material, FontAwesome 5
 
 From quartz manager ver 2.x.x, the new structure of project is:
- * REST backend (java based, using [http://www.quartz-scheduler.org/](http://www.quartz-scheduler.org/)
- * Single Page Application frontend (angular 7)
+ * REST API backend
+ * Single Page Application frontend (angular 9)
 
 (The previous version of quartz manager was a monolithic backend that provided also frontend developed with angularjs 1.6.x. You can find it at the branch 1.x.x)
 
