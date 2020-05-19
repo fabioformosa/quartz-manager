@@ -16,6 +16,12 @@ Open the [Projects Section](https://github.com/fabioformosa/quartz-manager/proje
 This project was born in 2016 when I needed a visual panel to monitor a scheduled job that fulfilled a mailing campaign to my customers.
 It is currently under development, regarding: frontend, backend and CI/CD.
 
+Next steps in the roadmap are:
+* to simplify the customization of the job through plugins
+* to add CI/CD pipeline to ease the deploy pulling a docker container
+* to add a complete setup UI panel for quartz, in term of cronjobs and multiple jobs
+* to add a persistent layer to save all job logs.
+
 ## QUICK START
 **[requirements]** Make sure you have installed
 * [Java 8](https://java.com/download/) or greater
