@@ -1,3 +1,5 @@
+[![Gitter chat](https://badges.gitter.im/gitterHQ/gitter.png)](https://gitter.im/quartz-manager/community)
+
 # QUARTZ MANAGER
 GUI Manager for Quartz Scheduler.
 
