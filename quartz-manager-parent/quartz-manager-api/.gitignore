@@ -1,11 +1,3 @@
-/target
-/Work
-/.mvn
-/.project
-/.settings
-/.springBeans
-/mvnw
-/mvnw.cmd
 /.classpath
-/.idea/
-/quartz-manager.iml
+/.project
+/target/**

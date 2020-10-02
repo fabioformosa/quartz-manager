@@ -1,6 +1,0 @@
-Manifest-Version: 1.0
-Implementation-Title: quartz-manager-core
-Implementation-Version: 2.2.1-SNAPSHOT
-Build-Jdk-Spec: 1.8
-Created-By: Maven Integration for Eclipse
-
