@@ -12,9 +12,9 @@ Through this webapp you can launch and control your scheduled job. The UI Consol
 * The GUI manager updates the progress bar and reports all logs of your quartz job.
 
 ## ROADMAP
-Open the [Projects Section](https://github.com/fabioformosa/quartz-manager/projects) to take a look at the roadmap of Quartz Manager.
-Currently this project might be useful to look how to import Quartz Library in a spring boot application. For this purpose, browse the folder `quartz-manager-parent/quartz-manager-api`.
-We're just working to create a library, from `quartz-manager-parent/quartz-manager-api`, to be imported in your spring boot where you have your job to be scheduled. For instance, the project `quartz-manager-parent/quartz-manager-web` imports it and it adds a secure layer and a custom job that says `hello world`.
+Open the [Project Roadmap](https://github.com/fabioformosa/quartz-manager/projects) to take a look at the plan of Quartz Manager.  
+Currently this project might be useful to look how to import Quartz Library in a spring boot application. For this purpose, browse the folder `quartz-manager-parent/quartz-manager-api`.  
+We're just working to create a library, from project `quartz-manager-parent/quartz-manager-api`, to be imported in your spring boot where you have your job to be scheduled. For instance, the project `quartz-manager-parent/quartz-manager-web` imports it and it adds a secure layer and a custom job that says `hello world`.
 
 ## PROJECT STRUCTURE
 ** quartz-parent/quartz-manager-api ** is the library that can be imported in webapp to have the quartz-manager API.
