@@ -1,3 +1,5 @@
+[![Gitter](https://badges.gitter.im/quartz-manager/community.svg)](https://gitter.im/quartz-manager/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
+
 # QUARTZ MANAGER
 UI Manager for Quartz Scheduler.
 
