@@ -9,3 +9,4 @@
 /.classpath
 /.idea/
 /quartz-manager.iml
+/target/**
