@@ -13,12 +13,17 @@ Through this webapp you can launch and control your scheduled job. The UI Consol
 ## ROADMAP
 Open the [Project Roadmap](https://github.com/fabioformosa/quartz-manager/projects) to take a look at the plan of Quartz Manager.  
 Currently this project might be useful to look how to import Quartz Library in a spring boot application. For this purpose, browse the folder `quartz-manager-parent/quartz-manager-api`.  
-We're just working to create a library, from project `quartz-manager-parent/quartz-manager-api`, to be imported in your spring boot where you have your job to be scheduled. For instance, the project `quartz-manager-parent/quartz-manager-web` imports it and it adds a secure layer and a custom job that says `hello world`.
+We're just working to create a library, from project `quartz-manager-parent/quartz-manager-api`, to be imported in your spring boot where you have your job to be scheduled.  
+The project `quartz-manager-parent/quartz-manager-web` is an example of how-to:
+ * import the library
+ * set the application.yml
+ * add secure layer
+ * schedule a custom job (a dummy `hello world`)
 
 ## PROJECT STRUCTURE
-** quartz-parent/quartz-manager-api ** is the library that can be imported in webapp to have the quartz-manager API.
-** quartz-parent/quartz-manager-web ** is an example of webapp that imports quartz-manager-api. It adds a secure layer and a custom job to be scheduled.
-** quartz-frontend ** is the angular app that interacts with the Quartz Manager API.
+* **quartz-parent/quartz-manager-api** is the library that can be imported in webapp to have the quartz-manager API.
+* **quartz-parent/quartz-manager-web** is an example of webapp that imports quartz-manager-api. It adds a secure layer and a custom job to be scheduled.
+* **quartz-frontend** is the angular app that interacts with the Quartz Manager API.
 
 ## QUICK START
 **[requirements]** Make sure you have installed
