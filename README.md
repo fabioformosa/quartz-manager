@@ -46,6 +46,8 @@ To build&run quartz-manager in your machine:
 git clone https://github.com/fabioformosa/quartz-manager.git
 
 # START QUARTZ-MANAGER-WEB
+cd quartz-manager/quartz-parent
+mvn install
 cd quartz-manager/quartz-parent/quartz-manager-web
 mvn spring-boot:run
 
