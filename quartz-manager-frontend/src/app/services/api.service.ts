@@ -1,4 +1,5 @@
 import { HttpClient, HttpHeaders, HttpResponse, HttpRequest, HttpEventType, HttpParams } from '@angular/common/http';
+import { Router} from '@angular/router';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { catchError, map, filter, tap } from 'rxjs/operators'
@@ -35,7 +36,7 @@ export class ApiService {
 
   private jwtToken: string;
 
-  constructor( private http: HttpClient) { }
+  constructor( private http: HttpClient, private router: Router) { }
 
   setToken(token: string) {
     this.jwtToken = token;
@@ -98,7 +99,7 @@ export class ApiService {
   // Display error if logged in, otherwise redirect to IDP
   private checkError(error: any): any {
     if (error && error.status === 401) {
-      // this.redirectIfUnauth(error);
+      this.router.navigate(['/login']);
     } else {
       // this.displayError(error);
     }

@@ -2,6 +2,8 @@ import { TestBed } from "@angular/core/testing";
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { ApiService } from './api.service';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Router} from '@angular/router';
+import {jest} from '@jest/globals'
 
 class Data{
     name: string
@@ -22,6 +24,8 @@ class HttpResponseMock {
     ) {}
   }
 
+const routerSpy = jest.spyOn(Router.prototype, 'navigateByUrl');
+
 describe('ApiServiceTest', () => {
 
     let apiService: ApiService;
@@ -36,7 +40,7 @@ describe('ApiServiceTest', () => {
 
         TestBed.configureTestingModule({ 
             imports: [HttpClientTestingModule],
-            providers: [ApiService]
+            providers: [ApiService, {provide: Router, useValue: routerSpy}]
         });
         apiService = TestBed.inject(ApiService);
 
@@ -64,7 +68,11 @@ describe('ApiServiceTest', () => {
 
         apiService.get(URL_401).subscribe((res: Data) => {
             expect(false);
-        }, (error) => {expect(error.status).toBe(401)});
+        }, (error) => 
+        {
+            expect(error.status).toBe(401);
+            expect(routerSpy).toHaveBeenCalledTimes(1);
+        });
         
         const req = httpTestingController.expectOne(URL_401)
         expect(req.request.method).toEqual('GET');
