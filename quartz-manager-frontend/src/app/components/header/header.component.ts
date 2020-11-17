@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import {
   UserService,
-  AuthService
+  AuthService,
+  NO_AUTH
 } from '../../services';
 import { Router } from '@angular/router';
 
@@ -30,6 +31,9 @@ export class HeaderComponent implements OnInit {
   hasSignedIn() {
     return !!this.userService.currentUser;
   }
+
+  noAuthenticationRequired = () => this.hasSignedIn() && this.userService.currentUser === NO_AUTH; 
+  
 
   userName() {
     const user = this.userService.currentUser;

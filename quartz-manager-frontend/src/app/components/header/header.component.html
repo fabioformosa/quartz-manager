@@ -11,7 +11,7 @@
       </button>
       <button
         class="greeting-button"
-        *ngIf="hasSignedIn()"
+        *ngIf="hasSignedIn() && !noAuthenticationRequired()"
         mat-button mat-ripple
         [matMenuTriggerFor]="accountMenu">
         <span>Hi, {{userName()}}</span>
