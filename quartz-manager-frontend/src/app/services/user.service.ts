@@ -4,6 +4,8 @@ import { ConfigService } from './config.service';
 
 import { map } from 'rxjs/operators'
 
+export const NO_AUTH: string = 'NO_AUTH'
+
 @Injectable()
 export class UserService {
 
@@ -34,6 +36,7 @@ export class UserService {
           this.currentUser = user;
         }, err => {
           //not logged
+          console.log(`error retrieving current user due to ` + err);
         });
   }
 

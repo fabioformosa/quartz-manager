@@ -37,9 +37,9 @@ import it.fabioformosa.quartzmanager.security.helpers.impl.JwtAuthenticationSucc
 import it.fabioformosa.quartzmanager.security.helpers.impl.JwtAuthenticationSuccessHandlerImpl;
 import it.fabioformosa.quartzmanager.security.helpers.impl.JwtTokenAuthenticationFilter;
 import it.fabioformosa.quartzmanager.security.helpers.impl.JwtTokenHelper;
-import it.fabioformosa.quartzmanager.security.helpers.impl.QuartzManagerHttpSecurity;
 import it.fabioformosa.quartzmanager.security.helpers.impl.JwtUsernamePasswordFiterLoginConfig;
 import it.fabioformosa.quartzmanager.security.helpers.impl.LogoutSuccess;
+import it.fabioformosa.quartzmanager.security.helpers.impl.QuartzManagerHttpSecurity;
 
 /**
  *
@@ -51,142 +51,142 @@ import it.fabioformosa.quartzmanager.security.helpers.impl.LogoutSuccess;
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class WebSecurityConfigJWT extends WebSecurityConfigurerAdapter {
 
-  private static final String[] PATTERNS_SWAGGER_UI = {"/swagger-ui.html", "/v2/api-docs", "/swagger-resources/**", "/webjars/**"};
+    private static final String[] PATTERNS_SWAGGER_UI = {"/swagger-ui.html", "/v2/api-docs", "/swagger-resources/**", "/webjars/**"};
 
-  private static final String LOGIN_PATH = "/api/login";
-  private static final String LOGOUT_PATH = "/api/logout";
+    private static final String LOGIN_PATH = "/quartz-manager/api/login";
+    private static final String LOGOUT_PATH = "/quartz-manager/api/logout";
 
-  @Value("${server.servlet.context-path}")
-  private String contextPath;
+    @Value("${server.servlet.context-path}")
+    private String contextPath;
 
-  @Value("${app.name}")
-  private String APP_NAME;
+    @Value("${app.name}")
+    private String APP_NAME;
 
-  @Value("${quartz-manager.security.login-model.form-login-enabled}")
-  private Boolean formLoginEnabled;
-  @Value("${quartz-manager.security.login-model.userpwd-filter-enabled}")
-  private Boolean userpwdFilterEnabled;
+    @Value("${quartz-manager.security.login-model.form-login-enabled}")
+    private Boolean formLoginEnabled;
+    @Value("${quartz-manager.security.login-model.userpwd-filter-enabled}")
+    private Boolean userpwdFilterEnabled;
 
-  @Autowired
-  private JwtSecurityProperties jwtSecurityProps;
+    @Autowired
+    private JwtSecurityProperties jwtSecurityProps;
 
-  @Autowired
-  private ObjectMapper objectMapper;
+    @Autowired
+    private ObjectMapper objectMapper;
 
-  @Autowired
-  private UserDetailsService userDetailsService;
+    @Autowired
+    private UserDetailsService userDetailsService;
 
-  @Autowired
-  private InMemoryAccountProperties inMemoryAccountProps;
+    @Autowired
+    private InMemoryAccountProperties inMemoryAccountProps;
 
 
-  @Override
-  public void configure(AuthenticationManagerBuilder authenticationManagerBuilder)throws Exception {
-    configureInMemoryAuthentication(authenticationManagerBuilder);
-  }
-
-  @Override
-  protected void configure(HttpSecurity http) throws Exception {
-    http.csrf().disable() //
-    .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and() //
-    .exceptionHandling().authenticationEntryPoint(restAuthEntryPoint()).and() //
-    .addFilterBefore(jwtAuthenticationTokenFilter(), BasicAuthenticationFilter.class) //
-    .authorizeRequests().anyRequest().authenticated();
-
-    QuartzManagerHttpSecurity.from(http).withLoginConfigurer(loginConfigurer(), logoutConfigurer()) //
-    .login(LOGIN_PATH, authenticationManager()).logout(LOGOUT_PATH);
-
-    // temporary disabled csfr
-    //    http.csrf().ignoringAntMatchers("/api/login", "/api/signup") //
-    //    .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()) //
-  }
-
-  @Override
-  public void configure(WebSecurity web) throws Exception {
-    web.ignoring()//
-    .antMatchers(HttpMethod.GET, PATTERNS_SWAGGER_UI) //
-    .antMatchers(HttpMethod.GET,"/css/**", "/js/**", "/img/**", "/lib/**");
-  }
-
-  private void configureInMemoryAuthentication(AuthenticationManagerBuilder authenticationManagerBuilder) throws Exception {
-    PasswordEncoder encoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
-    if(inMemoryAccountProps.isEnabled() && inMemoryAccountProps.getUsers() != null && !inMemoryAccountProps.getUsers().isEmpty()) {
-      InMemoryUserDetailsManagerConfigurer<AuthenticationManagerBuilder> inMemoryAuth = authenticationManagerBuilder.inMemoryAuthentication();
-      inMemoryAccountProps.getUsers()
-      .forEach(u -> inMemoryAuth
-          .withUser(u.getName())
-          .password(encoder.encode(u.getPassword()))
-          .roles(u.getRoles().toArray(new String[0])));
+    @Override
+    public void configure(AuthenticationManagerBuilder authenticationManagerBuilder)throws Exception {
+        configureInMemoryAuthentication(authenticationManagerBuilder);
     }
-  }
 
-  @Bean
-  CorsConfigurationSource corsConfigurationSource() {
-    UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-    source.registerCorsConfiguration("/**", new CorsConfiguration().applyPermitDefaultValues());
-    return source;
-  }
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
+        http.csrf().disable() //
+        .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and() //
+        .exceptionHandling().authenticationEntryPoint(restAuthEntryPoint()).and() //
+        .addFilterBefore(jwtAuthenticationTokenFilter(), BasicAuthenticationFilter.class) //
+        .authorizeRequests().anyRequest().authenticated();
 
-  @Bean
-  public LoginConfigurer formLoginConfigurer() {
-    JwtAuthenticationSuccessHandler jwtAuthenticationSuccessHandler = jwtAuthenticationSuccessHandler();
-    AuthenticationSuccessHandler authenticationSuccessHandler = new AuthenticationSuccessHandler(jwtAuthenticationSuccessHandler);
-    AuthenticationFailureHandler authenticationFailureHandler = new AuthenticationFailureHandler();
-    LoginConfigurer loginConfigurer = new FormLoginConfig(authenticationSuccessHandler, authenticationFailureHandler);
-    return loginConfigurer;
-  }
+        QuartzManagerHttpSecurity.from(http).withLoginConfigurer(loginConfigurer(), logoutConfigurer()) //
+        .login(LOGIN_PATH, authenticationManager()).logout(LOGOUT_PATH);
 
-  @Bean
-  public JwtAuthenticationSuccessHandler jwtAuthenticationSuccessHandler() {
-    JwtTokenHelper jwtTokenHelper = jwtTokenHelper();
-    JwtAuthenticationSuccessHandler jwtAuthenticationSuccessHandler = new JwtAuthenticationSuccessHandlerImpl(contextPath, jwtSecurityProps, jwtTokenHelper, objectMapper);
-    return jwtAuthenticationSuccessHandler;
-  }
+        // temporary disabled csfr
+        //    http.csrf().ignoringAntMatchers("/api/login", "/api/signup") //
+        //    .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()) //
+    }
 
-  @Bean
-  public JwtTokenAuthenticationFilter jwtAuthenticationTokenFilter() throws Exception {
-    return new JwtTokenAuthenticationFilter(jwtTokenHelper(), userDetailsService);
-  }
+    @Override
+    public void configure(WebSecurity web) throws Exception {
+        web.ignoring()//
+        .antMatchers(HttpMethod.GET, PATTERNS_SWAGGER_UI) //
+        .antMatchers(HttpMethod.GET,"/css/**", "/js/**", "/img/**", "/lib/**");
+    }
 
-  @Bean
-  public JwtTokenHelper jwtTokenHelper() {
-    return new JwtTokenHelper(APP_NAME, jwtSecurityProps);
-  }
+    private void configureInMemoryAuthentication(AuthenticationManagerBuilder authenticationManagerBuilder) throws Exception {
+        PasswordEncoder encoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
+        if(inMemoryAccountProps.isEnabled() && inMemoryAccountProps.getUsers() != null && !inMemoryAccountProps.getUsers().isEmpty()) {
+            InMemoryUserDetailsManagerConfigurer<AuthenticationManagerBuilder> inMemoryAuth = authenticationManagerBuilder.inMemoryAuthentication();
+            inMemoryAccountProps.getUsers()
+            .forEach(u -> inMemoryAuth
+                    .withUser(u.getName())
+                    .password(encoder.encode(u.getPassword()))
+                    .roles(u.getRoles().toArray(new String[0])));
+        }
+    }
 
-  @Bean
-  public LoginConfigurer loginConfigurer() {
-    if(BooleanUtils.isTrue(userpwdFilterEnabled))
-      return userpwdFilterLoginConfigurer();
-    if(BooleanUtils.isNotFalse(formLoginEnabled))
-      return formLoginConfigurer();
-    throw new RuntimeException("No login configurer enabled!");
-  }
+    @Bean
+    CorsConfigurationSource corsConfigurationSource() {
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", new CorsConfiguration().applyPermitDefaultValues());
+        return source;
+    }
 
-  @Bean
-  public LogoutSuccess logoutConfigurer() {
-    return new LogoutSuccess(objectMapper);
-  }
+    @Bean
+    public LoginConfigurer formLoginConfigurer() {
+        JwtAuthenticationSuccessHandler jwtAuthenticationSuccessHandler = jwtAuthenticationSuccessHandler();
+        AuthenticationSuccessHandler authenticationSuccessHandler = new AuthenticationSuccessHandler(jwtAuthenticationSuccessHandler);
+        AuthenticationFailureHandler authenticationFailureHandler = new AuthenticationFailureHandler();
+        LoginConfigurer loginConfigurer = new FormLoginConfig(authenticationSuccessHandler, authenticationFailureHandler);
+        return loginConfigurer;
+    }
 
-  @Bean
-  public AuthenticationEntryPoint restAuthEntryPoint() {
-    return new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED);
-  }
+    @Bean
+    public JwtAuthenticationSuccessHandler jwtAuthenticationSuccessHandler() {
+        JwtTokenHelper jwtTokenHelper = jwtTokenHelper();
+        JwtAuthenticationSuccessHandler jwtAuthenticationSuccessHandler = new JwtAuthenticationSuccessHandlerImpl(contextPath, jwtSecurityProps, jwtTokenHelper, objectMapper);
+        return jwtAuthenticationSuccessHandler;
+    }
 
-  @Bean
-  @Override
-  public UserDetailsService userDetailsServiceBean() throws Exception {
-    return super.userDetailsServiceBean();
-  }
+    @Bean
+    public JwtTokenAuthenticationFilter jwtAuthenticationTokenFilter() throws Exception {
+        return new JwtTokenAuthenticationFilter(jwtTokenHelper(), userDetailsService);
+    }
 
-  @Bean
-  public LoginConfigurer userpwdFilterLoginConfigurer() {
-    LoginConfigurer loginConfigurer = new JwtUsernamePasswordFiterLoginConfig(jwtAuthenticationSuccessHandler());
-    return loginConfigurer;
-  }
+    @Bean
+    public JwtTokenHelper jwtTokenHelper() {
+        return new JwtTokenHelper(APP_NAME, jwtSecurityProps);
+    }
 
-  // @Bean
-  //  public PasswordEncoder passwordEncoder() {
-  //    return new BCryptPasswordEncoder();
-  //  }
+    @Bean
+    public LoginConfigurer loginConfigurer() {
+        if(BooleanUtils.isTrue(userpwdFilterEnabled))
+            return userpwdFilterLoginConfigurer();
+        if(BooleanUtils.isNotFalse(formLoginEnabled))
+            return formLoginConfigurer();
+        throw new RuntimeException("No login configurer enabled!");
+    }
+
+    @Bean
+    public LogoutSuccess logoutConfigurer() {
+        return new LogoutSuccess(objectMapper);
+    }
+
+    @Bean
+    public AuthenticationEntryPoint restAuthEntryPoint() {
+        return new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED);
+    }
+
+    @Bean
+    @Override
+    public UserDetailsService userDetailsServiceBean() throws Exception {
+        return super.userDetailsServiceBean();
+    }
+
+    @Bean
+    public LoginConfigurer userpwdFilterLoginConfigurer() {
+        LoginConfigurer loginConfigurer = new JwtUsernamePasswordFiterLoginConfig(jwtAuthenticationSuccessHandler());
+        return loginConfigurer;
+    }
+
+    // @Bean
+    //  public PasswordEncoder passwordEncoder() {
+    //    return new BCryptPasswordEncoder();
+    //  }
 
 }
