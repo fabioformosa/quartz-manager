@@ -20,8 +20,8 @@ public class WebsocketConfig extends AbstractWebSocketMessageBrokerConfigurer {
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        registry.addEndpoint("/logs").setAllowedOrigins("/**").withSockJS();
-        registry.addEndpoint("/progress").setAllowedOrigins("/**").withSockJS();
+        registry.addEndpoint("/quartz-manager/logs").setAllowedOrigins("/**").withSockJS();
+        registry.addEndpoint("/quartz-manager/progress").setAllowedOrigins("/**").withSockJS();
     }
 
 }

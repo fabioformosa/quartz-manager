@@ -1,6 +1,6 @@
 server:
   servlet:
-    context-path: /quartz-manager
+    context-path: /
     session.timeout : 28800
   port: 8080
 
