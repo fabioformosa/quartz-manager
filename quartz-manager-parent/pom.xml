@@ -18,6 +18,7 @@
   <modules>
     <module>quartz-manager-api</module>
     <module>quartz-manager-web</module>
+    <module>quartz-manager-fe-builder</module>
   </modules>
 
   <dependencyManagement>
