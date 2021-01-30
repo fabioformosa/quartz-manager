@@ -17,8 +17,8 @@
 
   <modules>
     <module>quartz-manager-api</module>
-    <module>quartz-manager-web</module>
     <module>quartz-manager-ui-webjar</module>
+    <module>quartz-manager-web-showcase</module>
   </modules>
 
   <dependencyManagement>

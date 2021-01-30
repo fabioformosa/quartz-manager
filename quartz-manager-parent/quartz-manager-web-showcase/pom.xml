@@ -9,12 +9,12 @@
       <version>2.2.2-SNAPSHOT</version>
     </parent>
 
-	<artifactId>quartz-manager-web</artifactId>
+	<artifactId>quartz-manager-web-showcase</artifactId>
 	
     <packaging>war</packaging>
 
-	<name>Quartz Manager Web</name>
-	<description>A webapp that imports Quartz Manager API lib</description>
+	<name>Quartz Manager Web Showcase</name>
+	<description>A webapp that imports Quartz Manager API lib and the frontend webjar</description>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -29,11 +29,10 @@
           <artifactId>quartz-manager-api</artifactId>
         </dependency>
         
-        <!-- disabled to test frontend locally using the webpack dev server -->
-<!--         <dependency> -->
-<!--           <groupId>it.fabioformosa.quartz-manager</groupId> -->
-<!--           <artifactId>quartz-manager-ui-webjar</artifactId> -->
-<!--         </dependency> -->
+        <dependency>
+          <groupId>it.fabioformosa.quartz-manager</groupId>
+          <artifactId>quartz-manager-ui-webjar</artifactId>
+        </dependency>
   
         <!-- SPRING -->
 		<dependency>
