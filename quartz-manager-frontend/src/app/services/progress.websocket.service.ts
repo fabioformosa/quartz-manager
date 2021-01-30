@@ -1,12 +1,12 @@
-import { Injectable, OnInit } from '@angular/core';
-import { WebsocketService, ApiService } from '.';
+import { Injectable } from '@angular/core';
+import { WebsocketService, ApiService, getBaseUrl } from '.';
 import { SocketOption } from '../model/SocketOption.model';
 
 @Injectable()
 export class ProgressWebsocketService extends WebsocketService {
 
     constructor(private apiService: ApiService){
-        super(new SocketOption('/quartz-manager/progress', '/topic/progress', apiService.getToken))
+        super(new SocketOption(getBaseUrl() + '/quartz-manager/progress', '/topic/progress', apiService.getToken))
     }
 
 }

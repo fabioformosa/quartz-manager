@@ -7,10 +7,10 @@
         <version>2.2.2-SNAPSHOT</version>
 	</parent>
   
-	<artifactId>quartz-manager-fe-builder</artifactId>
+	<artifactId>quartz-manager-ui-webjar</artifactId>
   
-	<name>Quartz Manager FE Builder</name>
-	<description>Builder for frontend</description>
+	<name>Quartz Manager UI webjar</name>
+	<description>webjar builder for quartz-manager frontend</description>
   
 	<url>https://github.com/fabioformosa/quartz-manager</url>
 	<properties>

@@ -1,9 +1,30 @@
 import { Injectable } from '@angular/core';
+import { environment } from '../../environments/environment';
+
+
+const WEBJAR_PATH = '/quartz-manager-ui/';
+
+export function getHtmlBaseUrl(){
+    const baseUrl = getBaseUrl() || '/';
+    return environment.production ? getBaseUrl() + WEBJAR_PATH: '/';
+  }
+
+export function getBaseUrl(){
+    if(environment.production){
+        let contextPath: string = window.location.pathname.split('/')[1] || '';
+        if(contextPath && ('/' + contextPath + '/') === WEBJAR_PATH)
+            return '';
+        if(contextPath)
+          contextPath = '/' + contextPath;
+       return contextPath;
+     }
+     return '';
+}
 
 @Injectable()
 export class ConfigService {
 
-  private _api_url = '/quartz-manager/api'
+  private _api_url = getBaseUrl() + '/quartz-manager/api'
 
   private _refresh_token_url = this._api_url + '/refresh';
 
