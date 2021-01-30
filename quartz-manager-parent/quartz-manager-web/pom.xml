@@ -28,6 +28,12 @@
           <groupId>it.fabioformosa.quartz-manager</groupId>
           <artifactId>quartz-manager-api</artifactId>
         </dependency>
+        
+        <!-- disabled to test frontend locally using the webpack dev server -->
+<!--         <dependency> -->
+<!--           <groupId>it.fabioformosa.quartz-manager</groupId> -->
+<!--           <artifactId>quartz-manager-ui-webjar</artifactId> -->
+<!--         </dependency> -->
   
         <!-- SPRING -->
 		<dependency>
