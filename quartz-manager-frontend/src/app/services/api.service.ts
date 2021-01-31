@@ -53,9 +53,6 @@ export class ApiService {
     if (args) 
       options['params'] = serialize(args);
 
-    // if(this.jwtToken)
-    //   options.headers = options.headers.set('Authorization', `Bearer ${this.jwtToken}`);
-
     return this.http.get(path, options)
       .pipe(catchError(this.checkError.bind(this)));
   }
@@ -77,9 +74,6 @@ export class ApiService {
       headers: customHeaders || this.headers,
       withCredentials: true
     }    
-
-    // if(this.jwtToken)
-    //   options.headers = options.headers.append('Authorization', `Bearer ${this.jwtToken}`);
 
     const req = new HttpRequest(method, path, body, options);
 
