@@ -24,14 +24,17 @@ The project `quartz-manager-parent/quartz-manager-web` is an example of how-to:
 
 ## PROJECT STRUCTURE
 * **quartz-parent/quartz-manager-api** is the library that can be imported in webapp to have the quartz-manager API.
-* **quartz-parent/quartz-manager-web** is an example of webapp that imports quartz-manager-api. It adds a secure layer and a custom job to be scheduled.
+* **quartz-parent/quartz-manager-webjar** is a maven module to build and package the angular frontend in a webjar.
+* **quartz-parent/quartz-manager-security** is ther library that can be imported in a webapp to have a security layer (login) over the quartz-manager API.
+* **quartz-parent/quartz-manager-web-showcase** is an example of webapp that imports quartz-manager-api. Useful to develop the frontend started locally with the webpack dev server.
 * **quartz-frontend** is the angular app that interacts with the Quartz Manager API.
 
 Next steps in the roadmap are:
-* to simplify the customization of the job through plugins
-* to add CI/CD pipeline to ease the deploy pulling a docker container
-* to add a complete setup UI panel for quartz, in term of cronjobs and multiple jobs
-* to add a persistent layer to save all job logs.
+* to add a persistent layer to save all job setup.
+* to add a complete setup UI panel for quartz, in term of cronjobs and multiple jobs.
+* to add CI/CD pipeline to ease the deploy pulling a docker container.
+* Enabling adapters for integrations: kafka, etc.
+
 
 ## QUICK START
 **[requirements]** Make sure you have installed
