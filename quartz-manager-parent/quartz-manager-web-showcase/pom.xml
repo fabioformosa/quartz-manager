@@ -28,11 +28,14 @@
           <groupId>it.fabioformosa.quartz-manager</groupId>
           <artifactId>quartz-manager-api</artifactId>
         </dependency>
-        
-<!--         <dependency> -->
-<!--           <groupId>it.fabioformosa.quartz-manager</groupId> -->
-<!--           <artifactId>quartz-manager-ui-webjar</artifactId> -->
-<!--         </dependency> -->
+        <dependency>
+          <groupId>it.fabioformosa.quartz-manager</groupId>
+          <artifactId>quartz-manager-ui-webjar</artifactId>
+        </dependency>
+        <dependency>
+          <groupId>it.fabioformosa.quartz-manager</groupId>
+          <artifactId>quartz-manager-security</artifactId>
+        </dependency>
   
         <!-- SPRING -->
 		<dependency>
