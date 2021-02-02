@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>it.fabioformosa.quartz-manager</groupId>
+		<artifactId>quartz-manager-parent</artifactId>
+        <version>2.2.2-SNAPSHOT</version>
+	</parent>
+  
+	<artifactId>quartz-manager-ui-webjar</artifactId>
+  
+	<name>Quartz Manager UI webjar</name>
+	<description>webjar builder for quartz-manager frontend</description>
+  
+	<url>https://github.com/fabioformosa/quartz-manager</url>
+	<properties>
+		<main.basedir>${basedir}/../..</main.basedir>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <java.version>1.8</java.version>
+        <frontend.folderName>quartz-manager-frontend</frontend.folderName>
+        <node.version>v10.16.3</node.version>
+        <npm.version>6.9.0</npm.version>
+	</properties>
+  
+	<dependencies>
+	</dependencies>
+  
+   <profiles>
+      <profile>
+        <id>build-webjar</id>
+        <build>
+          <plugins>
+          
+            <!-- STEP1: create a copy of the frontend sources from frontend project to this frontend builder project -->
+            <plugin>
+              <groupId>org.apache.maven.plugins</groupId>
+              <artifactId>maven-resources-plugin</artifactId>
+              <version>2.6</version>
+              <executions>
+                <execution>
+                  <id>copy-resources</id>
+                  <phase>generate-resources</phase>
+                  <goals>
+                    <goal>copy-resources</goal>
+                  </goals>
+                  <configuration>
+                    <outputDirectory>${basedir}/target/tmp</outputDirectory>
+                    <resources>
+                      <resource>
+                        <directory>../../${frontend.folderName}</directory>
+                        <excludes>
+                          <exclude>static/**</exclude>
+                          <exclude>dist/**</exclude>
+                          <exclude>node_modules/**</exclude>
+                        </excludes>
+                      </resource>
+                    </resources>
+                  </configuration>
+                </execution>
+              </executions>
+            </plugin>
+            
+            <!-- STEP2: download npm, execute npm install, execute npm run build -->
+            <plugin>
+              <groupId>com.github.eirslett</groupId>
+              <artifactId>frontend-maven-plugin</artifactId>
+              <version>1.11.0</version>
+              <configuration>
+                <workingDirectory>target/tmp</workingDirectory>
+              </configuration>
+              <executions>
+                
+                <execution>
+                  <id>install node and npm</id>
+                  <goals>
+                    <goal>install-node-and-npm</goal>
+                  </goals>
+                  <phase>generate-resources</phase>
+                  <configuration>
+                    <nodeVersion>${node.version}</nodeVersion>
+                    <npmVersion>${npm.version}</npmVersion>
+                  </configuration>
+                </execution>
+                
+                <execution>
+                  <id>npm install</id>
+                  <goals>
+                    <goal>npm</goal>
+                  </goals>
+                  <phase>process-resources</phase>
+                  <configuration>
+                    <arguments>install</arguments>
+                  </configuration>
+                </execution>
+                
+                <execution>
+                  <id>npm run build</id>
+                  <goals>
+                    <goal>npm</goal>
+                  </goals>
+                  <phase>process-resources</phase>
+                  <configuration>
+                    <arguments>run build</arguments>
+                  </configuration>
+                </execution>
+                
+              </executions>
+            </plugin>
+            
+            <!-- STEP3: move built artifacts into the META-INF folder -->
+            <plugin>
+              <artifactId>maven-antrun-plugin</artifactId>
+              <version>1.8</version>
+              <executions>
+                <execution>
+                  <id>clean build files</id>
+                  <phase>process-resources</phase>
+                  <configuration>
+                    <target>
+                      <delete dir="${project.build.outputDirectory}/META-INF/resources/quartz-manager-ui"/>
+                      <move todir="${project.build.outputDirectory}/META-INF/resources/quartz-manager-ui">
+                        <fileset dir="${project.build.directory}/tmp/dist"/>
+                      </move>
+                      <delete dir="${project.build.directory}/tmp"/>
+                    </target>
+                  </configuration>
+                  <goals>
+                    <goal>run</goal>
+                  </goals>
+                </execution>
+              </executions>
+            </plugin>
+          </plugins>
+        </build>
+      </profile>
+   </profiles>
+  
+</project>

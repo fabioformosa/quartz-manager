@@ -45,14 +45,18 @@ import {
   SchedulerService,
   ConfigService,
   ProgressWebsocketService,
-  LogsWebsocketService
+  LogsWebsocketService,
+  getHtmlBaseUrl
 } from './services';
 import { ChangePasswordComponent } from './views/change-password/change-password.component';
 import { ForbiddenComponent } from './views/forbidden/forbidden.component';
+import { APP_BASE_HREF } from '@angular/common';
+import { environment } from '../environments/environment';
 
 export function initUserFactory(userService: UserService) {
     return () => userService.jsessionInitUser();
 }
+
 
 // const stompConfig: StompConfig = {
 //   // Which server?
@@ -131,6 +135,16 @@ export function jwtOptionsFactory(apiService: ApiService) {
     FlexLayoutModule
   ],
   providers: [
+    {
+      provide: APP_BASE_HREF,
+      useValue: getHtmlBaseUrl()
+    },
+    {
+      'provide': APP_INITIALIZER,
+      'useFactory': initUserFactory,
+      'deps': [UserService],
+      'multi': true
+    },
     LoginGuard,
     GuestGuard,
     AdminGuard,
@@ -141,13 +155,7 @@ export function jwtOptionsFactory(apiService: ApiService) {
     ApiService,
     UserService,
     ConfigService,
-    MatIconRegistry,
-    {
-      'provide': APP_INITIALIZER,
-      'useFactory': initUserFactory,
-      'deps': [UserService],
-      'multi': true
-    }
+    MatIconRegistry
     // StompService,
     // ServerSocket
     // {

@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { getBaseUrl } from '.';
 import { ApiService } from './api.service';
 
 @Injectable()
@@ -9,30 +10,30 @@ export class SchedulerService {
   ) { }
 
   startScheduler = () => {
-    return this.apiService.get('/quartz-manager/scheduler/run')
+    return this.apiService.get(getBaseUrl() + '/quartz-manager/scheduler/run')
   }
   
   stopScheduler = () => {
-    return this.apiService.get('/quartz-manager/scheduler/stop')
+    return this.apiService.get(getBaseUrl() + '/quartz-manager/scheduler/stop')
   }
   
   pauseScheduler = () => {
-    return this.apiService.get('/quartz-manager/scheduler/pause')
+    return this.apiService.get(getBaseUrl() + '/quartz-manager/scheduler/pause')
   }
   
   resumeScheduler = () => {
-    return this.apiService.get('/quartz-manager/scheduler/resume')
+    return this.apiService.get(getBaseUrl() + '/quartz-manager/scheduler/resume')
   }
 
   getStatus = () => {
-    return this.apiService.get('/quartz-manager/scheduler')
+    return this.apiService.get(getBaseUrl() + '/quartz-manager/scheduler')
   }
 
   getConfig = () => {
-    return this.apiService.get('/quartz-manager/scheduler/config')
+    return this.apiService.get(getBaseUrl() + '/quartz-manager/scheduler/config')
   }
 
   updateConfig = (config: Object) => {
-    return this.apiService.post('/quartz-manager/scheduler/config', config)
+    return this.apiService.post(getBaseUrl() + '/quartz-manager/scheduler/config', config)
   }
 }
