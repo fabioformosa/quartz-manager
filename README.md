@@ -16,14 +16,15 @@ Through this webapp you can launch and control your scheduled job. The UI Consol
 Open the [Project Roadmap](https://github.com/fabioformosa/quartz-manager/projects) to take a look at the plan of Quartz Manager.  
 Currently this project might be useful to look how to import Quartz Library in a spring boot application. For this purpose, browse the folder `quartz-manager-parent/quartz-manager-api`.  
 We're just working to create a library, from project `quartz-manager-parent/quartz-manager-api`, to be imported in your spring boot where you have your job to be scheduled.  
-The project [Quartz-Manager Demo](https://github.com/fabioformosa/quartz-manager-demo) is an example of how-to:
- * import the quartz-manager-api library
+
+Take a loot to the project [Quartz-Manager Demo](https://github.com/fabioformosa/quartz-manager-demo), it is an example of how-to:
+ * import the quartz-manager-api library in your webapp
  * include the quartz-manager frontend (angular based) through a webjar
- * set the application.yml
- * add secure layer to allow the API only to logged users
+ * set properties into the application.yml
+ * add a secure layer to allow the API only to logged users
  * schedule a custom job (a dummy `hello world`)
  
- **NB**: In few days, we'll release the library jar of quartz-manager into the maven central repo.
+ **NB: In few days, we'll release the library jar of quartz-manager into the maven central repo.**
 
 Next steps in the roadmap are:
 * to add a persistent layer to save all job setup.
