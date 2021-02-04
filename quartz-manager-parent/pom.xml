@@ -9,7 +9,7 @@
 
   <groupId>it.fabioformosa.quartz-manager</groupId>
   <artifactId>quartz-manager-parent</artifactId>
-  <version>3.0.0</version>
+  <version>3.0.1-SNAPSHOT</version>
 
   <packaging>pom</packaging>
   
@@ -29,7 +29,7 @@
     <connection>scm:git:git://github.com/fabioformosa/quartz-manager.git</connection>
     <developerConnection>scm:git:git@github.com:fabioformosa/quartz-manager.git</developerConnection>
     <url>https://github.com/fabioformosa/quartz-manager</url>
-    <tag>quartz-manager-parent-3.0.0</tag>
+    <tag>HEAD</tag>
   </scm>
   
   <developers>
@@ -51,17 +51,17 @@
       <dependency>
         <groupId>it.fabioformosa.quartz-manager</groupId>
         <artifactId>quartz-manager-api</artifactId>
-        <version>3.0.0</version>
+        <version>3.0.1-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>it.fabioformosa.quartz-manager</groupId>
         <artifactId>quartz-manager-security</artifactId>
-        <version>3.0.0</version>
+        <version>3.0.1-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>it.fabioformosa.quartz-manager</groupId>
         <artifactId>quartz-manager-ui-webjar</artifactId>
-        <version>3.0.0</version>
+        <version>3.0.1-SNAPSHOT</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
