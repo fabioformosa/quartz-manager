@@ -1,6 +1,4 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
@@ -11,10 +9,36 @@
 
   <groupId>it.fabioformosa.quartz-manager</groupId>
   <artifactId>quartz-manager-parent</artifactId>
-  <version>2.2.2-SNAPSHOT</version>
+  <version>3.0.1-SNAPSHOT</version>
 
   <packaging>pom</packaging>
-
+  
+  <name>Quartz Manager</name>
+  <description>API and UI Manager for Quartz Scheduler</description>
+  
+  <url>https://github.com/fabioformosa/quartz-manager</url>
+  
+  <licenses>
+    <license>
+      <name>Apache License 2.0</name>
+      <url>https://github.com/fabioformosa/quartz-manager/blob/master/LICENSE</url>
+    </license>
+  </licenses>
+  
+  <scm>
+    <connection>scm:git:git://github.com/fabioformosa/quartz-manager.git</connection>
+    <developerConnection>scm:git:git@github.com:fabioformosa/quartz-manager.git</developerConnection>
+    <url>https://github.com/fabioformosa/quartz-manager</url>
+    <tag>HEAD</tag>
+  </scm>
+  
+  <developers>
+    <developer>
+      <name>Fabio Formosa</name>
+      <url>https://github.com/fabioformosa</url>
+    </developer>
+  </developers>
+  
   <modules>
     <module>quartz-manager-api</module>
     <module>quartz-manager-ui-webjar</module>
@@ -27,19 +51,134 @@
       <dependency>
         <groupId>it.fabioformosa.quartz-manager</groupId>
         <artifactId>quartz-manager-api</artifactId>
-        <version>2.2.2-SNAPSHOT</version>
+        <version>3.0.1-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>it.fabioformosa.quartz-manager</groupId>
         <artifactId>quartz-manager-security</artifactId>
-        <version>2.2.2-SNAPSHOT</version>
+        <version>3.0.1-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>it.fabioformosa.quartz-manager</groupId>
         <artifactId>quartz-manager-ui-webjar</artifactId>
-        <version>2.2.2-SNAPSHOT</version>
+        <version>3.0.1-SNAPSHOT</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
+  
+  <distributionManagement>
+    <snapshotRepository>
+    <id>ossrh</id>
+    <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+    </snapshotRepository>
+    <repository>
+    <id>ossrh</id>
+    <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/
+    </url>
+    </repository>
+  </distributionManagement>
+  
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.8.0</version>
+        <configuration>
+          <source>1.8</source>
+          <target>1.8</target>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-source-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>attach-sources</id>
+            <goals>
+              <goal>jar</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-release-plugin</artifactId>
+        <version>2.5.3</version>
+        <configuration>
+          <preparationGoals>clean</preparationGoals>
+          <releaseProfiles>build-webjar</releaseProfiles>
+          <localCheckout>true</localCheckout>
+          <pushChanges>false</pushChanges>
+          <mavenExecutorId>forked-path</mavenExecutorId>
+          <arguments>-Dgpg.passphrase=${gpg.passphrase}</arguments>
+        </configuration>
+        <dependencies>
+          <dependency>
+          <groupId>org.apache.maven.scm</groupId>
+          <artifactId>maven-scm-provider-gitexe</artifactId>
+          <version>1.9.5</version>
+          </dependency>
+        </dependencies>
+      </plugin>
+      <plugin>
+        <groupId>org.sonatype.plugins</groupId>
+        <artifactId>nexus-staging-maven-plugin</artifactId>
+        <version>1.6.7</version>
+        <extensions>true</extensions>
+        <configuration>
+        <serverId>ossrh</serverId>
+        <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+        <autoReleaseAfterClose>true</autoReleaseAfterClose>
+        </configuration>
+      </plugin>
+      <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-javadoc-plugin</artifactId>
+          <executions>
+            <execution>
+              <id>attach-javadocs</id>
+              <goals>
+                <goal>jar</goal>
+              </goals>
+              <configuration>
+                    <doclint>none</doclint>
+                </configuration>
+            </execution>
+          </executions>
+        </plugin>
+    </plugins>
+  </build>
+  
+  <profiles>
+    <!-- GPG Signature on release -->
+    <profile>
+      <id>release-sign-artifacts</id>
+      <activation>
+      <property>
+      <name>performRelease</name>
+      <value>true</value>
+      </property>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-gpg-plugin</artifactId>
+          <version>1.6</version>
+          <executions>
+          <execution>
+          <id>sign-artifacts</id>
+          <phase>verify</phase>
+          <goals>
+          <goal>sign</goal>
+          </goals>
+          </execution>
+          </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 
 </project>
