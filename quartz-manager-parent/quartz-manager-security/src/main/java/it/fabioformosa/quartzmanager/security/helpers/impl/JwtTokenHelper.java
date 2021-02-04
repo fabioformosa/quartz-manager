@@ -33,15 +33,12 @@ public class JwtTokenHelper {
         return Base64.getEncoder().encodeToString(secretKey.getBytes(StandardCharsets.UTF_8));
     }
 
-    //  @Value("${app.name}")
     private final String appName;
 
-    //  @Autowired
     private final JwtSecurityProperties jwtSecurityProps;
 
     private SignatureAlgorithm SIGNATURE_ALGORITHM = SignatureAlgorithm.HS512;
 
-    //  @Autowired
     public JwtTokenHelper(String appName, JwtSecurityProperties jwtSecurityProps) {
         super();
         this.appName = appName;

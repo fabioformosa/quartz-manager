@@ -15,43 +15,42 @@ import it.fabioformosa.quartzmanager.security.helpers.LoginConfigurer;
  */
 public class QuartzManagerHttpSecurity extends SecurityConfigurerAdapter<DefaultSecurityFilterChain, HttpSecurity> {
 
-  public static QuartzManagerHttpSecurity from(HttpSecurity httpSecurity){
-    QuartzManagerHttpSecurity newInstance = new QuartzManagerHttpSecurity(httpSecurity);
-    newInstance.setBuilder(httpSecurity);
-    return newInstance;
-  }
+    public static QuartzManagerHttpSecurity from(HttpSecurity httpSecurity){
+        QuartzManagerHttpSecurity newInstance = new QuartzManagerHttpSecurity(httpSecurity);
+        newInstance.setBuilder(httpSecurity);
+        return newInstance;
+    }
 
-  private HttpSecurity httpSecurity;
+    private HttpSecurity httpSecurity;
 
-  private LoginConfigurer loginConfigurer;
+    private LoginConfigurer loginConfigurer;
 
-  private LogoutSuccess logoutSuccess;
+    private LogoutSuccess logoutSuccess;
 
-  public QuartzManagerHttpSecurity(HttpSecurity httpSecurity) {
-    this.httpSecurity = httpSecurity;
-    //    applicationContext = httpSecurity.getSharedObject(ApplicationContext.class);
-  }
+    public QuartzManagerHttpSecurity(HttpSecurity httpSecurity) {
+        this.httpSecurity = httpSecurity;
+    }
 
-  public QuartzManagerHttpSecurity login(String loginPath, AuthenticationManager authenticationManager) throws Exception {
-    if(loginConfigurer == null || logoutSuccess == null)
-      throw new IllegalStateException("QuartzManagerHttpSecurity requires to be set loginConfigurer and logoutSuccess!");
-    httpSecurity = loginConfigurer.login(loginPath, httpSecurity, authenticationManager);
-    return this;
-  }
+    public QuartzManagerHttpSecurity login(String loginPath, AuthenticationManager authenticationManager) throws Exception {
+        if(loginConfigurer == null || logoutSuccess == null)
+            throw new IllegalStateException("QuartzManagerHttpSecurity requires to be set loginConfigurer and logoutSuccess!");
+        httpSecurity = loginConfigurer.login(loginPath, httpSecurity, authenticationManager);
+        return this;
+    }
 
 
-  public LogoutConfigurer<HttpSecurity> logout(String logoutPath) throws Exception {
-    LogoutConfigurer<HttpSecurity> logoutConfigurer = httpSecurity.logout().logoutRequestMatcher(new AntPathRequestMatcher(logoutPath))
-        .logoutSuccessHandler(logoutSuccess);
-    String cookie = loginConfigurer.cookieMustBeDeletedAtLogout();
-    if(cookie != null)
-      logoutConfigurer.deleteCookies(cookie);
-    return logoutConfigurer;
-  }
+    public LogoutConfigurer<HttpSecurity> logout(String logoutPath) throws Exception {
+        LogoutConfigurer<HttpSecurity> logoutConfigurer = httpSecurity.logout().logoutRequestMatcher(new AntPathRequestMatcher(logoutPath))
+                .logoutSuccessHandler(logoutSuccess);
+        String cookie = loginConfigurer.cookieMustBeDeletedAtLogout();
+        if(cookie != null)
+            logoutConfigurer.deleteCookies(cookie);
+        return logoutConfigurer;
+    }
 
-  public QuartzManagerHttpSecurity withLoginConfigurer(LoginConfigurer loginConfigurer, LogoutSuccess logoutSuccess) {
-    this.loginConfigurer = loginConfigurer;
-    this.logoutSuccess = logoutSuccess;
-    return this;
-  }
+    public QuartzManagerHttpSecurity withLoginConfigurer(LoginConfigurer loginConfigurer, LogoutSuccess logoutSuccess) {
+        this.loginConfigurer = loginConfigurer;
+        this.logoutSuccess = logoutSuccess;
+        return this;
+    }
 }
