@@ -1,6 +1,4 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
@@ -11,7 +9,7 @@
 
   <groupId>it.fabioformosa.quartz-manager</groupId>
   <artifactId>quartz-manager-parent</artifactId>
-  <version>3.0.0-SNAPSHOT</version>
+  <version>3.0.0</version>
 
   <packaging>pom</packaging>
   
@@ -31,7 +29,7 @@
     <connection>scm:git:git://github.com/fabioformosa/quartz-manager.git</connection>
     <developerConnection>scm:git:git@github.com:fabioformosa/quartz-manager.git</developerConnection>
     <url>https://github.com/fabioformosa/quartz-manager</url>
-    <tag>HEAD</tag>
+    <tag>quartz-manager-parent-3.0.0</tag>
   </scm>
   
   <developers>
@@ -53,17 +51,17 @@
       <dependency>
         <groupId>it.fabioformosa.quartz-manager</groupId>
         <artifactId>quartz-manager-api</artifactId>
-        <version>3.0.0-SNAPSHOT</version>
+        <version>3.0.0</version>
       </dependency>
       <dependency>
         <groupId>it.fabioformosa.quartz-manager</groupId>
         <artifactId>quartz-manager-security</artifactId>
-        <version>3.0.0-SNAPSHOT</version>
+        <version>3.0.0</version>
       </dependency>
       <dependency>
         <groupId>it.fabioformosa.quartz-manager</groupId>
         <artifactId>quartz-manager-ui-webjar</artifactId>
-        <version>3.0.0-SNAPSHOT</version>
+        <version>3.0.0</version>
       </dependency>
     </dependencies>
   </dependencyManagement>

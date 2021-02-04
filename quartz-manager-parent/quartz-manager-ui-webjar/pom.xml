@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>it.fabioformosa.quartz-manager</groupId>
 		<artifactId>quartz-manager-parent</artifactId>
-        <version>3.0.0-SNAPSHOT</version>
+        <version>3.0.0</version>
 	</parent>
   
 	<artifactId>quartz-manager-ui-webjar</artifactId>
@@ -118,11 +118,11 @@
                   <phase>process-resources</phase>
                   <configuration>
                     <target>
-                      <delete dir="${project.build.outputDirectory}/META-INF/resources/quartz-manager-ui"/>
+                      <delete dir="${project.build.outputDirectory}/META-INF/resources/quartz-manager-ui" />
                       <move todir="${project.build.outputDirectory}/META-INF/resources/quartz-manager-ui">
-                        <fileset dir="${project.build.directory}/tmp/dist"/>
+                        <fileset dir="${project.build.directory}/tmp/dist" />
                       </move>
-                      <delete dir="${project.build.directory}/tmp"/>
+                      <delete dir="${project.build.directory}/tmp" />
                     </target>
                   </configuration>
                   <goals>
