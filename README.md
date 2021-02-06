@@ -15,6 +15,9 @@ The UI Dashboard is composed by a management panel to set the quartz trigger, to
 
 ## QUICK START
 
+* Requirements
+  Java 8+
+
 * add the dependency
 
 MAVEN
@@ -83,11 +86,19 @@ quartz-manager:
   jobClass: <QUALIFIED NAME OF THE YOUR JOB CLASS>
 ```
 
-* frontend
-If you've imported the `quartz-manager-starter-ui` you can open the UI at URL:
+* REST API  
+You can access the REST API, through the swagger-ui. Open the URL:  
+[http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html)
+
+(Change the port and the contextPath accordingly with the setup of your webapp)
+
+* frontend  
+If you've imported the `quartz-manager-starter-ui` you can open the UI at URL:  
 [http://localhost:8080/quartz-manager-ui/index.html](http://localhost:8080/quartz-manager-ui/index.html)
 
-* security
+(Change the port and the contextPath accordingly with the setup of your webapp)
+
+* security  
 If you want enable a security layer and allow the access to the REST API and to the UI only to authenticated users, add the dependency:
 
 MAVEN
@@ -135,11 +146,7 @@ quartz-manager:
 
 ```
 
-
-## ROADMAP
-Open the [Project Roadmap](https://github.com/fabioformosa/quartz-manager/projects) to take a look at the plan of Quartz Manager.  
-Currently this project might be useful to look how to import Quartz Library in a spring boot application. For this purpose, browse the folder `quartz-manager-parent/quartz-manager-api`.  
-We're just working to create a library, from project `quartz-manager-parent/quartz-manager-api`, to be imported in your spring boot where you have your job to be scheduled.  
+* DEMO
 
 Take a loot to the project [Quartz-Manager Demo](https://github.com/fabioformosa/quartz-manager-demo), it is an example of how-to:
  * import the quartz-manager-api library in your webapp
@@ -147,8 +154,9 @@ Take a loot to the project [Quartz-Manager Demo](https://github.com/fabioformosa
  * set properties into the application.yml
  * add a secure layer to allow the API only to logged users
  * schedule a custom job (a dummy `hello world`)
- 
- **NB: In few days, we'll release the library jar of quartz-manager into the maven central repo.**
+
+## ROADMAP
+Open the [Project Roadmap](https://github.com/fabioformosa/quartz-manager/projects) to take a look at the plan of Quartz Manager.  
 
 Next steps in the roadmap are:
 * to add a persistent layer to save all job setup.
@@ -156,14 +164,17 @@ Next steps in the roadmap are:
 * to add CI/CD pipeline to ease the deploy pulling a docker container.
 * Enabling adapters for integrations: kafka, etc.
 
-## PROJECT STRUCTURE
-* **quartz-parent/quartz-manager-api** is the library that can be imported in webapp to have the quartz-manager API.
-* **quartz-parent/quartz-manager-webjar** is a maven module to build and package the angular frontend in a webjar.
-* **quartz-parent/quartz-manager-security** is ther library that can be imported in a webapp to have a security layer (login) over the quartz-manager API.
+
+## HOW-TO CONTRIBUTE  
+
+### PROJECT STRUCTURE
+* **quartz-parent/quartz-manager-starter-api** is the library that can be imported in webapp to have the quartz-manager API.
+* **quartz-parent/quartz-manager-starter-ui** is a maven module to build and package the angular frontend in a webjar.
+* **quartz-parent/quartz-manager-starter-security** is ther library that can be imported in a webapp to have a security layer (login) over the quartz-manager API.
 * **quartz-parent/quartz-manager-web-showcase** is an example of webapp that imports quartz-manager-api. Useful to develop the frontend started locally with the webpack dev server.
 * **quartz-frontend** is the angular app that interacts with the Quartz Manager API.
 
-## HOW-TO CONTRIBUTE
+### PROJECT DETAILS
 **[requirements]** Make sure you have installed
 * [Java 8](https://java.com/download/) or greater
 * [Maven](https://maven.apache.org/)
