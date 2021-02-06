@@ -15,7 +15,9 @@ The UI Dashboard is composed by a management panel to set the quartz trigger, to
 
 ## QUICK START
 
-##### Import Maven Dependency #####
+* add the dependency
+
+MAVEN
 
 ```
 <dependency>
@@ -30,30 +32,109 @@ The UI Dashboard is composed by a management panel to set the quartz trigger, to
   <artifactId>quartz-manager-starter-ui</artifactId>
   <version>3.0.1</version>
 </dependency>
-
-<!-- OPTIONALLY -->
-<dependency>
-  <groupId>it.fabioformosa.quartz-manager</groupId>
-  <artifactId>quartz-manager-starter-security</artifactId>
-  <version>3.0.1</version>
-</dependency>
 ```
-Import  `quartz-manager-starter-ui` if you want use the Quartz Manager API by the angular frontend.  
-Import `quartz-manager-starter-security` if your webapp doesn't have spring security enabled and if you give access to Quartz Manager API and Quartz Manager UI only to authenticated users.
 
-##### Import Gradle Dependency #####
-
+GRADLE
+  
 ```
 compile group: 'it.fabioformosa.quartz-manager', name: 'quartz-manager-starter-api', version: '3.0.1'
 
 //optionally
 compile group: 'it.fabioformosa.quartz-manager', name: 'quartz-manager-starter-ui', version: '3.0.1'
 
-//optionally
+```
+Import  `quartz-manager-starter-ui` as well, if you want use the Quartz Manager API by the angular frontend.  
+
+* add a `quartz.properties` file in the classpath (`src/main/resources`):
+
+```
+org.quartz.scheduler.instanceName=example
+org.quartz.scheduler.instanceId=AUTO
+org.quartz.threadPool.threadCount=1
+```
+
+
+* Create the job class that you want to schedule
+ 
+ ```
+ public class SampleJob extends AbstractLoggingJob {
+
+    @Override
+    public LogRecord doIt(JobExecutionContext jobExecutionContext) {
+        return new LogRecord(LogType.INFO, "Hello from QuartManagerDemo!");
+    }
+
+}
+```
+Extend the super-class `AbstractLoggingJob`
+
+
+* Enable quartz-manager adding into the application.yml:
+
+```
+quartz:
+  enabled: true
+
+job: 
+  frequency: 4000
+  repeatCount: 19
+
+quartz-manager:
+  jobClass: <QUALIFIED NAME OF THE YOUR JOB CLASS>
+```
+
+* frontend
+If you've imported the `quartz-manager-starter-ui` you can open the UI at URL:
+[http://localhost:8080/quartz-manager-ui/index.html](http://localhost:8080/quartz-manager-ui/index.html)
+
+* security
+If you want enable a security layer and allow the access to the REST API and to the UI only to authenticated users, add the dependency:
+
+MAVEN
+
+```
+<dependency>
+  <groupId>it.fabioformosa.quartz-manager</groupId>
+  <artifactId>quartz-manager-starter-security</artifactId>
+  <version>3.0.1</version>
+</dependency>
+```
+
+GRADLE
+
+```
 compile group: 'it.fabioformosa.quartz-manager', name: 'quartz-manager-starter-security', version: '3.0.1'
 ```
-Import  `quartz-manager-starter-ui` if you want use the Quartz Manager API by the angular frontend.  
-Import `quartz-manager-starter-security` if your webapp doesn't have spring security enabled and if you give access to Quartz Manager API and Quartz Manager UI only to authenticated users.
+
+and in your application.yml:
+
+```
+quartz-manager:
+  security:
+    login-model:
+      form-login-enabled: true
+      userpwd-filter-enabled : false
+    jwt:
+      enabled: true
+      secret: "PLEASE_TYPE_HERE_A_SECRET"
+      expiration-in-sec: 28800  # 8 hours
+      header-strategy:
+        enabled: false
+        header: "Authorization"
+      cookie-strategy:
+        enabled: true
+        cookie: AUTH-TOKEN
+  accounts:
+    in-memory:
+      enabled: true
+      users:
+        - name: admin
+          password: admin
+          roles:
+            - ADMIN      
+
+```
+
 
 ## ROADMAP
 Open the [Project Roadmap](https://github.com/fabioformosa/quartz-manager/projects) to take a look at the plan of Quartz Manager.  
