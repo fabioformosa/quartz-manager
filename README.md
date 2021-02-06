@@ -1,9 +1,10 @@
 [![Gitter](https://badges.gitter.im/quartz-manager/community.svg)](https://gitter.im/quartz-manager/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
 # QUARTZ MANAGER
-UI Manager for Quartz Scheduler.
+Quartz Manager is a library you can import in your spring webapp to easily enable the [Quartz Scheduler](http://www.quartz-scheduler.org/) and to control it by REST APIs or by a UI Manager Panel (angular-based). 
 
-Through this webapp you can launch and control your scheduled job. The UI Console is composed by a management panel to set trigger, start/stop scheduler and a log panel with a progress bar to display the job output. 
+Your Spring Webapp should provide the java class of the job you want schedule. Importing the Quartz Manager your project will have the REST API and (optionally) the UI to launch and control the job.
+The UI Dashboard is composed by a management panel to set the quartz trigger, to start/stop the scheduler and a log panel with a progress bar to display the job output. 
 
 ![](https://github.com/fabioformosa/quartz-manager/blob/master/quartz-manager-parent/quartz-manager-web-showcase/src/main/resources/quartz-manager-2-screenshot_800.PNG)
 
@@ -11,6 +12,48 @@ Through this webapp you can launch and control your scheduled job. The UI Consol
 * Set up the trigger into the left sidebar in terms of: daily frequency and and max occurrences.
 * Press the start button
 * The GUI manager updates the progress bar and reports all logs of your quartz job.
+
+## QUICK START
+
+##### Import Maven Dependency #####
+
+```
+<dependency>
+  <groupId>it.fabioformosa.quartz-manager</groupId>
+  <artifactId>quartz-manager-starter-api</artifactId>
+  <version>3.0.1</version>
+</dependency>
+
+<!-- OPTIONALLY -->
+<dependency>
+  <groupId>it.fabioformosa.quartz-manager</groupId>
+  <artifactId>quartz-manager-starter-ui</artifactId>
+  <version>3.0.1</version>
+</dependency>
+
+<!-- OPTIONALLY -->
+<dependency>
+  <groupId>it.fabioformosa.quartz-manager</groupId>
+  <artifactId>quartz-manager-starter-security</artifactId>
+  <version>3.0.1</version>
+</dependency>
+```
+Import  `quartz-manager-starter-ui` if you want use the Quartz Manager API by the angular frontend.  
+Import `quartz-manager-starter-security` if your webapp doesn't have spring security enabled and if you give access to Quartz Manager API and Quartz Manager UI only to authenticated users.
+
+##### Import Gradle Dependency #####
+
+```
+compile group: 'it.fabioformosa.quartz-manager', name: 'quartz-manager-starter-api', version: '3.0.1'
+
+//optionally
+compile group: 'it.fabioformosa.quartz-manager', name: 'quartz-manager-starter-ui', version: '3.0.1'
+
+//optionally
+compile group: 'it.fabioformosa.quartz-manager', name: 'quartz-manager-starter-security', version: '3.0.1'
+```
+Import  `quartz-manager-starter-ui` if you want use the Quartz Manager API by the angular frontend.  
+Import `quartz-manager-starter-security` if your webapp doesn't have spring security enabled and if you give access to Quartz Manager API and Quartz Manager UI only to authenticated users.
 
 ## ROADMAP
 Open the [Project Roadmap](https://github.com/fabioformosa/quartz-manager/projects) to take a look at the plan of Quartz Manager.  
