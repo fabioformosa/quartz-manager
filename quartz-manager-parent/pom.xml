@@ -40,9 +40,9 @@
   </developers>
   
   <modules>
-    <module>quartz-manager-api</module>
-    <module>quartz-manager-ui-webjar</module>
-    <module>quartz-manager-security</module>
+    <module>quartz-manager-starter-api</module>
+    <module>quartz-manager-starter-ui</module>
+    <module>quartz-manager-starter-security</module>
     <module>quartz-manager-web-showcase</module>
   </modules>
 
@@ -50,17 +50,17 @@
     <dependencies>
       <dependency>
         <groupId>it.fabioformosa.quartz-manager</groupId>
-        <artifactId>quartz-manager-api</artifactId>
+        <artifactId>quartz-manager-starter-api</artifactId>
         <version>3.0.1-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>it.fabioformosa.quartz-manager</groupId>
-        <artifactId>quartz-manager-security</artifactId>
+        <artifactId>quartz-manager-starter-security</artifactId>
         <version>3.0.1-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>it.fabioformosa.quartz-manager</groupId>
-        <artifactId>quartz-manager-ui-webjar</artifactId>
+        <artifactId>quartz-manager-starter-ui</artifactId>
         <version>3.0.1-SNAPSHOT</version>
       </dependency>
     </dependencies>
@@ -83,7 +83,6 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.8.0</version>
         <configuration>
           <source>1.8</source>
           <target>1.8</target>

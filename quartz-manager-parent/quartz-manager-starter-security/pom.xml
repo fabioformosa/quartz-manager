@@ -6,10 +6,10 @@
     <version>3.0.1-SNAPSHOT</version>
   </parent>
   
-  <artifactId>quartz-manager-security</artifactId>
+  <artifactId>quartz-manager-starter-security</artifactId>
   
   <name>Quartz Manager Security</name>
-  <description>Security Layer for Quartz Manager</description>
+  <description>Security Layer for Quartz Manager. Import it in your spring webapp</description>
   
   <url>https://github.com/fabioformosa/quartz-manager</url>
   <properties>
