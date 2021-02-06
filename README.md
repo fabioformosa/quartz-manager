@@ -15,10 +15,10 @@ The UI Dashboard is composed by a management panel to set the quartz trigger, to
 
 ## QUICK START
 
-* Requirements
+* **Requirements** 
   Java 8+
 
-* add the dependency
+* **add the dependency**
 
 MAVEN
 
@@ -48,7 +48,7 @@ compile group: 'it.fabioformosa.quartz-manager', name: 'quartz-manager-starter-u
 ```
 Import  `quartz-manager-starter-ui` as well, if you want use the Quartz Manager API by the angular frontend.  
 
-* add a `quartz.properties` file in the classpath (`src/main/resources`):
+* **add a `quartz.properties` file in the classpath (`src/main/resources`)**
 
 ```
 org.quartz.scheduler.instanceName=example
@@ -57,7 +57,7 @@ org.quartz.threadPool.threadCount=1
 ```
 
 
-* Create the job class that you want to schedule
+* **Create the job class that you want to schedule**
  
  ```
  public class SampleJob extends AbstractLoggingJob {
@@ -72,7 +72,7 @@ org.quartz.threadPool.threadCount=1
 Extend the super-class `AbstractLoggingJob`
 
 
-* Enable quartz-manager adding into the application.yml:
+* **Enable quartz-manager adding into the application.yml**
 
 ```
 quartz:
@@ -86,19 +86,19 @@ quartz-manager:
   jobClass: <QUALIFIED NAME OF THE YOUR JOB CLASS>
 ```
 
-* REST API  
+* **REST API**  
 You can access the REST API, through the swagger-ui. Open the URL:  
 [http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html)
 
 (Change the port and the contextPath accordingly with the setup of your webapp)
 
-* frontend  
+* **Frontend**  
 If you've imported the `quartz-manager-starter-ui` you can open the UI at URL:  
 [http://localhost:8080/quartz-manager-ui/index.html](http://localhost:8080/quartz-manager-ui/index.html)
 
 (Change the port and the contextPath accordingly with the setup of your webapp)
 
-* security  
+* **Security**
 If you want enable a security layer and allow the access to the REST API and to the UI only to authenticated users, add the dependency:
 
 MAVEN
@@ -146,7 +146,7 @@ quartz-manager:
 
 ```
 
-* DEMO
+* **DEMO**
 
 Take a loot to the project [Quartz-Manager Demo](https://github.com/fabioformosa/quartz-manager-demo), it is an example of how-to:
  * import the quartz-manager-api library in your webapp
@@ -189,7 +189,7 @@ git clone https://github.com/fabioformosa/quartz-manager.git
 # START QUARTZ-MANAGER-WEB
 cd quartz-manager/quartz-parent
 mvn install
-cd quartz-manager/quartz-parent/quartz-manager-web
+cd quartz-manager/quartz-parent/quartz-manager-web-showcase
 mvn spring-boot:run
 
 # START QUARTZ-MANAGER-FRONTEND
@@ -206,7 +206,7 @@ If you are not confident with maven CLI, you can start it by your IDE. For more 
 
 
 ## HOW TO RUN YOUR SCHEDULED JOB
-By default, quartz-manager-web executes the dummy job that logs "hello world!".
+By default, `quartz-manager-web-showcase` executes the dummy job that logs "hello world!".
 Replace the dummy job (class: `it.fabioformosa.quartzmanager.jobs.SampleJob`) with yours. Follow these steps:
 
 1. Extend the super class `it.fabioformosa.quartzmanager.jobs.AbstractLoggingJob`
