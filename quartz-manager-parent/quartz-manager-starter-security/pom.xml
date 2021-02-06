@@ -3,12 +3,12 @@
   <parent>
     <groupId>it.fabioformosa.quartz-manager</groupId>
     <artifactId>quartz-manager-parent</artifactId>
-    <version>3.0.1-SNAPSHOT</version>
+    <version>3.0.1</version>
   </parent>
   
   <artifactId>quartz-manager-starter-security</artifactId>
   
-  <name>Quartz Manager Security</name>
+  <name>Quartz Manager Starter Security</name>
   <description>Security Layer for Quartz Manager. Import it in your spring webapp</description>
   
   <url>https://github.com/fabioformosa/quartz-manager</url>
