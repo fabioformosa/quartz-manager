@@ -4,13 +4,13 @@
 	<parent>
 		<groupId>it.fabioformosa.quartz-manager</groupId>
 		<artifactId>quartz-manager-parent</artifactId>
-        <version>3.0.1-SNAPSHOT</version>
+        <version>3.0.2-SNAPSHOT</version>
 	</parent>
   
-	<artifactId>quartz-manager-api</artifactId>
+	<artifactId>quartz-manager-starter-api</artifactId>
   
-	<name>Quartz Manager API</name>
-	<description>A library to manage your scheduled job by API</description>
+	<name>Quartz Manager Starter API</name>
+	<description>REST API layer for your scheduler and triggered jobs, to be included in your spring webapp</description>
   
 	<url>https://github.com/fabioformosa/quartz-manager</url>
 	<properties>

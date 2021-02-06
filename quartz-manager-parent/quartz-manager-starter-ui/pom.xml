@@ -4,13 +4,13 @@
 	<parent>
 		<groupId>it.fabioformosa.quartz-manager</groupId>
 		<artifactId>quartz-manager-parent</artifactId>
-        <version>3.0.1-SNAPSHOT</version>
+        <version>3.0.2-SNAPSHOT</version>
 	</parent>
   
-	<artifactId>quartz-manager-ui-webjar</artifactId>
+	<artifactId>quartz-manager-starter-ui</artifactId>
   
 	<name>Quartz Manager UI webjar</name>
-	<description>webjar builder for quartz-manager frontend</description>
+	<description>Webjar to import the quartz-manager frontend in your spring webapp</description>
   
 	<url>https://github.com/fabioformosa/quartz-manager</url>
 	<properties>

@@ -5,7 +5,7 @@
     <parent>
       <groupId>it.fabioformosa.quartz-manager</groupId>
       <artifactId>quartz-manager-parent</artifactId>
-      <version>3.0.1-SNAPSHOT</version>
+      <version>3.0.2-SNAPSHOT</version>
     </parent>
 
 	<artifactId>quartz-manager-web-showcase</artifactId>
@@ -25,15 +25,15 @@
 	<dependencies>
         <dependency>
           <groupId>it.fabioformosa.quartz-manager</groupId>
-          <artifactId>quartz-manager-api</artifactId>
+          <artifactId>quartz-manager-starter-api</artifactId>
         </dependency>
         <dependency>
           <groupId>it.fabioformosa.quartz-manager</groupId>
-          <artifactId>quartz-manager-ui-webjar</artifactId>
+          <artifactId>quartz-manager-starter-ui</artifactId>
         </dependency>
         <dependency>
           <groupId>it.fabioformosa.quartz-manager</groupId>
-          <artifactId>quartz-manager-security</artifactId>
+          <artifactId>quartz-manager-starter-security</artifactId>
         </dependency>
   
         <!-- SPRING -->
