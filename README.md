@@ -57,7 +57,7 @@ org.quartz.scheduler.instanceName=example
 org.quartz.scheduler.instanceId=AUTO
 org.quartz.threadPool.threadCount=1
 ```
-
+`quartz.properties` is a configuration file required by [Quartz Scheduler](http://www.quartz-scheduler.org/). For further details, click [here](http://www.quartz-scheduler.org/documentation/quartz-2.3.0/configuration/).
 
 * **Create the job class that you want to schedule**
  
