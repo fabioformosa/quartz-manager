@@ -48,7 +48,7 @@ compile group: 'it.fabioformosa.quartz-manager', name: 'quartz-manager-starter-a
 compile group: 'it.fabioformosa.quartz-manager', name: 'quartz-manager-starter-ui', version: '3.0.1'
 
 ```
-Import  `quartz-manager-starter-ui` as well, if you want use the Quartz Manager API by the angular frontend.  
+Import  `quartz-manager-starter-ui` as well, if you want to use the Quartz Manager API by the angular frontend.  
 
 * **add a `quartz.properties` file in the classpath (`src/main/resources`)**
 
@@ -170,11 +170,11 @@ Next steps in the roadmap are:
 ## HOW-TO CONTRIBUTE  
 
 ### PROJECT STRUCTURE
-* **quartz-parent/quartz-manager-starter-api** is the library that can be imported in webapp to have the quartz-manager API.
-* **quartz-parent/quartz-manager-starter-ui** is a maven module to build and package the angular frontend in a webjar.
-* **quartz-parent/quartz-manager-starter-security** is ther library that can be imported in a webapp to have a security layer (login) over the quartz-manager API.
-* **quartz-parent/quartz-manager-web-showcase** is an example of webapp that imports quartz-manager-api. Useful to develop the frontend started locally with the webpack dev server.
-* **quartz-frontend** is the angular app that interacts with the Quartz Manager API.
+* `quartz-parent/quartz-manager-starter-api` is the library that can be imported in webapp to have the quartz-manager API.
+* `quartz-parent/quartz-manager-starter-ui` is a maven module to build and package the angular frontend in a webjar.
+* `quartz-parent/quartz-manager-starter-security` is ther library that can be imported in a webapp to have a security layer (login) over the quartz-manager API.
+* `quartz-parent/quartz-manager-web-showcase` is an example of webapp that imports quartz-manager-api. Useful to develop the frontend started locally with the webpack dev server.
+* `quartz-frontend` is the angular app that interacts with the Quartz Manager API.
 
 ### PROJECT DETAILS
 **[requirements]** Make sure you have installed
