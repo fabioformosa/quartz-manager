@@ -1,3 +1,4 @@
+[![Build Status](https://travis-ci.org/fabioformosa/quartz-manager.svg?branch=master)](https://travis-ci.org/fabioformosa/quartz-manager)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/it.fabioformosa.quartz-manager/quartz-manager-starter-api/badge.svg)](https://maven-badges.herokuapp.com/maven-central/it.fabioformosa.quartz-manager/quartz-manager-starter-api)
 [![Gitter](https://badges.gitter.im/quartz-manager/community.svg)](https://gitter.im/quartz-manager/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
