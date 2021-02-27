@@ -65,12 +65,12 @@ public class SchedulerController {
     }
 
     @GetMapping("/config")
-    public SchedulerConfigParam getConfig() {
+    public SchedulerConfigParam getConfig() throws SchedulerException {
         log.debug("SCHEDULER - GET CONFIG params");
-        SimpleTrigger simpleTrigger = (SimpleTrigger) triggerMonitor.getTrigger();
 
-        int maxCount = simpleTrigger.getRepeatCount() + 1;
-        long triggersPerDay = fromMillsIntervalToTriggerPerDay(simpleTrigger.getRepeatInterval());
+        SimpleTrigger jobTrigger = (SimpleTrigger) scheduler.getTrigger(triggerMonitor.getTrigger().getKey());
+        int maxCount = jobTrigger.getRepeatCount() + 1;
+        long triggersPerDay = fromMillsIntervalToTriggerPerDay(jobTrigger.getRepeatInterval());
 
         return new SchedulerConfigParam(triggersPerDay, maxCount);
     }
