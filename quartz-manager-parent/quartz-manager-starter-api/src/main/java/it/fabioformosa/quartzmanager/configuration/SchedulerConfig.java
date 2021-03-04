@@ -30,6 +30,8 @@ import it.fabioformosa.quartzmanager.scheduler.TriggerMonitorImpl;
 @ConditionalOnProperty(name = "quartz.enabled")
 public class SchedulerConfig {
 
+    private static final int DEFAULT_MISFIRE_INSTRUCTION = SimpleTrigger.MISFIRE_INSTRUCTION_RESCHEDULE_NEXT_WITH_REMAINING_COUNT;
+
     private static JobDetailFactoryBean createJobDetail(Class<? extends Job> jobClass) {
         JobDetailFactoryBean factoryBean = new JobDetailFactoryBean();
         factoryBean.setJobClass(jobClass);
@@ -45,7 +47,7 @@ public class SchedulerConfig {
         factoryBean.setRepeatInterval(pollFrequencyMs);
         factoryBean.setRepeatCount(repeatCount);
         factoryBean
-        .setMisfireInstruction(SimpleTrigger.MISFIRE_INSTRUCTION_RESCHEDULE_NEXT_WITH_EXISTING_COUNT);// in case of misfire, ignore all missed triggers and continue
+        .setMisfireInstruction(DEFAULT_MISFIRE_INSTRUCTION);// in case of misfire, ignore all missed triggers and continue
         return factoryBean;
     }
 

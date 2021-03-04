@@ -122,8 +122,15 @@ public class SchedulerController {
         TriggerBuilder<SimpleTrigger> triggerBuilder = trigger.getTriggerBuilder();
 
         int intervalInMills = fromTriggerPerDayToMillsInterval(config.getTriggerPerDay());
-        Trigger newTrigger = triggerBuilder.withSchedule(SimpleScheduleBuilder.simpleSchedule()
-                .withIntervalInMilliseconds(intervalInMills).withRepeatCount(config.getMaxCount() - 1)).build();
+
+        Trigger newTrigger = triggerBuilder
+                .withSchedule(
+                        SimpleScheduleBuilder.simpleSchedule()
+                        .withIntervalInMilliseconds(intervalInMills)
+                        .withRepeatCount(config.getMaxCount() - 1)
+                        .withMisfireHandlingInstructionNextWithRemainingCount()
+                        )
+                .build();
 
         scheduler.rescheduleJob(triggerMonitor.getTrigger().getKey(), newTrigger);
         triggerMonitor.setTrigger(newTrigger);
