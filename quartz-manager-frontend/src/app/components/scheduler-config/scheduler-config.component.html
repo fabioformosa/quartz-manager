@@ -16,12 +16,11 @@
 
 				<div>
 					<h5>Misfire Policy</h5>
-					<div>RESCHEDULE NEXT WITH EXISTING COUNT</div>
+					<div>RESCHEDULE NEXT WITH REMAINING COUNT</div>
 					<div class="small">
-						In case of misfire event, the trigger is re-scheduled to the next scheduled time after 'now' with the repeat count left unchanged (missed events are definitively lost). 
+						In case of misfire event, the trigger is re-scheduled to the next scheduled time after 'now' with the repeat count set to what it would be, if it had not missed any firings. 
 						<br/>
-						<strong>Warning:</strong> This policy could cause the trigger to go directly to the complete state if the end-time of the trigger has arrived,
-						so this misfire instruction doesn't guarantee that the repeat counter reaches your max value, but it guarantees that the end-time doesn't go over the expected final fire time.	
+						<strong>Warning:</strong> This policy could cause the Trigger to go directly to the 'COMPLETE' state if all fire-times where missed.	
 					</div>
 				</div>
 				
