@@ -22,6 +22,10 @@
 	</properties>
   
 	<dependencies>
+        <dependency>
+          <groupId>it.fabioformosa.quartz-manager</groupId>
+          <artifactId>quartz-manager-common</artifactId>
+        </dependency>
         <!-- SPRING -->
     	<dependency>
     		<groupId>org.springframework.boot</groupId>

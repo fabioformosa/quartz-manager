@@ -8,6 +8,7 @@ import org.quartz.JobDetail;
 import org.quartz.SimpleTrigger;
 import org.quartz.Trigger;
 import org.quartz.spi.JobFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.PropertiesFactoryBean;
@@ -21,6 +22,7 @@ import org.springframework.scheduling.quartz.JobDetailFactoryBean;
 import org.springframework.scheduling.quartz.SchedulerFactoryBean;
 import org.springframework.scheduling.quartz.SimpleTriggerFactoryBean;
 
+import it.fabioformosa.quartzmanager.common.properties.QuartzModuleProperties;
 import it.fabioformosa.quartzmanager.scheduler.AutowiringSpringBeanJobFactory;
 import it.fabioformosa.quartzmanager.scheduler.TriggerMonitor;
 import it.fabioformosa.quartzmanager.scheduler.TriggerMonitorImpl;
@@ -53,6 +55,9 @@ public class SchedulerConfig {
 
     @Value("${quartz-manager.jobClass}")
     private String jobClassname;
+
+    @Autowired(required = false)
+    private QuartzModuleProperties quartzModuleProperties;
 
     @Bean(name = "triggerMonitor")
     public TriggerMonitor createTriggerMonitor(@Qualifier("jobTrigger") Trigger trigger) {
@@ -94,7 +99,11 @@ public class SchedulerConfig {
             @Qualifier("jobTrigger") Trigger sampleJobTrigger) throws IOException {
         SchedulerFactoryBean factory = new SchedulerFactoryBean();
         factory.setJobFactory(jobFactory);
-        factory.setQuartzProperties(quartzProperties());
+        Properties mergedProperties = new Properties();
+        mergedProperties.putAll(quartzProperties());
+        if(quartzModuleProperties != null)
+            mergedProperties.putAll(quartzModuleProperties.getProperties());
+        factory.setQuartzProperties(mergedProperties);
         factory.setTriggers(sampleJobTrigger);
         factory.setAutoStartup(false);
         return factory;
