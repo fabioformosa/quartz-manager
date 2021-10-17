@@ -1,7 +1,8 @@
 package it.fabioformosa.quartzmanager.persistence;
 
-import javax.sql.DataSource;
-
+import it.fabioformosa.quartzmanager.common.properties.QuartzModuleProperties;
+import liquibase.integration.spring.SpringLiquibase;
+import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.Bean;
@@ -9,12 +10,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.PropertySource;
 
-import it.fabioformosa.quartzmanager.common.properties.QuartzModuleProperties;
-import liquibase.integration.spring.SpringLiquibase;
-import lombok.Data;
-import lombok.extern.slf4j.Slf4j;
+import javax.sql.DataSource;
 
-@Slf4j
 @Configuration
 @PropertySource("classpath:quartz-manager-application-persistence.properties")
 public class PersistenceConfig {
@@ -27,11 +24,6 @@ public class PersistenceConfig {
         private String user;
         private String password;
     }
-
-    //    @Data
-    //    public class QuartzModuleProperties{
-    //        private Properties properties;
-    //    }
 
     @Bean
     public SpringLiquibase liquibase(PersistenceDatasourceProps persistenceDatasourceProps, DataSource quartzManagerDatasource) {

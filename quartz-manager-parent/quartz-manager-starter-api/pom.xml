@@ -26,11 +26,12 @@
           <groupId>it.fabioformosa.quartz-manager</groupId>
           <artifactId>quartz-manager-common</artifactId>
         </dependency>
+
         <!-- SPRING -->
-    	<dependency>
-    		<groupId>org.springframework.boot</groupId>
-    		<artifactId>spring-boot-starter</artifactId>
-    	</dependency>
+        <dependency>
+          <groupId>org.springframework.boot</groupId>
+          <artifactId>spring-boot-starter</artifactId>
+        </dependency>
         <dependency>
           <groupId>org.springframework.boot</groupId>
           <artifactId>spring-boot-starter-web</artifactId>
@@ -47,11 +48,11 @@
           <groupId>org.springframework.security</groupId>
           <artifactId>spring-security-core</artifactId>
         </dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-test</artifactId>
-			<scope>test</scope>
-		</dependency>
+        <dependency>
+          <groupId>org.springframework.boot</groupId>
+          <artifactId>spring-boot-starter-test</artifactId>
+          <scope>test</scope>
+        </dependency>
     
         <!-- MISC -->
         <dependency>
@@ -72,8 +73,14 @@
           <groupId>org.apache.commons</groupId>
           <artifactId>commons-lang3</artifactId>
         </dependency>
-        
-        <!-- QUARTZ -->
+        <dependency>
+          <groupId>it.fabioformosa</groupId>
+          <artifactId>metamorphosis-core</artifactId>
+          <version>3.0.0</version>
+        </dependency>
+
+
+    <!-- QUARTZ -->
         <dependency>
           <groupId>org.quartz-scheduler</groupId>
           <artifactId>quartz</artifactId>

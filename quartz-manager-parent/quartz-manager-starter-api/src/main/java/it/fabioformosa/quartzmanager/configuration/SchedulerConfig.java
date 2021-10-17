@@ -1,15 +1,12 @@
 package it.fabioformosa.quartzmanager.configuration;
 
-import java.io.IOException;
-import java.util.Properties;
-
+import it.fabioformosa.quartzmanager.common.properties.QuartzModuleProperties;
+import it.fabioformosa.quartzmanager.scheduler.AutowiringSpringBeanJobFactory;
 import org.quartz.Job;
 import org.quartz.JobDetail;
 import org.quartz.SimpleTrigger;
-import org.quartz.Trigger;
 import org.quartz.spi.JobFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.PropertiesFactoryBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -22,10 +19,8 @@ import org.springframework.scheduling.quartz.JobDetailFactoryBean;
 import org.springframework.scheduling.quartz.SchedulerFactoryBean;
 import org.springframework.scheduling.quartz.SimpleTriggerFactoryBean;
 
-import it.fabioformosa.quartzmanager.common.properties.QuartzModuleProperties;
-import it.fabioformosa.quartzmanager.scheduler.AutowiringSpringBeanJobFactory;
-import it.fabioformosa.quartzmanager.scheduler.TriggerMonitor;
-import it.fabioformosa.quartzmanager.scheduler.TriggerMonitorImpl;
+import java.io.IOException;
+import java.util.Properties;
 
 @ComponentScan(basePackages = {"it.fabioformosa.quartzmanager.controllers"})
 @Configuration
@@ -59,12 +54,14 @@ public class SchedulerConfig {
     @Autowired(required = false)
     private QuartzModuleProperties quartzModuleProperties;
 
-    @Bean(name = "triggerMonitor")
-    public TriggerMonitor createTriggerMonitor(@Qualifier("jobTrigger") Trigger trigger) {
-        TriggerMonitor triggerMonitor = new TriggerMonitorImpl();
-        triggerMonitor.setTrigger(trigger);
-        return triggerMonitor;
-    }
+
+    // REMOVEME
+//    @Bean(name = "triggerMonitor")
+//    public TriggerMonitor createTriggerMonitor(@Qualifier("jobTrigger") Trigger trigger) {
+//        TriggerMonitor triggerMonitor = new TriggerMonitorImpl();
+//        triggerMonitor.setTrigger(trigger);
+//        return triggerMonitor;
+//    }
 
     @Bean
     @SuppressWarnings("unchecked")
@@ -88,15 +85,16 @@ public class SchedulerConfig {
         return propertiesFactoryBean.getObject();
     }
 
-    @Bean(name = "jobTrigger")
-    public SimpleTriggerFactoryBean sampleJobTrigger(@Qualifier("jobDetail") JobDetail jobDetail,
-            @Value("${job.frequency}") long frequency, @Value("${job.repeatCount}") int repeatCount) {
-        return createTrigger(jobDetail, frequency, repeatCount);
-    }
+//    @Bean(name = "jobTrigger")
+//    public SimpleTriggerFactoryBean sampleJobTrigger(@Qualifier("jobDetail") JobDetail jobDetail,
+//            @Value("${job.frequency}") long frequency, @Value("${job.repeatCount}") int repeatCount) {
+//        return createTrigger(jobDetail, frequency, repeatCount);
+//    }
 
     @Bean(name = "scheduler")
-    public SchedulerFactoryBean schedulerFactoryBean(JobFactory jobFactory,
-            @Qualifier("jobTrigger") Trigger sampleJobTrigger) throws IOException {
+    public SchedulerFactoryBean schedulerFactoryBean(JobFactory jobFactory) throws IOException {
+//      public SchedulerFactoryBean schedulerFactoryBean(JobFactory jobFactory,
+//            @Qualifier("jobTrigger") Trigger sampleJobTrigger) throws IOException {
         SchedulerFactoryBean factory = new SchedulerFactoryBean();
         factory.setJobFactory(jobFactory);
         Properties mergedProperties = new Properties();
@@ -104,7 +102,7 @@ public class SchedulerConfig {
         if(quartzModuleProperties != null)
             mergedProperties.putAll(quartzModuleProperties.getProperties());
         factory.setQuartzProperties(mergedProperties);
-        factory.setTriggers(sampleJobTrigger);
+        //factory.setTriggers(sampleJobTrigger);
         factory.setAutoStartup(false);
         return factory;
     }

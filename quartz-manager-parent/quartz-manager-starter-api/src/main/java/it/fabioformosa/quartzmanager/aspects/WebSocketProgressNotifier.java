@@ -1,9 +1,8 @@
 package it.fabioformosa.quartzmanager.aspects;
 
-import javax.annotation.Resource;
-
+import it.fabioformosa.quartzmanager.dto.TriggerStatus;
+import it.fabioformosa.quartzmanager.services.SchedulerService;
 import org.quartz.DailyTimeIntervalTrigger;
-import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.SimpleTrigger;
 import org.quartz.Trigger;
@@ -11,8 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.stereotype.Component;
 
-import it.fabioformosa.quartzmanager.dto.TriggerStatus;
-import it.fabioformosa.quartzmanager.scheduler.TriggerMonitor;
+import javax.annotation.Resource;
 
 /**
  *
@@ -28,11 +26,14 @@ public class WebSocketProgressNotifier implements ProgressNotifier {
     @Autowired
     private SimpMessageSendingOperations messagingTemplate;
 
-    @Resource
-    private Scheduler scheduler;
+//    @Resource
+//    private Scheduler scheduler;
 
     @Resource
-    private TriggerMonitor triggerMonitor;
+    private SchedulerService schedulerService;
+
+//    @Resource
+//    private TriggerMonitor triggerMonitor;
 
     //@AfterReturning("execution(* logAndSend(..))")
     //	@Override
@@ -44,7 +45,7 @@ public class WebSocketProgressNotifier implements ProgressNotifier {
     public void send() throws SchedulerException {
         TriggerStatus currTriggerStatus = new TriggerStatus();
 
-        Trigger trigger = scheduler.getTrigger(triggerMonitor.getTrigger().getKey());
+        Trigger trigger = schedulerService.getOneSimpleTrigger().get();
         currTriggerStatus.setFinalFireTime(trigger.getFinalFireTime());
         currTriggerStatus.setNextFireTime(trigger.getNextFireTime());
         currTriggerStatus.setPreviousFireTime(trigger.getPreviousFireTime());
@@ -62,7 +63,7 @@ public class WebSocketProgressNotifier implements ProgressNotifier {
             repeatCount = dailyTrigger.getRepeatCount();
         }
 
-        Trigger jobTrigger = triggerMonitor.getTrigger();
+        Trigger jobTrigger = schedulerService.getOneSimpleTrigger().get();
         if (jobTrigger != null && jobTrigger.getJobKey() != null) {
             currTriggerStatus.setJobKey(jobTrigger.getJobKey().getName());
             currTriggerStatus.setJobClass(jobTrigger.getClass().getSimpleName());
