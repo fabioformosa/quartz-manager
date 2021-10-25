@@ -3,26 +3,30 @@ package it.fabioformosa.quartzmanager.persistence;
 import it.fabioformosa.quartzmanager.common.properties.QuartzModuleProperties;
 import liquibase.integration.spring.SpringLiquibase;
 import lombok.Data;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.jdbc.DataSourceBuilder;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
-import org.springframework.context.annotation.PropertySource;
+import org.springframework.context.annotation.*;
 
 import javax.sql.DataSource;
 
 @Configuration
-@PropertySource("classpath:quartz-manager-application-persistence.properties")
+@PropertySource("classpath:quartz-persistence.properties")
 public class PersistenceConfig {
+
+    @Value("${quartz-manager.persistence.quartz.datasource.url}")
+    private String quartzDatasourceUrl;
+
+    @Value("${quartz-manager.persistence.quartz.datasource.user}")
+    private String quartzDatasourceUser;
+
+    @Value("${quartz-manager.persistence.quartz.datasource.password}")
+    private String quartzDatasourcePassword;
 
     @Data
     public class PersistenceDatasourceProps {
-        private String url;
         private String changeLog;
         private String contexts;
-        private String user;
-        private String password;
     }
 
     @Bean
@@ -42,19 +46,23 @@ public class PersistenceConfig {
     }
 
     @Bean("quartzPersistenceProperties")
-    @ConfigurationProperties(prefix = "spring.quartz")
-    public QuartzModuleProperties persistenceQuartzProps() {
-        return new QuartzModuleProperties();
+    public QuartzModuleProperties persistenceQuartzProps(QuartzPersistencePropConfig quartzPersistencePropConfig) {
+      QuartzModuleProperties quartzModuleProperties = new QuartzModuleProperties();
+      quartzModuleProperties.setProperties(quartzPersistencePropConfig.getProperties());
+      quartzModuleProperties.getProperties().setProperty("org.quartz.dataSource.quartzDataSource.URL", quartzDatasourceUrl);
+      quartzModuleProperties.getProperties().setProperty("org.quartz.dataSource.quartzDataSource.user", quartzDatasourceUser);
+      quartzModuleProperties.getProperties().setProperty("org.quartz.dataSource.quartzDataSource.password", quartzDatasourcePassword);
+      return quartzModuleProperties;
     }
 
     @Primary
     @Bean
     public DataSource quartzManagerDatasource(PersistenceDatasourceProps persistenceDatasourceProps) {
         return DataSourceBuilder.create()
-                .url(persistenceDatasourceProps.getUrl())
+                .url(quartzDatasourceUrl)
                 .driverClassName("org.postgresql.Driver")
-                .username(persistenceDatasourceProps.getUser())
-                .password(persistenceDatasourceProps.getPassword())
+                .username(quartzDatasourceUser)
+                .password(quartzDatasourcePassword)
                 .build();
     }
 

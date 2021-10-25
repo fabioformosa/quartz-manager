@@ -47,6 +47,12 @@ logging:
     org.quartz: DEBUG
     
 quartz-manager:
+#  persistence:
+#  quartz:
+#    datasource:
+#      url: "jdbc:postgresql://localhost:5432/quartzmanager"
+#      user: "quartzmanager"
+#      password: "quartzmanager"
   security:
     login-model:
       form-login-enabled: true

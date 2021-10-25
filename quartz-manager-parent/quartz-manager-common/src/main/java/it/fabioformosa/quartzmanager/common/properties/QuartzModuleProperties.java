@@ -1,12 +1,12 @@
 package it.fabioformosa.quartzmanager.common.properties;
 
-import java.util.Properties;
-
 import lombok.Data;
+
+import java.util.Properties;
 
 @Data
 public class QuartzModuleProperties{
 
-    private Properties properties;
+    private Properties properties = new Properties();
 
 }
