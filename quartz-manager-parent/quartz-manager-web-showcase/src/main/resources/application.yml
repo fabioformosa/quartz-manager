@@ -12,22 +12,8 @@ spring:
     cache: false
     mode: LEGACYHTML5
   jpa.open-in-view: false
-#  liquibase:
-#    change-log: "classpath:db/liquibase-changelog-master.xml"
-#    contexts: default
-#    user: quartzmanager
-#    password: quartzmanager
-#  datasource:
-#    url: "jdbc:postgresql://localhost:5432/quartzmanager"
-#    username: quartzmanager
-#    password: quartzmanager
 
 #  quartz:
-#    job-store-type: jdbc
-#    initialize-schema: never
-#    properties:
-#      org.quartz.jobStore.driverDelegateClass: org.quartz.impl.jdbcjobstore.PostgreSQLDelegate
-      
 #     org.quartz.jobStore.isClustered: true
 #     org.quartz.scheduler.instanceId=AUTO
 
@@ -47,12 +33,12 @@ logging:
     org.quartz: DEBUG
     
 quartz-manager:
-#  persistence:
-#  quartz:
-#    datasource:
-#      url: "jdbc:postgresql://localhost:5432/quartzmanager"
-#      user: "quartzmanager"
-#      password: "quartzmanager"
+  persistence:
+    quartz:
+      datasource:
+        url: "jdbc:postgresql://localhost:5432/quartzmanager"
+        user: "quartzmanager"
+        password: "quartzmanager"
   security:
     login-model:
       form-login-enabled: true
