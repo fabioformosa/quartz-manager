@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Optional;
+
 @Slf4j
 @RequestMapping("/quartz-manager/triggers")
 @RestController
@@ -54,6 +56,7 @@ public class TriggerController {
           .withRepeatCount(config.getMaxCount() - 1)
           .withMisfireHandlingInstructionNextWithRemainingCount()
       )
+      .withIdentity(name)
       .build();
 
 //    Optional<TriggerKey> optionalTriggerKey = schedulerService.getTriggerByKey(name);
@@ -61,6 +64,35 @@ public class TriggerController {
 
     scheduler.scheduleJob(jobDetail, newTrigger);
 //    scheduler.rescheduleJob(triggerKey, newTrigger);
+
+    TriggerDTO newTriggerDTO = conversionService.convert(newTrigger, TriggerDTO.class);
+
+    log.info("Rescheduled new trigger {}", newTriggerDTO);
+    return newTriggerDTO;
+  }
+
+  @PutMapping("/{name}")
+  public TriggerDTO rescheduleTrigger(@PathVariable String name, @RequestBody SchedulerConfigParam config) throws SchedulerException, ClassNotFoundException {
+    log.info("TRIGGER - RESCHEDULE trigger {}", config);
+    int intervalInMills = SchedulerService.fromTriggerPerDayToMillsInterval(config.getTriggerPerDay());
+
+    Optional<TriggerKey> optionalTriggerKey = schedulerService.getTriggerByKey(name);
+    TriggerKey triggerKey = optionalTriggerKey.orElse(TriggerKey.triggerKey(name));
+    Trigger trigger = scheduler.getTrigger(triggerKey);
+
+    Trigger newTrigger = TriggerBuilder.newTrigger()
+      .withSchedule(
+        SimpleScheduleBuilder.simpleSchedule()
+          .withIntervalInMilliseconds(intervalInMills)
+          .withRepeatCount(config.getMaxCount() - 1)
+          .withMisfireHandlingInstructionNextWithRemainingCount()
+      )
+      .forJob(trigger.getJobKey().getName())
+      .withIdentity(name)
+      .build();
+
+//    scheduler.scheduleJob(jobDetail, newTrigger);
+    scheduler.rescheduleJob(triggerKey, newTrigger);
 
     TriggerDTO newTriggerDTO = conversionService.convert(newTrigger, TriggerDTO.class);
 

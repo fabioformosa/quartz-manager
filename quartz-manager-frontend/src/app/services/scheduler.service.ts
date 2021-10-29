@@ -37,8 +37,12 @@ export class SchedulerService {
     return this.apiService.get(getBaseUrl() + '/quartz-manager/scheduler/config')
   }
 
-  updateConfig = (config: Object) => {
+  saveConfig = (config: Object) => {
     return this.apiService.post(getBaseUrl() + '/quartz-manager/triggers/mytrigger', config)
+  }
+
+  updateConfig = (config: Object) => {
+    return this.apiService.put(getBaseUrl() + '/quartz-manager/triggers/mytrigger', config)
   }
 
 

@@ -4,14 +4,14 @@
 	</mat-card-header>
 
   <!-- ADD BUTTON -->
-  <mat-card-content *ngIf="!shouldShowTriggerConfig() && !enabledTriggerForm">
+  <mat-card-content *ngIf="!existsATriggerInProgress() && !enabledTriggerForm">
     <button mat-fab color="primary">
       <mat-icon (click)="enableTriggerForm()">add</mat-icon>
     </button>
   </mat-card-content>
 
   <!-- TRIGGER DETAILS -->
-	<mat-card-content *ngIf="shouldShowTriggerConfig() || enabledTriggerForm">
+	<mat-card-content *ngIf="existsATriggerInProgress() || enabledTriggerForm">
 		<div fxLayout="column">
 			<form name="configForm" fxFlex="1 1 100%" #configForm="ngForm">
 				<mat-form-field >

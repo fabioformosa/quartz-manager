@@ -47,10 +47,12 @@ export class SchedulerConfigComponent implements OnInit {
       })
   }
 
-  shouldShowTriggerConfig = (): boolean => this.fetchedTriggers && this.triggerInProgress;
+  existsATriggerInProgress = (): boolean => this.fetchedTriggers && this.triggerInProgress;
 
   submitConfig = () => {
-    this.schedulerService.updateConfig(this.config)
+    const schedulerServiceCall = this.existsATriggerInProgress() ? this.schedulerService.updateConfig : this.schedulerService.saveConfig;
+
+    schedulerServiceCall(this.config)
       .subscribe(res => {
         this.configBackup = this.config;
         this.enabledTriggerForm = false;
@@ -61,5 +63,5 @@ export class SchedulerConfigComponent implements OnInit {
       });
   };
 
-  enableTriggerForm = () =>    this.enabledTriggerForm = true;
+  enableTriggerForm = () => this.enabledTriggerForm = true;
 }
