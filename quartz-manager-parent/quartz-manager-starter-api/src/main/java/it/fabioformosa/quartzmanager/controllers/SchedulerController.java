@@ -38,24 +38,15 @@ public class SchedulerController {
     this.conversionService = conversionService;
   }
 
-  //  @Resource
-//  private Scheduler scheduler;
-
-  //TODO REMOVEME
-//  @Resource
-//  private TriggerMonitor triggerMonitor;
-
   @Resource
   private ConversionService conversionService;
 
   @GetMapping("/config")
   public SchedulerConfigParam getConfig() throws SchedulerException {
     log.debug("SCHEDULER - GET CONFIG params");
-
     SchedulerConfigParam schedulerConfigParam = schedulerService.getOneSimpleTrigger()
       .map(SchedulerController::fromSimpleTriggerToSchedulerConfigParam)
       .orElse(new SchedulerConfigParam(0, 0, 0));
-
     return schedulerConfigParam;
   }
 
@@ -65,8 +56,6 @@ public class SchedulerController {
     long triggersPerDay = SchedulerService.fromMillsIntervalToTriggerPerDay(simpleTrigger.getRepeatInterval());
     return new SchedulerConfigParam(triggersPerDay, maxCount, timesTriggered);
   }
-
-
 
   @GetMapping
   public SchedulerDTO getScheduler() {
@@ -113,26 +102,6 @@ public class SchedulerController {
     log.info("SCHEDULER - PAUSE COMMAND");
     schedulerService.getScheduler().standby();
   }
-
-//  @PostMapping("/config")
-//  public SchedulerConfigParam postConfig(@RequestBody SchedulerConfigParam config) throws SchedulerException {
-//    log.info("SCHEDULER - NEW CONFIG {}", config);
-//
-//    int intervalInMills = SchedulerService.fromTriggerPerDayToMillsInterval(config.getTriggerPerDay());
-//
-//    Trigger newTrigger = TriggerBuilder.newTrigger()
-//      .withSchedule(
-//        SimpleScheduleBuilder.simpleSchedule()
-//          .withIntervalInMilliseconds(intervalInMills)
-//          .withRepeatCount(config.getMaxCount() - 1)
-//          .withMisfireHandlingInstructionNextWithRemainingCount()
-//      )
-//      .build();
-//
-//    schedulerService.getScheduler().rescheduleJob(schedulerService.getOneTriggerKey().get(), newTrigger);
-////    triggerMonitor.setTrigger(newTrigger); REMOVEME
-//    return config;
-//  }
 
   @GetMapping("/resume")
   @ResponseStatus(HttpStatus.NO_CONTENT)

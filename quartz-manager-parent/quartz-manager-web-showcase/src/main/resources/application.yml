@@ -13,10 +13,6 @@ spring:
     mode: LEGACYHTML5
   jpa.open-in-view: false
 
-#  quartz:
-#     org.quartz.jobStore.isClustered: true
-#     org.quartz.scheduler.instanceId=AUTO
-
 quartz:
   enabled: true
 
