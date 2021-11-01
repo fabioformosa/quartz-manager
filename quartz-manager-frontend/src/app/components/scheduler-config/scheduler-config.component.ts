@@ -49,6 +49,8 @@ export class SchedulerConfigComponent implements OnInit {
 
   existsATriggerInProgress = (): boolean => this.fetchedTriggers && this.triggerInProgress;
 
+  cancelConfigForm = () => this.enabledTriggerForm = false;
+
   submitConfig = () => {
     const schedulerServiceCall = this.existsATriggerInProgress() ? this.schedulerService.updateConfig : this.schedulerService.saveConfig;
 

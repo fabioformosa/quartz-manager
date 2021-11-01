@@ -26,7 +26,7 @@ logging:
     org.springframework.security: INFO
     org.springframework.boot.autoconfigure.security: INFO
     it.fabioformosa: DEBUG
-    org.quartz: DEBUG
+    org.quartz: INFO
     
 quartz-manager:
   persistence:
