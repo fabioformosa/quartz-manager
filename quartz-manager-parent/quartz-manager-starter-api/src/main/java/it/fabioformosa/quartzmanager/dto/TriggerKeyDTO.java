@@ -1,5 +1,8 @@
 package it.fabioformosa.quartzmanager.dto;
 
+import lombok.Builder;
+
+@Builder
 public class TriggerKeyDTO {
   private String name;
   private String group;
