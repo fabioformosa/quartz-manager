@@ -1,0 +1,2 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+it.fabioformosa.quartzmanager.persistence.PersistenceConfig

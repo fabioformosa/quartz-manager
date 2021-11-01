@@ -44,10 +44,17 @@
     <module>quartz-manager-starter-ui</module>
     <module>quartz-manager-starter-security</module>
     <module>quartz-manager-web-showcase</module>
+    <module>quartz-manager-starter-persistence</module>
+    <module>quartz-manager-common</module>
   </modules>
 
   <dependencyManagement>
     <dependencies>
+    <dependency>
+        <groupId>it.fabioformosa.quartz-manager</groupId>
+        <artifactId>quartz-manager-common</artifactId>
+        <version>3.0.2-SNAPSHOT</version>
+      </dependency>
       <dependency>
         <groupId>it.fabioformosa.quartz-manager</groupId>
         <artifactId>quartz-manager-starter-api</artifactId>
@@ -56,6 +63,11 @@
       <dependency>
         <groupId>it.fabioformosa.quartz-manager</groupId>
         <artifactId>quartz-manager-starter-security</artifactId>
+        <version>3.0.2-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+        <groupId>it.fabioformosa.quartz-manager</groupId>
+        <artifactId>quartz-manager-starter-persistence</artifactId>
         <version>3.0.2-SNAPSHOT</version>
       </dependency>
       <dependency>

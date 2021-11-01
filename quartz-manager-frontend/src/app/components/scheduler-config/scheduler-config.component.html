@@ -2,35 +2,64 @@
 	<mat-card-header>
 		<mat-card-title><b>SCHEDULER CONFIG</b></mat-card-title>
 	</mat-card-header>
-	<mat-card-content>
+
+  <!-- ADD BUTTON -->
+  <mat-card-content *ngIf="!existsATriggerInProgress() && !enabledTriggerForm">
+    <button mat-fab color="primary">
+      <mat-icon (click)="enableTriggerForm()">add</mat-icon>
+    </button>
+  </mat-card-content>
+
+  <!-- TRIGGER DETAILS -->
+	<mat-card-content *ngIf="existsATriggerInProgress() || enabledTriggerForm">
 		<div fxLayout="column">
 			<form name="configForm" fxFlex="1 1 100%" #configForm="ngForm">
-				<mat-form-field>
-					<input matInput placeholder="Freq [Num per day]" [(ngModel)]="config.triggerPerDay" name="triggerPerDay" type="number">
+				<mat-form-field [appearance]="enabledTriggerForm ? 'fill': 'none'">
+          <mat-label>Freq [Num per day]</mat-label>
+					<input [readonly]="!enabledTriggerForm"
+                 matInput placeholder="Freq [Num per day]" name="triggerPerDay" type="number"
+                 [(ngModel)]="config.triggerPerDay"
+          >
 				</mat-form-field>
-				<mat-form-field>
-					<input matInput placeholder="Max Occurrences" [(ngModel)]="config.maxCount" name="maxCount" type="number">
+				<mat-form-field [appearance]="enabledTriggerForm ? 'fill': 'none'">
+          <mat-label>Max Occurrences</mat-label>
+					<input [readonly]="!enabledTriggerForm"
+            matInput placeholder="Max Occurrences" name="maxCount" type="number"
+            [(ngModel)]="config.maxCount"
+          >
 				</mat-form-field>
-			
+
 				<br>
 
 				<div>
 					<h5>Misfire Policy</h5>
 					<div>RESCHEDULE NEXT WITH REMAINING COUNT</div>
 					<div class="small">
-						In case of misfire event, the trigger is re-scheduled to the next scheduled time after 'now' with the repeat count set to what it would be, if it had not missed any firings. 
+						In case of misfire event, the trigger is re-scheduled to the next scheduled time after 'now' with the repeat count set to what it would be, if it had not missed any firings.
 						<br/>
-						<strong>Warning:</strong> This policy could cause the Trigger to go directly to the 'COMPLETE' state if all fire-times where missed.	
+						<strong>Warning:</strong> This policy could cause the Trigger to go directly to the 'COMPLETE' state if all fire-times where missed.
 					</div>
 				</div>
-				
+
 				<br>
 
+        <button mat-raised-button
+                type="button"
+                *ngIf="enabledTriggerForm"
+                (click)="cancelConfigForm()">
+          Cancel
+        </button>
 				<button mat-raised-button
-					 	type="button" 
+					 	type="button" color="primary"
+                *ngIf="enabledTriggerForm"
 						(click)="submitConfig()">
 						Submit
 				</button>
+        <button mat-raised-button type="button"
+                *ngIf="!enabledTriggerForm"
+                (click)="enabledTriggerForm = true">
+          Reschedule
+        </button>
 			</form>
 		</div>
 	</mat-card-content>

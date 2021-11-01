@@ -12,20 +12,24 @@ export class SchedulerService {
   startScheduler = () => {
     return this.apiService.get(getBaseUrl() + '/quartz-manager/scheduler/run')
   }
-  
+
   stopScheduler = () => {
     return this.apiService.get(getBaseUrl() + '/quartz-manager/scheduler/stop')
   }
-  
+
   pauseScheduler = () => {
     return this.apiService.get(getBaseUrl() + '/quartz-manager/scheduler/pause')
   }
-  
+
   resumeScheduler = () => {
     return this.apiService.get(getBaseUrl() + '/quartz-manager/scheduler/resume')
   }
 
   getStatus = () => {
+    return this.apiService.get(getBaseUrl() + '/quartz-manager/scheduler/status')
+  }
+
+  getScheduler = () => {
     return this.apiService.get(getBaseUrl() + '/quartz-manager/scheduler')
   }
 
@@ -33,7 +37,13 @@ export class SchedulerService {
     return this.apiService.get(getBaseUrl() + '/quartz-manager/scheduler/config')
   }
 
-  updateConfig = (config: Object) => {
-    return this.apiService.post(getBaseUrl() + '/quartz-manager/scheduler/config', config)
+  saveConfig = (config: Object) => {
+    return this.apiService.post(getBaseUrl() + '/quartz-manager/triggers/mytrigger', config)
   }
+
+  updateConfig = (config: Object) => {
+    return this.apiService.put(getBaseUrl() + '/quartz-manager/triggers/mytrigger', config)
+  }
+
+
 }

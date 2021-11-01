@@ -108,11 +108,11 @@
   "defaultProject": "angular-spring-starter",
   "schematics": {
     "@schematics/angular:component": {
-      "prefix": "app",
+      "prefix": "qrzmng",
       "style": "css"
     },
     "@schematics/angular:directive": {
-      "prefix": "app"
+      "prefix": "qrzmng"
     }
   }
 }
