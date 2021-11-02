@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping(value = "/quartz-manager/api", produces = MediaType.APPLICATION_JSON_VALUE)
 public class UserController {
 
-
     @GetMapping("/whoami")
     public @ResponseBody Object user() {
         SecurityContext context = SecurityContextHolder.getContext();
@@ -21,12 +20,12 @@ public class UserController {
         return "\"NO_AUTH\"";
     }
 
-    /**
-     * JWT Temporary disabled
-     *
-     * @author Fabio.Formosa
-     *
-     */
+//    /**
+//     * JWT Temporary disabled
+//     *
+//     * @author Fabio.Formosa
+//     *
+//     */
 
     //	@Autowired
     //	private UserService userService;

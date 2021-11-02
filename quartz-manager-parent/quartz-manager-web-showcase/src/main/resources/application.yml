@@ -26,8 +26,15 @@ logging:
     org.springframework.security: INFO
     org.springframework.boot.autoconfigure.security: INFO
     it.fabioformosa: DEBUG
+    org.quartz: INFO
     
 quartz-manager:
+  persistence:
+    quartz:
+      datasource:
+        url: "jdbc:postgresql://localhost:5432/quartzmanager"
+        user: "quartzmanager"
+        password: "quartzmanager"
   security:
     login-model:
       form-login-enabled: true
