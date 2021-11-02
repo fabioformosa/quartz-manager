@@ -26,6 +26,8 @@ At the moment, these are the limitations:
 * You can start only a simple trigger based on a daily frequency and a max number of occurencies.
 * You cannot start/stop a trigger, but the entire scheduler.
 
+Take a look a the [Project Roadmap](https://github.com/fabioformosa/quartz-manager/projects) and feel free to open an issue or add a commment on an existing one, to give your feedback about planned enhancements. Your opinion is important to understand the priority.
+
 ## QUICK START
 
 * **Requirements** 
@@ -109,6 +111,7 @@ If you've imported the `quartz-manager-starter-ui` you can open the UI at URL:
 ## HOW-TO
 
 * **HOW-TO ENABLE A SECURITY LAYER**
+
 If you want enable a security layer and allow the access to the REST API and to the UI only to authenticated users, add the dependency:
 
 MAVEN
@@ -157,6 +160,7 @@ quartz-manager:
 ```
 
 * **HOW-TO ENABLE A PERSISTENCE LAYER**
+
 If you don't want to lose your scheduler config and the progress of your trigger, when you stop&start your webapp, you have to enable a security layer which persists data on a postgresql database. The `quartz-manager-persistence-module` needs a postgresql datasource to create its tables. To import the `quartz-manager-persistence-module`, please add the following dependency:
 
 MAVEN
@@ -187,6 +191,10 @@ quartz-manager:
         password: "quartzmanager"   
 
 ```
+
+* **HOW-TO BROWSE REST API DOC**
+
+Swagger has been added as library. So, you can get REST API doc opening: [http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html)
 
 * **DEMO**
 
@@ -262,9 +270,6 @@ Replace the dummy job (class: `it.fabioformosa.quartzmanager.jobs.SampleJob`) wi
 * Credentials: To change admin's password, set ENV var `quartz-manager.account.pwd`
 * quartz-manager backend context path (default `/quartz-manager`) and port (default `8080`): `/quartz-manager/src/main/resources/application.properties`
 
-## HOW TO BROWSE REST API DOC
-Swagger has been added as library. So, you can get REST API doc opening: [http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html)
-
 ## Tech Overview
 
 **Backend Stack** Java 8, Spring Boot 2.1.4 (Spring MVC 5.1.6, Spring Security 5.1.5, Spring AOP 5.1.6), Quartz Scheduler 2.3.1
@@ -279,7 +284,7 @@ From quartz manager ver 2.x.x, the new structure of project is:
  * REST API backend
  * Single Page Application frontend (angular 9)
 
-(The previous version of quartz manager was a monolithic backend that provided also frontend developed with angularjs 1.6.x. You can find it at the branch 1.x.x)
+(The first version of quartz manager was a monolithic backend that provided also frontend developed with angularjs 1.6.x. You can find it at the branch 1.x.x)
 
 ## Contributes
 
