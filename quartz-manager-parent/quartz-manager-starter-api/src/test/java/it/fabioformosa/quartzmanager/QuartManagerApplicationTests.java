@@ -1,9 +1,11 @@
 package it.fabioformosa.quartzmanager;
 
-import org.junit.Test;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.junit.jupiter.api.Test;
+import org.springframework.boot.SpringBootConfiguration;
+import org.springframework.context.annotation.ComponentScan;
 
-@SpringBootTest
+@ComponentScan("it.fabioformosa.quartzmanager")
+@SpringBootConfiguration
 public class QuartManagerApplicationTests {
 
     @Test
