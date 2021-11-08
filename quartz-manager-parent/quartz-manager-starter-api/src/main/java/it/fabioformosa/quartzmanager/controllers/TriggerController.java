@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+
 @Slf4j
 @RequestMapping(TriggerController.TRIGGER_CONTROLLER_BASE_URL)
 @RestController
@@ -34,7 +36,7 @@ public class TriggerController {
 
   @ResponseStatus(HttpStatus.CREATED)
   @PostMapping("/{name}")
-  public TriggerDTO postTrigger(@PathVariable String name, @RequestBody SchedulerConfigParam config) throws SchedulerException, ClassNotFoundException {
+  public TriggerDTO postTrigger(@PathVariable String name, @Valid @RequestBody SchedulerConfigParam config) throws SchedulerException, ClassNotFoundException {
     log.info("TRIGGER - CREATING a trigger {} {}", name, config);
     TriggerDTO newTriggerDTO = schedulerService.scheduleNewTrigger(name, jobClassname, config);
     log.info("TRIGGER - CREATED a trigger {}", newTriggerDTO);

@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 
 public class TriggerUtils {
 
-  static public TriggerDTO getTriggerInstance(){
+  static public TriggerDTO getTriggerInstance(String triggerName){
     return TriggerDTO.builder()
       .description("sample trigger")
       .endTime(DateUtils.getHoursFromNow(2L))
@@ -21,7 +21,7 @@ public class TriggerUtils {
       .mayFireAgain(true)
       .triggerKeyDTO(TriggerKeyDTO.builder()
         .group("defaultTriggerGroup")
-        .name("sampleTrigger")
+        .name(triggerName)
         .build())
       .misfireInstruction(1)
       .nextFireTime(DateUtils.getHoursFromNow(1L))

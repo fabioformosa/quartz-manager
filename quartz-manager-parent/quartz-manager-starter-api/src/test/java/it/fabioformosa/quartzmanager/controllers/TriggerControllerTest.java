@@ -1,6 +1,7 @@
 package it.fabioformosa.quartzmanager.controllers;
 
 import it.fabioformosa.quartzmanager.QuartManagerApplicationTests;
+import it.fabioformosa.quartzmanager.controllers.utils.InvalidSchedulerConfigParamProvider;
 import it.fabioformosa.quartzmanager.controllers.utils.TestUtils;
 import it.fabioformosa.quartzmanager.controllers.utils.TriggerUtils;
 import it.fabioformosa.quartzmanager.dto.SchedulerConfigParam;
@@ -8,6 +9,8 @@ import it.fabioformosa.quartzmanager.dto.TriggerDTO;
 import it.fabioformosa.quartzmanager.services.SchedulerService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ArgumentsSource;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -18,8 +21,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 
 @ContextConfiguration(classes = {QuartManagerApplicationTests.class})
 @WebMvcTest(controllers = TriggerController.class, properties = {
@@ -40,10 +42,9 @@ class TriggerControllerTest {
 
   @Test
   void givenASchedulerConfigParam_whenPosted_thenANewTriggerIsCreated() throws Exception {
-    TriggerDTO expectedTriggerDTO = TriggerUtils.getTriggerInstance();
+    SchedulerConfigParam configParamToPost = buildSimpleSchedulerConfigParam();
+    TriggerDTO expectedTriggerDTO = TriggerUtils.getTriggerInstance("mytrigger");
     Mockito.when(schedulerService.scheduleNewTrigger(any(), any(), any())).thenReturn(expectedTriggerDTO);
-
-    SchedulerConfigParam configParamToPost = SchedulerConfigParam.builder().maxCount(20).triggerPerDay(20000L).build();
     mockMvc.perform(
       post(TriggerController.TRIGGER_CONTROLLER_BASE_URL + "/mytrigger")
         .contentType(MediaType.APPLICATION_JSON)
@@ -54,14 +55,40 @@ class TriggerControllerTest {
     ;
   }
 
+  @ParameterizedTest
+  @ArgumentsSource(InvalidSchedulerConfigParamProvider.class)
+  void givenAnInvalidSchedulerConfigParam_whenPosted_thenAnErrorIsReturned(SchedulerConfigParam invalidSchedulerConfigParam) throws Exception {
+    mockMvc.perform(post(TriggerController.TRIGGER_CONTROLLER_BASE_URL + "/mytrigger")
+      .contentType(MediaType.APPLICATION_JSON)
+      .content(TestUtils.toJson(invalidSchedulerConfigParam)))
+      .andExpect(MockMvcResultMatchers.status().is4xxClientError());
+  }
+
   @Test
   void whenGetIsCalled_thenATriggerIsReturned() throws Exception {
-    TriggerDTO expectedTriggerDTO = TriggerUtils.getTriggerInstance();
+    TriggerDTO expectedTriggerDTO = TriggerUtils.getTriggerInstance("mytrigger");
     Mockito.when(schedulerService.getTriggerByName("mytrigger")).thenReturn(expectedTriggerDTO);
 
     mockMvc.perform(get(TriggerController.TRIGGER_CONTROLLER_BASE_URL + "/mytrigger")
       .contentType(MediaType.APPLICATION_JSON)).andExpect(MockMvcResultMatchers.status().isOk())
       .andExpect(MockMvcResultMatchers.content().json(TestUtils.toJson(expectedTriggerDTO)));
+  }
+
+  @Test
+  void givenATriggerName_whenPutSchedulerConfigParam_thenTheTriggerIsRescheduled() throws Exception {
+    SchedulerConfigParam expectedConfigParam = buildSimpleSchedulerConfigParam();
+    TriggerDTO expectedTriggerDTO = TriggerUtils.getTriggerInstance("mytrigger");
+    Mockito.when(schedulerService.rescheduleTrigger("mytrigger", buildSimpleSchedulerConfigParam())).thenReturn(expectedTriggerDTO);
+
+    mockMvc.perform(put(TriggerController.TRIGGER_CONTROLLER_BASE_URL + "/mytrigger")
+      .contentType(MediaType.APPLICATION_JSON)
+      .content(TestUtils.toJson(expectedConfigParam)))
+      .andExpect(MockMvcResultMatchers.status().isOk())
+      .andExpect(MockMvcResultMatchers.content().json(TestUtils.toJson(expectedTriggerDTO)));
+  }
+
+  private SchedulerConfigParam buildSimpleSchedulerConfigParam() {
+    return SchedulerConfigParam.builder().maxCount(20).triggerPerDay(20000L).build();
   }
 
 }

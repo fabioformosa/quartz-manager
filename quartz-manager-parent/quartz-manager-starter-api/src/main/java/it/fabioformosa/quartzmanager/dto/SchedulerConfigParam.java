@@ -5,12 +5,16 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.NotNull;
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @Data
 public class SchedulerConfigParam {
-  public long triggerPerDay;
-  public int maxCount;
+  @NotNull
+  public Long triggerPerDay;
+  @NotNull
+  public Integer maxCount;
   public int timesTriggered;
 }

@@ -46,7 +46,7 @@ public class SchedulerController {
     log.debug("SCHEDULER - GET CONFIG params");
     SchedulerConfigParam schedulerConfigParam = schedulerService.getOneSimpleTrigger()
       .map(SchedulerController::fromSimpleTriggerToSchedulerConfigParam)
-      .orElse(new SchedulerConfigParam(0, 0, 0));
+      .orElse(new SchedulerConfigParam(0L, 0, 0));
     return schedulerConfigParam;
   }
 
