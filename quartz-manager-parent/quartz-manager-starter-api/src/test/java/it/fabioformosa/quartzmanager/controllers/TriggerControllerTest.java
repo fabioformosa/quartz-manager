@@ -57,7 +57,7 @@ class TriggerControllerTest {
 
   @ParameterizedTest
   @ArgumentsSource(InvalidSchedulerConfigParamProvider.class)
-  void givenAnInvalidSchedulerConfigParam_whenPosted_thenAnErrorIsReturned(SchedulerConfigParam invalidSchedulerConfigParam) throws Exception {
+  void givenAnInvalidSchedulerConfigParam_whenRequestedANewTrigger_thenAnErrorIsReturned(SchedulerConfigParam invalidSchedulerConfigParam) throws Exception {
     mockMvc.perform(post(TriggerController.TRIGGER_CONTROLLER_BASE_URL + "/mytrigger")
       .contentType(MediaType.APPLICATION_JSON)
       .content(TestUtils.toJson(invalidSchedulerConfigParam)))
@@ -85,6 +85,15 @@ class TriggerControllerTest {
       .content(TestUtils.toJson(expectedConfigParam)))
       .andExpect(MockMvcResultMatchers.status().isOk())
       .andExpect(MockMvcResultMatchers.content().json(TestUtils.toJson(expectedTriggerDTO)));
+  }
+
+  @ParameterizedTest
+  @ArgumentsSource(InvalidSchedulerConfigParamProvider.class)
+  void givenAnInvalidSchedulerConfigParam_whenATriggerIsRescheduled_thenAnErrorIsReturned(SchedulerConfigParam invalidSchedulerConfigParam) throws Exception {
+    mockMvc.perform(put(TriggerController.TRIGGER_CONTROLLER_BASE_URL + "/mytrigger")
+        .contentType(MediaType.APPLICATION_JSON)
+        .content(TestUtils.toJson(invalidSchedulerConfigParam)))
+      .andExpect(MockMvcResultMatchers.status().is4xxClientError());
   }
 
   private SchedulerConfigParam buildSimpleSchedulerConfigParam() {

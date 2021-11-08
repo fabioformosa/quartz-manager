@@ -44,7 +44,7 @@ public class TriggerController {
   }
 
   @PutMapping("/{name}")
-  public TriggerDTO rescheduleTrigger(@PathVariable String name, @RequestBody SchedulerConfigParam config) throws SchedulerException {
+  public TriggerDTO rescheduleTrigger(@PathVariable String name, @Valid @RequestBody SchedulerConfigParam config) throws SchedulerException {
     log.info("TRIGGER - RESCHEDULING the trigger {} {}", name, config);
     TriggerDTO triggerDTO = schedulerService.rescheduleTrigger(name, config);
     log.info("TRIGGER - RESCHEDULED the trigger {}", triggerDTO);
