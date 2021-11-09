@@ -1,18 +1,26 @@
 package it.fabioformosa.quartzmanager.controllers;
 
-import io.swagger.annotations.Api;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import it.fabioformosa.quartzmanager.dto.SchedulerConfigParam;
 import it.fabioformosa.quartzmanager.dto.SchedulerDTO;
 import it.fabioformosa.quartzmanager.dto.TriggerStatus;
 import it.fabioformosa.quartzmanager.enums.SchedulerStates;
 import it.fabioformosa.quartzmanager.services.SchedulerService;
-import org.quartz.*;
+import org.quartz.SchedulerException;
+import org.quartz.SimpleTrigger;
 import org.quartz.impl.triggers.SimpleTriggerImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
 import java.util.Collections;
@@ -26,7 +34,6 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("/quartz-manager/scheduler")
-@Api(value = "scheduler")
 public class SchedulerController {
 
   private final Logger log = LoggerFactory.getLogger(SchedulerController.class);
@@ -41,7 +48,14 @@ public class SchedulerController {
   @Resource
   private ConversionService conversionService;
 
+  //TODO replace this a list of trigger
   @GetMapping("/config")
+  @Operation(summary = "Get the config of the trigger")
+  @ApiResponses(value = {
+    @ApiResponse(responseCode = "200", description = "Return the trigger config",
+      content = { @Content(mediaType = "application/json",
+        schema = @Schema(implementation = SchedulerConfigParam.class)) })
+  })
   public SchedulerConfigParam getConfig() throws SchedulerException {
     log.debug("SCHEDULER - GET CONFIG params");
     SchedulerConfigParam schedulerConfigParam = schedulerService.getOneSimpleTrigger()
@@ -58,13 +72,26 @@ public class SchedulerController {
   }
 
   @GetMapping
+  @Operation(summary = "Get the scheduler details")
+  @ApiResponses(value = {
+    @ApiResponse(responseCode = "200", description = "Return the scheduler config",
+      content = { @Content(mediaType = "application/json",
+        schema = @Schema(implementation = SchedulerDTO.class)) })
+  })
   public SchedulerDTO getScheduler() {
     log.debug("SCHEDULER - GET Scheduler...");
     SchedulerDTO schedulerDTO = conversionService.convert(schedulerService.getScheduler(), SchedulerDTO.class);
     return schedulerDTO;
   }
 
+  //TODO move this to the Trigger Controller
   @GetMapping("/progress")
+  @Operation(summary = "Get the trigger status")
+  @ApiResponses(value = {
+    @ApiResponse(responseCode = "200", description = "Return the trigger status",
+      content = { @Content(mediaType = "application/json",
+        schema = @Schema(implementation = TriggerStatus.class)) })
+  })
   public TriggerStatus getProgressInfo() throws SchedulerException {
     log.trace("SCHEDULER - GET PROGRESS INFO");
     TriggerStatus progress = new TriggerStatus();
@@ -84,6 +111,12 @@ public class SchedulerController {
   }
 
   @GetMapping(value = "/status", produces = "application/json")
+  @Operation(summary = "Get the scheduler status")
+  @ApiResponses(value = {
+    @ApiResponse(responseCode = "200", description = "Return the scheduler status",
+      content = { @Content(mediaType = "application/json",
+        schema = @Schema(implementation = SchedulerStates.class)) })
+  })
   public Map<String, String> getStatus() throws SchedulerException {
     log.trace("SCHEDULER - GET STATUS");
     String schedulerState = "";
@@ -97,6 +130,10 @@ public class SchedulerController {
   }
 
   @GetMapping("/pause")
+  @Operation(summary = "Get paused the scheduler")
+  @ApiResponses(value = {
+    @ApiResponse(responseCode = "204", description = "Got paused successfully")
+  })
   @ResponseStatus(HttpStatus.NO_CONTENT)
   public void pause() throws SchedulerException {
     log.info("SCHEDULER - PAUSE COMMAND");
@@ -104,6 +141,10 @@ public class SchedulerController {
   }
 
   @GetMapping("/resume")
+  @Operation(summary = "Get resumed the scheduler")
+  @ApiResponses(value = {
+    @ApiResponse(responseCode = "204", description = "Got resumed successfully")
+  })
   @ResponseStatus(HttpStatus.NO_CONTENT)
   public void resume() throws SchedulerException {
     log.info("SCHEDULER - RESUME COMMAND");
@@ -111,6 +152,10 @@ public class SchedulerController {
   }
 
   @GetMapping("/run")
+  @Operation(summary = "Start the scheduler")
+  @ApiResponses(value = {
+    @ApiResponse(responseCode = "204", description = "Got started successfully")
+  })
   @ResponseStatus(HttpStatus.NO_CONTENT)
   public void run() throws SchedulerException {
     log.info("SCHEDULER - START COMMAND");
@@ -118,6 +163,10 @@ public class SchedulerController {
   }
 
   @GetMapping("/stop")
+  @Operation(summary = "Stop the scheduler")
+  @ApiResponses(value = {
+    @ApiResponse(responseCode = "204", description = "Got stopped successfully")
+  })
   @ResponseStatus(HttpStatus.NO_CONTENT)
   public void stop() throws SchedulerException {
     log.info("SCHEDULER - STOP COMMAND");
