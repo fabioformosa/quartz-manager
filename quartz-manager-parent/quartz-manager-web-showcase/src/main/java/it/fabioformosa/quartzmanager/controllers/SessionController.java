@@ -1,7 +1,6 @@
 package it.fabioformosa.quartzmanager.controllers;
 
-import javax.servlet.http.HttpSession;
-
+import io.swagger.v3.oas.annotations.Operation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpEntity;
@@ -13,10 +12,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-import springfox.documentation.annotations.ApiIgnore;
+import javax.servlet.http.HttpSession;
 
 @Controller
-@ApiIgnore
 @RequestMapping("/session")
 public class SessionController {
 
@@ -25,6 +23,7 @@ public class SessionController {
 	@GetMapping("/invalidate")
 	@PreAuthorize("hasAuthority('ADMIN')")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
+  @Operation(hidden = true)
 	public void invalidateSession(HttpSession session) {
 		session.invalidate();
 		log.info("Invalidated current session!");
@@ -32,6 +31,7 @@ public class SessionController {
 
 	@GetMapping("/refresh")
 	@PreAuthorize("hasAuthority('ADMIN')")
+  @Operation(hidden = true)
 	public HttpEntity<Void> refreshSession(HttpSession session) {
 		return new ResponseEntity<>(HttpStatus.OK);
 	}

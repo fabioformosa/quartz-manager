@@ -51,7 +51,7 @@ import it.fabioformosa.quartzmanager.security.helpers.impl.QuartzManagerHttpSecu
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class WebSecurityConfigJWT extends WebSecurityConfigurerAdapter {
 
-    private static final String[] PATTERNS_SWAGGER_UI = {"/swagger-ui.html", "/v2/api-docs", "/swagger-resources/**", "/webjars/**"};
+    private static final String[] PATTERNS_SWAGGER_UI = {"/swagger-ui.html", "/v3/api-docs/**", "/swagger-resources/**", "/webjars/**"};
 
     private static final String LOGIN_PATH = "/quartz-manager/api/login";
     private static final String LOGOUT_PATH = "/quartz-manager/api/logout";
