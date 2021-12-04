@@ -104,7 +104,7 @@ public class WebSecurityConfigJWT extends WebSecurityConfigurerAdapter {
     }
 
     @Override
-    public void configure(WebSecurity web) throws Exception {
+    public void configure(WebSecurity web) {
         web.ignoring()//
         .antMatchers(HttpMethod.GET, PATTERNS_SWAGGER_UI) //
         .antMatchers(HttpMethod.GET, WEBJAR_PATH + "/css/**", WEBJAR_PATH + "/js/**", WEBJAR_PATH + "/img/**", WEBJAR_PATH + "/lib/**", WEBJAR_PATH + "/assets/**");
@@ -146,7 +146,7 @@ public class WebSecurityConfigJWT extends WebSecurityConfigurerAdapter {
     }
 
     @Bean
-    public JwtTokenAuthenticationFilter jwtAuthenticationTokenFilter() throws Exception {
+    public JwtTokenAuthenticationFilter jwtAuthenticationTokenFilter() {
         return new JwtTokenAuthenticationFilter(jwtTokenHelper(), userDetailsService);
     }
 

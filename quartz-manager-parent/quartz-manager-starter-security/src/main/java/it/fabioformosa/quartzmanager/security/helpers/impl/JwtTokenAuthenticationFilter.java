@@ -1,16 +1,5 @@
 package it.fabioformosa.quartzmanager.security.helpers.impl;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -20,6 +9,16 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.security.web.util.matcher.OrRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
+
+import javax.servlet.FilterChain;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 
 /**
@@ -65,12 +64,11 @@ public class JwtTokenAuthenticationFilter extends OncePerRequestFilter {
 
   @Override
   public void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
-
     String jwtToken = jwtTokenHelper.retrieveToken(request);
     if (jwtToken != null) {
       log.debug("Found a jwtToken into the request {}", request.getPathInfo());
       try {
-        String username = jwtTokenHelper.getUsernameFromToken(jwtToken);
+        String username = jwtTokenHelper.verifyTokenAndExtractUsername(jwtToken);
         UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 
         JwtTokenBasedAuthentication authentication = new JwtTokenBasedAuthentication(userDetails);
@@ -78,7 +76,7 @@ public class JwtTokenAuthenticationFilter extends OncePerRequestFilter {
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
       } catch (Exception e) {
-        log.error("Authentication failed! an expected error occurred authenticating the request {}", request.getRequestURL());
+        log.error("Authentication failed! an expected error occurred authenticating the request {} due to {}", request.getRequestURL(), e.getMessage(), e);
         //        SecurityContextHolder.getContext().setAuthentication(new AnonAuthentication());
         //        log.error("Switched to Anonymous Authentication, "
         //            + "because an error occurred setting authentication in security context holder due to " + e.getMessage(), e);

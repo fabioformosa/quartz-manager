@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import it.fabioformosa.quartzmanager.dto.SchedulerConfigParam;
 import it.fabioformosa.quartzmanager.dto.TriggerDTO;
 import it.fabioformosa.quartzmanager.services.SchedulerService;
@@ -18,6 +19,7 @@ import javax.validation.Valid;
 
 @Slf4j
 @RequestMapping(TriggerController.TRIGGER_CONTROLLER_BASE_URL)
+@SecurityRequirement(name = "basic-auth")
 @RestController
 public class TriggerController {
 

@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import it.fabioformosa.quartzmanager.dto.SchedulerConfigParam;
 import it.fabioformosa.quartzmanager.dto.SchedulerDTO;
 import it.fabioformosa.quartzmanager.dto.TriggerStatus;
@@ -33,6 +34,7 @@ import java.util.Map;
  * @author Fabio.Formosa
  */
 @RestController
+@SecurityRequirement(name = "basic-auth")
 @RequestMapping("/quartz-manager/scheduler")
 public class SchedulerController {
 

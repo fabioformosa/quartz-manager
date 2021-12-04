@@ -17,7 +17,7 @@
 		<main.basedir>${basedir}/../..</main.basedir>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-          <springfox.version>2.9.2</springfox.version>
+        <openapi.version>1.5.12</openapi.version>
         <java.version>1.8</java.version>
 	</properties>
   
@@ -141,7 +141,12 @@
           <dependency>
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-ui</artifactId>
-            <version>1.5.12</version>
+            <version>${openapi.version}</version>
+          </dependency>
+          <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-security</artifactId>
+            <version>${openapi.version}</version>
           </dependency>
           <dependency>
             <groupId>io.swagger.core.v3</groupId>

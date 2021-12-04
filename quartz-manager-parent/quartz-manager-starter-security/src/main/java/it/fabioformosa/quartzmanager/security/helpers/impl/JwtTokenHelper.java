@@ -1,23 +1,21 @@
 package it.fabioformosa.quartzmanager.security.helpers.impl;
 
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+import it.fabioformosa.quartzmanager.security.configuration.properties.JwtSecurityProperties;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Base64;
 import java.util.Date;
 import java.util.Map;
-
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
-import it.fabioformosa.quartzmanager.security.configuration.properties.JwtSecurityProperties;
 
 /**
  *
@@ -47,7 +45,7 @@ public class JwtTokenHelper {
 
     public Boolean canTokenBeRefreshed(String token) {
         try {
-            final Date expirationDate = getClaimsFromToken(token).getExpiration();
+            final Date expirationDate = verifyAndGetClaimsFromToken(token).getExpiration();
             // String username = getUsernameFromToken(token);
             // UserDetails userDetails = userDetailsService.loadUserByUsername(username);
             return expirationDate.compareTo(generateCurrentDate()) > 0;
@@ -75,7 +73,7 @@ public class JwtTokenHelper {
                 .signWith(SIGNATURE_ALGORITHM, base64EncodeSecretKey(jwtSecurityProps.getSecret())).compact();
     }
 
-    private Claims getClaimsFromToken(String token) {
+    private Claims verifyAndGetClaimsFromToken(String token) {
         Claims claims;
         try {
             claims = Jwts.parser().setSigningKey(base64EncodeSecretKey(jwtSecurityProps.getSecret()))
@@ -109,13 +107,12 @@ public class JwtTokenHelper {
         return LocalDateTime.now().atZone(ZoneId.of("Europe/Rome")).toInstant().toEpochMilli();
     }
 
-    public String getUsernameFromToken(String token) {
+    public String verifyTokenAndExtractUsername(String token) {
         String username;
         try {
-            final Claims claims = getClaimsFromToken(token);
+            final Claims claims = verifyAndGetClaimsFromToken(token);
             username = claims.getSubject();
         } catch (Exception e) {
-            username = null;
             log.error("Error getting claims from jwt token due to " + e.getMessage(), e);
             throw e;
         }
@@ -125,7 +122,7 @@ public class JwtTokenHelper {
     public String refreshToken(String token) {
         String refreshedToken;
         try {
-            final Claims claims = getClaimsFromToken(token);
+            final Claims claims = verifyAndGetClaimsFromToken(token);
             claims.setIssuedAt(generateCurrentDate());
             refreshedToken = generateToken(claims);
         } catch (Exception e) {
@@ -136,7 +133,7 @@ public class JwtTokenHelper {
     }
 
     public String retrieveToken(HttpServletRequest request) {
-        if (jwtSecurityProps.getCookieStrategy().isEnabled() == true) {
+        if (jwtSecurityProps.getCookieStrategy().isEnabled()) {
             Cookie authCookie = getCookieValueByName(request, jwtSecurityProps.getCookieStrategy().getCookie());
             if (authCookie != null)
                 return authCookie.getValue();
