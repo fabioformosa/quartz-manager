@@ -17,6 +17,11 @@ import {MatToolbarModule} from '@angular/material/toolbar';
 import {MatIconModule} from '@angular/material/icon';
 import {MatButtonModule} from '@angular/material/button';
 import {MatCardModule} from '@angular/material/card';
+import {MatDatepickerModule} from '@angular/material/datepicker';
+
+import {MatNativeDateModule} from '@angular/material/core';
+import { NgxMatTimepickerModule, NgxMatDatetimePickerModule} from '@angular-material-components/datetime-picker';
+import { NgxMatMomentModule } from '@angular-material-components/moment-adapter';
 
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FlexLayoutModule } from '@angular/flex-layout';
@@ -52,6 +57,7 @@ import { ChangePasswordComponent } from './views/change-password/change-password
 import { ForbiddenComponent } from './views/forbidden/forbidden.component';
 import { APP_BASE_HREF } from '@angular/common';
 import { environment } from '../environments/environment';
+import {SimpleTriggerConfigComponent} from './components/simple-trigger-config';
 
 export function initUserFactory(userService: UserService) {
     return () => userService.jsessionInitUser();
@@ -102,6 +108,7 @@ export function jwtOptionsFactory(apiService: ApiService) {
     NotFoundComponent,
     AccountMenuComponent,
     SchedulerConfigComponent,
+    SimpleTriggerConfigComponent,
     SchedulerControlComponent,
     LogsPanelComponent,
     ProgressPanelComponent,
@@ -132,6 +139,9 @@ export function jwtOptionsFactory(apiService: ApiService) {
     MatCardModule,
     MatProgressSpinnerModule,
     MatProgressBarModule,
+    MatDatepickerModule, MatNativeDateModule,
+    NgxMatMomentModule,
+    NgxMatDatetimePickerModule,
     FlexLayoutModule
   ],
   providers: [

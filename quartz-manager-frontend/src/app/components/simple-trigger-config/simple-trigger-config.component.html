@@ -1,0 +1,103 @@
+<mat-card>
+  <mat-card-header>
+    <mat-card-title><b>SCHEDULER CONFIG</b></mat-card-title>
+  </mat-card-header>
+
+  <!-- ADD BUTTON -->
+  <mat-card-content *ngIf="!existsATriggerInProgress() && !enabledTriggerForm">
+    <button mat-fab color="primary">
+      <mat-icon (click)="enableTriggerForm()">add</mat-icon>
+    </button>
+  </mat-card-content>
+
+  <!-- TRIGGER DETAILS -->
+  <mat-card-content *ngIf="existsATriggerInProgress() || enabledTriggerForm">
+
+    <div fxLayout="column">
+        <form name="configForm" fxFlex="1 1 100%" #configForm="ngForm">
+
+          <div>
+            <mat-form-field [appearance]="enabledTriggerForm ? 'standard': 'none'">
+              <mat-label>Start Date (optional)</mat-label>
+              <input [readonly]="!enabledTriggerForm"
+                     matInput name="startDate"
+                     [ngxMatDatetimePicker]="startDatePicker" placeholder="Choose a start date"
+                     [(ngModel)]="simpleTriggerForm.startDate">
+              <mat-datepicker-toggle matSuffix [for]="startDatePicker"></mat-datepicker-toggle>
+              <ngx-mat-datetime-picker #startDatePicker showSpinners="true" showSeconds="true">
+<!--                                       [stepHour]="stepHour"-->
+<!--                                       [stepMinute]="stepMinute" [stepSecond]="stepSecond" [touchUi]="touchUi" [color]="color"-->
+<!--                                       [enableMeridian]="enableMeridian" [disableMinute]="disableMinute" [hideTime]="hideTime">-->
+              </ngx-mat-datetime-picker>
+            </mat-form-field>
+          </div>
+
+          <div>
+            <mat-form-field [appearance]="enabledTriggerForm ? 'standard': 'none'">
+              <mat-label>End Date (optional)</mat-label>
+              <input [readonly]="!enabledTriggerForm"
+                     matInput name="endDate"
+                     [ngxMatDatetimePicker]="endDatePicker" placeholder="Choose a end date"
+                     [(ngModel)]="simpleTriggerForm.endDate"
+              >
+              <mat-datepicker-toggle matSuffix [for]="endDatePicker"></mat-datepicker-toggle>
+              <ngx-mat-datetime-picker #endDatePicker showSpinners="true" showSeconds="true">
+                <!--                                       [stepHour]="stepHour"-->
+                <!--                                       [stepMinute]="stepMinute" [stepSecond]="stepSecond" [touchUi]="touchUi" [color]="color"-->
+                <!--                                       [enableMeridian]="enableMeridian" [disableMinute]="disableMinute" [hideTime]="hideTime">-->
+              </ngx-mat-datetime-picker>
+            </mat-form-field>
+          </div>
+
+          <div>
+            <mat-form-field [appearance]="enabledTriggerForm ? 'standard': 'none'">
+              <mat-label>Repeat Interval [in mills]</mat-label>
+              <input [readonly]="!enabledTriggerForm"
+                     matInput placeholder="Repeat Interval [in mills]" name="repeatInterval" type="number"
+                     [(ngModel)]="simpleTriggerForm.repeatInterval"
+              >
+            </mat-form-field>
+          </div>
+          <div>
+            <mat-form-field [appearance]="enabledTriggerForm ? 'standard': 'none'">
+              <mat-label>Repeat Count</mat-label>
+              <input [readonly]="!enabledTriggerForm"
+                     matInput placeholder="Repeat Count (-1 REPEAT INDEFINITELY)" name="repeatCount" type="number"
+                     [(ngModel)]="simpleTriggerForm.repeatCount"
+              >
+            </mat-form-field>
+          </div>
+          <br>
+          <div>
+            <h5>Misfire Policy</h5>
+            <div>RESCHEDULE NEXT WITH REMAINING COUNT</div>
+            <div class="small">
+              In case of misfire event, the trigger is re-scheduled to the next scheduled time after 'now' with the repeat count set to what it would be, if it had not missed any firings.
+              <br/>
+              <strong>Warning:</strong> This policy could cause the Trigger to go directly to the 'COMPLETE' state if all fire-times where missed.
+            </div>
+          </div>
+
+          <br>
+
+          <button mat-raised-button
+                  type="button"
+                  *ngIf="enabledTriggerForm"
+                  (click)="cancelConfigForm()">
+            Cancel
+          </button>
+          <button mat-raised-button
+              type="button" color="primary"
+                  *ngIf="enabledTriggerForm"
+              (click)="submitConfig()">
+              Submit
+          </button>
+          <button mat-raised-button type="button"
+                  *ngIf="!enabledTriggerForm"
+                  (click)="enabledTriggerForm = true">
+            Reschedule
+          </button>
+        </form>
+      </div>
+  </mat-card-content>
+</mat-card>
