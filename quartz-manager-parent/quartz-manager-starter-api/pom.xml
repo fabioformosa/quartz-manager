@@ -6,12 +6,12 @@
 		<artifactId>quartz-manager-parent</artifactId>
         <version>3.1.1-SNAPSHOT</version>
 	</parent>
-  
+
 	<artifactId>quartz-manager-starter-api</artifactId>
-  
+
 	<name>Quartz Manager Starter API</name>
 	<description>REST API layer for your scheduler and triggered jobs, to be included in your spring webapp</description>
-  
+
 	<url>https://github.com/fabioformosa/quartz-manager</url>
 	<properties>
 		<main.basedir>${basedir}/../..</main.basedir>
@@ -20,7 +20,7 @@
         <openapi.version>1.5.12</openapi.version>
         <java.version>1.8</java.version>
 	</properties>
-  
+
 	<dependencies>
         <dependency>
           <groupId>it.fabioformosa.quartz-manager</groupId>
@@ -57,7 +57,7 @@
           <artifactId>spring-boot-starter-test</artifactId>
           <scope>test</scope>
         </dependency>
-    
+
         <!-- MISC -->
         <dependency>
           <groupId>com.fasterxml.jackson.core</groupId>
@@ -108,7 +108,7 @@
           <artifactId>commons-io</artifactId>
           <version>1.3.2</version>
         </dependency>
-        
+
     <!-- Reactor -->
         <dependency>
             <groupId>io.projectreactor</groupId>
@@ -136,7 +136,7 @@
             <groupId>org.yaml</groupId>
             <artifactId>snakeyaml</artifactId>
           </dependency>
-      
+
          <!-- OAS -->
           <dependency>
             <groupId>org.springdoc</groupId>
@@ -160,6 +160,10 @@
             <artifactId>junit-platform-launcher</artifactId>
             <scope>test</scope>
           </dependency>
+          <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-tx</artifactId>
+          </dependency>
 	</dependencies>
-  
+
 </project>
