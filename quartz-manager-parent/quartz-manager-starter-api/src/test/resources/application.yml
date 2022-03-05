@@ -1,0 +1,18 @@
+app:
+  name: quartz-manager
+
+quartz:
+  enabled: true
+
+job:
+  frequency: 4000
+  repeatCount: 19
+
+logging:
+  level:
+    org.springframework.boot.autoconfigure.security: INFO
+    it.fabioformosa: DEBUG
+    org.quartz: INFO
+
+quartz-manager:
+  jobClass: it.fabioformosa.quartzmanager.jobs.SampleJob

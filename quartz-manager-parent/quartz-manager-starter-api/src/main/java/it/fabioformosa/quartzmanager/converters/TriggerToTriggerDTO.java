@@ -1,6 +1,6 @@
 package it.fabioformosa.quartzmanager.converters;
 
-import it.fabioformosa.metamorphosis.core.converters.AbstractBaseConverterToDTO;
+import it.fabioformosa.metamorphosis.core.converters.AbstractBaseConverter;
 import it.fabioformosa.quartzmanager.dto.JobKeyDTO;
 import it.fabioformosa.quartzmanager.dto.TriggerDTO;
 import it.fabioformosa.quartzmanager.dto.TriggerKeyDTO;
@@ -10,10 +10,10 @@ import org.quartz.TriggerKey;
 import org.springframework.stereotype.Component;
 
 @Component
-public class TriggerToTriggerDTO extends AbstractBaseConverterToDTO<Trigger, TriggerDTO> {
+public class TriggerToTriggerDTO<S extends Trigger, T extends TriggerDTO> extends AbstractBaseConverter<S, T> {
 
   @Override
-  protected void convert(Trigger source, TriggerDTO target) {
+  protected void convert(S source, T target) {
     TriggerKey triggerKey = source.getKey();
     TriggerKeyDTO triggerKeyDTO = conversionService.convert(triggerKey, TriggerKeyDTO.class);
     target.setTriggerKeyDTO(triggerKeyDTO);
@@ -30,7 +30,11 @@ public class TriggerToTriggerDTO extends AbstractBaseConverterToDTO<Trigger, Tri
     JobKey jobKey = source.getJobKey();
     JobKeyDTO jobKeyDTO = conversionService.convert(jobKey, JobKeyDTO.class);
     target.setJobKeyDTO(jobKeyDTO);
+  }
 
+  @Override
+  protected T createOrRetrieveTarget(S source) {
+    return (T) new TriggerDTO();
   }
 
 }

@@ -1,16 +1,16 @@
 package it.fabioformosa.quartzmanager.dto;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 import java.util.Date;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-@Builder
+@SuperBuilder
 public class TriggerDTO {
   private TriggerKeyDTO triggerKeyDTO;
   private int priority;

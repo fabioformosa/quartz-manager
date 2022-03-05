@@ -1,16 +1,10 @@
 package it.fabioformosa.quartzmanager.aspects;
 
 import it.fabioformosa.quartzmanager.dto.TriggerStatus;
-import it.fabioformosa.quartzmanager.services.SchedulerService;
-import org.quartz.DailyTimeIntervalTrigger;
-import org.quartz.SchedulerException;
-import org.quartz.SimpleTrigger;
-import org.quartz.Trigger;
+import org.quartz.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.stereotype.Component;
-
-import javax.annotation.Resource;
 
 /**
  *
@@ -29,8 +23,8 @@ public class WebSocketProgressNotifier implements ProgressNotifier {
 //    @Resource
 //    private Scheduler scheduler;
 
-    @Resource
-    private SchedulerService schedulerService;
+//    @Resource
+//    private LegacySchedulerService schedulerService;
 
 //    @Resource
 //    private TriggerMonitor triggerMonitor;
@@ -42,34 +36,26 @@ public class WebSocketProgressNotifier implements ProgressNotifier {
     //	}
 
     @Override
-    public void send() throws SchedulerException {
+    public void send(JobExecutionContext jobExecutionContext) throws SchedulerException {
         TriggerStatus currTriggerStatus = new TriggerStatus();
 
-        Trigger trigger = schedulerService.getOneSimpleTrigger().get();
+        Trigger trigger = jobExecutionContext.getTrigger();
         currTriggerStatus.setFinalFireTime(trigger.getFinalFireTime());
         currTriggerStatus.setNextFireTime(trigger.getNextFireTime());
         currTriggerStatus.setPreviousFireTime(trigger.getPreviousFireTime());
 
-        int timesTriggered = 0;
-        int repeatCount = 0;
-
         if (trigger instanceof SimpleTrigger) {
             SimpleTrigger simpleTrigger = (SimpleTrigger) trigger;
-            timesTriggered = simpleTrigger.getTimesTriggered();
-            repeatCount = simpleTrigger.getRepeatCount();
+            currTriggerStatus.setRepeatCount(simpleTrigger.getRepeatCount() + 1);
+            currTriggerStatus.setTimesTriggered(simpleTrigger.getTimesTriggered());
         } else if (trigger instanceof DailyTimeIntervalTrigger) {
             DailyTimeIntervalTrigger dailyTrigger = (DailyTimeIntervalTrigger) trigger;
-            timesTriggered = dailyTrigger.getTimesTriggered();
-            repeatCount = dailyTrigger.getRepeatCount();
+            currTriggerStatus.setRepeatCount(dailyTrigger.getRepeatCount() + 1);
         }
 
-        Trigger jobTrigger = schedulerService.getOneSimpleTrigger().get();
-        if (jobTrigger != null && jobTrigger.getJobKey() != null) {
-            currTriggerStatus.setJobKey(jobTrigger.getJobKey().getName());
-            currTriggerStatus.setJobClass(jobTrigger.getClass().getSimpleName());
-            currTriggerStatus.setTimesTriggered(timesTriggered);
-            currTriggerStatus.setRepeatCount(repeatCount + 1);
-        }
+        JobDetail jobDetail = jobExecutionContext.getJobDetail();
+        currTriggerStatus.setJobKey(jobDetail.getKey().getName());
+        currTriggerStatus.setJobClass(trigger.getClass().getSimpleName());
 
         messagingTemplate.convertAndSend("/topic/progress", currTriggerStatus);
     }

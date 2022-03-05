@@ -1,5 +1,6 @@
 package it.fabioformosa.quartzmanager.aspects;
 
+import org.quartz.JobExecutionContext;
 import org.quartz.SchedulerException;
 
 /**
@@ -11,6 +12,6 @@ import org.quartz.SchedulerException;
  */
 public interface ProgressNotifier {
 
-	void send() throws SchedulerException;
+	void send(JobExecutionContext jobExecutionContext) throws SchedulerException;
 
 }

@@ -1,5 +1,9 @@
 package it.fabioformosa.quartzmanager.exceptions;
 
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter @Setter
 public class ResourceConflictException extends RuntimeException {
 
   private static final long serialVersionUID = 1791564636123821405L;
@@ -8,14 +12,7 @@ public class ResourceConflictException extends RuntimeException {
 
   public ResourceConflictException(Long resourceId, String message) {
     super(message);
-    setResourceId(resourceId);
-  }
-
-  public Long getResourceId() {
-    return resourceId;
-  }
-
-  public void setResourceId(Long resourceId) {
     this.resourceId = resourceId;
   }
+
 }

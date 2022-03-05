@@ -6,7 +6,7 @@ import it.fabioformosa.quartzmanager.controllers.utils.TestUtils;
 import it.fabioformosa.quartzmanager.controllers.utils.TriggerUtils;
 import it.fabioformosa.quartzmanager.dto.SchedulerConfigParam;
 import it.fabioformosa.quartzmanager.dto.TriggerDTO;
-import it.fabioformosa.quartzmanager.services.SchedulerService;
+import it.fabioformosa.quartzmanager.services.LegacySchedulerService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -25,7 +25,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 
 @ContextConfiguration(classes = {QuartManagerApplicationTests.class})
 @WebMvcTest(controllers = TriggerController.class, properties = {
-  "quartz-manager.jobClass=it.fabioformosa.quartzmanager.jobs.myjobs.SampleJob"
+  "quartz-manager.jobClass=it.fabioformosa.quartzmanager.jobs.SampleJob"
 })
 class TriggerControllerTest {
 
@@ -33,7 +33,7 @@ class TriggerControllerTest {
   private MockMvc mockMvc;
 
   @MockBean
-  private SchedulerService schedulerService;
+  private LegacySchedulerService schedulerService;
 
   @AfterEach
   void cleanUp(){
@@ -67,7 +67,7 @@ class TriggerControllerTest {
   @Test
   void whenGetIsCalled_thenATriggerIsReturned() throws Exception {
     TriggerDTO expectedTriggerDTO = TriggerUtils.getTriggerInstance("mytrigger");
-    Mockito.when(schedulerService.getTriggerByName("mytrigger")).thenReturn(expectedTriggerDTO);
+    Mockito.when(schedulerService.getLegacyTriggerByName("mytrigger")).thenReturn(expectedTriggerDTO);
 
     mockMvc.perform(get(TriggerController.TRIGGER_CONTROLLER_BASE_URL + "/mytrigger")
       .contentType(MediaType.APPLICATION_JSON)).andExpect(MockMvcResultMatchers.status().isOk())

@@ -10,7 +10,7 @@ import it.fabioformosa.quartzmanager.dto.SchedulerConfigParam;
 import it.fabioformosa.quartzmanager.dto.SchedulerDTO;
 import it.fabioformosa.quartzmanager.dto.TriggerStatus;
 import it.fabioformosa.quartzmanager.enums.SchedulerStates;
-import it.fabioformosa.quartzmanager.services.SchedulerService;
+import it.fabioformosa.quartzmanager.services.LegacySchedulerService;
 import org.quartz.SchedulerException;
 import org.quartz.SimpleTrigger;
 import org.quartz.impl.triggers.SimpleTriggerImpl;
@@ -40,10 +40,10 @@ public class SchedulerController {
 
   private final Logger log = LoggerFactory.getLogger(SchedulerController.class);
 
-  private SchedulerService schedulerService;
+  private LegacySchedulerService legacySchedulerService;
 
-  public SchedulerController(SchedulerService schedulerService, ConversionService conversionService) {
-    this.schedulerService = schedulerService;
+  public SchedulerController(LegacySchedulerService legacySchedulerService, ConversionService conversionService) {
+    this.legacySchedulerService = legacySchedulerService;
     this.conversionService = conversionService;
   }
 
@@ -60,7 +60,7 @@ public class SchedulerController {
   })
   public SchedulerConfigParam getConfig() throws SchedulerException {
     log.debug("SCHEDULER - GET CONFIG params");
-    SchedulerConfigParam schedulerConfigParam = schedulerService.getOneSimpleTrigger()
+    SchedulerConfigParam schedulerConfigParam = legacySchedulerService.getOneSimpleTrigger()
       .map(SchedulerController::fromSimpleTriggerToSchedulerConfigParam)
       .orElse(new SchedulerConfigParam(0L, 0, 0));
     return schedulerConfigParam;
@@ -69,7 +69,7 @@ public class SchedulerController {
   public static SchedulerConfigParam fromSimpleTriggerToSchedulerConfigParam(SimpleTrigger simpleTrigger){
     int timesTriggered = simpleTrigger.getTimesTriggered();
     int maxCount = simpleTrigger.getRepeatCount() + 1;
-    long triggersPerDay = SchedulerService.fromMillsIntervalToTriggerPerDay(simpleTrigger.getRepeatInterval());
+    long triggersPerDay = LegacySchedulerService.fromMillsIntervalToTriggerPerDay(simpleTrigger.getRepeatInterval());
     return new SchedulerConfigParam(triggersPerDay, maxCount, timesTriggered);
   }
 
@@ -82,7 +82,7 @@ public class SchedulerController {
   })
   public SchedulerDTO getScheduler() {
     log.debug("SCHEDULER - GET Scheduler...");
-    SchedulerDTO schedulerDTO = conversionService.convert(schedulerService.getScheduler(), SchedulerDTO.class);
+    SchedulerDTO schedulerDTO = conversionService.convert(legacySchedulerService.getScheduler(), SchedulerDTO.class);
     return schedulerDTO;
   }
 
@@ -98,7 +98,7 @@ public class SchedulerController {
     log.trace("SCHEDULER - GET PROGRESS INFO");
     TriggerStatus progress = new TriggerStatus();
 
-    SimpleTriggerImpl jobTrigger = (SimpleTriggerImpl) schedulerService.getOneSimpleTrigger().get();
+    SimpleTriggerImpl jobTrigger = (SimpleTriggerImpl) legacySchedulerService.getOneSimpleTrigger().get();
     if (jobTrigger != null && jobTrigger.getJobKey() != null) {
       progress.setJobKey(jobTrigger.getJobKey().getName());
       progress.setJobClass(jobTrigger.getClass().getSimpleName());
@@ -122,9 +122,9 @@ public class SchedulerController {
   public Map<String, String> getStatus() throws SchedulerException {
     log.trace("SCHEDULER - GET STATUS");
     String schedulerState = "";
-    if (schedulerService.getScheduler().isShutdown() || !schedulerService.getScheduler().isStarted())
+    if (legacySchedulerService.getScheduler().isShutdown() || !legacySchedulerService.getScheduler().isStarted())
       schedulerState = SchedulerStates.STOPPED.toString();
-    else if (schedulerService.getScheduler().isStarted() && schedulerService.getScheduler().isInStandbyMode())
+    else if (legacySchedulerService.getScheduler().isStarted() && legacySchedulerService.getScheduler().isInStandbyMode())
       schedulerState = SchedulerStates.PAUSED.toString();
     else
       schedulerState = SchedulerStates.RUNNING.toString();
@@ -139,7 +139,7 @@ public class SchedulerController {
   @ResponseStatus(HttpStatus.NO_CONTENT)
   public void pause() throws SchedulerException {
     log.info("SCHEDULER - PAUSE COMMAND");
-    schedulerService.getScheduler().standby();
+    legacySchedulerService.getScheduler().standby();
   }
 
   @GetMapping("/resume")
@@ -150,7 +150,7 @@ public class SchedulerController {
   @ResponseStatus(HttpStatus.NO_CONTENT)
   public void resume() throws SchedulerException {
     log.info("SCHEDULER - RESUME COMMAND");
-    schedulerService.getScheduler().start();
+    legacySchedulerService.getScheduler().start();
   }
 
   @GetMapping("/run")
@@ -161,7 +161,7 @@ public class SchedulerController {
   @ResponseStatus(HttpStatus.NO_CONTENT)
   public void run() throws SchedulerException {
     log.info("SCHEDULER - START COMMAND");
-    schedulerService.getScheduler().start();
+    legacySchedulerService.getScheduler().start();
   }
 
   @GetMapping("/stop")
@@ -172,7 +172,7 @@ public class SchedulerController {
   @ResponseStatus(HttpStatus.NO_CONTENT)
   public void stop() throws SchedulerException {
     log.info("SCHEDULER - STOP COMMAND");
-    schedulerService.getScheduler().shutdown(true);
+    legacySchedulerService.getScheduler().shutdown(true);
   }
 
 }

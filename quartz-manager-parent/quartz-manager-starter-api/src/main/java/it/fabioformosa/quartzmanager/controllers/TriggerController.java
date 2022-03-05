@@ -8,10 +8,10 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import it.fabioformosa.quartzmanager.dto.SchedulerConfigParam;
 import it.fabioformosa.quartzmanager.dto.TriggerDTO;
-import it.fabioformosa.quartzmanager.services.SchedulerService;
+import it.fabioformosa.quartzmanager.exceptions.TriggerNotFoundException;
+import it.fabioformosa.quartzmanager.services.LegacySchedulerService;
 import lombok.extern.slf4j.Slf4j;
 import org.quartz.SchedulerException;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,24 +21,23 @@ import javax.validation.Valid;
 @RequestMapping(TriggerController.TRIGGER_CONTROLLER_BASE_URL)
 @SecurityRequirement(name = "basic-auth")
 @RestController
-public class TriggerController {
+public class TriggerController extends AbstractTriggerController {
 
   static public final String TRIGGER_CONTROLLER_BASE_URL = "/quartz-manager/triggers";
+  static public final String SIMPLE_TRIGGER_BASE_URL = "/simple-triggers";
 
-  @Value("${quartz-manager.jobClass}")
-  private String jobClassname;
+  private LegacySchedulerService schedulerService;
 
-  private SchedulerService schedulerService;
-
-  public TriggerController(SchedulerService schedulerService) {
+  public TriggerController(LegacySchedulerService schedulerService) {
     this.schedulerService = schedulerService;
   }
 
   @GetMapping("/{name}")
-  public TriggerDTO getTrigger(@PathVariable String name) throws SchedulerException {
-    return schedulerService.getTriggerByName(name);
+  public TriggerDTO getTrigger(@PathVariable String name) throws SchedulerException, TriggerNotFoundException {
+    return schedulerService.getLegacyTriggerByName(name);
   }
 
+  @Deprecated
   @PostMapping("/{name}")
   @ResponseStatus(HttpStatus.CREATED)
   @Operation(summary = "Create a new trigger")
@@ -55,6 +54,8 @@ public class TriggerController {
     log.info("TRIGGER - CREATED a trigger {}", newTriggerDTO);
     return newTriggerDTO;
   }
+
+
 
   @PutMapping("/{name}")
   @Operation(summary = "Reschedule the trigger")
