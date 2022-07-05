@@ -6,9 +6,9 @@ server:
 
 app:
   name: quartz-manager
-  
+
 spring:
-  thymeleaf: 
+  thymeleaf:
     cache: false
     mode: LEGACYHTML5
   jpa.open-in-view: false
@@ -16,7 +16,7 @@ spring:
 quartz:
   enabled: true
 
-job: 
+job:
   frequency: 4000
   repeatCount: 19
 
@@ -27,8 +27,10 @@ logging:
     org.springframework.boot.autoconfigure.security: INFO
     it.fabioformosa: DEBUG
     org.quartz: INFO
-    
+
 quartz-manager:
+  trigger:
+    name: "sampletrigger"
   persistence:
     quartz:
       datasource:
@@ -57,4 +59,4 @@ quartz-manager:
         - name: admin
           password: admin
           roles:
-            - ADMIN      
+            - ADMIN

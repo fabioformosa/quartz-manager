@@ -3,6 +3,9 @@ import { SchedulerService } from '../../services';
 import { SchedulerConfig } from '../../model/schedulerConfig.model'
 import {Scheduler} from '../../model/scheduler.model';
 
+/**
+ * DEPRECATED! Not more used
+ */
 @Component({
   selector: 'qrzmng-scheduler-config',
   templateUrl: './scheduler-config.component.html',

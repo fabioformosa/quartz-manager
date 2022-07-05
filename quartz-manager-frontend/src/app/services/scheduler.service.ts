@@ -46,20 +46,22 @@ export class SchedulerService {
     return this.apiService.get(getBaseUrl() + '/quartz-manager/simple-triggers/my-simple-trigger');
   }
 
+  // deprecated
   saveConfig = (config: Object) => {
     return this.apiService.post(getBaseUrl() + '/quartz-manager/triggers/mytrigger', config)
   }
 
   saveSimpleTriggerConfig = (config: SimpleTriggerCommand) => {
-    return this.apiService.post(getBaseUrl() + '/quartz-manager/simple-triggers/mytrigger', config)
+    return this.apiService.post(getBaseUrl() + '/quartz-manager/simple-triggers/my-simple-trigger', config)
   }
 
+  // deprecated
   updateConfig = (config: SchedulerConfig) => {
     return this.apiService.put(getBaseUrl() + '/quartz-manager/triggers/mytrigger', config)
   }
 
   updateSimpleTriggerConfig = (config: SimpleTriggerCommand) => {
-    return this.apiService.put(getBaseUrl() + '/quartz-manager/simple-triggers/mytrigger', config)
+    return this.apiService.put(getBaseUrl() + '/quartz-manager/simple-triggers/my-simple-trigger', config)
   }
 
 

@@ -50,7 +50,8 @@ public class SchedulerController {
   @Resource
   private ConversionService conversionService;
 
-  //TODO replace this a list of trigger
+  @Deprecated
+  //TODO to be removed when the legacy trigger is removed
   @GetMapping("/config")
   @Operation(summary = "Get the config of the trigger")
   @ApiResponses(value = {

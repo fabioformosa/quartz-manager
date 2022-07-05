@@ -24,7 +24,6 @@ import javax.validation.Valid;
 public class TriggerController extends AbstractTriggerController {
 
   static public final String TRIGGER_CONTROLLER_BASE_URL = "/quartz-manager/triggers";
-  static public final String SIMPLE_TRIGGER_BASE_URL = "/simple-triggers";
 
   private LegacySchedulerService schedulerService;
 
