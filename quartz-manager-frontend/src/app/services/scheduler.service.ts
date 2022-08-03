@@ -5,6 +5,7 @@ import {Trigger} from '../model/trigger.model';
 import {Observable} from 'rxjs';
 import {SimpleTriggerCommand} from '../model/simple-trigger.command';
 import {SchedulerConfig} from '../model/schedulerConfig.model';
+import {Scheduler} from '../model/scheduler.model';
 
 @Injectable()
 export class SchedulerService {
@@ -13,19 +14,19 @@ export class SchedulerService {
     private apiService: ApiService
   ) { }
 
-  startScheduler = () => {
+  startScheduler = (): Observable<void> => {
     return this.apiService.get(getBaseUrl() + '/quartz-manager/scheduler/run')
   }
 
-  stopScheduler = () => {
+  stopScheduler = (): Observable<void> => {
     return this.apiService.get(getBaseUrl() + '/quartz-manager/scheduler/stop')
   }
 
-  pauseScheduler = () => {
+  pauseScheduler = (): Observable<void> => {
     return this.apiService.get(getBaseUrl() + '/quartz-manager/scheduler/pause')
   }
 
-  resumeScheduler = () => {
+  resumeScheduler = (): Observable<void> => {
     return this.apiService.get(getBaseUrl() + '/quartz-manager/scheduler/resume')
   }
 
@@ -33,7 +34,7 @@ export class SchedulerService {
     return this.apiService.get(getBaseUrl() + '/quartz-manager/scheduler/status')
   }
 
-  getScheduler = () => {
+  getScheduler = (): Observable<Scheduler> => {
     return this.apiService.get(getBaseUrl() + '/quartz-manager/scheduler')
   }
 

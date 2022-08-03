@@ -11,14 +11,18 @@ import {
 })
 export class ManagerComponent implements OnInit {
 
-  whoamIResponse = {};
-  allUserResponse = {};
+  newTriggerFormOpened = false;
+
   constructor(
     private config: ConfigService,
     private userService: UserService
   ) { }
 
   ngOnInit() {
+  }
+
+  setnewTriggerFormOpened(opened: boolean){
+    this.newTriggerFormOpened = opened;
   }
 
 }

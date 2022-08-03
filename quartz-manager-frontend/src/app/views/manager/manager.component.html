@@ -1,19 +1,32 @@
-<div class="content" fxLayout="row" fxLayoutAlign="center none">
+<div id="managerViewContainer" class="contenttt" fxLayout="column" fxLayoutAlign="left stretch" fxLayoutGap="10px" fxFill>
 
-  <div fxFlex="1 1 30%" fxFill>
-		<div fxLayout="column">
-			<scheduler-control></scheduler-control>
-			<br/>
-			<qrzmng-simple-trigger-config></qrzmng-simple-trigger-config>
-		</div>
+  <div id="schedulerBarContainer" class="contentttt" fxLayout="column" fxLayoutAlign="left stretch">
+    <qrzmng-scheduler-control></qrzmng-scheduler-control>
   </div>
 
-  <div fxFlex="1 1 70%" style="margin-left: 20px">
-    <div fxLayout="column">
-		<div fxFlex="1 1 100%"><progress-panel></progress-panel></div>
-		<br/>
-  	    <div fxFlex="1 1 100%"><logs-panel></logs-panel></div>
-  	</div>
-  </div>
+  <div fxLayout="row" fxLayoutGap="20px" fxLayoutAlign="center stretch" fxFlex="1 1 auto">
 
+    <div fxFlex="0 0 300px">
+      <div fxLayout="row" fxLayoutAlign="stretch" fxFill>
+        <qrzmng-trigger-list (openedNewTriggerFormEvent)="setnewTriggerFormOpened($event)" fxFill></qrzmng-trigger-list>
+      </div>
+    </div>
+
+    <div fxFlex="1 1 500px" >
+      <div fxLayout="column">
+        <qrzmng-simple-trigger-config></qrzmng-simple-trigger-config>
+      </div>
+    </div>
+
+    <div fxFlex="1 1 auto" style="margin-left: 20px">
+      <div fxLayout="column">
+        <div fxFlex="1 1 100%"><progress-panel></progress-panel></div>
+        <br/>
+        <div fxFlex="1 1 100%"><logs-panel></logs-panel></div>
+      </div>
+    </div>
+
+  </div>
 </div>
+
+

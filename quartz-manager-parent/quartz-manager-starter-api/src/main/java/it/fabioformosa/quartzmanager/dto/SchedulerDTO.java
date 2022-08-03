@@ -1,35 +1,19 @@
 package it.fabioformosa.quartzmanager.dto;
 
+import it.fabioformosa.quartzmanager.enums.SchedulerStatus;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.quartz.TriggerKey;
 
 import java.util.Set;
 
+@NoArgsConstructor
+@AllArgsConstructor
+@Data
 public class SchedulerDTO {
   private String name;
   private String instanceId;
+  private SchedulerStatus status;
   private Set<TriggerKey> triggerKeys;
-
-  public void setName(String name) {
-    this.name = name;
-  }
-
-  public String getName() {
-    return name;
-  }
-
-  public void setInstanceId(String instanceId) {
-    this.instanceId = instanceId;
-  }
-
-  public String getInstanceId() {
-    return instanceId;
-  }
-
-  public void setTriggerKeys(Set<TriggerKey> triggerKeys) {
-    this.triggerKeys = triggerKeys;
-  }
-
-  public Set<TriggerKey> getTriggerKeys() {
-    return triggerKeys;
-  }
 }

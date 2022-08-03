@@ -18,6 +18,8 @@ import {MatIconModule} from '@angular/material/icon';
 import {MatButtonModule} from '@angular/material/button';
 import {MatCardModule} from '@angular/material/card';
 import {MatDatepickerModule} from '@angular/material/datepicker';
+import {MatListModule} from '@angular/material/list';
+import {MatSidenavModule} from '@angular/material/sidenav';
 
 import {MatNativeDateModule} from '@angular/material/core';
 import { NgxMatTimepickerModule, NgxMatDatetimePickerModule} from '@angular-material-components/datetime-picker';
@@ -40,7 +42,8 @@ import {
   SchedulerConfigComponent,
   SchedulerControlComponent,
   LogsPanelComponent,
-  ProgressPanelComponent
+  ProgressPanelComponent,
+  TriggerListComponent
 } from './components';
 
 import {
@@ -51,7 +54,8 @@ import {
   ConfigService,
   ProgressWebsocketService,
   LogsWebsocketService,
-  getHtmlBaseUrl
+  getHtmlBaseUrl,
+  TriggerService
 } from './services';
 import { ChangePasswordComponent } from './views/change-password/change-password.component';
 import { ForbiddenComponent } from './views/forbidden/forbidden.component';
@@ -113,7 +117,8 @@ export function jwtOptionsFactory(apiService: ApiService) {
     LogsPanelComponent,
     ProgressPanelComponent,
     ChangePasswordComponent,
-    ForbiddenComponent
+    ForbiddenComponent,
+    TriggerListComponent
   ],
   imports: [
     BrowserAnimationsModule,
@@ -137,11 +142,13 @@ export function jwtOptionsFactory(apiService: ApiService) {
     MatInputModule,
     MatToolbarModule,
     MatCardModule,
+    MatListModule,
     MatProgressSpinnerModule,
     MatProgressBarModule,
     MatDatepickerModule, MatNativeDateModule,
     NgxMatMomentModule,
     NgxMatDatetimePickerModule,
+    MatSidenavModule,
     FlexLayoutModule
   ],
   providers: [
@@ -159,6 +166,7 @@ export function jwtOptionsFactory(apiService: ApiService) {
     GuestGuard,
     AdminGuard,
     SchedulerService,
+    TriggerService,
     ProgressWebsocketService,
     LogsWebsocketService,
     AuthService,

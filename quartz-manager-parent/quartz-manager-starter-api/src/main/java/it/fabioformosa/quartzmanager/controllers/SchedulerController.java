@@ -9,8 +9,8 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import it.fabioformosa.quartzmanager.dto.SchedulerConfigParam;
 import it.fabioformosa.quartzmanager.dto.SchedulerDTO;
 import it.fabioformosa.quartzmanager.dto.TriggerStatus;
-import it.fabioformosa.quartzmanager.enums.SchedulerStates;
 import it.fabioformosa.quartzmanager.services.LegacySchedulerService;
+import it.fabioformosa.quartzmanager.services.SchedulerService;
 import org.quartz.SchedulerException;
 import org.quartz.SimpleTrigger;
 import org.quartz.impl.triggers.SimpleTriggerImpl;
@@ -24,8 +24,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
-import java.util.Collections;
-import java.util.Map;
 
 /**
  * This controller provides scheduler info about config and status. It provides
@@ -42,8 +40,11 @@ public class SchedulerController {
 
   private LegacySchedulerService legacySchedulerService;
 
-  public SchedulerController(LegacySchedulerService legacySchedulerService, ConversionService conversionService) {
+  private SchedulerService schedulerService;
+
+  public SchedulerController(LegacySchedulerService legacySchedulerService, SchedulerService schedulerService, ConversionService conversionService) {
     this.legacySchedulerService = legacySchedulerService;
+    this.schedulerService = schedulerService;
     this.conversionService = conversionService;
   }
 
@@ -82,9 +83,8 @@ public class SchedulerController {
         schema = @Schema(implementation = SchedulerDTO.class)) })
   })
   public SchedulerDTO getScheduler() {
-    log.debug("SCHEDULER - GET Scheduler...");
-    SchedulerDTO schedulerDTO = conversionService.convert(legacySchedulerService.getScheduler(), SchedulerDTO.class);
-    return schedulerDTO;
+    log.trace("SCHEDULER - GET Scheduler...");
+    return schedulerService.getScheduler();
   }
 
   //TODO move this to the Trigger Controller
@@ -113,24 +113,26 @@ public class SchedulerController {
     return progress;
   }
 
-  @GetMapping(value = "/status", produces = "application/json")
-  @Operation(summary = "Get the scheduler status")
-  @ApiResponses(value = {
-    @ApiResponse(responseCode = "200", description = "Return the scheduler status",
-      content = { @Content(mediaType = "application/json",
-        schema = @Schema(implementation = SchedulerStates.class)) })
-  })
-  public Map<String, String> getStatus() throws SchedulerException {
-    log.trace("SCHEDULER - GET STATUS");
-    String schedulerState = "";
-    if (legacySchedulerService.getScheduler().isShutdown() || !legacySchedulerService.getScheduler().isStarted())
-      schedulerState = SchedulerStates.STOPPED.toString();
-    else if (legacySchedulerService.getScheduler().isStarted() && legacySchedulerService.getScheduler().isInStandbyMode())
-      schedulerState = SchedulerStates.PAUSED.toString();
-    else
-      schedulerState = SchedulerStates.RUNNING.toString();
-    return Collections.singletonMap("data", schedulerState.toLowerCase());
-  }
+
+  //REMOVEME
+//  @GetMapping(value = "/status", produces = "application/json")
+//  @Operation(summary = "Get the scheduler status")
+//  @ApiResponses(value = {
+//    @ApiResponse(responseCode = "200", description = "Return the scheduler status",
+//      content = { @Content(mediaType = "application/json",
+//        schema = @Schema(implementation = SchedulerStates.class)) })
+//  })
+//  public Map<String, String> getStatus() throws SchedulerException {
+//    log.trace("SCHEDULER - GET STATUS");
+//    String schedulerState = "";
+//    if (legacySchedulerService.getScheduler().isShutdown() || !legacySchedulerService.getScheduler().isStarted())
+//      schedulerState = SchedulerStates.STOPPED.toString();
+//    else if (legacySchedulerService.getScheduler().isStarted() && legacySchedulerService.getScheduler().isInStandbyMode())
+//      schedulerState = SchedulerStates.PAUSED.toString();
+//    else
+//      schedulerState = SchedulerStates.RUNNING.toString();
+//    return Collections.singletonMap("data", schedulerState.toLowerCase());
+//  }
 
   @GetMapping("/pause")
   @Operation(summary = "Get paused the scheduler")

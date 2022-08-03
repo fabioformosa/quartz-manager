@@ -10,12 +10,14 @@ import it.fabioformosa.quartzmanager.dto.SchedulerConfigParam;
 import it.fabioformosa.quartzmanager.dto.TriggerDTO;
 import it.fabioformosa.quartzmanager.exceptions.TriggerNotFoundException;
 import it.fabioformosa.quartzmanager.services.LegacySchedulerService;
+import it.fabioformosa.quartzmanager.services.TriggerService;
 import lombok.extern.slf4j.Slf4j;
 import org.quartz.SchedulerException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @Slf4j
 @RequestMapping(TriggerController.TRIGGER_CONTROLLER_BASE_URL)
@@ -26,10 +28,18 @@ public class TriggerController extends AbstractTriggerController {
   static public final String TRIGGER_CONTROLLER_BASE_URL = "/quartz-manager/triggers";
 
   private LegacySchedulerService schedulerService;
+  private TriggerService triggerService;
 
-  public TriggerController(LegacySchedulerService schedulerService) {
+  public TriggerController(LegacySchedulerService schedulerService, TriggerService triggerService) {
     this.schedulerService = schedulerService;
+    this.triggerService = triggerService;
   }
+
+  @GetMapping
+  public List<TriggerDTO> listTriggers() throws SchedulerException {
+    return triggerService.fetchTriggers();
+  }
+
 
   @GetMapping("/{name}")
   public TriggerDTO getTrigger(@PathVariable String name) throws SchedulerException, TriggerNotFoundException {

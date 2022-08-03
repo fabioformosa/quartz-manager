@@ -1,5 +1,5 @@
 package it.fabioformosa.quartzmanager.enums;
 
-public enum SchedulerStates {
+public enum SchedulerStatus {
 	RUNNING, STOPPED, PAUSED
 }

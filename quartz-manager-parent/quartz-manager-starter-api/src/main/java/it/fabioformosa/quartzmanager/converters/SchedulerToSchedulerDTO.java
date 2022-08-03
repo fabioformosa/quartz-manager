@@ -2,8 +2,10 @@ package it.fabioformosa.quartzmanager.converters;
 
 import it.fabioformosa.metamorphosis.core.converters.AbstractBaseConverterToDTO;
 import it.fabioformosa.quartzmanager.dto.SchedulerDTO;
+import it.fabioformosa.quartzmanager.enums.SchedulerStatus;
 import lombok.SneakyThrows;
 import org.quartz.Scheduler;
+import org.quartz.SchedulerException;
 import org.quartz.impl.matchers.GroupMatcher;
 import org.springframework.stereotype.Component;
 
@@ -16,6 +18,15 @@ public class SchedulerToSchedulerDTO extends AbstractBaseConverterToDTO<Schedule
     target.setName(source.getSchedulerName());
     target.setInstanceId(source.getSchedulerInstanceId());
     target.setTriggerKeys(source.getTriggerKeys(GroupMatcher.anyTriggerGroup()));
+    target.setStatus(buildTheSchedulerStatus(source));
+  }
+
+  private SchedulerStatus buildTheSchedulerStatus(Scheduler scheduler) throws SchedulerException {
+    if (scheduler.isShutdown() || !scheduler.isStarted())
+      return SchedulerStatus.STOPPED;
+    else if (scheduler.isStarted() && scheduler.isInStandbyMode())
+      return SchedulerStatus.PAUSED;
+    return SchedulerStatus.RUNNING;
   }
 
 }
