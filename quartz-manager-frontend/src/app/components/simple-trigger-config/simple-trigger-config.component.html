@@ -3,16 +3,7 @@
     <mat-card-subtitle><b>TRIGGER DETAILS</b></mat-card-subtitle>
   </mat-card-header>
 
-  <!-- ADD BUTTON -->
-  <mat-card-content *ngIf="!existsATriggerInProgress() && !enabledTriggerForm">
-    <button mat-fab color="primary">
-      <mat-icon (click)="enableTriggerForm()">add</mat-icon>
-    </button>
-  </mat-card-content>
-
-  <!-- TRIGGER DETAILS -->
-  <mat-card-content *ngIf="existsATriggerInProgress() || enabledTriggerForm">
-
+  <mat-card-content *ngIf="shouldShowTheTriggerCardContent()">
     <div fxLayout="column">
         <form name="configForm" fxFlex="1 1 100%" #configForm="ngForm">
 
@@ -82,7 +73,7 @@
 
           <button mat-raised-button
                   type="button"
-                  *ngIf="enabledTriggerForm"
+                  *ngIf="enabledTriggerForm && !_newTriggerRequired"
                   (click)="cancelConfigForm()">
             Cancel
           </button>

@@ -1,6 +1,6 @@
-<div id="managerViewContainer" class="contenttt" fxLayout="column" fxLayoutAlign="left stretch" fxLayoutGap="10px" fxFill>
+<div id="managerViewContainer" fxLayout="column" fxLayoutAlign="left stretch" fxLayoutGap="10px" fxFill>
 
-  <div id="schedulerBarContainer" class="contentttt" fxLayout="column" fxLayoutAlign="left stretch">
+  <div id="schedulerBarContainer" fxLayout="column" fxLayoutAlign="left stretch">
     <qrzmng-scheduler-control></qrzmng-scheduler-control>
   </div>
 
@@ -8,13 +8,21 @@
 
     <div fxFlex="0 0 300px">
       <div fxLayout="row" fxLayoutAlign="stretch" fxFill>
-        <qrzmng-trigger-list (openedNewTriggerFormEvent)="setnewTriggerFormOpened($event)" fxFill></qrzmng-trigger-list>
+        <qrzmng-trigger-list
+            [newTriggers]="newTriggers"
+            (onNewTriggerClicked)="onNewTriggerRequested()"
+            [openedNewTriggerForm]="newTriggerFormOpened"
+            (onSelectedTrigger)="setSelectedTrigger($event)"
+             fxFill></qrzmng-trigger-list>
       </div>
     </div>
 
     <div fxFlex="1 1 500px" >
       <div fxLayout="column">
-        <qrzmng-simple-trigger-config></qrzmng-simple-trigger-config>
+        <qrzmng-simple-trigger-config
+          [triggerKey]="selectedTriggerKey"
+          (onNewTrigger)="onNewTrigger($event)">
+        </qrzmng-simple-trigger-config>
       </div>
     </div>
 

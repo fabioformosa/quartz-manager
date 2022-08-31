@@ -1,10 +1,11 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {SchedulerService} from '../../services';
 import {Scheduler} from '../../model/scheduler.model';
 import {SimpleTriggerCommand} from '../../model/simple-trigger.command';
 import {SimpleTrigger} from '../../model/simple-trigger.model';
 import {SimpleTriggerForm} from '../../model/simple-trigger.form';
 import * as moment from 'moment';
+import {TriggerKey} from '../../model/triggerKey.model';
 
 @Component({
   selector: 'qrzmng-simple-trigger-config',
@@ -20,30 +21,52 @@ export class SimpleTriggerConfigComponent implements OnInit {
   scheduler: Scheduler;
 
   triggerLoading = true;
-  enabledTriggerForm = false;
+
   private fetchedTriggers = false;
   private triggerInProgress = false;
+
+  private selectedTriggerKey: TriggerKey;
+
+  enabledTriggerForm = false;
+
+  @Output()
+  onNewTrigger = new EventEmitter<SimpleTrigger>();
 
   constructor(
     private schedulerService: SchedulerService
   ) { }
 
   ngOnInit() {
-    this.triggerLoading = true;
-    this.retrieveConfiguredTriggerIfExists();
   }
 
-  retrieveConfiguredTriggerIfExists = () => {
-    this.schedulerService.getSimpleTriggerConfig()
+  openTriggerForm() {
+      this.enabledTriggerForm = true;
+  }
+
+  private closeTriggerForm() {
+    this.enabledTriggerForm = false;
+  }
+
+  @Input()
+  set triggerKey(triggerKey: TriggerKey){
+    this.selectedTriggerKey = {...triggerKey} as TriggerKey;
+    this.fetchSelectedTrigger();
+  }
+
+
+  fetchSelectedTrigger = () => {
+    this.triggerLoading = true;
+    this.schedulerService.getSimpleTriggerConfig(this.selectedTriggerKey.name)
       .subscribe((retTrigger: SimpleTrigger) => {
           this.trigger = retTrigger;
           this.formBackup = this.simpleTriggerForm;
           this.simpleTriggerForm = this._fromTriggerToForm(retTrigger);
-
           this.triggerLoading = false;
           this.triggerInProgress = this.trigger.mayFireAgain;
       })
   }
+
+  shouldShowTheTriggerCardContent = (): boolean => this.trigger !== null || this.enabledTriggerForm;
 
   existsATriggerInProgress = (): boolean => this.trigger && this.triggerInProgress;
 
@@ -59,24 +82,15 @@ export class SimpleTriggerConfigComponent implements OnInit {
         this.trigger = retTrigger;
         this.formBackup = this.simpleTriggerForm;
         this.simpleTriggerForm = this._fromTriggerToForm(retTrigger);
-        this.enabledTriggerForm = false;
         this.fetchedTriggers = true;
         this.triggerInProgress = this.trigger.mayFireAgain;
+
+        this.onNewTrigger.emit(retTrigger);
+        this.closeTriggerForm();
       }, error => {
         this.simpleTriggerForm = this.formBackup;
       });
   };
-
-  enableTriggerForm = () => this.enabledTriggerForm = true;
-
-  private _fromTriggerToCommand = (simpleTrigger: SimpleTrigger) => {
-    const command = new SimpleTriggerCommand();
-    command.repeatCount = simpleTrigger.repeatCount;
-    command.repeatInterval = simpleTrigger.repeatInterval;
-    command.startDate = simpleTrigger.startTime;
-    command.endDate = simpleTrigger.endTime;
-    return command;
-  }
 
   private _fromTriggerToForm = (simpleTrigger: SimpleTrigger): SimpleTriggerForm => {
     const command = new SimpleTriggerForm();

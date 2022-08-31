@@ -43,8 +43,8 @@ export class SchedulerService {
     return this.apiService.get(getBaseUrl() + '/quartz-manager/scheduler/config')
   }
 
-  getSimpleTriggerConfig = (): Observable<Trigger> => {
-    return this.apiService.get(getBaseUrl() + '/quartz-manager/simple-triggers/my-simple-trigger');
+  getSimpleTriggerConfig = (triggerName: string): Observable<Trigger> => {
+    return this.apiService.get(getBaseUrl() + `/quartz-manager/simple-triggers/${triggerName}`);
   }
 
   // deprecated
