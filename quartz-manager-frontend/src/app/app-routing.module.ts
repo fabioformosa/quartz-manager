@@ -1,15 +1,12 @@
-import { NgModule } from '@angular/core';
-import { Routes, RouterModule } from '@angular/router';
-import { AppComponent } from './app.component';
-import { LoginComponent } from './views/login';
-import { LoginGuard } from './guards';
-import { GuestGuard, AdminGuard } from './guards';
-import { NotFoundComponent } from './views/not-found';
-import { ChangePasswordComponent } from './views/change-password';
-import { ForbiddenComponent } from './views/forbidden';
+import {NgModule} from '@angular/core';
+import {RouterModule, Routes} from '@angular/router';
+import {LoginComponent} from './views/login';
+import {AdminGuard, GuestGuard} from './guards';
+import {NotFoundComponent} from './views/not-found';
+import {ForbiddenComponent} from './views/forbidden';
 
-import { ManagerComponent } from './views/manager'; 
- 
+import {ManagerComponent} from './views/manager';
+
 export const routes: Routes = [
   {
     path: '',

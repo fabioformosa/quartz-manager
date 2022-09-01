@@ -2,6 +2,7 @@ import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {TriggerService} from '../../services/trigger.service';
 import {TriggerKey} from '../../model/triggerKey.model';
 import {SimpleTrigger} from '../../model/simple-trigger.model';
+import {MatDialog} from '@angular/material/dialog';
 
 @Component({
   selector: 'qrzmng-trigger-list',
@@ -24,7 +25,8 @@ export class TriggerListComponent implements OnInit {
   @Output() onSelectedTrigger = new EventEmitter<TriggerKey>();
 
   constructor(
-    private triggerService: TriggerService
+    private triggerService: TriggerService,
+    public dialog: MatDialog
   ) { }
 
   ngOnInit() {
@@ -61,6 +63,14 @@ export class TriggerListComponent implements OnInit {
   }
 
   onNewTriggerBtnClicked() {
-    this.onNewTriggerClicked.emit();
+    if (this.triggerKeys && this.triggerKeys.length > 0)
+      this.dialog.open(UnsupportedMultipleJobsDialog)
+    else
+      this.onNewTriggerClicked.emit();
   }
 }
+
+@Component({
+  template: 'Multiple jobs not supported yet - Coming Soon...',
+})
+export class UnsupportedMultipleJobsDialog {}

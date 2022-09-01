@@ -66,7 +66,7 @@ describe('SimpleTriggerConfig', () => {
     expect(submitButton.nativeElement.textContent.trim()).toEqual('Reschedule');
   });
 
-  it('should get display the form if the openTriggerForm method is called', () => {
+  it('should display the form if the openTriggerForm method is called', () => {
     component.openTriggerForm();
     fixture.detectChanges();
 
