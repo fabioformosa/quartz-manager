@@ -9,6 +9,16 @@
 
           <div>
             <mat-form-field [appearance]="enabledTriggerForm ? 'standard': 'none'">
+              <mat-label>Trigger Name</mat-label>
+              <input  [readonly]="!enabledTriggerForm"
+                      matInput placeholder="Repeat Interval [in mills]" name="triggerName"
+                      [(ngModel)]="simpleTriggerForm.triggerName">
+            </mat-form-field>
+
+          </div>
+
+          <div>
+            <mat-form-field [appearance]="enabledTriggerForm ? 'standard': 'none'">
               <mat-label>Start Date (optional)</mat-label>
               <input [readonly]="!enabledTriggerForm"
                      matInput name="startDate"

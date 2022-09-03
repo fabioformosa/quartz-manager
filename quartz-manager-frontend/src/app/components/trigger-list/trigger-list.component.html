@@ -10,11 +10,7 @@
     <mat-nav-list  style="overflow-y: auto; position: absolute; left: 0; right: 0; top: 0; bottom: 0; overflow: auto; height: calc(100% - 3em)">
       <mat-list-item *ngFor="let triggerKey of getTriggerKeyList()" class="triggerItemList"
                      [ngClass]="{'selectedTrigger': triggerKey.name == selectedTrigger.name}">
-<!--        <a matLine href="...">{{ triggerKey.name }}</a>-->
         <a matLine>{{ triggerKey.name }}</a>
-<!--        <button mat-icon-button (click)="showInfo(link)">-->
-<!--          <mat-icon>info</mat-icon>-->
-<!--        </button>-->
       </mat-list-item>
     </mat-nav-list>
   </mat-card-content>

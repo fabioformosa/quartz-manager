@@ -94,6 +94,7 @@ export class SimpleTriggerConfigComponent implements OnInit {
 
   private _fromTriggerToForm = (simpleTrigger: SimpleTrigger): SimpleTriggerForm => {
     const command = new SimpleTriggerForm();
+    command.triggerName = simpleTrigger.triggerKeyDTO.name;
     command.repeatCount = simpleTrigger.repeatCount;
     command.repeatInterval = simpleTrigger.repeatInterval;
     command.startDate = moment(simpleTrigger.startTime);
@@ -103,6 +104,7 @@ export class SimpleTriggerConfigComponent implements OnInit {
 
   private _fromFormToCommand = (simpleTriggerForm: SimpleTriggerForm): SimpleTriggerCommand => {
     const simpleTriggerCommand = new SimpleTriggerCommand();
+    simpleTriggerCommand.triggerName = simpleTriggerForm.triggerName;
     simpleTriggerCommand.repeatCount = simpleTriggerForm.repeatCount;
     simpleTriggerCommand.repeatInterval = simpleTriggerForm.repeatInterval;
     simpleTriggerCommand.startDate = simpleTriggerForm.startDate.toDate();
