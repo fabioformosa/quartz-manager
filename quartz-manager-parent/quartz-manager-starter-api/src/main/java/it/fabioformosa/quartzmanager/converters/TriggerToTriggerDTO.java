@@ -1,6 +1,7 @@
 package it.fabioformosa.quartzmanager.converters;
 
 import it.fabioformosa.metamorphosis.core.converters.AbstractBaseConverter;
+import it.fabioformosa.quartzmanager.dto.JobDetailDTO;
 import it.fabioformosa.quartzmanager.dto.JobKeyDTO;
 import it.fabioformosa.quartzmanager.dto.TriggerDTO;
 import it.fabioformosa.quartzmanager.dto.TriggerKeyDTO;
@@ -30,6 +31,9 @@ public class TriggerToTriggerDTO<S extends Trigger, T extends TriggerDTO> extend
     JobKey jobKey = source.getJobKey();
     JobKeyDTO jobKeyDTO = conversionService.convert(jobKey, JobKeyDTO.class);
     target.setJobKeyDTO(jobKeyDTO);
+
+    JobDetailDTO jobDetailDTO = conversionService.convert(jobKey, JobDetailDTO.class);
+    target.setJobDetailDTO(jobDetailDTO);
   }
 
   @Override

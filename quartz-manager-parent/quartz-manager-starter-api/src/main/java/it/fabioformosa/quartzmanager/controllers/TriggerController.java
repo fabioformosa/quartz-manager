@@ -64,8 +64,6 @@ public class TriggerController extends AbstractTriggerController {
     return newTriggerDTO;
   }
 
-
-
   @PutMapping("/{name}")
   @Operation(summary = "Reschedule the trigger")
   @ApiResponses(value = {

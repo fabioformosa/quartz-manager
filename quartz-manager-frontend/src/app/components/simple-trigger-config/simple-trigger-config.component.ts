@@ -95,6 +95,7 @@ export class SimpleTriggerConfigComponent implements OnInit {
   private _fromTriggerToForm = (simpleTrigger: SimpleTrigger): SimpleTriggerForm => {
     const command = new SimpleTriggerForm();
     command.triggerName = simpleTrigger.triggerKeyDTO.name;
+    command.jobClass = simpleTrigger.jobDetailDTO.jobClassName;
     command.repeatCount = simpleTrigger.repeatCount;
     command.repeatInterval = simpleTrigger.repeatInterval;
     command.startDate = moment(simpleTrigger.startTime);

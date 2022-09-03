@@ -1,5 +1,6 @@
 import {TriggerKey} from './triggerKey.model';
 import {JobKeyModel} from './jobKey.model';
+import {JobDetail} from './jobDetail.model';
 
 export class Trigger {
   triggerKeyDTO: TriggerKey;
@@ -11,5 +12,6 @@ export class Trigger {
   misfireInstruction: number;
   nextFireTime: Date;
   jobKeyDTO: JobKeyModel;
+  jobDetailDTO: JobDetail;
   mayFireAgain: boolean;
 }

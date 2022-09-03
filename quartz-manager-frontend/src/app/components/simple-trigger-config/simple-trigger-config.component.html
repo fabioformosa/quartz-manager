@@ -14,7 +14,15 @@
                       matInput placeholder="Repeat Interval [in mills]" name="triggerName"
                       [(ngModel)]="simpleTriggerForm.triggerName">
             </mat-form-field>
+          </div>
 
+          <div>
+            <mat-form-field [appearance]="enabledTriggerForm ? 'standard': 'none'">
+              <mat-label>Job Class</mat-label>
+              <input  [readonly]="!enabledTriggerForm"
+                      matInput placeholder="Job Class Name" name="jobClass"
+                      [(ngModel)]="simpleTriggerForm.jobClass">
+            </mat-form-field>
           </div>
 
           <div>

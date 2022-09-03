@@ -21,5 +21,6 @@ public class TriggerDTO {
   private int misfireInstruction;
   private Date nextFireTime;
   private JobKeyDTO jobKeyDTO;
+  private JobDetailDTO jobDetailDTO;
   private boolean mayFireAgain;
 }
