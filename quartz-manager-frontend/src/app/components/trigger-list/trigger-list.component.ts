@@ -50,8 +50,7 @@ export class TriggerListComponent implements OnInit {
         this.triggerKeys = triggerKeys;
         if (!triggerKeys || triggerKeys.length === 0) {
           this.onNewTriggerBtnClicked();
-        }
-        else {
+        } else {
           this.selectTrigger(this.triggerKeys[0]);
         }
       })

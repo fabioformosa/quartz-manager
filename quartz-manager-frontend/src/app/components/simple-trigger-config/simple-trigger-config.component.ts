@@ -85,7 +85,10 @@ export class SimpleTriggerConfigComponent implements OnInit {
         this.fetchedTriggers = true;
         this.triggerInProgress = this.trigger.mayFireAgain;
 
-        this.onNewTrigger.emit(retTrigger);
+        if (schedulerServiceCall === this.schedulerService.saveSimpleTriggerConfig) {
+          this.onNewTrigger.emit(retTrigger);
+        }
+
         this.closeTriggerForm();
       }, error => {
         this.simpleTriggerForm = this.formBackup;
@@ -108,8 +111,8 @@ export class SimpleTriggerConfigComponent implements OnInit {
     simpleTriggerCommand.triggerName = simpleTriggerForm.triggerName;
     simpleTriggerCommand.repeatCount = simpleTriggerForm.repeatCount;
     simpleTriggerCommand.repeatInterval = simpleTriggerForm.repeatInterval;
-    simpleTriggerCommand.startDate = simpleTriggerForm.startDate.toDate();
-    simpleTriggerCommand.endDate = simpleTriggerForm.endDate.toDate();
+    simpleTriggerCommand.startDate = simpleTriggerForm.startDate?.toDate();
+    simpleTriggerCommand.endDate = simpleTriggerForm.endDate?.toDate();
     return simpleTriggerCommand;
   }
 

@@ -10,7 +10,8 @@
           <div>
             <mat-form-field [appearance]="enabledTriggerForm ? 'standard': 'none'">
               <mat-label>Trigger Name</mat-label>
-              <input  [readonly]="!enabledTriggerForm"
+              <input  id="triggerName"
+                      [readonly]="!enabledTriggerForm"
                       matInput placeholder="Repeat Interval [in mills]" name="triggerName"
                       [(ngModel)]="simpleTriggerForm.triggerName">
             </mat-form-field>
@@ -19,7 +20,8 @@
           <div>
             <mat-form-field [appearance]="enabledTriggerForm ? 'standard': 'none'">
               <mat-label>Job Class</mat-label>
-              <input  [readonly]="!enabledTriggerForm"
+              <input  id="jobClass"
+                      [readonly]="!enabledTriggerForm"
                       matInput placeholder="Job Class Name" name="jobClass"
                       [(ngModel)]="simpleTriggerForm.jobClass">
             </mat-form-field>
@@ -28,7 +30,8 @@
           <div>
             <mat-form-field [appearance]="enabledTriggerForm ? 'standard': 'none'">
               <mat-label>Start Date (optional)</mat-label>
-              <input [readonly]="!enabledTriggerForm"
+              <input id="startDate"
+                     [readonly]="!enabledTriggerForm"
                      matInput name="startDate"
                      [ngxMatDatetimePicker]="startDatePicker" placeholder="Choose a start date"
                      [(ngModel)]="simpleTriggerForm.startDate">
@@ -44,7 +47,8 @@
           <div>
             <mat-form-field [appearance]="enabledTriggerForm ? 'standard': 'none'">
               <mat-label>End Date (optional)</mat-label>
-              <input [readonly]="!enabledTriggerForm"
+              <input id="endDate"
+                     [readonly]="!enabledTriggerForm"
                      matInput name="endDate"
                      [ngxMatDatetimePicker]="endDatePicker" placeholder="Choose a end date"
                      [(ngModel)]="simpleTriggerForm.endDate"
@@ -61,7 +65,8 @@
           <div>
             <mat-form-field [appearance]="enabledTriggerForm ? 'standard': 'none'">
               <mat-label>Repeat Interval [in mills]</mat-label>
-              <input [readonly]="!enabledTriggerForm"
+              <input id="repeatInterval"
+                     [readonly]="!enabledTriggerForm"
                      matInput placeholder="Repeat Interval [in mills]" name="repeatInterval" type="number"
                      [(ngModel)]="simpleTriggerForm.repeatInterval"
               >
@@ -70,7 +75,8 @@
           <div>
             <mat-form-field [appearance]="enabledTriggerForm ? 'standard': 'none'">
               <mat-label>Repeat Count</mat-label>
-              <input [readonly]="!enabledTriggerForm"
+              <input id="repeatCount"
+                     [readonly]="!enabledTriggerForm"
                      matInput placeholder="Repeat Count (-1 REPEAT INDEFINITELY)" name="repeatCount" type="number"
                      [(ngModel)]="simpleTriggerForm.repeatCount"
               >
@@ -91,7 +97,7 @@
 
           <button mat-raised-button
                   type="button"
-                  *ngIf="enabledTriggerForm && !_newTriggerRequired"
+                  *ngIf="enabledTriggerForm"
                   (click)="cancelConfigForm()">
             Cancel
           </button>
