@@ -11,7 +11,6 @@ import {MatDialog} from '@angular/material/dialog';
 })
 export class TriggerListComponent implements OnInit {
 
-  @Input()
   newTriggers: Array<SimpleTrigger> = new Array<SimpleTrigger>();
 
   loading = true;
@@ -67,9 +66,15 @@ export class TriggerListComponent implements OnInit {
     else
       this.onNewTriggerClicked.emit();
   }
+
+  onNewTrigger(newTrigger: SimpleTrigger) {
+   this.newTriggers = [newTrigger, ...this.newTriggers];
+   this.selectedTrigger = newTrigger.triggerKeyDTO;
+  }
 }
 
 @Component({
   template: 'Multiple jobs not supported yet - Coming Soon...',
 })
+// tslint:disable-next-line:component-class-suffix
 export class UnsupportedMultipleJobsDialog {}

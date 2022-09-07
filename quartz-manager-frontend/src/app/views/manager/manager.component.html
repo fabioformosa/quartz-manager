@@ -9,7 +9,6 @@
     <div fxFlex="0 0 300px">
       <div fxLayout="row" fxLayoutAlign="stretch" fxFill>
         <qrzmng-trigger-list
-            [newTriggers]="newTriggers"
             (onNewTriggerClicked)="onNewTriggerRequested()"
             [openedNewTriggerForm]="newTriggerFormOpened"
             (onSelectedTrigger)="setSelectedTrigger($event)"
@@ -21,7 +20,7 @@
       <div fxLayout="column">
         <qrzmng-simple-trigger-config
           [triggerKey]="selectedTriggerKey"
-          (onNewTrigger)="onNewTrigger($event)">
+          (onNewTrigger)="onNewTriggerCreated($event)">
         </qrzmng-simple-trigger-config>
       </div>
     </div>

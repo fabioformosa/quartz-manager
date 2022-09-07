@@ -6,6 +6,7 @@ import {
 import {SimpleTrigger} from '../../model/simple-trigger.model';
 import {TriggerKey} from '../../model/triggerKey.model';
 import {SimpleTriggerConfigComponent} from '../../components/simple-trigger-config';
+import {TriggerListComponent} from '../../components';
 
 @Component({
   selector: 'manager',
@@ -17,14 +18,14 @@ export class ManagerComponent implements OnInit {
   @ViewChild(SimpleTriggerConfigComponent)
   private triggerConfigComponent!: SimpleTriggerConfigComponent;
 
+  @ViewChild(TriggerListComponent)
+  private triggerListComponent: TriggerListComponent;
+
   newTriggerFormOpened = false;
 
-  newTriggers = new Array<SimpleTrigger>();
   selectedTriggerKey: TriggerKey;
 
   constructor(
-    private config: ConfigService,
-    private userService: UserService
   ) { }
 
   ngOnInit() {
@@ -34,15 +35,12 @@ export class ManagerComponent implements OnInit {
     this.triggerConfigComponent.openTriggerForm();
   }
 
-  onNewTrigger(newTrigger: SimpleTrigger) {
-    this.newTriggers.push(newTrigger);
+  onNewTriggerCreated(newTrigger: SimpleTrigger) {
+    this.triggerListComponent.onNewTrigger(newTrigger);
   }
 
   setSelectedTrigger(triggerKey: TriggerKey) {
     this.selectedTriggerKey = triggerKey;
   }
 
-  onTriggerFormToggled(formOpened: boolean) {
-    this.newTriggerFormOpened = formOpened;
-  }
 }
