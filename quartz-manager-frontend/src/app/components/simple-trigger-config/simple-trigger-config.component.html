@@ -8,11 +8,11 @@
         <form name="configForm" fxFlex="1 1 100%" #configForm="ngForm">
 
           <div>
-            <mat-form-field [appearance]="enabledTriggerForm ? 'standard': 'none'">
+            <mat-form-field [appearance]="enabledTriggerForm && !simpleTriggerForm.triggerName ? 'standard': 'none'">
               <mat-label>Trigger Name</mat-label>
               <input  id="triggerName"
-                      [readonly]="!enabledTriggerForm"
-                      matInput placeholder="Repeat Interval [in mills]" name="triggerName"
+                      [readonly]="!enabledTriggerForm || simpleTriggerForm.triggerName"
+                      matInput placeholder="name of the trigger (unique)" name="triggerName"
                       [(ngModel)]="simpleTriggerForm.triggerName">
             </mat-form-field>
           </div>
