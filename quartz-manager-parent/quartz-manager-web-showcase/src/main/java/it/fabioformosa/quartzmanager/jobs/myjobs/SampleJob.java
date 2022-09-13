@@ -10,7 +10,7 @@ import it.fabioformosa.quartzmanager.jobs.entities.LogRecord.LogType;
 public class SampleJob extends AbstractLoggingJob {
     @Override
     public LogRecord doIt(JobExecutionContext jobExecutionContext) {
-      return new LogRecord(LogType.INFO, "Hello!");
+      return new LogRecord(LogType.INFO, "Hello World!");
     }
 
 }

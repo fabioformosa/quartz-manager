@@ -18,6 +18,7 @@ import {MatIconModule} from '@angular/material/icon';
 import {MatButtonModule} from '@angular/material/button';
 import {MatCardModule} from '@angular/material/card';
 import {MatDatepickerModule} from '@angular/material/datepicker';
+import {MatSelectModule} from '@angular/material/select';
 import {MatListModule} from '@angular/material/list';
 import {MatSidenavModule} from '@angular/material/sidenav';
 
@@ -50,6 +51,7 @@ import {
   AuthService,
   UserService,
   SchedulerService,
+  JobService,
   ConfigService,
   ProgressWebsocketService,
   LogsWebsocketService,
@@ -138,6 +140,7 @@ export function jwtOptionsFactory(apiService: ApiService) {
     MatChipsModule,
     MatIconModule,
     MatInputModule,
+    MatSelectModule,
     MatToolbarModule,
     MatCardModule,
     MatListModule,
@@ -164,6 +167,7 @@ export function jwtOptionsFactory(apiService: ApiService) {
     GuestGuard,
     AdminGuard,
     SchedulerService,
+    JobService,
     TriggerService,
     ProgressWebsocketService,
     LogsWebsocketService,

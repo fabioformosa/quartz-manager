@@ -18,6 +18,7 @@ import {Trigger} from '../../model/trigger.model';
 import {JobDetail} from '../../model/jobDetail.model';
 import {SimpleTriggerForm} from '../../model/simple-trigger.form';
 import {SimpleTrigger} from '../../model/simple-trigger.model';
+import JobService from '../../services/job.service';
 
 describe('SimpleTriggerConfig', () => {
 
@@ -33,7 +34,7 @@ describe('SimpleTriggerConfig', () => {
         MatNativeDateModule,
         MatCardModule, MatIconModule, HttpClientTestingModule, RouterTestingModule],
       declarations: [SimpleTriggerConfigComponent],
-      providers: [SchedulerService, ApiService, ConfigService],
+      providers: [SchedulerService, ApiService, ConfigService, JobService],
       schemas: [NO_ERRORS_SCHEMA]
     }).compileComponents();
 

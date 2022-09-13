@@ -1,5 +1,6 @@
 export class SimpleTriggerCommand {
   triggerName: string;
+  jobClass: string;
   startDate: Date;
   endDate: Date;
   repeatCount: number;

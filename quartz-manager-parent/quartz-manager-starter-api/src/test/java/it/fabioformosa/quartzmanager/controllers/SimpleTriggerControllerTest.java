@@ -29,7 +29,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 
 @ContextConfiguration(classes = {QuartManagerApplicationTests.class})
 @WebMvcTest(controllers = SimpleTriggerController.class, properties = {
-  "quartz-manager.jobClass=it.fabioformosa.quartzmanager.jobs.SampleJob"
+  "quartz-manager.jobClassPackages=it.fabioformosa.quartzmanager.jobs"
 })
 class SimpleTriggerControllerTest {
 
@@ -66,7 +66,7 @@ class SimpleTriggerControllerTest {
   void givenASimpleTriggerCommandDTO_whenPosted_thenANewSimpleTriggerIsCreated() throws Exception {
     SimpleTriggerInputDTO simpleTriggerInputDTO = buildSimpleTriggerCommandDTO();
     SimpleTriggerDTO expectedSimpleTriggerDTO = TriggerUtils.getSimpleTriggerInstance("mytrigger", simpleTriggerInputDTO);
-    Mockito.when(simpleTriggerSchedulerService.scheduleSimpleTrigger(any(), any())).thenReturn(expectedSimpleTriggerDTO);
+    Mockito.when(simpleTriggerSchedulerService.scheduleSimpleTrigger(any())).thenReturn(expectedSimpleTriggerDTO);
     mockMvc.perform(
       post(SimpleTriggerController.SIMPLE_TRIGGER_CONTROLLER_BASE_URL + "/mytrigger")
         .contentType(MediaType.APPLICATION_JSON)
@@ -79,6 +79,7 @@ class SimpleTriggerControllerTest {
 
   private SimpleTriggerInputDTO buildSimpleTriggerCommandDTO() {
     return SimpleTriggerInputDTO.builder()
+      .jobClass("it.fabioformosa.quartzmanager.jobs.SampleJob")
       .startDate(new Date())
       .repeatCount(20)
       .repeatInterval(20000L)

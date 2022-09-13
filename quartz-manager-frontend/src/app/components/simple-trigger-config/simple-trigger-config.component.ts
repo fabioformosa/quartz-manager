@@ -1,5 +1,5 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {SchedulerService} from '../../services';
+import {JobService, SchedulerService} from '../../services';
 import {Scheduler} from '../../model/scheduler.model';
 import {SimpleTriggerCommand} from '../../model/simple-trigger.command';
 import {SimpleTrigger} from '../../model/simple-trigger.model';
@@ -27,16 +27,24 @@ export class SimpleTriggerConfigComponent implements OnInit {
 
   private selectedTriggerKey: TriggerKey;
 
+  private jobs: Array<String>;
+
   enabledTriggerForm = false;
 
   @Output()
   onNewTrigger = new EventEmitter<SimpleTrigger>();
 
   constructor(
-    private schedulerService: SchedulerService
+    private schedulerService: SchedulerService,
+    private jobService: JobService
   ) { }
 
   ngOnInit() {
+    this.fetchJobs();
+  }
+
+  private fetchJobs() {
+    this.jobService.fetchJobs().subscribe(jobs => this.jobs = jobs);
   }
 
   openTriggerForm() {
@@ -109,6 +117,7 @@ export class SimpleTriggerConfigComponent implements OnInit {
   private _fromFormToCommand = (simpleTriggerForm: SimpleTriggerForm): SimpleTriggerCommand => {
     const simpleTriggerCommand = new SimpleTriggerCommand();
     simpleTriggerCommand.triggerName = simpleTriggerForm.triggerName;
+    simpleTriggerCommand.jobClass = simpleTriggerForm.jobClass;
     simpleTriggerCommand.repeatCount = simpleTriggerForm.repeatCount;
     simpleTriggerCommand.repeatInterval = simpleTriggerForm.repeatInterval;
     simpleTriggerCommand.startDate = simpleTriggerForm.startDate?.toDate();

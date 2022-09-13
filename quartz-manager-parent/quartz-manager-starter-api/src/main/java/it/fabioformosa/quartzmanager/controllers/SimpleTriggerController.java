@@ -62,7 +62,7 @@ public class SimpleTriggerController extends AbstractTriggerController {
       .triggerName(name)
       .simpleTriggerInputDTO(simpleTriggerInputDTO)
       .build();
-    SimpleTriggerDTO newTriggerDTO = simpleSchedulerService.scheduleSimpleTrigger(jobClassname, simpleTriggerCommandDTO);
+    SimpleTriggerDTO newTriggerDTO = simpleSchedulerService.scheduleSimpleTrigger(simpleTriggerCommandDTO);
     log.info("SIMPLE TRIGGER - CREATED a SimpleTrigger {}", newTriggerDTO);
     return newTriggerDTO;
   }

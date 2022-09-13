@@ -48,6 +48,7 @@ class SimpleTriggerSchedulerServiceTest {
   @Test
   void givenASimpleTriggerCommandDTO_whenASimpleTriggerIsScheduled_thenATriggerDTOIsReturned() throws SchedulerException, ClassNotFoundException {
     SimpleTriggerInputDTO triggerInputDTO = SimpleTriggerInputDTO.builder()
+      .jobClass("it.fabioformosa.quartzmanager.jobs.SampleJob")
       .startDate(new Date())
       .repeatInterval(5000L).repeatCount(5)
       .endDate(DateUtils.getHoursFromNow(1))
@@ -73,7 +74,7 @@ class SimpleTriggerSchedulerServiceTest {
       .triggerName(simpleTriggerName)
       .simpleTriggerInputDTO(triggerInputDTO)
       .build();
-    SimpleTriggerDTO simpleTrigger = simpleSchedulerService.scheduleSimpleTrigger("it.fabioformosa.quartzmanager.jobs.SampleJob", simpleTriggerCommandDTO);
+    SimpleTriggerDTO simpleTrigger = simpleSchedulerService.scheduleSimpleTrigger(simpleTriggerCommandDTO);
 
     Assertions.assertThat(simpleTrigger).isEqualTo(expectedTriggerDTO);
   }

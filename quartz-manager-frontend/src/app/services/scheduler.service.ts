@@ -1,17 +1,14 @@
-import { Injectable } from '@angular/core';
-import { getBaseUrl } from '.';
-import { ApiService } from './api.service';
+import {Injectable} from '@angular/core';
+import {CONTEXT_PATH, getBaseUrl} from '.';
+import {ApiService} from './api.service';
 import {Trigger} from '../model/trigger.model';
 import {Observable} from 'rxjs';
 import {SimpleTriggerCommand} from '../model/simple-trigger.command';
-import {SchedulerConfig} from '../model/schedulerConfig.model';
 import {Scheduler} from '../model/scheduler.model';
 
-const CONTEXT_PATH = '/quartz-manager';
 
 @Injectable()
 export class SchedulerService {
-
 
   constructor(
     private apiService: ApiService

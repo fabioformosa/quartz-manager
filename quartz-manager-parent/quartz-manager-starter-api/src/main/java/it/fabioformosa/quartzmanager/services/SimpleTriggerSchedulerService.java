@@ -20,8 +20,8 @@ public class SimpleTriggerSchedulerService extends AbstractSchedulerService {
     return conversionService.convert(trigger, SimpleTriggerDTO.class);
   }
 
-  public SimpleTriggerDTO scheduleSimpleTrigger(String jobClassname, SimpleTriggerCommandDTO triggerCommandDTO) throws SchedulerException, ClassNotFoundException {
-    Class<? extends Job> jobClass = (Class<? extends Job>) Class.forName(jobClassname);
+  public SimpleTriggerDTO scheduleSimpleTrigger(SimpleTriggerCommandDTO triggerCommandDTO) throws SchedulerException, ClassNotFoundException {
+    Class<? extends Job> jobClass = (Class<? extends Job>) Class.forName(triggerCommandDTO.getSimpleTriggerInputDTO().getJobClass());
     JobDetail jobDetail = JobBuilder.newJob()
       .ofType(jobClass)
       .storeDurably(false)

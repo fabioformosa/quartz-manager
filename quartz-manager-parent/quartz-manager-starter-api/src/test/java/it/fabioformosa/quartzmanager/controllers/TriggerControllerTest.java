@@ -20,12 +20,11 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
-import static org.mockito.ArgumentMatchers.any;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 
 @ContextConfiguration(classes = {QuartManagerApplicationTests.class})
 @WebMvcTest(controllers = TriggerController.class, properties = {
-  "quartz-manager.jobClass=it.fabioformosa.quartzmanager.jobs.SampleJob"
+  "quartz-manager.jobClassPackages=it.fabioformosa.quartzmanager.jobs"
 })
 class TriggerControllerTest {
 
@@ -38,21 +37,6 @@ class TriggerControllerTest {
   @AfterEach
   void cleanUp(){
     Mockito.reset(schedulerService);
-  }
-
-  @Test
-  void givenASchedulerConfigParam_whenPosted_thenANewTriggerIsCreated() throws Exception {
-    SchedulerConfigParam configParamToPost = buildSimpleSchedulerConfigParam();
-    TriggerDTO expectedTriggerDTO = TriggerUtils.getTriggerInstance("mytrigger");
-    Mockito.when(schedulerService.scheduleNewTrigger(any(), any(), any())).thenReturn(expectedTriggerDTO);
-    mockMvc.perform(
-      post(TriggerController.TRIGGER_CONTROLLER_BASE_URL + "/mytrigger")
-        .contentType(MediaType.APPLICATION_JSON)
-        .content(TestUtils.toJson(configParamToPost))
-      )
-      .andExpect(MockMvcResultMatchers.status().isCreated())
-      .andExpect(MockMvcResultMatchers.content().json(TestUtils.toJson(expectedTriggerDTO)))
-    ;
   }
 
   @ParameterizedTest

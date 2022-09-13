@@ -13,7 +13,6 @@ import it.fabioformosa.quartzmanager.services.LegacySchedulerService;
 import it.fabioformosa.quartzmanager.services.TriggerService;
 import lombok.extern.slf4j.Slf4j;
 import org.quartz.SchedulerException;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -46,23 +45,23 @@ public class TriggerController extends AbstractTriggerController {
     return schedulerService.getLegacyTriggerByName(name);
   }
 
-  @Deprecated
-  @PostMapping("/{name}")
-  @ResponseStatus(HttpStatus.CREATED)
-  @Operation(summary = "Create a new trigger")
-  @ApiResponses(value = {
-    @ApiResponse(responseCode = "201", description = "Created the new trigger",
-      content = { @Content(mediaType = "application/json",
-        schema = @Schema(implementation = TriggerDTO.class)) }),
-    @ApiResponse(responseCode = "400", description = "Invalid config supplied",
-      content = @Content)
-  })
-  public TriggerDTO postTrigger(@PathVariable String name, @Valid @RequestBody SchedulerConfigParam config) throws SchedulerException, ClassNotFoundException {
-    log.info("TRIGGER - CREATING a trigger {} {}", name, config);
-    TriggerDTO newTriggerDTO = schedulerService.scheduleNewTrigger(name, jobClassname, config);
-    log.info("TRIGGER - CREATED a trigger {}", newTriggerDTO);
-    return newTriggerDTO;
-  }
+//  @Deprecated
+//  @PostMapping("/{name}")
+//  @ResponseStatus(HttpStatus.CREATED)
+//  @Operation(summary = "Create a new trigger")
+//  @ApiResponses(value = {
+//    @ApiResponse(responseCode = "201", description = "Created the new trigger",
+//      content = { @Content(mediaType = "application/json",
+//        schema = @Schema(implementation = TriggerDTO.class)) }),
+//    @ApiResponse(responseCode = "400", description = "Invalid config supplied",
+//      content = @Content)
+//  })
+//  public TriggerDTO postTrigger(@PathVariable String name, @Valid @RequestBody SchedulerConfigParam config) throws SchedulerException, ClassNotFoundException {
+//    log.info("TRIGGER - CREATING a trigger {} {}", name, config);
+//    TriggerDTO newTriggerDTO = schedulerService.scheduleNewTrigger(name, config);
+//    log.info("TRIGGER - CREATED a trigger {}", newTriggerDTO);
+//    return newTriggerDTO;
+//  }
 
   @PutMapping("/{name}")
   @Operation(summary = "Reschedule the trigger")

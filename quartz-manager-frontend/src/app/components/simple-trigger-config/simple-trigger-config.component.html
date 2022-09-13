@@ -20,10 +20,11 @@
           <div>
             <mat-form-field [appearance]="enabledTriggerForm ? 'standard': 'none'">
               <mat-label>Job Class</mat-label>
-              <input  id="jobClass"
-                      [readonly]="!enabledTriggerForm"
-                      matInput placeholder="Job Class Name" name="jobClass"
-                      [(ngModel)]="simpleTriggerForm.jobClass">
+              <mat-select name="jobClass" [(ngModel)]="simpleTriggerForm.jobClass" [disabled]="!enabledTriggerForm">
+                <mat-option *ngFor="let job of jobs" [value]="job">
+                  {{job}}
+                </mat-option>
+              </mat-select>
             </mat-form-field>
           </div>
 

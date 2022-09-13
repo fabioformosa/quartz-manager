@@ -52,6 +52,7 @@ quartz-manager:
         enabled: true
         cookie: AUTH-TOKEN
   jobClass: it.fabioformosa.quartzmanager.jobs.myjobs.SampleJob
+  jobClassPackages: it.fabioformosa.quartzmanager.jobs
   accounts:
     in-memory:
       enabled: true
