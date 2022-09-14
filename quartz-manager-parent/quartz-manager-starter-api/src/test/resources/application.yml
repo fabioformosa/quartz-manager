@@ -15,4 +15,4 @@ logging:
     org.quartz: INFO
 
 quartz-manager:
-  jobClass: it.fabioformosa.quartzmanager.jobs.SampleJob
+  jobClassPackages: it.fabioformosa.quartzmanager.jobs
