@@ -6,31 +6,39 @@
     </div>
 </div> -->
 
-<mat-card>
+<mat-card style="padding-bottom: 0">
     <mat-card-header>
         <mat-card-subtitle><b>JOB PROGRESS</b></mat-card-subtitle>
     </mat-card-header>
     <mat-card-content>
-                <div>
-                    <mat-progress-bar mode="determinate" value="{{progress.percentage}}"></mat-progress-bar>
-                    {{percentageStr}}
-                </div>
+      <div id="progressBarBox">
+          <mat-progress-bar mode="determinate" value="{{progress.percentage}}"></mat-progress-bar>
+          {{percentageStr}}
+      </div>
 
-                <br>
+      <div id="counterBox" fxLayout="row" fxLayoutAlign="center" ng-show="progress.timesTriggered">
+        <span id="timesTriggeredCounter" class="animated pulse">{{progress.timesTriggered}}</span>
+        <span id="totCounter" ng-show="progress.repeatCount > 0">&nbsp;/&nbsp;{{progress.repeatCount}} </span>
+      </div>
 
-                <div>
-                    <mat-chip>counter</mat-chip>&nbsp;
-                    <span class="animated pulse">{{progress.timesTriggered}}</span> <span ng-show="progress.repeatCount > 0">/ {{progress.repeatCount}} </span>
+      <mat-divider></mat-divider>
 
-                    <br/><br/>
-
-                    <mat-chip>job key</mat-chip> <span class="animated pulse">{{progress.jobKey}}</span><br>
-                    <mat-chip>job class</mat-chip> <span class="animated pulse">{{progress.jobClass}}</span><br/>
-
-                    <br/>
-                    <mat-chip>prev fire time</mat-chip> <span class="animated pulse">{{progress.previousFireTime|date:'dd-MM-yyyy HH:mm:ss'}}</span><br/>
-                    <mat-chip>next fire time</mat-chip> <span class="animated pulse">{{progress.nextFireTime|date:'dd-MM-yyyy HH:mm:ss'}}</span><br/>
-                    <mat-chip>final fire time</mat-chip> <span class="animated pulse">{{progress.finalFireTime|date:'dd-MM-yyyy HH:mm:ss'}}</span><br/>
-                </div>
+      <div fxLayout="row" fxLayoutAlign="space-around center">
+          <div class="fireBox">
+            <div class="fireBoxHeader">prev fire time</div>
+            <div class="fireBoxContent"><span class="animated pulse">{{progress.previousFireTime|date:'dd-MM-yyyy HH:mm:ss'}}</span></div>
+            <div class="fireBoxContent" [hidden]="progress.previousFireTime"><span>-</span></div>
+          </div>
+          <div class="fireBox">
+            <div class="fireBoxHeader">next fire time</div>
+            <div class="fireBoxContent"><span class="animated pulse">{{progress.nextFireTime|date:'dd-MM-yyyy HH:mm:ss'}}</span></div>
+            <div class="fireBoxContent" [hidden]="progress.nextFireTime"><span>-</span></div>
+          </div>
+          <div class="fireBox">
+            <div class="fireBoxHeader">final fire time</div>
+            <div class="fireBoxContent"><span class="animated pulse">{{progress.finalFireTime|date:'dd-MM-yyyy HH:mm:ss'}}</span></div>
+            <div class="fireBoxContent" [hidden]="progress.finalFireTime"><span>-</span></div>
+          </div>
+       </div>
     </mat-card-content>
 </mat-card>
