@@ -4,9 +4,9 @@
     <qrzmng-scheduler-control></qrzmng-scheduler-control>
   </div>
 
-  <div fxLayout="row" fxLayoutGap="20px" fxLayoutAlign="center stretch" fxFlex="1 1 auto">
+  <div fxLayout="row" fxLayoutGap="8px" fxLayoutAlign="center stretch" fxFlex="1 1 auto">
 
-    <div fxFlex="0 0 300px">
+    <div fxFlex="0 0 250px">
       <div fxLayout="row" fxLayoutAlign="stretch" fxFill>
         <qrzmng-trigger-list
             (onNewTriggerClicked)="onNewTriggerRequested()"
@@ -16,7 +16,7 @@
       </div>
     </div>
 
-    <div fxFlex="1 1 400px" >
+    <div fxFlex="1 1 350px" >
       <div fxLayout="column">
         <qrzmng-simple-trigger-config
           [triggerKey]="selectedTriggerKey"
@@ -26,10 +26,9 @@
     </div>
 
     <div fxFlex="1 1 auto" style="margin-left: 20px">
-      <div fxLayout="column">
+      <div fxLayout="column" fxLayoutGap="8px">
         <div fxFlex="1 1 100%"><progress-panel></progress-panel></div>
-        <br/>
-        <div fxFlex="1 1 100%"><logs-panel></logs-panel></div>
+        <div fxFlex="1 1 100%" fxFill><logs-panel></logs-panel></div>
       </div>
     </div>
 

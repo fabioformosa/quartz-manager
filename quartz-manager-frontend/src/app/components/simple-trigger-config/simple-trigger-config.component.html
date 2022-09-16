@@ -9,11 +9,11 @@
 
           <div>
             <mat-form-field
-                [appearance]="enabledTriggerForm && !simpleTriggerForm.triggerName ? 'standard': 'none'"
+                [appearance]="enabledTriggerForm && !trigger ? 'standard': 'none'"
                 class="full-size-input">
               <mat-label>Trigger Name</mat-label>
               <input  id="triggerName"
-                      [readonly]="!enabledTriggerForm || simpleTriggerForm.triggerName"
+                      [readonly]="!enabledTriggerForm || trigger"
                       matInput placeholder="name of the trigger (unique)" name="triggerName"
                       [(ngModel)]="simpleTriggerForm.triggerName">
             </mat-form-field>

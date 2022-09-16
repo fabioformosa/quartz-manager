@@ -10,7 +10,7 @@ import { Observable } from 'rxjs';
 })
 export class LogsPanelComponent implements OnInit {
 
-  MAX_LOGS : number = 20;
+  MAX_LOGS : number = 30;
 
   logs : Array<any> = new Array();
 
@@ -37,7 +37,7 @@ export class LogsPanelComponent implements OnInit {
   _showNewLog = (logRecord) => {
     if(this.logs.length > this.MAX_LOGS)
       this.logs.pop();
-    
+
     this.logs.unshift({
       time : logRecord.date,
       type : logRecord.type,

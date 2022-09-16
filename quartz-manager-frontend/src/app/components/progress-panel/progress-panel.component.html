@@ -16,9 +16,9 @@
           {{percentageStr}}
       </div>
 
-      <div id="counterBox" fxLayout="row" fxLayoutAlign="center" ng-show="progress.timesTriggered">
+      <div id="counterBox" fxLayout="row" fxLayoutAlign="center" *ngIf="progress.timesTriggered">
         <span id="timesTriggeredCounter" class="animated pulse">{{progress.timesTriggered}}</span>
-        <span id="totCounter" ng-show="progress.repeatCount > 0">&nbsp;/&nbsp;{{progress.repeatCount}} </span>
+        <span id="totCounter" *ngIf="progress.repeatCount > 0">&nbsp;/&nbsp;{{progress.repeatCount}} </span>
       </div>
 
       <mat-divider></mat-divider>
