@@ -1,6 +1,6 @@
 [![Build Status](https://travis-ci.org/fabioformosa/quartz-manager.svg?branch=master)](https://travis-ci.org/fabioformosa/quartz-manager)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/it.fabioformosa.quartz-manager/quartz-manager-starter-api/badge.svg)](https://maven-badges.herokuapp.com/maven-central/it.fabioformosa.quartz-manager/quartz-manager-starter-api)
-[![Gitter](https://badges.gitter.im/quartz-manager/community.svg)](https://gitter.im/quartz-manager/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
+
 
 # QUARTZ MANAGER
 Quartz Manager is a library you can import in your spring webapp to easily enable the [Quartz Scheduler](http://www.quartz-scheduler.org/) and to control it by REST APIs or by a UI Manager Panel (angular-based). 
@@ -205,6 +205,13 @@ Take a loot to the project [Quartz-Manager Demo](https://github.com/fabioformosa
  * add a secure layer to allow the API only to logged users
  * schedule a custom job (a dummy `hello world`)
 
+## APPLICATION PROPERTIES
+
+| Property    | Values      | Description     |
+| :---        |:---         |:---             |
+| quartz-manager.accounts.in-memory.enabled              | boolean             | Enable in memory users to login   |
+| quartz-manager.accounts.in-memory.users[0].name        | string              |       |
+| quartz-manager.accounts.in-memory.users[0].password    | string              |       |
 
 ## ROADMAP
 Open the [Project Roadmap](https://github.com/fabioformosa/quartz-manager/projects) to take a look at the plan of Quartz Manager.  
