@@ -20,10 +20,10 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.MockitoAnnotations.openMocks;
 
-class SimpleTriggerSchedulerServiceTest {
+class SimpleTriggerServiceTest {
 
   @InjectMocks
-  private SimpleTriggerSchedulerService simpleSchedulerService;
+  private SimpleTriggerService simpleSchedulerService;
 
   @Mock
   private Scheduler scheduler;

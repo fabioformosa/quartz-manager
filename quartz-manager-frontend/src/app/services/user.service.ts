@@ -40,10 +40,6 @@ export class UserService {
         });
   }
 
-  resetCredentials() {
-    return this.apiService.get(this.config.reset_credentials_url);
-  }
-
   getMyInfo() {
     return this.apiService.get(this.config.whoami_url).pipe(map(user => this.currentUser = user));
   }

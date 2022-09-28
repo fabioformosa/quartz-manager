@@ -8,7 +8,7 @@ import it.fabioformosa.quartzmanager.dto.SimpleTriggerCommandDTO;
 import it.fabioformosa.quartzmanager.dto.SimpleTriggerDTO;
 import it.fabioformosa.quartzmanager.dto.SimpleTriggerInputDTO;
 import it.fabioformosa.quartzmanager.exceptions.TriggerNotFoundException;
-import it.fabioformosa.quartzmanager.services.SimpleTriggerSchedulerService;
+import it.fabioformosa.quartzmanager.services.SimpleTriggerService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -37,17 +37,17 @@ class SimpleTriggerControllerTest {
   private MockMvc mockMvc;
 
   @MockBean
-  private SimpleTriggerSchedulerService simpleTriggerSchedulerService;
+  private SimpleTriggerService simpleTriggerService;
 
   @AfterEach
   void cleanUp(){
-    Mockito.reset(simpleTriggerSchedulerService);
+    Mockito.reset(simpleTriggerService);
   }
 
   @Test
   void whenGetIsCalled_thenASimpleTriggerIsReturned() throws Exception {
     SimpleTriggerDTO expectedSimpleTriggerDTO = TriggerUtils.getSimpleTriggerInstance("mytrigger");
-    Mockito.when(simpleTriggerSchedulerService.getSimpleTriggerByName("mytrigger")).thenReturn(expectedSimpleTriggerDTO);
+    Mockito.when(simpleTriggerService.getSimpleTriggerByName("mytrigger")).thenReturn(expectedSimpleTriggerDTO);
 
     mockMvc.perform(get(SimpleTriggerController.SIMPLE_TRIGGER_CONTROLLER_BASE_URL + "/mytrigger")
         .contentType(MediaType.APPLICATION_JSON)).andExpect(MockMvcResultMatchers.status().isOk())
@@ -56,7 +56,7 @@ class SimpleTriggerControllerTest {
 
   @Test
   void givenAnExistingTrigger_whenGetIsCalled_then404IsReturned() throws Exception {
-    Mockito.when(simpleTriggerSchedulerService.getSimpleTriggerByName("not_existing_trigger_name")).thenThrow(new TriggerNotFoundException("not_existing_trigger_name"));
+    Mockito.when(simpleTriggerService.getSimpleTriggerByName("not_existing_trigger_name")).thenThrow(new TriggerNotFoundException("not_existing_trigger_name"));
 
     mockMvc.perform(get(SimpleTriggerController.SIMPLE_TRIGGER_CONTROLLER_BASE_URL + "/not_existing_trigger_name")
         .contentType(MediaType.APPLICATION_JSON)).andExpect(MockMvcResultMatchers.status().isNotFound());
@@ -66,7 +66,7 @@ class SimpleTriggerControllerTest {
   void givenASimpleTriggerCommandDTO_whenPosted_thenANewSimpleTriggerIsCreated() throws Exception {
     SimpleTriggerInputDTO simpleTriggerInputDTO = buildSimpleTriggerCommandDTO();
     SimpleTriggerDTO expectedSimpleTriggerDTO = TriggerUtils.getSimpleTriggerInstance("mytrigger", simpleTriggerInputDTO);
-    Mockito.when(simpleTriggerSchedulerService.scheduleSimpleTrigger(any())).thenReturn(expectedSimpleTriggerDTO);
+    Mockito.when(simpleTriggerService.scheduleSimpleTrigger(any())).thenReturn(expectedSimpleTriggerDTO);
     mockMvc.perform(
       post(SimpleTriggerController.SIMPLE_TRIGGER_CONTROLLER_BASE_URL + "/mytrigger")
         .contentType(MediaType.APPLICATION_JSON)
@@ -103,7 +103,7 @@ class SimpleTriggerControllerTest {
       .triggerName("mytrigger")
       .simpleTriggerInputDTO(simpleTriggerInputDTO)
       .build();
-    Mockito.when(simpleTriggerSchedulerService.rescheduleSimpleTrigger(simpleTriggerCommandDTO)).thenReturn(expectedSimpleTriggerDTO);
+    Mockito.when(simpleTriggerService.rescheduleSimpleTrigger(simpleTriggerCommandDTO)).thenReturn(expectedSimpleTriggerDTO);
 
     mockMvc.perform(put(SimpleTriggerController.SIMPLE_TRIGGER_CONTROLLER_BASE_URL + "/mytrigger")
       .contentType(MediaType.APPLICATION_JSON)

@@ -62,7 +62,7 @@ public class WebSecurityConfigJWT extends WebSecurityConfigurerAdapter {
     private String contextPath;
 
     @Value("${app.name:quartz-manager}")
-    private String APP_NAME;
+    private String appName;
 
     @Value("${quartz-manager.security.login-model.form-login-enabled}")
     private Boolean formLoginEnabled;
@@ -152,7 +152,7 @@ public class WebSecurityConfigJWT extends WebSecurityConfigurerAdapter {
 
     @Bean
     public JwtTokenHelper jwtTokenHelper() {
-        return new JwtTokenHelper(APP_NAME, jwtSecurityProps);
+        return new JwtTokenHelper(appName, jwtSecurityProps);
     }
 
     @Bean

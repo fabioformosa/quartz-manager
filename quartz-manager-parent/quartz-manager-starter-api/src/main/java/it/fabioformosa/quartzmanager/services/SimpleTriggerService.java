@@ -9,9 +9,9 @@ import org.springframework.core.convert.ConversionService;
 import org.springframework.stereotype.Service;
 
 @Service
-public class SimpleTriggerSchedulerService extends AbstractSchedulerService {
+public class SimpleTriggerService extends AbstractSchedulerService {
 
-  public SimpleTriggerSchedulerService(Scheduler scheduler, ConversionService conversionService) {
+  public SimpleTriggerService(Scheduler scheduler, ConversionService conversionService) {
     super(scheduler, conversionService);
   }
 

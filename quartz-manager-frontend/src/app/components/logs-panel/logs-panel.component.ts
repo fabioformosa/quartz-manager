@@ -20,7 +20,7 @@ export class LogsPanelComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    let obs = this.logsWebsocketService.getObservable()
+    const obs = this.logsWebsocketService.getObservable()
     obs.subscribe({
       'next' : this.onNewLogMsg,
       'error' : (err) => {console.log(err)}

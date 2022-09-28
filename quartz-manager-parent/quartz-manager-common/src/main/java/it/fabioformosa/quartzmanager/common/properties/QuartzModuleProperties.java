@@ -5,7 +5,7 @@ import lombok.Data;
 import java.util.Properties;
 
 @Data
-public class QuartzModuleProperties{
+public class QuartzModuleProperties {
 
     private Properties properties = new Properties();
 

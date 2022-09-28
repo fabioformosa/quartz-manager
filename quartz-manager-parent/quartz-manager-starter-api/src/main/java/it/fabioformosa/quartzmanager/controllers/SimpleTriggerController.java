@@ -11,7 +11,7 @@ import it.fabioformosa.quartzmanager.dto.SimpleTriggerInputDTO;
 import it.fabioformosa.quartzmanager.dto.SimpleTriggerDTO;
 import it.fabioformosa.quartzmanager.dto.TriggerDTO;
 import it.fabioformosa.quartzmanager.exceptions.TriggerNotFoundException;
-import it.fabioformosa.quartzmanager.services.SimpleTriggerSchedulerService;
+import it.fabioformosa.quartzmanager.services.SimpleTriggerService;
 import lombok.extern.slf4j.Slf4j;
 import org.quartz.SchedulerException;
 import org.springframework.http.HttpStatus;
@@ -27,9 +27,9 @@ public class SimpleTriggerController extends AbstractTriggerController {
 
   static public final String SIMPLE_TRIGGER_CONTROLLER_BASE_URL = "/quartz-manager/simple-triggers";
 
-  private SimpleTriggerSchedulerService simpleSchedulerService;
+  private SimpleTriggerService simpleSchedulerService;
 
-  public SimpleTriggerController(SimpleTriggerSchedulerService simpleSchedulerService) {
+  public SimpleTriggerController(SimpleTriggerService simpleSchedulerService) {
     this.simpleSchedulerService = simpleSchedulerService;
   }
 

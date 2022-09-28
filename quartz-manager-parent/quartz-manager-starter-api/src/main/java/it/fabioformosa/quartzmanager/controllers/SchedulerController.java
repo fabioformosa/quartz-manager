@@ -6,16 +6,10 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-import it.fabioformosa.quartzmanager.dto.SchedulerConfigParam;
 import it.fabioformosa.quartzmanager.dto.SchedulerDTO;
-import it.fabioformosa.quartzmanager.dto.TriggerStatus;
-import it.fabioformosa.quartzmanager.services.LegacySchedulerService;
 import it.fabioformosa.quartzmanager.services.SchedulerService;
+import lombok.extern.slf4j.Slf4j;
 import org.quartz.SchedulerException;
-import org.quartz.SimpleTrigger;
-import org.quartz.impl.triggers.SimpleTriggerImpl;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -31,49 +25,21 @@ import javax.annotation.Resource;
  *
  * @author Fabio.Formosa
  */
+@Slf4j
 @RestController
 @SecurityRequirement(name = "basic-auth")
 @RequestMapping("/quartz-manager/scheduler")
 public class SchedulerController {
 
-  private final Logger log = LoggerFactory.getLogger(SchedulerController.class);
-
-  private LegacySchedulerService legacySchedulerService;
-
   private SchedulerService schedulerService;
 
-  public SchedulerController(LegacySchedulerService legacySchedulerService, SchedulerService schedulerService, ConversionService conversionService) {
-    this.legacySchedulerService = legacySchedulerService;
+  public SchedulerController(SchedulerService schedulerService, ConversionService conversionService) {
     this.schedulerService = schedulerService;
     this.conversionService = conversionService;
   }
 
   @Resource
   private ConversionService conversionService;
-
-  @Deprecated
-  //TODO to be removed when the legacy trigger is removed
-  @GetMapping("/config")
-  @Operation(summary = "Get the config of the trigger")
-  @ApiResponses(value = {
-    @ApiResponse(responseCode = "200", description = "Return the trigger config",
-      content = { @Content(mediaType = "application/json",
-        schema = @Schema(implementation = SchedulerConfigParam.class)) })
-  })
-  public SchedulerConfigParam getConfig() throws SchedulerException {
-    log.debug("SCHEDULER - GET CONFIG params");
-    SchedulerConfigParam schedulerConfigParam = legacySchedulerService.getOneSimpleTrigger()
-      .map(SchedulerController::fromSimpleTriggerToSchedulerConfigParam)
-      .orElse(new SchedulerConfigParam(0L, 0, 0));
-    return schedulerConfigParam;
-  }
-
-  public static SchedulerConfigParam fromSimpleTriggerToSchedulerConfigParam(SimpleTrigger simpleTrigger){
-    int timesTriggered = simpleTrigger.getTimesTriggered();
-    int maxCount = simpleTrigger.getRepeatCount() + 1;
-    long triggersPerDay = LegacySchedulerService.fromMillsIntervalToTriggerPerDay(simpleTrigger.getRepeatInterval());
-    return new SchedulerConfigParam(triggersPerDay, maxCount, timesTriggered);
-  }
 
   @GetMapping
   @Operation(summary = "Get the scheduler details")
@@ -87,53 +53,6 @@ public class SchedulerController {
     return schedulerService.getScheduler();
   }
 
-  //TODO move this to the Trigger Controller
-  @GetMapping("/progress")
-  @Operation(summary = "Get the trigger status")
-  @ApiResponses(value = {
-    @ApiResponse(responseCode = "200", description = "Return the trigger status",
-      content = { @Content(mediaType = "application/json",
-        schema = @Schema(implementation = TriggerStatus.class)) })
-  })
-  public TriggerStatus getProgressInfo() throws SchedulerException {
-    log.trace("SCHEDULER - GET PROGRESS INFO");
-    TriggerStatus progress = new TriggerStatus();
-
-    SimpleTriggerImpl jobTrigger = (SimpleTriggerImpl) legacySchedulerService.getOneSimpleTrigger().get();
-    if (jobTrigger != null && jobTrigger.getJobKey() != null) {
-      progress.setJobKey(jobTrigger.getJobKey().getName());
-      progress.setJobClass(jobTrigger.getClass().getSimpleName());
-      progress.setTimesTriggered(jobTrigger.getTimesTriggered());
-      progress.setRepeatCount(jobTrigger.getRepeatCount());
-      progress.setFinalFireTime(jobTrigger.getFinalFireTime());
-      progress.setNextFireTime(jobTrigger.getNextFireTime());
-      progress.setPreviousFireTime(jobTrigger.getPreviousFireTime());
-    }
-
-    return progress;
-  }
-
-
-  //REMOVEME
-//  @GetMapping(value = "/status", produces = "application/json")
-//  @Operation(summary = "Get the scheduler status")
-//  @ApiResponses(value = {
-//    @ApiResponse(responseCode = "200", description = "Return the scheduler status",
-//      content = { @Content(mediaType = "application/json",
-//        schema = @Schema(implementation = SchedulerStates.class)) })
-//  })
-//  public Map<String, String> getStatus() throws SchedulerException {
-//    log.trace("SCHEDULER - GET STATUS");
-//    String schedulerState = "";
-//    if (legacySchedulerService.getScheduler().isShutdown() || !legacySchedulerService.getScheduler().isStarted())
-//      schedulerState = SchedulerStates.STOPPED.toString();
-//    else if (legacySchedulerService.getScheduler().isStarted() && legacySchedulerService.getScheduler().isInStandbyMode())
-//      schedulerState = SchedulerStates.PAUSED.toString();
-//    else
-//      schedulerState = SchedulerStates.RUNNING.toString();
-//    return Collections.singletonMap("data", schedulerState.toLowerCase());
-//  }
-
   @GetMapping("/pause")
   @Operation(summary = "Get paused the scheduler")
   @ApiResponses(value = {
@@ -142,7 +61,7 @@ public class SchedulerController {
   @ResponseStatus(HttpStatus.NO_CONTENT)
   public void pause() throws SchedulerException {
     log.info("SCHEDULER - PAUSE COMMAND");
-    legacySchedulerService.getScheduler().standby();
+    schedulerService.standby();
   }
 
   @GetMapping("/resume")
@@ -153,7 +72,7 @@ public class SchedulerController {
   @ResponseStatus(HttpStatus.NO_CONTENT)
   public void resume() throws SchedulerException {
     log.info("SCHEDULER - RESUME COMMAND");
-    legacySchedulerService.getScheduler().start();
+    schedulerService.start();
   }
 
   @GetMapping("/run")
@@ -164,7 +83,7 @@ public class SchedulerController {
   @ResponseStatus(HttpStatus.NO_CONTENT)
   public void run() throws SchedulerException {
     log.info("SCHEDULER - START COMMAND");
-    legacySchedulerService.getScheduler().start();
+    schedulerService.start();
   }
 
   @GetMapping("/stop")
@@ -175,7 +94,7 @@ public class SchedulerController {
   @ResponseStatus(HttpStatus.NO_CONTENT)
   public void stop() throws SchedulerException {
     log.info("SCHEDULER - STOP COMMAND");
-    legacySchedulerService.getScheduler().shutdown(true);
+    schedulerService.shutdown();
   }
 
 }

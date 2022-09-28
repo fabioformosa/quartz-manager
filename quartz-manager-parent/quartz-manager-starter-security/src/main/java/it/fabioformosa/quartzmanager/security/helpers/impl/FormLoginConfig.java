@@ -9,7 +9,7 @@ import org.springframework.security.config.annotation.web.configurers.FormLoginC
 import it.fabioformosa.quartzmanager.security.helpers.LoginConfigurer;
 
 /**
- * It delegates form to @FormLoginConfigurer of the httpSecurity.
+ * It delegates the login to the @FormLoginConfigurer of the httpSecurity.
  *
  */
 public class FormLoginConfig implements LoginConfigurer {

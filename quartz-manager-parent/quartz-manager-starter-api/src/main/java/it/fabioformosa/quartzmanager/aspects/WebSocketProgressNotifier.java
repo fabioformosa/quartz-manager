@@ -20,15 +20,6 @@ public class WebSocketProgressNotifier implements ProgressNotifier {
     @Autowired
     private SimpMessageSendingOperations messagingTemplate;
 
-//    @Resource
-//    private Scheduler scheduler;
-
-//    @Resource
-//    private LegacySchedulerService schedulerService;
-
-//    @Resource
-//    private TriggerMonitor triggerMonitor;
-
     //@AfterReturning("execution(* logAndSend(..))")
     //	@Override
     //	public void updateProgress(JoinPoint joinPoint) {

@@ -39,7 +39,7 @@ public class JwtUsernamePasswordFiterLoginConfig implements LoginConfigurer {
 
   @Override
   public HttpSecurity login(String loginPath, HttpSecurity http, AuthenticationManager authenticationManager) throws Exception {
-    log.debug("Configuring login through JwtAuthenticationFilter...");
+    log.debug("Configuring login via JwtAuthenticationFilter...");
     return http.addFilterAfter(authenticationProcessingFilter(loginPath, authenticationManager), AbstractPreAuthenticatedProcessingFilter.class);
   }
 

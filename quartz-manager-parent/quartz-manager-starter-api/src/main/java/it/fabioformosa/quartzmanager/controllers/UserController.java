@@ -20,47 +20,4 @@ public class UserController {
         return "\"NO_AUTH\"";
     }
 
-//    /**
-//     * JWT Temporary disabled
-//     *
-//     * @author Fabio.Formosa
-//     *
-//     */
-
-    //	@Autowired
-    //	private UserService userService;
-
-
-    //	@RequestMapping(method = POST, value = "/signup")
-    //	public ResponseEntity<?> addUser(@RequestBody UserRequest userRequest,
-    //			UriComponentsBuilder ucBuilder) {
-    //
-    //		User existUser = this.userService.findByUsername(userRequest.getUsername());
-    //		if (existUser != null)
-    //			throw new ResourceConflictException(userRequest.getId(), "Username already exists");
-    //		User user = this.userService.save(userRequest);
-    //		HttpHeaders headers = new HttpHeaders();
-    //		headers.setLocation(ucBuilder.path("/api/user/{userId}").buildAndExpand(user.getId()).toUri());
-    //		return new ResponseEntity<>(user, HttpStatus.CREATED);
-    //	}
-    //
-    //	@RequestMapping(method = GET, value = "/user/all")
-    //	public List<User> loadAll() {
-    //		return this.userService.findAll();
-    //	}
-    //
-    //	@RequestMapping(method = GET, value = "/user/{userId}")
-    //	public User loadById(@PathVariable Long userId) {
-    //		return this.userService.findById(userId);
-    //	}
-    //
-    //
-    //	@RequestMapping(method = GET, value = "/user/reset-credentials")
-    //	public ResponseEntity<Map> resetCredentials() {
-    //		this.userService.resetCredentials();
-    //		Map<String, String> result = new HashMap<>();
-    //		result.put("result", "success");
-    //		return ResponseEntity.accepted().body(result);
-    //	}
-
 }

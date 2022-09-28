@@ -1,25 +1,22 @@
 package it.fabioformosa.quartzmanager.security.helpers.impl;
 
-import java.io.IOException;
-
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletResponse;
-
+import com.fasterxml.jackson.databind.ObjectMapper;
+import it.fabioformosa.quartzmanager.security.configuration.properties.JwtSecurityProperties;
+import it.fabioformosa.quartzmanager.security.models.UserTokenState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.User;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import it.fabioformosa.quartzmanager.security.configuration.properties.JwtSecurityProperties;
-import it.fabioformosa.quartzmanager.security.models.UserTokenState;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
 /**
  * It depends on @JwtTokenHelper to generate the jwtToken.
  * On login success, it generates the jwtToken and it returns it to the login according to possible strategies: cookie, response header.
- * You can choice the strategy through @JwtSecurityProperties
+ * You can choose the strategy through @JwtSecurityProperties
  *
  */
 public class JwtAuthenticationSuccessHandlerImpl implements JwtAuthenticationSuccessHandler {
@@ -51,7 +48,7 @@ public class JwtAuthenticationSuccessHandlerImpl implements JwtAuthenticationSuc
 
     @Override
     public void onLoginSuccess(Authentication authentication, HttpServletResponse response) throws IOException {
-        log.debug("Login successed, generating jwtToken...");
+        log.debug("Login succeeded, generating jwtToken...");
 
         User user = (User) authentication.getPrincipal();
         String jwtToken = jwtTokenHelper.generateToken(user.getUsername());
