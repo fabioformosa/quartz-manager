@@ -11,6 +11,7 @@ import {MatDividerModule} from '@angular/material/divider';
 import {TriggerListComponent} from './trigger-list.component';
 import {MatListModule} from '@angular/material/list';
 import {TriggerKey} from '../../model/triggerKey.model';
+import {MatDialogModule} from '@angular/material/dialog';
 
 describe('TriggerListComponent', () => {
 
@@ -22,7 +23,7 @@ describe('TriggerListComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [MatCardModule, MatDividerModule, MatIconModule, MatListModule, HttpClientTestingModule, RouterTestingModule],
+      imports: [MatCardModule, MatDialogModule, MatDividerModule, MatIconModule, MatListModule, HttpClientTestingModule, RouterTestingModule],
       declarations: [TriggerListComponent],
       providers: [TriggerService, ApiService, ConfigService]
     }).compileComponents();

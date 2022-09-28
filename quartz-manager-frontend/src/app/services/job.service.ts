@@ -4,7 +4,7 @@ import {CONTEXT_PATH, getBaseUrl} from './config.service';
 import {Observable} from 'rxjs';
 
 @Injectable()
-export class JobService {
+export default class JobService {
 
   constructor(
     private apiService: ApiService

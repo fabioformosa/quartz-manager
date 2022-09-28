@@ -12,33 +12,33 @@
   <version>3.1.1-SNAPSHOT</version>
 
   <packaging>pom</packaging>
-  
+
   <name>Quartz Manager</name>
   <description>API and UI Manager for Quartz Scheduler</description>
-  
+
   <url>https://github.com/fabioformosa/quartz-manager</url>
-  
+
   <licenses>
     <license>
       <name>Apache License 2.0</name>
       <url>https://github.com/fabioformosa/quartz-manager/blob/master/LICENSE</url>
     </license>
   </licenses>
-  
+
   <scm>
     <connection>scm:git:git://github.com/fabioformosa/quartz-manager.git</connection>
     <developerConnection>scm:git:git@github.com:fabioformosa/quartz-manager.git</developerConnection>
     <url>https://github.com/fabioformosa/quartz-manager</url>
     <tag>HEAD</tag>
   </scm>
-  
+
   <developers>
     <developer>
       <name>Fabio Formosa</name>
       <url>https://github.com/fabioformosa</url>
     </developer>
   </developers>
-  
+
   <modules>
     <module>quartz-manager-starter-api</module>
     <module>quartz-manager-starter-ui</module>
@@ -77,7 +77,7 @@
       </dependency>
     </dependencies>
   </dependencyManagement>
-  
+
   <distributionManagement>
     <snapshotRepository>
     <id>ossrh</id>
@@ -89,7 +89,7 @@
     </url>
     </repository>
   </distributionManagement>
-  
+
   <build>
     <plugins>
       <plugin>
@@ -160,7 +160,7 @@
         </plugin>
     </plugins>
   </build>
-  
+
   <profiles>
     <!-- GPG Signature on release -->
     <profile>

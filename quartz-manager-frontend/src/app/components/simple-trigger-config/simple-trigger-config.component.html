@@ -25,7 +25,7 @@
                 class="full-size-input"
             >
               <mat-label>Job Class</mat-label>
-              <mat-select name="jobClass" [(ngModel)]="simpleTriggerForm.jobClass" [disabled]="!enabledTriggerForm">
+              <mat-select id="jobClass" name="jobClass" [(ngModel)]="simpleTriggerForm.jobClass" [disabled]="!enabledTriggerForm">
                 <mat-option *ngFor="let job of jobs" [value]="job">
                   {{job}}
                 </mat-option>

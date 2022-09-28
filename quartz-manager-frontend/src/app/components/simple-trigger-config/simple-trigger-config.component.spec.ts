@@ -19,6 +19,7 @@ import {JobDetail} from '../../model/jobDetail.model';
 import {SimpleTriggerForm} from '../../model/simple-trigger.form';
 import {SimpleTrigger} from '../../model/simple-trigger.model';
 import JobService from '../../services/job.service';
+import {MatSelectModule} from '@angular/material/select';
 
 describe('SimpleTriggerConfig', () => {
 
@@ -30,7 +31,7 @@ describe('SimpleTriggerConfig', () => {
 
   beforeEach(async( () => {
     TestBed.configureTestingModule({
-      imports: [FormsModule, MatFormFieldModule, MatFormFieldModule, MatInputModule, BrowserAnimationsModule,
+      imports: [FormsModule,  MatFormFieldModule, MatFormFieldModule, MatSelectModule, MatInputModule, BrowserAnimationsModule,
         MatNativeDateModule,
         MatCardModule, MatIconModule, HttpClientTestingModule, RouterTestingModule],
       declarations: [SimpleTriggerConfigComponent],
