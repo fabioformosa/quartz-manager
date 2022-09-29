@@ -15,11 +15,11 @@ import java.util.List;
 @RequestMapping(TriggerController.TRIGGER_CONTROLLER_BASE_URL)
 @SecurityRequirement(name = "basic-auth")
 @RestController
-public class TriggerController extends AbstractTriggerController {
+public class TriggerController extends AbstractQuartzManagerController {
 
-  static public final String TRIGGER_CONTROLLER_BASE_URL = "/quartz-manager/triggers";
+  static protected final String TRIGGER_CONTROLLER_BASE_URL = QUARTZ_MANAGER_CONTEXT_PATH + "/triggers";
 
-  private TriggerService triggerService;
+  final private TriggerService triggerService;
 
   public TriggerController(TriggerService triggerService) {
     this.triggerService = triggerService;

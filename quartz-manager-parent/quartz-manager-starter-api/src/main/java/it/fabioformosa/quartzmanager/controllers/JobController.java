@@ -8,11 +8,12 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@RequestMapping("/quartz-manager/jobs")
-@RestController
-public class JobController extends AbstractTriggerController {
+import static it.fabioformosa.quartzmanager.controllers.AbstractQuartzManagerController.QUARTZ_MANAGER_CONTEXT_PATH;
 
-  private JobService jobService;
+@RequestMapping(QUARTZ_MANAGER_CONTEXT_PATH + "/jobs")
+@RestController
+public class JobController extends AbstractQuartzManagerController {
+  final private JobService jobService;
 
   public JobController(JobService jobService) {
     this.jobService = jobService;

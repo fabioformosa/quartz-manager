@@ -10,14 +10,13 @@ import it.fabioformosa.quartzmanager.dto.SchedulerDTO;
 import it.fabioformosa.quartzmanager.services.SchedulerService;
 import lombok.extern.slf4j.Slf4j;
 import org.quartz.SchedulerException;
-import org.springframework.core.convert.ConversionService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.annotation.Resource;
+import static it.fabioformosa.quartzmanager.controllers.AbstractQuartzManagerController.QUARTZ_MANAGER_CONTEXT_PATH;
 
 /**
  * This controller provides scheduler info about config and status. It provides
@@ -28,18 +27,16 @@ import javax.annotation.Resource;
 @Slf4j
 @RestController
 @SecurityRequirement(name = "basic-auth")
-@RequestMapping("/quartz-manager/scheduler")
+@RequestMapping(SchedulerController.SCHEDULER_CONTROLLER_BASE_URL)
 public class SchedulerController {
 
-  private SchedulerService schedulerService;
+  static protected final String SCHEDULER_CONTROLLER_BASE_URL = QUARTZ_MANAGER_CONTEXT_PATH + "/scheduler";
 
-  public SchedulerController(SchedulerService schedulerService, ConversionService conversionService) {
+  final private SchedulerService schedulerService;
+
+  public SchedulerController(SchedulerService schedulerService) {
     this.schedulerService = schedulerService;
-    this.conversionService = conversionService;
   }
-
-  @Resource
-  private ConversionService conversionService;
 
   @GetMapping
   @Operation(summary = "Get the scheduler details")

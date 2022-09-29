@@ -23,11 +23,11 @@ import javax.validation.Valid;
 @RequestMapping(SimpleTriggerController.SIMPLE_TRIGGER_CONTROLLER_BASE_URL)
 @SecurityRequirement(name = "basic-auth")
 @RestController
-public class SimpleTriggerController extends AbstractTriggerController {
+public class SimpleTriggerController extends AbstractQuartzManagerController {
 
-  static public final String SIMPLE_TRIGGER_CONTROLLER_BASE_URL = "/quartz-manager/simple-triggers";
+  static protected final String SIMPLE_TRIGGER_CONTROLLER_BASE_URL = QUARTZ_MANAGER_CONTEXT_PATH + "/simple-triggers";
 
-  private SimpleTriggerService simpleSchedulerService;
+  final private SimpleTriggerService simpleSchedulerService;
 
   public SimpleTriggerController(SimpleTriggerService simpleSchedulerService) {
     this.simpleSchedulerService = simpleSchedulerService;
