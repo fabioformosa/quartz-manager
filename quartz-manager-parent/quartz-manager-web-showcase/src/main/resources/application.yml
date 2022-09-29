@@ -4,9 +4,6 @@ server:
     session.timeout : 28800
   port: 8080
 
-app:
-  name: quartz-manager
-
 spring:
   thymeleaf:
     cache: false
