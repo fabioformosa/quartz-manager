@@ -4,6 +4,7 @@ import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -44,6 +45,7 @@ import it.fabioformosa.quartzmanager.security.helpers.impl.QuartzManagerHttpSecu
 /**
  * @author Fabio.Formosa
  */
+@ComponentScan(basePackages = {"it.fabioformosa.quartzmanager.security"})
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)

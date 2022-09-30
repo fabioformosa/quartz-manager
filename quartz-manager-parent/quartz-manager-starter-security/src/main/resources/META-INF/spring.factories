@@ -1,4 +1,2 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-it.fabioformosa.quartzmanager.security.WebSecurityConfigJWT,\
-it.fabioformosa.quartzmanager.security.properties.JwtSecurityProperties,\
-it.fabioformosa.quartzmanager.security.properties.InMemoryAccountProperties
+it.fabioformosa.quartzmanager.security.WebSecurityConfigJWT
