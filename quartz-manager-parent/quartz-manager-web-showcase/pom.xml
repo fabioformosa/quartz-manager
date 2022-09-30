@@ -9,7 +9,7 @@
     </parent>
 
 	<artifactId>quartz-manager-web-showcase</artifactId>
-	
+
     <packaging>war</packaging>
 
 	<name>Quartz Manager Web Showcase</name>
@@ -21,7 +21,7 @@
 	    <springfox.version>2.9.2</springfox.version>
 		<java.version>1.8</java.version>
 	</properties>
-	
+
 	<dependencies>
         <dependency>
           <groupId>it.fabioformosa.quartz-manager</groupId>
@@ -39,7 +39,7 @@
 <!--          <groupId>it.fabioformosa.quartz-manager</groupId>-->
 <!--          <artifactId>quartz-manager-starter-persistence</artifactId>-->
 <!--        </dependency>-->
-  
+
         <!-- SPRING -->
         <dependency>
           <groupId>org.springframework.boot</groupId>
@@ -68,7 +68,7 @@
           <artifactId>spring-boot-starter-test</artifactId>
           <scope>test</scope>
         </dependency>
-		
+
         <!-- MISC -->
         <dependency>
             <groupId>io.jsonwebtoken</groupId>
@@ -118,8 +118,8 @@
           <scope>test</scope>
         </dependency>
 	</dependencies>
-	
-	
+
+
 	<build>
 		<pluginManagement>
 			<plugins>
@@ -146,6 +146,6 @@
 			</plugins>
 		</pluginManagement>
 	</build>
-	
+
 
 </project>

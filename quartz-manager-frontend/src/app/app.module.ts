@@ -51,18 +51,17 @@ import {
   AuthService,
   UserService,
   SchedulerService,
-  JobService,
   ConfigService,
   ProgressWebsocketService,
   LogsWebsocketService,
   getHtmlBaseUrl,
   TriggerService
 } from './services';
-import { ChangePasswordComponent } from './views/change-password/change-password.component';
 import { ForbiddenComponent } from './views/forbidden/forbidden.component';
 import { APP_BASE_HREF } from '@angular/common';
 import { environment } from '../environments/environment';
 import {SimpleTriggerConfigComponent} from './components/simple-trigger-config';
+import JobService from './services/job.service';
 
 export function initUserFactory(userService: UserService) {
     return () => userService.jsessionInitUser();
@@ -116,7 +115,6 @@ export function jwtOptionsFactory(apiService: ApiService) {
     SchedulerControlComponent,
     LogsPanelComponent,
     ProgressPanelComponent,
-    ChangePasswordComponent,
     ForbiddenComponent,
     TriggerListComponent
   ],

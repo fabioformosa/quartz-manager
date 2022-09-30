@@ -26,8 +26,6 @@ logging:
     org.quartz: INFO
 
 quartz-manager:
-  trigger:
-    name: "sampletrigger"
   persistence:
     quartz:
       datasource:

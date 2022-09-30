@@ -1,7 +1,7 @@
 package it.fabioformosa.quartzmanager.security.helpers.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import it.fabioformosa.quartzmanager.security.configuration.properties.JwtSecurityProperties;
+import it.fabioformosa.quartzmanager.security.properties.JwtSecurityProperties;
 import it.fabioformosa.quartzmanager.security.models.UserTokenState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

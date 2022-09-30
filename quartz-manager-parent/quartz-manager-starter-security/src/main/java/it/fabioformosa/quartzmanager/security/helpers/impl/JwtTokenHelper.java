@@ -3,7 +3,7 @@ package it.fabioformosa.quartzmanager.security.helpers.impl;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import it.fabioformosa.quartzmanager.security.configuration.properties.JwtSecurityProperties;
+import it.fabioformosa.quartzmanager.security.properties.JwtSecurityProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

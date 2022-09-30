@@ -1,4 +1,4 @@
-package it.fabioformosa.quartzmanager.security.configuration.properties;
+package it.fabioformosa.quartzmanager.security.properties;
 
 import lombok.Getter;
 import lombok.Setter;
