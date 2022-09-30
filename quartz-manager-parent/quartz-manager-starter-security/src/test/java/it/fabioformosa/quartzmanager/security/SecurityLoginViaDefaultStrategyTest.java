@@ -11,10 +11,10 @@ import org.springframework.test.context.TestPropertySource;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestPropertySource(properties = {
-  "quartz-manager.accounts.in-memory.enabled=true",
-  "quartz-manager.accounts.in-memory.users[0].name=foo",
-  "quartz-manager.accounts.in-memory.users[0].password=bar",
-  "quartz-manager.accounts.in-memory.users[0].roles[0]=admin",
+  "quartz-manager.security.accounts.in-memory.enabled=true",
+  "quartz-manager.security.accounts.in-memory.users[0].name=foo",
+  "quartz-manager.security.accounts.in-memory.users[0].password=bar",
+  "quartz-manager.security.accounts.in-memory.users[0].roles[0]=admin",
 })
 public class SecurityLoginViaDefaultStrategyTest extends AbstractSecurityLoginTest {
 

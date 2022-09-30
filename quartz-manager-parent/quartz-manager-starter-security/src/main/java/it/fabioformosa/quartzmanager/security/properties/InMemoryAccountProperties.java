@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Configuration
-@ConfigurationProperties(prefix = "quartz-manager.accounts.in-memory")
+@ConfigurationProperties(prefix = "quartz-manager.security.accounts.in-memory")
 @Getter @Setter
 public class InMemoryAccountProperties {
   private boolean enabled;

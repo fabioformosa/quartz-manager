@@ -20,10 +20,10 @@ import org.springframework.test.context.TestPropertySource;
   "quartz-manager.security.jwt.header-strategy.header=Authorization",
   "quartz-manager.security.jwt.cookie-strategy.enabled=true",
   "quartz-manager.security.jwt.cookie-strategy.cookie=AUTH-TOKEN",
-  "quartz-manager.accounts.in-memory.enabled=true",
-  "quartz-manager.accounts.in-memory.users[0].name=foo",
-  "quartz-manager.accounts.in-memory.users[0].password=bar",
-  "quartz-manager.accounts.in-memory.users[0].roles[0]=admin",
+  "quartz-manager.security.accounts.in-memory.enabled=true",
+  "quartz-manager.security.accounts.in-memory.users[0].name=foo",
+  "quartz-manager.security.accounts.in-memory.users[0].password=bar",
+  "quartz-manager.security.accounts.in-memory.users[0].roles[0]=admin",
 })
 public class SecurityLoginViaCookieTest extends AbstractSecurityLoginTest {
 
