@@ -18,7 +18,7 @@ import java.util.Properties;
 
 @ComponentScan(basePackages = {"it.fabioformosa.quartzmanager.controllers"})
 @Configuration
-@ConditionalOnProperty(name = "quartz.enabled")
+@ConditionalOnProperty(name = "quartz.enabled", matchIfMissing = true)
 public class SchedulerConfig {
 
     @Autowired(required = false)

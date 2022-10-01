@@ -1,12 +1,3 @@
-server:
-  servlet:
-    context-path: /
-    session.timeout : 28800
-  port: 8080
-
-quartz:
-  enabled: true
-
 quartz-manager:
   jobClassPackages: it.fabioformosa.quartzmanager.jobs
   security:
