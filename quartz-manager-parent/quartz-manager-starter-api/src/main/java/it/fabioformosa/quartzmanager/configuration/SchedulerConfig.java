@@ -21,34 +21,48 @@ import java.util.Properties;
 @ConditionalOnProperty(name = "quartz.enabled", matchIfMissing = true)
 public class SchedulerConfig {
 
-    @Autowired(required = false)
-    private QuartzModuleProperties quartzModuleProperties;
+  protected static final String QUARTZ_MANAGER_SCHEDULER_DEFAULT_NAME = "quartz-manager-scheduler";
 
-    @Bean
-    public JobFactory jobFactory(ApplicationContext applicationContext) {
-        AutowiringSpringBeanJobFactory jobFactory = new AutowiringSpringBeanJobFactory();
-        jobFactory.setApplicationContext(applicationContext);
-        return jobFactory;
-    }
+  private final QuartzModuleProperties quartzModuleProperties;
 
-    @Bean
-    public Properties quartzProperties() throws IOException {
-        PropertiesFactoryBean propertiesFactoryBean = new PropertiesFactoryBean();
-        propertiesFactoryBean.setLocation(new ClassPathResource("/quartz.properties"));
-        propertiesFactoryBean.afterPropertiesSet();
-        return propertiesFactoryBean.getObject();
-    }
+  @Autowired(required = false)
+  public SchedulerConfig(QuartzModuleProperties quartzModuleProperties) {
+    this.quartzModuleProperties = quartzModuleProperties;
+  }
 
-    @Bean(name = "scheduler")
-    public SchedulerFactoryBean schedulerFactoryBean(JobFactory jobFactory) throws IOException {
-        SchedulerFactoryBean factory = new SchedulerFactoryBean();
-        factory.setJobFactory(jobFactory);
-        Properties mergedProperties = new Properties();
-        if(quartzModuleProperties != null)
-            mergedProperties.putAll(quartzModuleProperties.getProperties());
-        mergedProperties.putAll(quartzProperties());
-        factory.setQuartzProperties(mergedProperties);
-        factory.setAutoStartup(false);
-        return factory;
-    }
+  @Bean
+  public JobFactory jobFactory(ApplicationContext applicationContext) {
+    AutowiringSpringBeanJobFactory jobFactory = new AutowiringSpringBeanJobFactory();
+    jobFactory.setApplicationContext(applicationContext);
+    return jobFactory;
+  }
+
+  @Bean
+  public Properties quartzProperties() throws IOException {
+    PropertiesFactoryBean propertiesFactoryBean = new PropertiesFactoryBean();
+    propertiesFactoryBean.setLocation(new ClassPathResource("/quartz.properties"));
+    propertiesFactoryBean.afterPropertiesSet();
+    return propertiesFactoryBean.getObject();
+  }
+
+  @Bean("quartzDefaultProperties")
+  public QuartzModuleProperties persistenceQuartzProps() {
+    QuartzModuleProperties quartzModuleProperties = new QuartzModuleProperties();
+    quartzModuleProperties.getProperties().setProperty("org.quartz.scheduler.instanceName", QUARTZ_MANAGER_SCHEDULER_DEFAULT_NAME);
+    quartzModuleProperties.getProperties().setProperty("org.quartz.threadPool.threadCount", "1");
+    return quartzModuleProperties;
+  }
+
+  @Bean(name = "scheduler")
+  public SchedulerFactoryBean schedulerFactoryBean(JobFactory jobFactory) throws IOException {
+    SchedulerFactoryBean factory = new SchedulerFactoryBean();
+    factory.setJobFactory(jobFactory);
+    Properties mergedProperties = new Properties();
+    if (quartzModuleProperties != null)
+      mergedProperties.putAll(quartzModuleProperties.getProperties());
+    mergedProperties.putAll(quartzProperties());
+    factory.setQuartzProperties(mergedProperties);
+    factory.setAutoStartup(false);
+    return factory;
+  }
 }
