@@ -2,6 +2,8 @@ package it.fabioformosa.quartzmanager.security;
 
 import it.fabioformosa.quartzmanager.security.controllers.TestController;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -45,10 +47,11 @@ public class SecurityControllerTest {
       .andExpect(status().isUnauthorized());
   }
 
-  @Test
-  void givenAnAnonymousUser_whenRequestedSwaggerResource_thenShouldReturn2xx() throws Exception {
-    mockMvc.perform(MockMvcRequestBuilders.get("/swagger-ui.html"))
-      .andExpect(status().isOk());
+  @ParameterizedTest
+  @ValueSource(strings =  {"/swagger-ui.html", "/v3/api-docs/**", "/swagger-resources/**", "/webjars/**"})
+   void givenAnAnonymousUser_whenRequestedAnEndpointInWhitelist_thenShouldnotReturnForbidden(String whitelistEndpoint) throws Exception {
+    mockMvc.perform(MockMvcRequestBuilders.get(whitelistEndpoint))
+      .andExpect(status().isNotFound());
   }
 
   @Test

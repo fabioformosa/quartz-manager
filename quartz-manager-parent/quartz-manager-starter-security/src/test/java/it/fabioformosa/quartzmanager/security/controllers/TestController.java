@@ -19,12 +19,6 @@ public class TestController {
   }
 
   @ResponseStatus(HttpStatus.OK)
-  @GetMapping("/swagger-ui.html")
-  public void getSwaggerUI(){
-
-  }
-
-  @ResponseStatus(HttpStatus.OK)
   @GetMapping(QUARTZ_MANAGER + "/scheduler")
   public void getQuartzManagerScheduler(){
 
