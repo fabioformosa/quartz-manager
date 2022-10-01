@@ -7,7 +7,7 @@ import org.quartz.SchedulerException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import static it.fabioformosa.quartzmanager.configuration.SchedulerConfig.QUARTZ_MANAGER_SCHEDULER_DEFAULT_NAME;
+import static it.fabioformosa.quartzmanager.configuration.QuartzDefaultPropertiesConfig.QUARTZ_MANAGER_SCHEDULER_DEFAULT_NAME;
 
 @SpringBootTest
 class SchedulerConfigDefaultAppPropertiesTest {

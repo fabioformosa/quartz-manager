@@ -21,8 +21,6 @@ import java.util.Properties;
 @ConditionalOnProperty(name = "quartz.enabled", matchIfMissing = true)
 public class SchedulerConfig {
 
-  protected static final String QUARTZ_MANAGER_SCHEDULER_DEFAULT_NAME = "quartz-manager-scheduler";
-
   private final QuartzModuleProperties quartzModuleProperties;
 
   @Autowired(required = false)
@@ -43,14 +41,6 @@ public class SchedulerConfig {
     propertiesFactoryBean.setLocation(new ClassPathResource("/quartz.properties"));
     propertiesFactoryBean.afterPropertiesSet();
     return propertiesFactoryBean.getObject();
-  }
-
-  @Bean("quartzDefaultProperties")
-  public QuartzModuleProperties persistenceQuartzProps() {
-    QuartzModuleProperties quartzModuleProperties = new QuartzModuleProperties();
-    quartzModuleProperties.getProperties().setProperty("org.quartz.scheduler.instanceName", QUARTZ_MANAGER_SCHEDULER_DEFAULT_NAME);
-    quartzModuleProperties.getProperties().setProperty("org.quartz.threadPool.threadCount", "1");
-    return quartzModuleProperties;
   }
 
   @Bean(name = "scheduler")
