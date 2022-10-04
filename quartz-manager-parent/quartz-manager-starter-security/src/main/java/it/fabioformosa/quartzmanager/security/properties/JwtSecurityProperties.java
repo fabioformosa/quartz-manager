@@ -13,7 +13,6 @@ import org.springframework.context.annotation.Configuration;
 @Getter
 @Setter
 public class JwtSecurityProperties {
-  private boolean enabled = true;
   private String secret = RandomStringUtils.randomAlphabetic(10);
   private long expirationInSec = 28800;
 
