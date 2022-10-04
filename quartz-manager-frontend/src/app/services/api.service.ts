@@ -18,9 +18,16 @@ export enum RequestMethod {
 @Injectable()
 export class ApiService {
 
+  headers = new HttpHeaders({
+    'Accept': 'application/json',
+    'Content-Type': 'application/json'
+  });
+
+  private jwtToken: string;
+
   private static extractTokenFromHttpResponse(res: HttpResponse<any>): string {
     let authorization: string = null;
-    let headers: HttpHeaders = res.headers;
+    const headers: HttpHeaders = res.headers;
     if (headers && headers.has('Authorization')) {
       authorization = headers.get('Authorization');
       if (authorization.startsWith('Bearer ')) {
@@ -29,13 +36,6 @@ export class ApiService {
     }
     return authorization;
   }
-
-  headers = new HttpHeaders({
-    'Accept': 'application/json',
-    'Content-Type': 'application/json'
-  });
-
-  private jwtToken: string;
 
   constructor(private http: HttpClient, private router: Router) {
   }

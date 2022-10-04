@@ -14,7 +14,7 @@ export class WebsocketService {
 
   observableStompConnection: Observable<any>;
   subscribers: Array<any> = [];
-  subscriberIndex: number = 0;
+  subscriberIndex = 0;
 
   _messageIds: Array<any> = [];
 
@@ -26,9 +26,7 @@ export class WebsocketService {
     this.connect();
   }
 
-  //TO BE OVERRIDEN
   getOptions = () => {
-    return {}
   }
 
   private createObservableSocket = () => {
@@ -45,6 +43,7 @@ export class WebsocketService {
 
   removeFromSubscribers = (index) => {
     if (index > this.subscribers.length) {
+      // tslint:disable-next-line:max-line-length
       throw new Error(`Unexpected error removing subscriber from websocket, because index ${index} is greater than subscriber length ${this.subscribers.length}`);
     }
     this.subscribers.splice(index, 1);
@@ -101,7 +100,7 @@ export class WebsocketService {
   };
 
   send = (message) => {
-    var id = Math.floor(Math.random() * 1000000);
+    const id = Math.floor(Math.random() * 1000000);
     this._socket.stomp.send(this._options.brokerName, {
       priority: 9
     }, JSON.stringify({

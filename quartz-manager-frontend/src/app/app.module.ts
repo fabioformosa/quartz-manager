@@ -3,7 +3,7 @@ import { NgModule, APP_INITIALIZER} from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 
-import {JWT_OPTIONS, JwtModule} from "@auth0/angular-jwt";
+import {JWT_OPTIONS, JwtModule} from '@auth0/angular-jwt';
 
 // material
 import {MatIconRegistry} from '@angular/material/icon';

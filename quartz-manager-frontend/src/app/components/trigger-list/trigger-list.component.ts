@@ -5,6 +5,13 @@ import {SimpleTrigger} from '../../model/simple-trigger.model';
 import {MatDialog} from '@angular/material/dialog';
 
 @Component({
+  template: 'Multiple jobs not supported yet - Coming Soon...',
+})
+// tslint:disable-next-line:component-class-suffix
+export class UnsupportedMultipleJobsDialog {
+}
+
+@Component({
   selector: 'qrzmng-trigger-list',
   templateUrl: './trigger-list.component.html',
   styleUrls: ['./trigger-list.component.scss']
@@ -26,7 +33,8 @@ export class TriggerListComponent implements OnInit {
   constructor(
     private triggerService: TriggerService,
     public dialog: MatDialog
-  ) { }
+  ) {
+  }
 
   ngOnInit() {
     this.loading = true;
@@ -34,7 +42,7 @@ export class TriggerListComponent implements OnInit {
   }
 
   @Input()
-  set openedNewTriggerForm(triggerFormIsOpen: boolean){
+  set openedNewTriggerForm(triggerFormIsOpen: boolean) {
     this.triggerFormIsOpen = triggerFormIsOpen;
   }
 
@@ -61,20 +69,17 @@ export class TriggerListComponent implements OnInit {
   }
 
   onNewTriggerBtnClicked() {
-    if (this.triggerKeys && this.triggerKeys.length > 0)
+    if (this.triggerKeys && this.triggerKeys.length > 0) {
       this.dialog.open(UnsupportedMultipleJobsDialog)
-    else
+    } else {
       this.onNewTriggerClicked.emit();
+    }
   }
 
   onNewTrigger(newTrigger: SimpleTrigger) {
-   this.newTriggers = [newTrigger, ...this.newTriggers];
-   this.selectedTrigger = newTrigger.triggerKeyDTO;
+    this.newTriggers = [newTrigger, ...this.newTriggers];
+    this.selectedTrigger = newTrigger.triggerKeyDTO;
   }
 }
 
-@Component({
-  template: 'Multiple jobs not supported yet - Coming Soon...',
-})
-// tslint:disable-next-line:component-class-suffix
-export class UnsupportedMultipleJobsDialog {}
+

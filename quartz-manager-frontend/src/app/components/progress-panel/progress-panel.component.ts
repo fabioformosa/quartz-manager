@@ -19,8 +19,8 @@ import { Observable } from 'rxjs';
 })
 export class ProgressPanelComponent implements OnInit {
 
-  progress : any = {}
-  percentageStr : string
+  progress = {};
+  percentageStr: string;
 
   // // Stream of messages
   // private subscription: Subscription;
@@ -31,7 +31,7 @@ export class ProgressPanelComponent implements OnInit {
   // public mq: Array<string> = [];
 
 
-  // private socketSubscription  
+  // private socketSubscription
 
   constructor(
     private progressWebsocketService: ProgressWebsocketService,
@@ -40,15 +40,15 @@ export class ProgressPanelComponent implements OnInit {
   ) { }
 
   onNewProgressMsg = (receivedMsg) => {
-    if (receivedMsg.type == 'SUCCESS') {
-      var newStatus = receivedMsg.message;
+    if (receivedMsg.type === 'SUCCESS') {
+      const newStatus = receivedMsg.message;
       this.progress = newStatus;
       this.percentageStr = this.progress.percentage + '%';
     }
   }
 
   ngOnInit() {
-    let obs = this.progressWebsocketService.getObservable()
+    const obs = this.progressWebsocketService.getObservable()
     obs.subscribe({
       'next' : this.onNewProgressMsg,
       'error' : (err) => {console.log(err)}

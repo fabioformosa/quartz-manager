@@ -1,4 +1,4 @@
-export class SocketEndpoint{
-    client : any
-    stomp : any
+export class SocketEndpoint {
+  client: any
+  stomp: any
 }

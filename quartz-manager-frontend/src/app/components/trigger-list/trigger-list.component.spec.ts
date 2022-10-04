@@ -23,7 +23,8 @@ describe('TriggerListComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [MatCardModule, MatDialogModule, MatDividerModule, MatIconModule, MatListModule, HttpClientTestingModule, RouterTestingModule],
+      imports: [MatCardModule, MatDialogModule, MatDividerModule,
+        MatIconModule, MatListModule, HttpClientTestingModule, RouterTestingModule],
       declarations: [TriggerListComponent],
       providers: [TriggerService, ApiService, ConfigService]
     }).compileComponents();
