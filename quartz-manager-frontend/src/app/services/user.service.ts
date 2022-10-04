@@ -20,8 +20,7 @@ export class UserService {
   }
 
   refreshToken() {
-    const promise = this.apiService.get(this.config.refresh_token_url).toPromise()
-      .then(res => {
+    this.apiService.get(this.config.refresh_token_url).subscribe(res => {
         if (res.access_token !== null) {
           return this.getUserInfo().toPromise()
             .then(user => {
@@ -29,8 +28,6 @@ export class UserService {
             });
         }
       })
-      .catch(() => null);
-    return promise;
   }
 
   fetchLoggedUser() {
