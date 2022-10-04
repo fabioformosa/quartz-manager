@@ -28,19 +28,15 @@ export function getBaseUrl() {
 @Injectable()
 export class ConfigService {
 
-  private _api_url = getBaseUrl() + `${CONTEXT_PATH}/api`
+  private _auth_url = getBaseUrl() + `${CONTEXT_PATH}/auth`
 
-  private _refresh_token_url = this._api_url + '/refresh';
+  private _refresh_token_url = this._auth_url + '/refresh';
 
-  private _login_url = this._api_url + '/login';
+  private _login_url = this._auth_url + '/login';
 
-  private _logout_url = this._api_url + '/logout';
+  private _logout_url = this._auth_url + '/logout';
 
-  private _whoami_url = this._api_url + '/whoami';
-
-  private _user_url = this._api_url + '/user';
-
-  private _users_url = this._user_url + '/all';
+  private _whoami_url = this._auth_url + '/whoami';
 
   get refresh_token_url(): string {
     return this._refresh_token_url;
@@ -48,10 +44,6 @@ export class ConfigService {
 
   get whoami_url(): string {
     return this._whoami_url;
-  }
-
-  get users_url(): string {
-    return this._users_url;
   }
 
   get login_url(): string {

@@ -1,7 +1,12 @@
 package it.fabioformosa.quartzmanager.controllers;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-import it.fabioformosa.quartzmanager.dto.TriggerDTO;
+import it.fabioformosa.quartzmanager.dto.TriggerKeyDTO;
 import it.fabioformosa.quartzmanager.services.TriggerService;
 import lombok.extern.slf4j.Slf4j;
 import org.quartz.SchedulerException;
@@ -11,13 +16,16 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+import static it.fabioformosa.quartzmanager.common.config.OpenAPIConfigConsts.BASIC_AUTH_SEC_OAS_SCHEME;
+import static it.fabioformosa.quartzmanager.common.config.QuartzManagerPaths.QUARTZ_MANAGER_BASE_CONTEXT_PATH;
+
 @Slf4j
 @RequestMapping(TriggerController.TRIGGER_CONTROLLER_BASE_URL)
-@SecurityRequirement(name = "basic-auth")
+@SecurityRequirement(name = BASIC_AUTH_SEC_OAS_SCHEME)
 @RestController
-public class TriggerController extends AbstractQuartzManagerController {
+public class TriggerController {
 
-  static protected final String TRIGGER_CONTROLLER_BASE_URL = QUARTZ_MANAGER_CONTEXT_PATH + "/triggers";
+  static protected final String TRIGGER_CONTROLLER_BASE_URL = QUARTZ_MANAGER_BASE_CONTEXT_PATH + "/triggers";
 
   final private TriggerService triggerService;
 
@@ -26,7 +34,13 @@ public class TriggerController extends AbstractQuartzManagerController {
   }
 
   @GetMapping
-  public List<TriggerDTO> listTriggers() throws SchedulerException {
+  @Operation(summary = "Get a list of triggers")
+  @ApiResponses(value = {
+    @ApiResponse(responseCode = "200", description = "Got the trigger list",
+      content = { @Content(mediaType = "application/json",
+        schema = @Schema(implementation = TriggerKeyDTO.class)) })
+  })
+  public List<TriggerKeyDTO> listTriggers() throws SchedulerException {
     return triggerService.fetchTriggers();
   }
 

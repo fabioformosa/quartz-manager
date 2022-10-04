@@ -1,5 +1,11 @@
 package it.fabioformosa.quartzmanager.security;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import it.fabioformosa.quartzmanager.common.config.QuartzManagerPaths;
+import it.fabioformosa.quartzmanager.security.helpers.LoginConfigurer;
+import it.fabioformosa.quartzmanager.security.helpers.impl.*;
+import it.fabioformosa.quartzmanager.security.properties.InMemoryAccountProperties;
+import it.fabioformosa.quartzmanager.security.properties.JwtSecurityProperties;
 import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -26,21 +32,8 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import it.fabioformosa.quartzmanager.security.properties.InMemoryAccountProperties;
-import it.fabioformosa.quartzmanager.security.properties.JwtSecurityProperties;
-import it.fabioformosa.quartzmanager.security.helpers.LoginConfigurer;
-import it.fabioformosa.quartzmanager.security.helpers.impl.AuthenticationFailureHandler;
-import it.fabioformosa.quartzmanager.security.helpers.impl.AuthenticationSuccessHandler;
-import it.fabioformosa.quartzmanager.security.helpers.impl.FormLoginConfig;
-import it.fabioformosa.quartzmanager.security.helpers.impl.JwtAuthenticationSuccessHandler;
-import it.fabioformosa.quartzmanager.security.helpers.impl.JwtAuthenticationSuccessHandlerImpl;
-import it.fabioformosa.quartzmanager.security.helpers.impl.JwtTokenAuthenticationFilter;
-import it.fabioformosa.quartzmanager.security.helpers.impl.JwtTokenHelper;
-import it.fabioformosa.quartzmanager.security.helpers.impl.JwtUsernamePasswordFiterLoginConfig;
-import it.fabioformosa.quartzmanager.security.helpers.impl.LogoutSuccess;
-import it.fabioformosa.quartzmanager.security.helpers.impl.QuartzManagerHttpSecurity;
+import static it.fabioformosa.quartzmanager.common.config.QuartzManagerPaths.QUARTZ_MANAGER_LOGIN_PATH;
+import static it.fabioformosa.quartzmanager.common.config.QuartzManagerPaths.QUARTZ_MANAGER_LOGOUT_PATH;
 
 /**
  * @author Fabio.Formosa
@@ -52,12 +45,6 @@ import it.fabioformosa.quartzmanager.security.helpers.impl.QuartzManagerHttpSecu
 public class WebSecurityConfigJWT extends WebSecurityConfigurerAdapter {
 
   private static final String[] PATTERNS_SWAGGER_UI = {"/swagger-ui.html", "/v3/api-docs/**", "/swagger-resources/**", "/webjars/**"};
-
-  public static final String QUARTZ_MANAGER_CONTEXT_PATH = "/quartz-manager";
-  protected static final String LOGIN_PATH = QUARTZ_MANAGER_CONTEXT_PATH + "/api/login";
-  private static final String LOGOUT_PATH = QUARTZ_MANAGER_CONTEXT_PATH + "/api/logout";
-
-  private static final String WEBJAR_PATH = "/quartz-manager-ui";
 
   @Value("${server.servlet.context-path:/}")
   private String contextPath;
@@ -97,7 +84,7 @@ public class WebSecurityConfigJWT extends WebSecurityConfigurerAdapter {
       .authorizeRequests().anyRequest().authenticated();
 
     QuartzManagerHttpSecurity.from(http).withLoginConfigurer(loginConfigurer(), logoutConfigurer()) //
-      .login(LOGIN_PATH, authenticationManager()).logout(LOGOUT_PATH);
+      .login(QUARTZ_MANAGER_LOGIN_PATH, authenticationManager()).logout(QUARTZ_MANAGER_LOGOUT_PATH);
 
     // temporary disabled csfr
     //    http.csrf().ignoringAntMatchers("/api/login", "/api/signup") //
@@ -108,7 +95,7 @@ public class WebSecurityConfigJWT extends WebSecurityConfigurerAdapter {
   public void configure(WebSecurity web) {
     web.ignoring()//
       .antMatchers(HttpMethod.GET, PATTERNS_SWAGGER_UI) //
-      .antMatchers(HttpMethod.GET, WEBJAR_PATH + "/css/**", WEBJAR_PATH + "/js/**", WEBJAR_PATH + "/img/**", WEBJAR_PATH + "/lib/**", WEBJAR_PATH + "/assets/**");
+      .antMatchers(HttpMethod.GET, QuartzManagerPaths.WEBJAR_PATH + "/css/**", QuartzManagerPaths.WEBJAR_PATH + "/js/**", QuartzManagerPaths.WEBJAR_PATH + "/img/**", QuartzManagerPaths.WEBJAR_PATH + "/lib/**", QuartzManagerPaths.WEBJAR_PATH + "/assets/**");
   }
 
   private void configureInMemoryAuthentication(AuthenticationManagerBuilder authenticationManagerBuilder) throws Exception {

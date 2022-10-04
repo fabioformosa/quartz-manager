@@ -1,6 +1,5 @@
 package it.fabioformosa.quartzmanager.services;
 
-import it.fabioformosa.quartzmanager.dto.TriggerDTO;
 import it.fabioformosa.quartzmanager.dto.TriggerKeyDTO;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
@@ -24,9 +23,9 @@ public class TriggerService {
     this.conversionService = conversionService;
   }
 
-  public List<TriggerDTO> fetchTriggers() throws SchedulerException {
+  public List<TriggerKeyDTO> fetchTriggers() throws SchedulerException {
     Set<TriggerKey> triggerKeys = scheduler.getTriggerKeys(GroupMatcher.anyTriggerGroup());
-    return (List<TriggerDTO>) conversionService.convert(triggerKeys,
+    return (List<TriggerKeyDTO>) conversionService.convert(triggerKeys,
       TypeDescriptor.collection(Set.class, TypeDescriptor.valueOf(TriggerKey.class)),
       TypeDescriptor.collection(List.class, TypeDescriptor.valueOf(TriggerKeyDTO.class)));
   }

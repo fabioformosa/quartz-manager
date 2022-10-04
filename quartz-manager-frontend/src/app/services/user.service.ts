@@ -1,51 +1,56 @@
-import { Injectable } from '@angular/core';
-import { ApiService } from './api.service';
-import { ConfigService } from './config.service';
+import {Injectable} from '@angular/core';
+import {ApiService} from './api.service';
+import {ConfigService} from './config.service';
 
-import { map } from 'rxjs/operators'
-
-export const NO_AUTH: string = 'NO_AUTH'
+import {map} from 'rxjs/operators'
+import {HttpErrorResponse} from '@angular/common/http';
+import {Router} from '@angular/router';
 
 @Injectable()
 export class UserService {
 
-  currentUser;
+  isAnAnonymousUser: boolean;
+  currentUser: any;
 
   constructor(
     private apiService: ApiService,
-    private config: ConfigService
-  ) { }
+    private config: ConfigService,
+    private router: Router
+  ) {
+  }
 
-  jwtInitUser() {
+  refreshToken() {
     const promise = this.apiService.get(this.config.refresh_token_url).toPromise()
-    .then(res => {
-      if (res.access_token !== null) {
-        return this.getMyInfo().toPromise()
-        .then(user => {
-          this.currentUser = user;
-        });
-      }
-    })
-    .catch(() => null);
+      .then(res => {
+        if (res.access_token !== null) {
+          return this.getUserInfo().toPromise()
+            .then(user => {
+              this.currentUser = user;
+            });
+        }
+      })
+      .catch(() => null);
     return promise;
   }
 
-  jsessionInitUser() {
-    return this.getMyInfo().toPromise()
-        .then(user => {
-          this.currentUser = user;
-        }, err => {
-          //not logged
-          console.log(`error retrieving current user due to ` + err);
-        });
+  fetchLoggedUser() {
+    this.getUserInfo().subscribe(user => {
+      this.currentUser = user;
+      this.router.initialNavigation();
+    }, err => {
+      console.log(`error retrieving current user due to ` + err);
+      const httpErrorResponse = err as HttpErrorResponse;
+      if (httpErrorResponse.status === 404) {
+        this.isAnAnonymousUser = true;
+        this.router.initialNavigation();
+      }
+      // TODO generic error!
+    });
   }
 
-  getMyInfo() {
-    return this.apiService.get(this.config.whoami_url).pipe(map(user => this.currentUser = user));
-  }
-
-  getAll() {
-    return this.apiService.get(this.config.users_url);
+  getUserInfo() {
+    return this.apiService.get(this.config.whoami_url)
+      .pipe(map(user => this.currentUser = user));
   }
 
 }

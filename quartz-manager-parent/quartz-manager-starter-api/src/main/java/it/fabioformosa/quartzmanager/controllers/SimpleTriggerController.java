@@ -7,8 +7,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import it.fabioformosa.quartzmanager.dto.SimpleTriggerCommandDTO;
-import it.fabioformosa.quartzmanager.dto.SimpleTriggerInputDTO;
 import it.fabioformosa.quartzmanager.dto.SimpleTriggerDTO;
+import it.fabioformosa.quartzmanager.dto.SimpleTriggerInputDTO;
 import it.fabioformosa.quartzmanager.dto.TriggerDTO;
 import it.fabioformosa.quartzmanager.exceptions.TriggerNotFoundException;
 import it.fabioformosa.quartzmanager.services.SimpleTriggerService;
@@ -19,13 +19,16 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
+import static it.fabioformosa.quartzmanager.common.config.OpenAPIConfigConsts.BASIC_AUTH_SEC_OAS_SCHEME;
+import static it.fabioformosa.quartzmanager.common.config.QuartzManagerPaths.QUARTZ_MANAGER_BASE_CONTEXT_PATH;
+
 @Slf4j
 @RequestMapping(SimpleTriggerController.SIMPLE_TRIGGER_CONTROLLER_BASE_URL)
-@SecurityRequirement(name = "basic-auth")
+@SecurityRequirement(name = BASIC_AUTH_SEC_OAS_SCHEME)
 @RestController
-public class SimpleTriggerController extends AbstractQuartzManagerController {
+public class SimpleTriggerController {
 
-  static protected final String SIMPLE_TRIGGER_CONTROLLER_BASE_URL = QUARTZ_MANAGER_CONTEXT_PATH + "/simple-triggers";
+  static protected final String SIMPLE_TRIGGER_CONTROLLER_BASE_URL = QUARTZ_MANAGER_BASE_CONTEXT_PATH + "/simple-triggers";
 
   final private SimpleTriggerService simpleSchedulerService;
 

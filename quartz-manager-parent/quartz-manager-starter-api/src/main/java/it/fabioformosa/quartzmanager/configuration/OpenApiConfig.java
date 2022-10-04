@@ -11,22 +11,27 @@ import io.swagger.v3.oas.models.parameters.RequestBody;
 import io.swagger.v3.oas.models.responses.ApiResponse;
 import io.swagger.v3.oas.models.responses.ApiResponses;
 import io.swagger.v3.oas.models.security.SecurityScheme;
+import it.fabioformosa.quartzmanager.common.config.QuartzManagerPaths;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import java.util.Arrays;
 
+import static it.fabioformosa.quartzmanager.common.config.OpenAPIConfigConsts.BASIC_AUTH_SEC_OAS_SCHEME;
+
 @Configuration
 public class OpenApiConfig {
 
-  static private String BASIC_AUTH_SEC_SCHEME = "basic-auth";
-
   @Bean
-  public OpenAPI customOpenAPI() {
-    return new OpenAPI()
-                .info(apiInfo())
-                .components(new Components().addSecuritySchemes(BASIC_AUTH_SEC_SCHEME, buildBasicAuthScheme()))
-                .path("/quartz-manager/api/login",
+  public OpenAPI customOpenAPI(@Autowired(required = false) SecurityDiscover securityDiscover) {
+    OpenAPI openAPI = new OpenAPI()
+      .info(apiInfo());
+
+    if(securityDiscover != null)
+      openAPI
+        .components(new Components().addSecuritySchemes(BASIC_AUTH_SEC_OAS_SCHEME, buildBasicAuthScheme()))
+        .path(QuartzManagerPaths.QUARTZ_MANAGER_LOGIN_PATH,
                   new PathItem().post(new Operation()
                     .operationId("login")
                     .tags(Arrays.asList("auth"))
@@ -39,6 +44,8 @@ public class OpenApiConfig {
                       .responses(new ApiResponses().addApiResponse("200", new ApiResponse().description("JWT Token to authenticate the next requests")))
                       .responses(new ApiResponses().addApiResponse("401", new ApiResponse().description("Unauthorized - Username or password are incorrect!")))
                   ));
+
+    return openAPI;
   }
 
   private SecurityScheme buildBasicAuthScheme() {

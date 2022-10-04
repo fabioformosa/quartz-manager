@@ -25,11 +25,6 @@ export const routes: Routes = [
     component: LoginComponent,
     canActivate: [GuestGuard]
   },
-  // {
-  //   path: 'change-password',
-  //   component: ChangePasswordComponent,
-  //   canActivate: [LoginGuard]
-  // },
   {
     path: '404',
     component: NotFoundComponent
@@ -45,7 +40,9 @@ export const routes: Routes = [
 ];
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes)],
+  imports: [RouterModule.forRoot(routes, {
+    initialNavigation: false
+  })],
   exports: [RouterModule],
   providers: []
 })

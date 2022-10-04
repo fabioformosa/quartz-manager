@@ -18,9 +18,18 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <java.version>1.8</java.version>
+    <springdoc-openapi.version>1.5.12</springdoc-openapi.version>
   </properties>
 
   <dependencies>
+
+    <!-- QUARTZ-MANAGER DEPs -->
+    <dependency>
+      <groupId>it.fabioformosa.quartz-manager</groupId>
+      <artifactId>quartz-manager-common</artifactId>
+    </dependency>
+
+    <!-- Spring -->
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-security</artifactId>
@@ -30,6 +39,8 @@
       <artifactId>spring-boot-configuration-processor</artifactId>
       <optional>true</optional>
     </dependency>
+
+    <!-- Misc -->
     <dependency>
       <groupId>io.jsonwebtoken</groupId>
       <artifactId>jjwt</artifactId>
@@ -48,6 +59,13 @@
       <groupId>javax.servlet</groupId>
       <artifactId>javax.servlet-api</artifactId>
       <scope>provided</scope>
+    </dependency>
+
+    <!-- OAS -->
+    <dependency>
+      <groupId>org.springdoc</groupId>
+      <artifactId>springdoc-openapi-ui</artifactId>
+      <version>${springdoc-openapi.version}</version>
     </dependency>
 
     <!-- TEST -->

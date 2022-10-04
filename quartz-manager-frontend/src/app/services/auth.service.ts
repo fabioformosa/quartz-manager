@@ -25,7 +25,7 @@ export class AuthService {
       .pipe(
         map(() => {
           console.log('Login success');
-          this.userService.getMyInfo().subscribe();
+          this.userService.getUserInfo().subscribe();
         })
       );
   }

@@ -16,7 +16,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import static it.fabioformosa.quartzmanager.controllers.AbstractQuartzManagerController.QUARTZ_MANAGER_CONTEXT_PATH;
+import static it.fabioformosa.quartzmanager.common.config.OpenAPIConfigConsts.BASIC_AUTH_SEC_OAS_SCHEME;
+import static it.fabioformosa.quartzmanager.common.config.QuartzManagerPaths.QUARTZ_MANAGER_BASE_CONTEXT_PATH;
 
 /**
  * This controller provides scheduler info about config and status. It provides
@@ -26,11 +27,11 @@ import static it.fabioformosa.quartzmanager.controllers.AbstractQuartzManagerCon
  */
 @Slf4j
 @RestController
-@SecurityRequirement(name = "basic-auth")
+@SecurityRequirement(name = BASIC_AUTH_SEC_OAS_SCHEME)
 @RequestMapping(SchedulerController.SCHEDULER_CONTROLLER_BASE_URL)
 public class SchedulerController {
 
-  static protected final String SCHEDULER_CONTROLLER_BASE_URL = QUARTZ_MANAGER_CONTEXT_PATH + "/scheduler";
+  static protected final String SCHEDULER_CONTROLLER_BASE_URL = QUARTZ_MANAGER_BASE_CONTEXT_PATH + "/scheduler";
 
   final private SchedulerService schedulerService;
 

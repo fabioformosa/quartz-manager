@@ -64,7 +64,7 @@ import {SimpleTriggerConfigComponent} from './components/simple-trigger-config';
 import JobService from './services/job.service';
 
 export function initUserFactory(userService: UserService) {
-    return () => userService.jsessionInitUser();
+    return () => userService.fetchLoggedUser();
 }
 
 
