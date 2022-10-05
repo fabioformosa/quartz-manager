@@ -1,4 +1,7 @@
+import SockJS from 'sockjs-client';
+import Stomp from 'stompjs';
+
 export class SocketEndpoint {
-  client: any
-  stomp: any
+  client: SockJS;
+  stomp: Stomp;
 }

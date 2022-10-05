@@ -4,7 +4,7 @@ import it.fabioformosa.quartzmanager.jobs.entities.LogRecord;
 import it.fabioformosa.quartzmanager.jobs.entities.LogRecord.LogType;
 import org.quartz.JobExecutionContext;
 
-public class SampleJob extends AbstractLoggingJob {
+public class SampleJob extends AbstractQuartzManagerJob {
 
   @Override
   public LogRecord doIt(JobExecutionContext jobExecutionContext) {

@@ -1,6 +1,6 @@
 package it.fabioformosa.quartzmanager.services;
 
-import it.fabioformosa.quartzmanager.jobs.AbstractLoggingJob;
+import it.fabioformosa.quartzmanager.jobs.AbstractQuartzManagerJob;
 import lombok.Getter;
 import org.apache.commons.lang3.StringUtils;
 import org.reflections.Reflections;
@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 public class JobService {
 
   @Getter
-  private List<Class<? extends AbstractLoggingJob>> jobClasses = new ArrayList<>();
+  private List<Class<? extends AbstractQuartzManagerJob>> jobClasses = new ArrayList<>();
 
   private List<String> jobClassPackages = new ArrayList<>();
 
@@ -30,14 +30,14 @@ public class JobService {
 
   @PostConstruct
   public void initJobClassList() {
-    List<Class<? extends AbstractLoggingJob>> foundJobClasses = jobClassPackages.stream().flatMap(jobClassPackage -> findJobClassesInPackage(jobClassPackage).stream()).collect(Collectors.toList());
+    List<Class<? extends AbstractQuartzManagerJob>> foundJobClasses = jobClassPackages.stream().flatMap(jobClassPackage -> findJobClassesInPackage(jobClassPackage).stream()).collect(Collectors.toList());
     if (foundJobClasses.size() > 0)
       this.jobClasses.addAll(foundJobClasses);
   }
 
-  private static Set<Class<? extends AbstractLoggingJob>> findJobClassesInPackage(String packageStr) {
+  private static Set<Class<? extends AbstractQuartzManagerJob>> findJobClassesInPackage(String packageStr) {
     Reflections reflections = new Reflections(packageStr);
-    return reflections.getSubTypesOf(AbstractLoggingJob.class);
+    return reflections.getSubTypesOf(AbstractQuartzManagerJob.class);
   }
 
 }

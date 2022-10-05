@@ -8,20 +8,20 @@ import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBr
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 
 @Configuration
-@ComponentScan(basePackages = {"it.fabioformosa.quartzmanager.aspects"})
+@ComponentScan(basePackages = {"it.fabioformosa.quartzmanager.websockets"})
 @EnableWebSocketMessageBroker
 public class WebsocketConfig extends AbstractWebSocketMessageBrokerConfigurer {
 
-    @Override
-    public void configureMessageBroker(MessageBrokerRegistry config) {
-        config.enableSimpleBroker("/topic");
-        config.setApplicationDestinationPrefixes("/job");
-    }
+  @Override
+  public void configureMessageBroker(MessageBrokerRegistry config) {
+    config.enableSimpleBroker("/topic");
+    config.setApplicationDestinationPrefixes("/job");
+  }
 
-    @Override
-    public void registerStompEndpoints(StompEndpointRegistry registry) {
-        registry.addEndpoint("/quartz-manager/logs").setAllowedOrigins("/**").withSockJS();
-        registry.addEndpoint("/quartz-manager/progress").setAllowedOrigins("/**").withSockJS();
-    }
+  @Override
+  public void registerStompEndpoints(StompEndpointRegistry registry) {
+    registry.addEndpoint("/quartz-manager/logs").setAllowedOrigins("/**").withSockJS();
+    registry.addEndpoint("/quartz-manager/progress").setAllowedOrigins("/**").withSockJS();
+  }
 
 }

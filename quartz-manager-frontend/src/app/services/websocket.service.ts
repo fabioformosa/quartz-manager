@@ -1,10 +1,22 @@
-import {Observable} from 'rxjs';
+import {Observable, Subscriber} from 'rxjs';
 import {SocketEndpoint} from '../model/SocketEndpoint.model'
 
 
 import Stomp from 'stompjs';
 import SockJS from 'sockjs-client';
 import {SocketOption} from '../model/SocketOption.model';
+
+interface WebsocketSubscriber {
+  index: number,
+  observer: Subscriber<any>
+}
+
+export interface QuartzManagerWebsocketMessage {
+  type: string;
+  message: any;
+  headers: any;
+  self: boolean;
+}
 
 export class WebsocketService {
 
@@ -13,7 +25,7 @@ export class WebsocketService {
   _socket: SocketEndpoint = new SocketEndpoint();
 
   observableStompConnection: Observable<any>;
-  subscribers: Array<any> = [];
+  subscribers: Array<WebsocketSubscriber> = [];
   subscriberIndex = 0;
 
   _messageIds: Array<any> = [];
@@ -37,24 +49,20 @@ export class WebsocketService {
     });
   }
 
-  addToSubscribers = (subscriber) => {
+  private addToSubscribers = (subscriber) => {
     this.subscribers.push(subscriber);
   }
 
-  removeFromSubscribers = (index) => {
-    if (index > this.subscribers.length) {
-      // tslint:disable-next-line:max-line-length
-      throw new Error(`Unexpected error removing subscriber from websocket, because index ${index} is greater than subscriber length ${this.subscribers.length}`);
-    }
-    this.subscribers.splice(index, 1);
+  private removeFromSubscribers = (index) => {
+    this.subscribers = this.subscribers.filter(subscriber => subscriber.index !== index);
   }
 
   getObservable = () => {
     return this.observableStompConnection;
   };
 
-  getMessage = function (data) {
-    const out: any = {};
+  getMessage = function (data): QuartzManagerWebsocketMessage  {
+    const out: QuartzManagerWebsocketMessage = <QuartzManagerWebsocketMessage>{};
     out.type = 'SUCCESS';
     out.message = JSON.parse(data.body);
     out.headers = {};
@@ -115,7 +123,7 @@ export class WebsocketService {
 
     let socketUrl = this._options.socketUrl;
     if (this._options.getAccessToken()) {
-      socketUrl += `?access_token=${this._options.getAccessToken()}`
+      socketUrl += `?access_token=${this._options.getAccessToken()}`;
     }
 
     this._socket.client = new SockJS(socketUrl);
