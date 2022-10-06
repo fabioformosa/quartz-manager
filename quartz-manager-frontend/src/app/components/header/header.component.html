@@ -6,7 +6,7 @@
 
   <div class="right">
     <div fxFlex="1 1 auto" fxLayout="row" fxLayoutAlign="flex-end center">
-      <button *ngIf="!noAuthenticationRequired()" routerLink="/login" mat-button mat-ripple>
+      <button *ngIf="!hasSignedIn() && !noAuthenticationRequired()" routerLink="/login" mat-button mat-ripple>
         <span>Login</span>
       </button>
       <button
