@@ -7,7 +7,7 @@ import org.springframework.http.*;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
-import static it.fabioformosa.quartzmanager.security.WebSecurityConfigJWT.LOGIN_PATH;
+import static it.fabioformosa.quartzmanager.common.config.QuartzManagerPaths.QUARTZ_MANAGER_LOGIN_PATH;
 
 public class AbstractSecurityLoginTest {
   @Autowired
@@ -23,7 +23,7 @@ public class AbstractSecurityLoginTest {
 
     HttpEntity<MultiValueMap<String, String>> entity = new HttpEntity<>(map, headers);
 
-    ResponseEntity<UserTokenState> responseEntity = testRestTemplate.exchange(LOGIN_PATH, HttpMethod.POST, entity, UserTokenState.class);
+    ResponseEntity<UserTokenState> responseEntity = testRestTemplate.exchange(QUARTZ_MANAGER_LOGIN_PATH, HttpMethod.POST, entity, UserTokenState.class);
     return responseEntity;
   }
 }

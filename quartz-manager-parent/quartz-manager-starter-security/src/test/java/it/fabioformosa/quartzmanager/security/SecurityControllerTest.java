@@ -1,6 +1,7 @@
 package it.fabioformosa.quartzmanager.security;
 
 import it.fabioformosa.quartzmanager.security.controllers.TestController;
+import org.hamcrest.core.IsNot;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -12,7 +13,7 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import static it.fabioformosa.quartzmanager.security.WebSecurityConfigJWT.LOGIN_PATH;
+import static it.fabioformosa.quartzmanager.common.config.QuartzManagerPaths.QUARTZ_MANAGER_LOGIN_PATH;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -51,7 +52,7 @@ public class SecurityControllerTest {
   @ValueSource(strings =  {"/swagger-ui.html", "/v3/api-docs/**", "/swagger-resources/**", "/webjars/**"})
    void givenAnAnonymousUser_whenRequestedAnEndpointInWhitelist_thenShouldnotReturnForbidden(String whitelistEndpoint) throws Exception {
     mockMvc.perform(MockMvcRequestBuilders.get(whitelistEndpoint))
-      .andExpect(status().isNotFound());
+      .andExpect(status().is(IsNot.not(403)));
   }
 
   @Test
@@ -63,7 +64,7 @@ public class SecurityControllerTest {
 
   @Test
   void givenAnAnonymousUser_whenCalledTheLoginPath_thenShouldReturn2xx() throws Exception {
-    mockMvc.perform(MockMvcRequestBuilders.post(LOGIN_PATH)
+    mockMvc.perform(MockMvcRequestBuilders.post(QUARTZ_MANAGER_LOGIN_PATH)
         .contentType("application/x-www-form-urlencoded")
         .accept("application/json")
         .param("username", "foo")

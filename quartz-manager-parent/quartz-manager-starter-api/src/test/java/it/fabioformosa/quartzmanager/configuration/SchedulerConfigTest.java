@@ -7,6 +7,9 @@ import org.quartz.Scheduler;
 import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.scheduling.quartz.SchedulerFactoryBean;
 
+import java.util.ArrayList;
+import java.util.List;
+
 class SchedulerConfigTest {
 
   public static final String TEST_SCHEDULER_NAME = "foo";
@@ -16,7 +19,9 @@ class SchedulerConfigTest {
   void givenASchedulerName_whenTheSchedulerIsInstatiated_thenTheSchedulerHasThatName() throws Exception {
     QuartzModuleProperties quartzModuleProperties = new QuartzModuleProperties();
     quartzModuleProperties.getProperties().put("org.quartz.scheduler.instanceName", TEST_SCHEDULER_NAME);
-    SchedulerConfig schedulerConfig = new SchedulerConfig(quartzModuleProperties);
+    List<QuartzModuleProperties> quartzModulePropertiesList = new ArrayList<>();
+    quartzModulePropertiesList.add(quartzModuleProperties);
+    SchedulerConfig schedulerConfig = new SchedulerConfig(quartzModulePropertiesList);
     GenericApplicationContext applicationContext = new GenericApplicationContext();
     applicationContext.refresh();
     SchedulerFactoryBean schedulerFactoryBean = schedulerConfig.schedulerFactoryBean(schedulerConfig.jobFactory(applicationContext));
@@ -29,7 +34,9 @@ class SchedulerConfigTest {
   @Test
   void givenNoSchedulerName_whenTheSchedulerIsInstatiated_thenTheSchedulerHasTheDefaultName() throws Exception {
     QuartzModuleProperties quartzModuleProperties = new QuartzModuleProperties();
-    SchedulerConfig schedulerConfig = new SchedulerConfig(quartzModuleProperties);
+    List<QuartzModuleProperties> quartzModulePropertiesList = new ArrayList<>();
+    quartzModulePropertiesList.add(quartzModuleProperties);
+    SchedulerConfig schedulerConfig = new SchedulerConfig(quartzModulePropertiesList);
     GenericApplicationContext applicationContext = new GenericApplicationContext();
     applicationContext.refresh();
     SchedulerFactoryBean schedulerFactoryBean = schedulerConfig.schedulerFactoryBean(schedulerConfig.jobFactory(applicationContext));
