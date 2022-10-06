@@ -14,6 +14,7 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.scheduling.quartz.SchedulerFactoryBean;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Properties;
 
 @ComponentScan(basePackages = {"it.fabioformosa.quartzmanager.controllers"})
@@ -21,10 +22,10 @@ import java.util.Properties;
 @ConditionalOnProperty(name = "quartz.enabled", matchIfMissing = true)
 public class SchedulerConfig {
 
-  private final QuartzModuleProperties quartzModuleProperties;
+  private final List<QuartzModuleProperties> quartzModuleProperties;
 
   @Autowired(required = false)
-  public SchedulerConfig(QuartzModuleProperties quartzModuleProperties) {
+  public SchedulerConfig(List<QuartzModuleProperties> quartzModuleProperties) {
     this.quartzModuleProperties = quartzModuleProperties;
   }
 
@@ -48,8 +49,7 @@ public class SchedulerConfig {
     SchedulerFactoryBean factory = new SchedulerFactoryBean();
     factory.setJobFactory(jobFactory);
     Properties mergedProperties = new Properties();
-    if (quartzModuleProperties != null)
-      mergedProperties.putAll(quartzModuleProperties.getProperties());
+    quartzModuleProperties.stream().forEach(prop -> mergedProperties.putAll(prop.getProperties()));
     mergedProperties.putAll(quartzProperties());
     factory.setQuartzProperties(mergedProperties);
     factory.setAutoStartup(false);
