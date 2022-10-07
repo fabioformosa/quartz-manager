@@ -64,9 +64,6 @@ public class WebSecurityConfigJWT extends WebSecurityConfigurerAdapter {
   private ObjectMapper objectMapper;
 
   @Autowired
-  private UserDetailsService userDetailsService;
-
-  @Autowired
   private InMemoryAccountProperties inMemoryAccountProps;
 
 
@@ -85,10 +82,6 @@ public class WebSecurityConfigJWT extends WebSecurityConfigurerAdapter {
 
     QuartzManagerHttpSecurity.from(http).withLoginConfigurer(loginConfigurer(), logoutConfigurer()) //
       .login(QUARTZ_MANAGER_LOGIN_PATH, authenticationManager()).logout(QUARTZ_MANAGER_LOGOUT_PATH);
-
-    // temporary disabled csfr
-    //    http.csrf().ignoringAntMatchers("/api/login", "/api/signup") //
-    //    .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()) //
   }
 
   @Override
@@ -133,8 +126,8 @@ public class WebSecurityConfigJWT extends WebSecurityConfigurerAdapter {
   }
 
 //  @Bean
-  public JwtTokenAuthenticationFilter jwtAuthenticationTokenFilter() {
-    return new JwtTokenAuthenticationFilter(jwtTokenHelper(), userDetailsService);
+  public JwtTokenAuthenticationFilter jwtAuthenticationTokenFilter() throws Exception {
+    return new JwtTokenAuthenticationFilter(jwtTokenHelper(), userDetailsServiceBean());
   }
 
   @Bean
