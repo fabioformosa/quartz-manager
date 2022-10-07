@@ -2,6 +2,7 @@ package it.fabioformosa.quartzmanager.api.services;
 
 import it.fabioformosa.quartzmanager.api.jobs.AbstractQuartzManagerJob;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.reflections.Reflections;
 import org.springframework.beans.factory.annotation.Value;
@@ -11,6 +12,7 @@ import javax.annotation.PostConstruct;
 import java.util.*;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 public class JobService {
 
@@ -31,8 +33,12 @@ public class JobService {
   @PostConstruct
   public void initJobClassList() {
     List<Class<? extends AbstractQuartzManagerJob>> foundJobClasses = jobClassPackages.stream().flatMap(jobClassPackage -> findJobClassesInPackage(jobClassPackage).stream()).collect(Collectors.toList());
-    if (foundJobClasses.size() > 0)
+    if (foundJobClasses.size() > 0) {
+      log.info("Found the following eligible job classes: {foundJobClasses}");
       this.jobClasses.addAll(foundJobClasses);
+    }
+    else
+      log.warn("Not found any eligible job classes!");
   }
 
   private static Set<Class<? extends AbstractQuartzManagerJob>> findJobClassesInPackage(String packageStr) {
