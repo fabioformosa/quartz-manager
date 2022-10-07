@@ -7,11 +7,13 @@ import org.quartz.JobDetail;
 import org.quartz.JobKey;
 import org.quartz.Scheduler;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 @Component
 public class JobKeyToJobDetailDTO extends AbstractBaseConverterToDTO<JobKey, JobDetailDTO> {
 
+  @Qualifier("quartzScheduler")
   @Autowired
   private Scheduler scheduler;
 

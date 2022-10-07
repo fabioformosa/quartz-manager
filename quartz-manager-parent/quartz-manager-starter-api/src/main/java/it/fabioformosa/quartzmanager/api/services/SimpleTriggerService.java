@@ -5,13 +5,14 @@ import it.fabioformosa.quartzmanager.api.dto.TriggerDTO;
 import it.fabioformosa.quartzmanager.api.dto.SimpleTriggerDTO;
 import it.fabioformosa.quartzmanager.api.exceptions.TriggerNotFoundException;
 import org.quartz.*;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.stereotype.Service;
 
 @Service
 public class SimpleTriggerService extends AbstractSchedulerService {
 
-  public SimpleTriggerService(Scheduler scheduler, ConversionService conversionService) {
+  public SimpleTriggerService(@Qualifier("quartzScheduler") Scheduler scheduler, ConversionService conversionService) {
     super(scheduler, conversionService);
   }
 

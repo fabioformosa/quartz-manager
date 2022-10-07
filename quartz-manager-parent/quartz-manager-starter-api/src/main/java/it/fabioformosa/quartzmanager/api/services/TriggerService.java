@@ -5,6 +5,7 @@ import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.TriggerKey;
 import org.quartz.impl.matchers.GroupMatcher;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.core.convert.TypeDescriptor;
 import org.springframework.stereotype.Service;
@@ -18,7 +19,7 @@ public class TriggerService {
   private Scheduler scheduler;
   private ConversionService conversionService;
 
-  public TriggerService(Scheduler scheduler, ConversionService conversionService) {
+  public TriggerService(@Qualifier("quartzScheduler") Scheduler scheduler, ConversionService conversionService) {
     this.scheduler = scheduler;
     this.conversionService = conversionService;
   }

@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-@ConditionalOnProperty(name = "quartz.enabled", matchIfMissing = true)
+@ConditionalOnProperty(name = "quartz-manager.quartz.enabled", matchIfMissing = true)
 public class QuartzDefaultPropertiesConfig {
 
   protected static final String QUARTZ_MANAGER_SCHEDULER_DEFAULT_NAME = "quartz-manager-scheduler";

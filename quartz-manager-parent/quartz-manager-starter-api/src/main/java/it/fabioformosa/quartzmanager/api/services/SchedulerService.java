@@ -3,13 +3,14 @@ package it.fabioformosa.quartzmanager.api.services;
 import it.fabioformosa.quartzmanager.api.dto.SchedulerDTO;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.stereotype.Service;
 
 @Service
 public class SchedulerService extends AbstractSchedulerService{
 
-  public SchedulerService(Scheduler scheduler, ConversionService conversionService) {
+  public SchedulerService(@Qualifier("quartzScheduler") Scheduler scheduler, ConversionService conversionService) {
     super(scheduler, conversionService);
   }
 

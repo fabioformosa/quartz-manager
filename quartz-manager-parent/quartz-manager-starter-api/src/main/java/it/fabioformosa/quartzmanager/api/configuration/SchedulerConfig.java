@@ -4,6 +4,7 @@ import it.fabioformosa.quartzmanager.api.common.properties.QuartzModulePropertie
 import it.fabioformosa.quartzmanager.api.scheduler.AutowiringSpringBeanJobFactory;
 import org.quartz.spi.JobFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.config.PropertiesFactoryBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnResource;
@@ -18,7 +19,7 @@ import java.util.List;
 import java.util.Properties;
 
 @Configuration
-@ConditionalOnProperty(name = "quartz.enabled", matchIfMissing = true)
+@ConditionalOnProperty(name = "quartz-manager.quartz.enabled", matchIfMissing = true)
 public class SchedulerConfig {
 
   private final List<QuartzModuleProperties> quartzModuleProperties;
@@ -28,7 +29,7 @@ public class SchedulerConfig {
     this.quartzModuleProperties = quartzModuleProperties;
   }
 
-  @Bean
+  @Bean(name = "quartzJobFactory")
   public JobFactory jobFactory(ApplicationContext applicationContext) {
     AutowiringSpringBeanJobFactory jobFactory = new AutowiringSpringBeanJobFactory();
     jobFactory.setApplicationContext(applicationContext);
@@ -44,8 +45,8 @@ public class SchedulerConfig {
     return propertiesFactoryBean.getObject();
   }
 
-  @Bean(name = "scheduler")
-  public SchedulerFactoryBean schedulerFactoryBean(JobFactory jobFactory, Properties quartzProperties) throws IOException {
+  @Bean(name = "quartzScheduler")
+  public SchedulerFactoryBean schedulerFactoryBean(@Qualifier("quartzJobFactory") JobFactory jobFactory, Properties quartzProperties) throws IOException {
     SchedulerFactoryBean factory = new SchedulerFactoryBean();
     factory.setJobFactory(jobFactory);
     Properties mergedProperties = new Properties();
