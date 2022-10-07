@@ -1,7 +1,7 @@
 package it.fabioformosa.quartzmanager.api.configuration;
 
-import it.fabioformosa.quartzmanager.api.scheduler.AutowiringSpringBeanJobFactory;
 import it.fabioformosa.quartzmanager.api.common.properties.QuartzModuleProperties;
+import it.fabioformosa.quartzmanager.api.scheduler.AutowiringSpringBeanJobFactory;
 import org.quartz.spi.JobFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.PropertiesFactoryBean;
@@ -9,7 +9,6 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnResource;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.scheduling.quartz.SchedulerFactoryBean;
@@ -18,7 +17,6 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Properties;
 
-@ComponentScan(basePackages = {"it.fabioformosa.quartzmanager.api"})
 @Configuration
 @ConditionalOnProperty(name = "quartz.enabled", matchIfMissing = true)
 public class SchedulerConfig {

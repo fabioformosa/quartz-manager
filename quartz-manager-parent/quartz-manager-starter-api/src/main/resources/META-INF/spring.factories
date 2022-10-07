@@ -1,4 +1,2 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-it.fabioformosa.quartzmanager.api.configuration.SchedulerConfig,\
-it.fabioformosa.quartzmanager.api.configuration.OpenApiConfig,\
-it.fabioformosa.quartzmanager.api.configuration.WebsocketConfig
+it.fabioformosa.quartzmanager.api.configuration.QuartzManagerApiConfig
