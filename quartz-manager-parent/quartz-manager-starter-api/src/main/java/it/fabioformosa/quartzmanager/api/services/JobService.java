@@ -34,7 +34,7 @@ public class JobService {
   public void initJobClassList() {
     List<Class<? extends AbstractQuartzManagerJob>> foundJobClasses = jobClassPackages.stream().flatMap(jobClassPackage -> findJobClassesInPackage(jobClassPackage).stream()).collect(Collectors.toList());
     if (foundJobClasses.size() > 0) {
-      log.info("Found the following eligible job classes: {foundJobClasses}");
+      log.info("Found the following eligible job classes: {}", foundJobClasses);
       this.jobClasses.addAll(foundJobClasses);
     }
     else
