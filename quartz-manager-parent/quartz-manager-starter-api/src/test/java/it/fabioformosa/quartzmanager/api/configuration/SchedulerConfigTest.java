@@ -24,7 +24,7 @@ class SchedulerConfigTest {
     SchedulerConfig schedulerConfig = new SchedulerConfig(quartzModulePropertiesList);
     GenericApplicationContext applicationContext = new GenericApplicationContext();
     applicationContext.refresh();
-    SchedulerFactoryBean schedulerFactoryBean = schedulerConfig.schedulerFactoryBean(schedulerConfig.jobFactory(applicationContext));
+    SchedulerFactoryBean schedulerFactoryBean = schedulerConfig.schedulerFactoryBean(schedulerConfig.jobFactory(applicationContext), null);
 
     schedulerFactoryBean.afterPropertiesSet();
     Scheduler scheduler = schedulerFactoryBean.getScheduler();
@@ -39,7 +39,7 @@ class SchedulerConfigTest {
     SchedulerConfig schedulerConfig = new SchedulerConfig(quartzModulePropertiesList);
     GenericApplicationContext applicationContext = new GenericApplicationContext();
     applicationContext.refresh();
-    SchedulerFactoryBean schedulerFactoryBean = schedulerConfig.schedulerFactoryBean(schedulerConfig.jobFactory(applicationContext));
+    SchedulerFactoryBean schedulerFactoryBean = schedulerConfig.schedulerFactoryBean(schedulerConfig.jobFactory(applicationContext), null);
 
     schedulerFactoryBean.afterPropertiesSet();
     Scheduler scheduler = schedulerFactoryBean.getScheduler();

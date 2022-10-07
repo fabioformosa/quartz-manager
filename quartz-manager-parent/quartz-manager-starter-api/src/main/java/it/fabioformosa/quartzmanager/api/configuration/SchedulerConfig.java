@@ -6,6 +6,7 @@ import org.quartz.spi.JobFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.PropertiesFactoryBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnResource;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -36,6 +37,7 @@ public class SchedulerConfig {
     return jobFactory;
   }
 
+  @ConditionalOnResource(resources = {"quartz.properties"})
   @Bean
   public Properties quartzProperties() throws IOException {
     PropertiesFactoryBean propertiesFactoryBean = new PropertiesFactoryBean();
@@ -45,12 +47,13 @@ public class SchedulerConfig {
   }
 
   @Bean(name = "scheduler")
-  public SchedulerFactoryBean schedulerFactoryBean(JobFactory jobFactory) throws IOException {
+  public SchedulerFactoryBean schedulerFactoryBean(JobFactory jobFactory, Properties quartzProperties) throws IOException {
     SchedulerFactoryBean factory = new SchedulerFactoryBean();
     factory.setJobFactory(jobFactory);
     Properties mergedProperties = new Properties();
     quartzModuleProperties.stream().forEach(prop -> mergedProperties.putAll(prop.getProperties()));
-    mergedProperties.putAll(quartzProperties());
+    if (quartzProperties != null && quartzProperties.size() > 0)
+      mergedProperties.putAll(quartzProperties);
     factory.setQuartzProperties(mergedProperties);
     factory.setAutoStartup(false);
     return factory;
