@@ -19,7 +19,7 @@ public class TriggerService {
   private Scheduler scheduler;
   private ConversionService conversionService;
 
-  public TriggerService(@Qualifier("quartzScheduler") Scheduler scheduler, ConversionService conversionService) {
+  public TriggerService(@Qualifier("quartzManagerScheduler") Scheduler scheduler, ConversionService conversionService) {
     this.scheduler = scheduler;
     this.conversionService = conversionService;
   }

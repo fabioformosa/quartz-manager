@@ -5,12 +5,14 @@ import org.junit.jupiter.api.Test;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
 class SchedulerConfigDefaultAppPropertiesTest {
 
   @Autowired
+  @Qualifier("quartzManagerScheduler")
   private Scheduler scheduler;
 
   @Test

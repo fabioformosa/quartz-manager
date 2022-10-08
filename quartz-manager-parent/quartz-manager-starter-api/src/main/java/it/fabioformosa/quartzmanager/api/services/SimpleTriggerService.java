@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class SimpleTriggerService extends AbstractSchedulerService {
 
-  public SimpleTriggerService(@Qualifier("quartzScheduler") Scheduler scheduler, ConversionService conversionService) {
+  public SimpleTriggerService(@Qualifier("quartzManagerScheduler") Scheduler scheduler, ConversionService conversionService) {
     super(scheduler, conversionService);
   }
 

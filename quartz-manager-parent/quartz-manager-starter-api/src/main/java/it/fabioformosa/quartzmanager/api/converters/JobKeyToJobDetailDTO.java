@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class JobKeyToJobDetailDTO extends AbstractBaseConverterToDTO<JobKey, JobDetailDTO> {
 
-  @Qualifier("quartzScheduler")
+  @Qualifier("quartzManagerScheduler")
   @Autowired
   private Scheduler scheduler;
 

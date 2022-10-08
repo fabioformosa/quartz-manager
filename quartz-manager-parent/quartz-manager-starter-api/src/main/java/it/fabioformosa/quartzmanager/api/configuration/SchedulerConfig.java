@@ -37,7 +37,7 @@ public class SchedulerConfig {
   }
 
   @ConditionalOnResource(resources = {"managed-quartz.properties"})
-  @Bean
+  @Bean(name = "ManagedQuartzProperties")
   public Properties quartzProperties() throws IOException {
     PropertiesFactoryBean propertiesFactoryBean = new PropertiesFactoryBean();
     propertiesFactoryBean.setLocation(new ClassPathResource("/managed-quartz.properties"));
@@ -45,8 +45,8 @@ public class SchedulerConfig {
     return propertiesFactoryBean.getObject();
   }
 
-  @Bean(name = "quartzScheduler")
-  public SchedulerFactoryBean schedulerFactoryBean(@Qualifier("quartzJobFactory") JobFactory jobFactory, Properties quartzProperties) throws IOException {
+  @Bean(name = "quartzManagerScheduler")
+  public SchedulerFactoryBean schedulerFactoryBean(@Qualifier("quartzJobFactory") JobFactory jobFactory, @Autowired(required = false) @Qualifier("ManagedQuartzProperties") Properties quartzProperties) throws IOException {
     SchedulerFactoryBean factory = new SchedulerFactoryBean();
     factory.setJobFactory(jobFactory);
     Properties mergedProperties = new Properties();

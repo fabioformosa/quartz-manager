@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class SchedulerService extends AbstractSchedulerService{
 
-  public SchedulerService(@Qualifier("quartzScheduler") Scheduler scheduler, ConversionService conversionService) {
+  public SchedulerService(@Qualifier("quartzManagerScheduler") Scheduler scheduler, ConversionService conversionService) {
     super(scheduler, conversionService);
   }
 
