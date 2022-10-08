@@ -36,11 +36,11 @@ public class SchedulerConfig {
     return jobFactory;
   }
 
-  @ConditionalOnResource(resources = {"quartz.properties"})
+  @ConditionalOnResource(resources = {"managed-quartz.properties"})
   @Bean
   public Properties quartzProperties() throws IOException {
     PropertiesFactoryBean propertiesFactoryBean = new PropertiesFactoryBean();
-    propertiesFactoryBean.setLocation(new ClassPathResource("/quartz.properties"));
+    propertiesFactoryBean.setLocation(new ClassPathResource("/managed-quartz.properties"));
     propertiesFactoryBean.afterPropertiesSet();
     return propertiesFactoryBean.getObject();
   }
