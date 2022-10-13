@@ -14,23 +14,28 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.config.annotation.authentication.configurers.provisioning.InMemoryUserDetailsManagerConfigurer;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.factory.PasswordEncoderFactories;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.AuthenticationEntryPoint;
+import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static it.fabioformosa.quartzmanager.api.common.config.QuartzManagerPaths.QUARTZ_MANAGER_LOGIN_PATH;
 import static it.fabioformosa.quartzmanager.api.common.config.QuartzManagerPaths.QUARTZ_MANAGER_LOGOUT_PATH;
@@ -42,7 +47,7 @@ import static it.fabioformosa.quartzmanager.api.common.config.QuartzManagerPaths
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
-public class WebSecurityConfigJWT extends WebSecurityConfigurerAdapter {
+public class WebSecurityConfigJWT {
 
   private static final String[] PATTERNS_SWAGGER_UI = {"/swagger-ui.html", "/v3/api-docs/**", "/swagger-resources/**", "/webjars/**"};
 
@@ -66,41 +71,58 @@ public class WebSecurityConfigJWT extends WebSecurityConfigurerAdapter {
   @Autowired
   private InMemoryAccountProperties inMemoryAccountProps;
 
-
-  @Override
-  public void configure(AuthenticationManagerBuilder authenticationManagerBuilder) throws Exception {
-    configureInMemoryAuthentication(authenticationManagerBuilder);
+  @Bean
+  public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
+    return authenticationConfiguration.getAuthenticationManager();
   }
 
-  @Override
-  protected void configure(HttpSecurity http) throws Exception {
+//  @Bean
+//  public AuthenticationManager authManager(HttpSecurity http, UserDetailsService userDetailsService)
+//    throws Exception {
+//    return http.getSharedObject(AuthenticationManagerBuilder.class)
+//      .userDetailsService(userDetailsService)
+////      .passwordEncoder(bCryptPasswordEncoder)
+//      .passwordEncoder(new BCryptPasswordEncoder())
+//      .and()
+//      .build();
+//  }
+
+  @Bean
+  public InMemoryUserDetailsManager  configureInMemoryAuthentication() throws Exception {
+    List<UserDetails> users = new ArrayList<>();
+    if (inMemoryAccountProps.isEnabled() && inMemoryAccountProps.getUsers() != null && !inMemoryAccountProps.getUsers().isEmpty()) {
+      users = inMemoryAccountProps.getUsers().stream()
+        .map(u -> User.withDefaultPasswordEncoder()
+          .username(u.getName())
+          .password(u.getPassword())
+          .roles(u.getRoles().toArray(new String[0]))
+          .build()).collect(Collectors.toList());
+    }
+    return new InMemoryUserDetailsManager(users);
+  }
+
+  @Bean
+  public SecurityFilterChain filterChain(HttpSecurity http, InMemoryUserDetailsManager userDetailsService, AuthenticationManager authenticationManager) throws Exception {
     http.csrf().disable() //
       .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and() //
       .exceptionHandling().authenticationEntryPoint(restAuthEntryPoint()).and() //
-      .addFilterBefore(jwtAuthenticationTokenFilter(), BasicAuthenticationFilter.class) //
-      .authorizeRequests().anyRequest().authenticated();
+      .addFilterBefore(jwtAuthenticationTokenFilter(userDetailsService), BasicAuthenticationFilter.class) //
+      .authorizeRequests();
 
     QuartzManagerHttpSecurity.from(http).withLoginConfigurer(loginConfigurer(), logoutConfigurer()) //
-      .login(QUARTZ_MANAGER_LOGIN_PATH, authenticationManager()).logout(QUARTZ_MANAGER_LOGOUT_PATH);
+      .login(QUARTZ_MANAGER_LOGIN_PATH, authenticationManager).logout(QUARTZ_MANAGER_LOGOUT_PATH);
+
+    http.authorizeRequests().anyRequest().authenticated();
+
+    return http.build();
   }
 
-  @Override
-  public void configure(WebSecurity web) {
-    web.ignoring()//
-      .antMatchers(HttpMethod.GET, PATTERNS_SWAGGER_UI) //
-      .antMatchers(HttpMethod.GET, QuartzManagerPaths.WEBJAR_PATH + "/css/**", QuartzManagerPaths.WEBJAR_PATH + "/js/**", QuartzManagerPaths.WEBJAR_PATH + "/img/**", QuartzManagerPaths.WEBJAR_PATH + "/lib/**", QuartzManagerPaths.WEBJAR_PATH + "/assets/**");
-  }
-
-  private void configureInMemoryAuthentication(AuthenticationManagerBuilder authenticationManagerBuilder) throws Exception {
-    PasswordEncoder encoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
-    if (inMemoryAccountProps.isEnabled() && inMemoryAccountProps.getUsers() != null && !inMemoryAccountProps.getUsers().isEmpty()) {
-      InMemoryUserDetailsManagerConfigurer<AuthenticationManagerBuilder> inMemoryAuth = authenticationManagerBuilder.inMemoryAuthentication();
-      inMemoryAccountProps.getUsers()
-        .forEach(u -> inMemoryAuth
-          .withUser(u.getName())
-          .password(encoder.encode(u.getPassword()))
-          .roles(u.getRoles().toArray(new String[0])));
-    }
+  @Bean
+  public WebSecurityCustomizer webSecurityCustomizer() {
+    return (web) ->
+      web.ignoring()//
+        .antMatchers(HttpMethod.GET, PATTERNS_SWAGGER_UI) //
+        .antMatchers(HttpMethod.GET, QuartzManagerPaths.WEBJAR_PATH + "/css/**", QuartzManagerPaths.WEBJAR_PATH + "/js/**", QuartzManagerPaths.WEBJAR_PATH + "/img/**", QuartzManagerPaths.WEBJAR_PATH + "/lib/**", QuartzManagerPaths.WEBJAR_PATH + "/assets/**");
   }
 
   @Bean
@@ -125,9 +147,9 @@ public class WebSecurityConfigJWT extends WebSecurityConfigurerAdapter {
     return jwtAuthenticationSuccessHandler;
   }
 
-//  @Bean
-  public JwtTokenAuthenticationFilter jwtAuthenticationTokenFilter() throws Exception {
-    return new JwtTokenAuthenticationFilter(jwtTokenHelper(), userDetailsServiceBean());
+  //  @Bean
+  public JwtTokenAuthenticationFilter jwtAuthenticationTokenFilter(UserDetailsService userDetailsService) throws Exception {
+    return new JwtTokenAuthenticationFilter(jwtTokenHelper(), userDetailsService);
   }
 
   @Bean
@@ -150,12 +172,6 @@ public class WebSecurityConfigJWT extends WebSecurityConfigurerAdapter {
   @Bean
   public AuthenticationEntryPoint restAuthEntryPoint() {
     return new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED);
-  }
-
-  @Bean
-  @Override
-  public UserDetailsService userDetailsServiceBean() throws Exception {
-    return super.userDetailsServiceBean();
   }
 
   public LoginConfigurer userpwdFilterLoginConfigurer() {

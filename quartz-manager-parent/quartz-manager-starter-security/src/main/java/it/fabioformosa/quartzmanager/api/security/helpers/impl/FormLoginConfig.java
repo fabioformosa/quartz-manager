@@ -1,12 +1,11 @@
 package it.fabioformosa.quartzmanager.api.security.helpers.impl;
 
+import it.fabioformosa.quartzmanager.api.security.helpers.LoginConfigurer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.FormLoginConfigurer;
-
-import it.fabioformosa.quartzmanager.api.security.helpers.LoginConfigurer;
 
 /**
  * It delegates the login to the @FormLoginConfigurer of the httpSecurity.
