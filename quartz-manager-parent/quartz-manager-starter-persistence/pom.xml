@@ -5,20 +5,20 @@
     <artifactId>quartz-manager-parent</artifactId>
     <version>3.1.1-SNAPSHOT</version>
   </parent>
-  
+
   <artifactId>quartz-manager-starter-persistence</artifactId>
-  
+
   <name>Quartz Manager Starter Security</name>
   <description>Persist quartz jobs into a database</description>
-  
+
   <url>https://github.com/fabioformosa/quartz-manager</url>
   <properties>
     <main.basedir>${basedir}/../..</main.basedir>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <java.version>1.8</java.version>
+    <java.version>9</java.version>
   </properties>
-  
+
   <dependencies>
     <dependency>
       <groupId>it.fabioformosa.quartz-manager</groupId>
@@ -47,5 +47,5 @@
       <scope>provided</scope>
     </dependency>
   </dependencies>
-  
+
 </project>

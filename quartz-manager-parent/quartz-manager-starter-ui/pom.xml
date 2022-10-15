@@ -6,32 +6,32 @@
 		<artifactId>quartz-manager-parent</artifactId>
         <version>3.1.1-SNAPSHOT</version>
 	</parent>
-  
+
 	<artifactId>quartz-manager-starter-ui</artifactId>
-  
+
 	<name>Quartz Manager UI webjar</name>
 	<description>Webjar to import the quartz-manager frontend in your spring webapp</description>
-  
+
 	<url>https://github.com/fabioformosa/quartz-manager</url>
 	<properties>
 		<main.basedir>${basedir}/../..</main.basedir>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <java.version>1.8</java.version>
+        <java.version>9</java.version>
         <frontend.folderName>quartz-manager-frontend</frontend.folderName>
         <node.version>v10.16.3</node.version>
         <npm.version>6.9.0</npm.version>
 	</properties>
-  
+
 	<dependencies>
 	</dependencies>
-  
+
    <profiles>
       <profile>
         <id>build-webjar</id>
         <build>
           <plugins>
-          
+
             <!-- STEP1: create a copy of the frontend sources from frontend project to this frontend builder project -->
             <plugin>
               <groupId>org.apache.maven.plugins</groupId>
@@ -60,7 +60,7 @@
                 </execution>
               </executions>
             </plugin>
-            
+
             <!-- STEP2: download npm, execute npm install, execute npm run build -->
             <plugin>
               <groupId>com.github.eirslett</groupId>
@@ -70,7 +70,7 @@
                 <workingDirectory>target/tmp</workingDirectory>
               </configuration>
               <executions>
-                
+
                 <execution>
                   <id>install node and npm</id>
                   <goals>
@@ -82,7 +82,7 @@
                     <npmVersion>${npm.version}</npmVersion>
                   </configuration>
                 </execution>
-                
+
                 <execution>
                   <id>npm install</id>
                   <goals>
@@ -93,7 +93,7 @@
                     <arguments>install</arguments>
                   </configuration>
                 </execution>
-                
+
                 <execution>
                   <id>npm run build</id>
                   <goals>
@@ -104,10 +104,10 @@
                     <arguments>run build</arguments>
                   </configuration>
                 </execution>
-                
+
               </executions>
             </plugin>
-            
+
             <!-- STEP3: move built artifacts into the META-INF folder -->
             <plugin>
               <artifactId>maven-antrun-plugin</artifactId>
@@ -135,5 +135,5 @@
         </build>
       </profile>
    </profiles>
-  
+
 </project>
