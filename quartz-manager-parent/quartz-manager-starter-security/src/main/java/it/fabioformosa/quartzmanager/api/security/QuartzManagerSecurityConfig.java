@@ -27,6 +27,8 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
@@ -46,13 +48,15 @@ import static it.fabioformosa.quartzmanager.api.common.config.QuartzManagerPaths
  * @author Fabio.Formosa
  */
 
-@ComponentScan(basePackages = {"it.fabioformosa.quartzmanager.security"})
+@ComponentScan(basePackages = {"it.fabioformosa.quartzmanager.api.security"})
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
-public class WebSecurityConfigJWT {
+public class QuartzManagerSecurityConfig {
 
   private static final String[] PATTERNS_SWAGGER_UI = {"/swagger-ui.html", "/v3/api-docs/**", "/swagger-resources/**", "/webjars/**"};
+  public static final String QUARTZ_MANAGER_API_ANT_MATCHER = QUARTZ_MANAGER_BASE_CONTEXT_PATH + "/**";
+  public static final String QUARTZ_MANAGER_UI_ANT_MATCHER = QuartzManagerPaths.WEBJAR_PATH + "/**";
 
   @Value("${server.servlet.context-path:/}")
   private String contextPath;
@@ -79,25 +83,19 @@ public class WebSecurityConfigJWT {
     return authenticationConfiguration.getAuthenticationManager();
   }
 
-//  @Bean
-//  public AuthenticationManager authManager(HttpSecurity http, UserDetailsService userDetailsService)
-//    throws Exception {
-//    return http.getSharedObject(AuthenticationManagerBuilder.class)
-//      .userDetailsService(userDetailsService)
-////      .passwordEncoder(bCryptPasswordEncoder)
-//      .passwordEncoder(new BCryptPasswordEncoder())
-//      .and()
-//      .build();
-//  }
+  @Bean
+  public PasswordEncoder quartzManagerPasswordEncoder(){
+    return new BCryptPasswordEncoder();
+  }
 
   @Bean(name = "quartzManagerInMemoryAuthentication")
-  public InMemoryUserDetailsManager  configureInMemoryAuthentication() throws Exception {
+  public InMemoryUserDetailsManager  configureInMemoryAuthentication(PasswordEncoder quartzManagerPasswordEncoder) throws Exception {
     List<UserDetails> users = new ArrayList<>();
     if (inMemoryAccountProps.isEnabled() && inMemoryAccountProps.getUsers() != null && !inMemoryAccountProps.getUsers().isEmpty()) {
       users = inMemoryAccountProps.getUsers().stream()
-        .map(u -> User.withDefaultPasswordEncoder()
-          .username(u.getName())
-          .password(u.getPassword())
+        .map(u -> User
+          .withUsername(u.getUsername())
+          .password(quartzManagerPasswordEncoder.encode(u.getPassword()))
           .roles(u.getRoles().toArray(new String[0]))
           .build()).collect(Collectors.toList());
     }
@@ -107,7 +105,7 @@ public class WebSecurityConfigJWT {
   @Order(Ordered.HIGHEST_PRECEDENCE)
   @Bean(name = "quartzManagerFilterChain")
   public SecurityFilterChain filterChain(HttpSecurity http, @Qualifier("quartzManagerInMemoryAuthentication") InMemoryUserDetailsManager userDetailsService, AuthenticationManager authenticationManager) throws Exception {
-    http.antMatcher(QUARTZ_MANAGER_BASE_CONTEXT_PATH + "/**").csrf().disable() //
+    http.antMatcher(QUARTZ_MANAGER_API_ANT_MATCHER).csrf().disable() //
       .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and() //
       .exceptionHandling().authenticationEntryPoint(restAuthEntryPoint()).and() //
       .addFilterBefore(jwtAuthenticationTokenFilter(userDetailsService), BasicAuthenticationFilter.class) //
@@ -117,8 +115,7 @@ public class WebSecurityConfigJWT {
       .login(QUARTZ_MANAGER_LOGIN_PATH, authenticationManager).logout(QUARTZ_MANAGER_LOGOUT_PATH);
 
     http.authorizeRequests()
-      .antMatchers(HttpMethod.GET, QUARTZ_MANAGER_BASE_CONTEXT_PATH + "/**").authenticated()
-      .antMatchers(HttpMethod.POST, QUARTZ_MANAGER_BASE_CONTEXT_PATH + "/**").authenticated();
+      .antMatchers(QUARTZ_MANAGER_API_ANT_MATCHER).authenticated();
 
     return http.build();
   }
@@ -128,14 +125,14 @@ public class WebSecurityConfigJWT {
     return (web) ->
       web.ignoring()//
         .antMatchers(HttpMethod.GET, PATTERNS_SWAGGER_UI) //
-        .antMatchers(HttpMethod.GET, QuartzManagerPaths.WEBJAR_PATH + "/**")
-        .antMatchers(HttpMethod.GET, QuartzManagerPaths.WEBJAR_PATH + "/css/**", QuartzManagerPaths.WEBJAR_PATH + "/js/**", QuartzManagerPaths.WEBJAR_PATH + "/img/**", QuartzManagerPaths.WEBJAR_PATH + "/lib/**", QuartzManagerPaths.WEBJAR_PATH + "/assets/**");
+        .antMatchers(HttpMethod.GET, QUARTZ_MANAGER_UI_ANT_MATCHER);
   }
 
   @Bean(name = "quartzManagerCorsConfigurationSource")
   CorsConfigurationSource corsConfigurationSource() {
     UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-    source.registerCorsConfiguration("/**", new CorsConfiguration().applyPermitDefaultValues());
+    source.registerCorsConfiguration(QUARTZ_MANAGER_API_ANT_MATCHER, new CorsConfiguration().applyPermitDefaultValues());
+    source.registerCorsConfiguration(QUARTZ_MANAGER_UI_ANT_MATCHER, new CorsConfiguration().applyPermitDefaultValues());
     return source;
   }
 
