@@ -8,7 +8,7 @@ quartz-manager:
       in-memory:
         enabled: true
         users:
-          - name: admin
+          - username: admin
             password: admin
             roles:
               - ADMIN

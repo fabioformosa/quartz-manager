@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Slf4j
-@ConditionalOnClass(name = {"it.fabioformosa.quartzmanager.security.WebSecurityConfigJWT"})
+@ConditionalOnClass(name = {"it.fabioformosa.quartzmanager.api.security.QuartzManagerSecurityConfig"})
 @Configuration
 public class SecurityDiscoverConfig {
 

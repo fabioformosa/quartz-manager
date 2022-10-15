@@ -21,7 +21,7 @@ import org.springframework.test.context.TestPropertySource;
   "quartz-manager.security.jwt.cookie-strategy.enabled=true",
   "quartz-manager.security.jwt.cookie-strategy.cookie=AUTH-TOKEN",
   "quartz-manager.security.accounts.in-memory.enabled=true",
-  "quartz-manager.security.accounts.in-memory.users[0].name=foo",
+  "quartz-manager.security.accounts.in-memory.users[0].username=foo",
   "quartz-manager.security.accounts.in-memory.users[0].password=bar",
   "quartz-manager.security.accounts.in-memory.users[0].roles[0]=admin",
 })

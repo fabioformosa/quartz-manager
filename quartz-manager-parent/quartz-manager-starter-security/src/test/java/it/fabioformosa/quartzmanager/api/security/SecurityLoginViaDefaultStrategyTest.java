@@ -12,7 +12,7 @@ import org.springframework.test.context.TestPropertySource;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestPropertySource(properties = {
   "quartz-manager.security.accounts.in-memory.enabled=true",
-  "quartz-manager.security.accounts.in-memory.users[0].name=foo",
+  "quartz-manager.security.accounts.in-memory.users[0].username=foo",
   "quartz-manager.security.accounts.in-memory.users[0].password=bar",
   "quartz-manager.security.accounts.in-memory.users[0].roles[0]=admin",
 })
