@@ -37,9 +37,9 @@ public class SecurityControllerTest {
   private MockMvc mockMvc;
 
   @Test
-  void givenAnAnonymousUser_whenCalledATestController_thenShouldRaiseForbidden() throws Exception {
-    mockMvc.perform(MockMvcRequestBuilders.get("/test"))
-      .andExpect(status().isUnauthorized());
+  void givenAnAnonymousUser_whenCalledADMZController_thenShouldRaiseForbidden() throws Exception {
+    mockMvc.perform(MockMvcRequestBuilders.get("/dmz"))
+      .andExpect(status().isOk());
   }
 
   @Test

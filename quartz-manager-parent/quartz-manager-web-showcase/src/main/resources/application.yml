@@ -1,5 +1,5 @@
 quartz-manager:
-  jobClassPackages: it.fabioformosa.quartzmanager.api.jobs
+  jobClassPackages: it.fabioformosa.quartzmanager.jobs
   security:
     jwt:
       secret: "bibidibobidiboo"

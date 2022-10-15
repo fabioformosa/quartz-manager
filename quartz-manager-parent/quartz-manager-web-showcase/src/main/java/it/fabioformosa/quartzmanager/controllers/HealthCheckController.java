@@ -1,4 +1,4 @@
-package it.fabioformosa.quartzmanager.api.controllers;
+package it.fabioformosa.quartzmanager.controllers;
 
 import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
@@ -14,7 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 @Hidden
 @RestController
 @RequestMapping
-public class QuartzManagerController {
+public class HealthCheckController {
 
   @ResponseStatus(code = HttpStatus.OK)
   @GetMapping("/")

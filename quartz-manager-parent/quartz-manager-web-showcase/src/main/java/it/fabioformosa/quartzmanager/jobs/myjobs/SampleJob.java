@@ -1,4 +1,4 @@
-package it.fabioformosa.quartzmanager.api.jobs.myjobs;
+package it.fabioformosa.quartzmanager.jobs.myjobs;
 
 import it.fabioformosa.quartzmanager.api.jobs.AbstractQuartzManagerJob;
 import it.fabioformosa.quartzmanager.api.jobs.entities.LogRecord;

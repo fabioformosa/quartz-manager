@@ -13,7 +13,7 @@ public class TestController {
   public static final String QUARTZ_MANAGER = "/quartz-manager";
 
   @ResponseStatus(HttpStatus.OK)
-  @GetMapping("/test")
+  @GetMapping("/dmz")
   public void getDMZTest(){
 
   }
