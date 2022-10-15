@@ -8,10 +8,13 @@ import it.fabioformosa.quartzmanager.api.security.properties.InMemoryAccountProp
 import it.fabioformosa.quartzmanager.api.security.properties.JwtSecurityProperties;
 import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -37,12 +40,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static it.fabioformosa.quartzmanager.api.common.config.QuartzManagerPaths.QUARTZ_MANAGER_LOGIN_PATH;
-import static it.fabioformosa.quartzmanager.api.common.config.QuartzManagerPaths.QUARTZ_MANAGER_LOGOUT_PATH;
+import static it.fabioformosa.quartzmanager.api.common.config.QuartzManagerPaths.*;
 
 /**
  * @author Fabio.Formosa
  */
+
 @ComponentScan(basePackages = {"it.fabioformosa.quartzmanager.security"})
 @Configuration
 @EnableWebSecurity
@@ -87,7 +90,7 @@ public class WebSecurityConfigJWT {
 //      .build();
 //  }
 
-  @Bean
+  @Bean(name = "quartzManagerInMemoryAuthentication")
   public InMemoryUserDetailsManager  configureInMemoryAuthentication() throws Exception {
     List<UserDetails> users = new ArrayList<>();
     if (inMemoryAccountProps.isEnabled() && inMemoryAccountProps.getUsers() != null && !inMemoryAccountProps.getUsers().isEmpty()) {
@@ -101,9 +104,10 @@ public class WebSecurityConfigJWT {
     return new InMemoryUserDetailsManager(users);
   }
 
-  @Bean
-  public SecurityFilterChain filterChain(HttpSecurity http, InMemoryUserDetailsManager userDetailsService, AuthenticationManager authenticationManager) throws Exception {
-    http.csrf().disable() //
+  @Order(Ordered.HIGHEST_PRECEDENCE)
+  @Bean(name = "quartzManagerFilterChain")
+  public SecurityFilterChain filterChain(HttpSecurity http, @Qualifier("quartzManagerInMemoryAuthentication") InMemoryUserDetailsManager userDetailsService, AuthenticationManager authenticationManager) throws Exception {
+    http.antMatcher(QUARTZ_MANAGER_BASE_CONTEXT_PATH + "/**").csrf().disable() //
       .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and() //
       .exceptionHandling().authenticationEntryPoint(restAuthEntryPoint()).and() //
       .addFilterBefore(jwtAuthenticationTokenFilter(userDetailsService), BasicAuthenticationFilter.class) //
@@ -112,20 +116,23 @@ public class WebSecurityConfigJWT {
     QuartzManagerHttpSecurity.from(http).withLoginConfigurer(loginConfigurer(), logoutConfigurer()) //
       .login(QUARTZ_MANAGER_LOGIN_PATH, authenticationManager).logout(QUARTZ_MANAGER_LOGOUT_PATH);
 
-    http.authorizeRequests().anyRequest().authenticated();
+    http.authorizeRequests()
+      .antMatchers(HttpMethod.GET, QUARTZ_MANAGER_BASE_CONTEXT_PATH + "/**").authenticated()
+      .antMatchers(HttpMethod.POST, QUARTZ_MANAGER_BASE_CONTEXT_PATH + "/**").authenticated();
 
     return http.build();
   }
 
-  @Bean
+  @Bean(name = "quartzManagerWebSecurityCustomizer")
   public WebSecurityCustomizer webSecurityCustomizer() {
     return (web) ->
       web.ignoring()//
         .antMatchers(HttpMethod.GET, PATTERNS_SWAGGER_UI) //
+        .antMatchers(HttpMethod.GET, QuartzManagerPaths.WEBJAR_PATH + "/**")
         .antMatchers(HttpMethod.GET, QuartzManagerPaths.WEBJAR_PATH + "/css/**", QuartzManagerPaths.WEBJAR_PATH + "/js/**", QuartzManagerPaths.WEBJAR_PATH + "/img/**", QuartzManagerPaths.WEBJAR_PATH + "/lib/**", QuartzManagerPaths.WEBJAR_PATH + "/assets/**");
   }
 
-  @Bean
+  @Bean(name = "quartzManagerCorsConfigurationSource")
   CorsConfigurationSource corsConfigurationSource() {
     UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
     source.registerCorsConfiguration("/**", new CorsConfiguration().applyPermitDefaultValues());
@@ -140,7 +147,7 @@ public class WebSecurityConfigJWT {
     return loginConfigurer;
   }
 
-  @Bean
+  @Bean(name = "quartzManagerJwtAuthenticationSuccessHandler")
   public JwtAuthenticationSuccessHandler jwtAuthenticationSuccessHandler() {
     JwtTokenHelper jwtTokenHelper = jwtTokenHelper();
     JwtAuthenticationSuccessHandler jwtAuthenticationSuccessHandler = new JwtAuthenticationSuccessHandlerImpl(contextPath, jwtSecurityProps, jwtTokenHelper, objectMapper);
@@ -152,7 +159,7 @@ public class WebSecurityConfigJWT {
     return new JwtTokenAuthenticationFilter(jwtTokenHelper(), userDetailsService);
   }
 
-  @Bean
+  @Bean(name = "quartzManagerJwtTokenHelper")
   public JwtTokenHelper jwtTokenHelper() {
     return new JwtTokenHelper(appName, jwtSecurityProps);
   }
@@ -169,7 +176,7 @@ public class WebSecurityConfigJWT {
     return new LogoutSuccess(objectMapper);
   }
 
-  @Bean
+  @Bean(name = "quartzManagerRestAuthEntryPoint")
   public AuthenticationEntryPoint restAuthEntryPoint() {
     return new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED);
   }
