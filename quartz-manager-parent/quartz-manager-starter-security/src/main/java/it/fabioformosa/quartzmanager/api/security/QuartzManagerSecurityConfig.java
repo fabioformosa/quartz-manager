@@ -54,7 +54,7 @@ import static it.fabioformosa.quartzmanager.api.common.config.QuartzManagerPaths
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class QuartzManagerSecurityConfig {
 
-  private static final String[] PATTERNS_SWAGGER_UI = {"/swagger-ui.html", "/v3/api-docs/**", "/swagger-resources/**", "/webjars/**"};
+  private static final String[] PATTERNS_SWAGGER_UI = {"/swagger-ui/**", "/swagger-ui.html", "/v3/api-docs/**", "/swagger-resources/**", "/webjars/**"};
   public static final String QUARTZ_MANAGER_API_ANT_MATCHER = QUARTZ_MANAGER_BASE_CONTEXT_PATH + "/**";
   public static final String QUARTZ_MANAGER_UI_ANT_MATCHER = QuartzManagerPaths.WEBJAR_PATH + "/**";
 
@@ -121,11 +121,14 @@ public class QuartzManagerSecurityConfig {
   }
 
   @Bean(name = "quartzManagerWebSecurityCustomizer")
-  public WebSecurityCustomizer webSecurityCustomizer() {
-    return (web) ->
+  public WebSecurityCustomizer webSecurityCustomizer(@Value("${quartz-manager.oas.enabled:false}") Boolean oasEnabled) {
+    return (web) -> {
       web.ignoring()//
-        .antMatchers(HttpMethod.GET, PATTERNS_SWAGGER_UI) //
         .antMatchers(HttpMethod.GET, QUARTZ_MANAGER_UI_ANT_MATCHER);
+      if(BooleanUtils.isNotFalse(oasEnabled))
+        web.ignoring()
+          .antMatchers(HttpMethod.GET, PATTERNS_SWAGGER_UI);
+    };
   }
 
   @Bean(name = "quartzManagerCorsConfigurationSource")
@@ -151,8 +154,7 @@ public class QuartzManagerSecurityConfig {
     return jwtAuthenticationSuccessHandler;
   }
 
-  //  @Bean
-  public JwtTokenAuthenticationFilter jwtAuthenticationTokenFilter(UserDetailsService userDetailsService) throws Exception {
+  public JwtTokenAuthenticationFilter jwtAuthenticationTokenFilter(UserDetailsService userDetailsService) {
     return new JwtTokenAuthenticationFilter(jwtTokenHelper(), userDetailsService);
   }
 

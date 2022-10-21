@@ -16,12 +16,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
-import static it.fabioformosa.quartzmanager.api.common.config.OpenAPIConfigConsts.BASIC_AUTH_SEC_OAS_SCHEME;
+import static it.fabioformosa.quartzmanager.api.common.config.OpenAPIConfigConsts.QUARTZ_MANAGER_SEC_OAS_SCHEMA;
 import static it.fabioformosa.quartzmanager.api.common.config.QuartzManagerPaths.QUARTZ_MANAGER_BASE_CONTEXT_PATH;
 
 @Slf4j
 @RequestMapping(TriggerController.TRIGGER_CONTROLLER_BASE_URL)
-@SecurityRequirement(name = BASIC_AUTH_SEC_OAS_SCHEME)
+@SecurityRequirement(name = QUARTZ_MANAGER_SEC_OAS_SCHEMA)
 @RestController
 public class TriggerController {
 

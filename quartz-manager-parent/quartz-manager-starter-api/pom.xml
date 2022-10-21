@@ -40,18 +40,20 @@
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-devtools</artifactId>
+      <scope>runtime</scope>
+      <optional>true</optional>
     </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-websocket</artifactId>
     </dependency>
-    <!--        <dependency>-->
-    <!--          <groupId>org.springframework.security</groupId>-->
-    <!--          <artifactId>spring-security-core</artifactId>-->
-    <!--        </dependency>-->
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-validation</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-context-support</artifactId>
     </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>
@@ -116,28 +118,28 @@
     </dependency>
 
     <!-- Reactor -->
-    <dependency>
-      <groupId>io.projectreactor</groupId>
-      <artifactId>reactor-core</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>io.projectreactor</groupId>
-      <artifactId>reactor-net</artifactId>
-      <version>2.0.8.RELEASE</version>
-    </dependency>
-    <dependency>
-      <groupId>io.projectreactor.spring</groupId>
-      <artifactId>reactor-spring-context</artifactId>
-      <version>2.0.7.RELEASE</version>
-    </dependency>
-    <dependency>
-      <groupId>io.netty</groupId>
-      <artifactId>netty-all</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-aop</artifactId>
-    </dependency>
+<!--    <dependency>-->
+<!--      <groupId>io.projectreactor</groupId>-->
+<!--      <artifactId>reactor-core</artifactId>-->
+<!--    </dependency>-->
+<!--    <dependency>-->
+<!--      <groupId>io.projectreactor</groupId>-->
+<!--      <artifactId>reactor-net</artifactId>-->
+<!--      <version>2.0.8.RELEASE</version>-->
+<!--    </dependency>-->
+<!--    <dependency>-->
+<!--      <groupId>io.projectreactor.spring</groupId>-->
+<!--      <artifactId>reactor-spring-context</artifactId>-->
+<!--      <version>2.0.7.RELEASE</version>-->
+<!--    </dependency>-->
+<!--    <dependency>-->
+<!--      <groupId>io.netty</groupId>-->
+<!--      <artifactId>netty-all</artifactId>-->
+<!--    </dependency>-->
+<!--    <dependency>-->
+<!--      <groupId>org.springframework.boot</groupId>-->
+<!--      <artifactId>spring-boot-starter-aop</artifactId>-->
+<!--    </dependency>-->
     <dependency>
       <groupId>org.yaml</groupId>
       <artifactId>snakeyaml</artifactId>
@@ -148,16 +150,13 @@
       <groupId>org.springdoc</groupId>
       <artifactId>springdoc-openapi-ui</artifactId>
       <version>${springdoc-openapi.version}</version>
+      <optional>true</optional>
     </dependency>
-    <!--          <dependency>-->
-    <!--            <groupId>org.springdoc</groupId>-->
-    <!--            <artifactId>springdoc-openapi-security</artifactId>-->
-    <!--            <version>${openapi.version}</version>-->
-    <!--          </dependency>-->
     <dependency>
       <groupId>io.swagger.core.v3</groupId>
       <artifactId>swagger-annotations</artifactId>
       <version>2.1.11</version>
+      <optional>true</optional>
     </dependency>
 
     <!-- TEST -->

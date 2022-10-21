@@ -23,7 +23,7 @@ import javax.validation.Valid;
 
 @Slf4j
 @RequestMapping(SimpleTriggerController.SIMPLE_TRIGGER_CONTROLLER_BASE_URL)
-@SecurityRequirement(name = OpenAPIConfigConsts.BASIC_AUTH_SEC_OAS_SCHEME)
+@SecurityRequirement(name = OpenAPIConfigConsts.QUARTZ_MANAGER_SEC_OAS_SCHEMA)
 @RestController
 public class SimpleTriggerController {
 

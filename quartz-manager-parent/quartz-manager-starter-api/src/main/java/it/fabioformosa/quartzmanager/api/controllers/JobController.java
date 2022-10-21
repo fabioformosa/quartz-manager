@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RequestMapping(QuartzManagerPaths.QUARTZ_MANAGER_BASE_CONTEXT_PATH + "/jobs")
-@SecurityRequirement(name = OpenAPIConfigConsts.BASIC_AUTH_SEC_OAS_SCHEME)
+@SecurityRequirement(name = OpenAPIConfigConsts.QUARTZ_MANAGER_SEC_OAS_SCHEMA)
 @RestController
 public class JobController {
   final private JobService jobService;

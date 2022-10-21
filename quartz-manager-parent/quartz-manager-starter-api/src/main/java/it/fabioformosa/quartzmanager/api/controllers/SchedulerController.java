@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import static it.fabioformosa.quartzmanager.api.common.config.OpenAPIConfigConsts.BASIC_AUTH_SEC_OAS_SCHEME;
+import static it.fabioformosa.quartzmanager.api.common.config.OpenAPIConfigConsts.QUARTZ_MANAGER_SEC_OAS_SCHEMA;
 import static it.fabioformosa.quartzmanager.api.common.config.QuartzManagerPaths.QUARTZ_MANAGER_BASE_CONTEXT_PATH;
 
 /**
@@ -27,7 +27,7 @@ import static it.fabioformosa.quartzmanager.api.common.config.QuartzManagerPaths
  */
 @Slf4j
 @RestController
-@SecurityRequirement(name = BASIC_AUTH_SEC_OAS_SCHEME)
+@SecurityRequirement(name = QUARTZ_MANAGER_SEC_OAS_SCHEMA)
 @RequestMapping(SchedulerController.SCHEDULER_CONTROLLER_BASE_URL)
 public class SchedulerController {
 

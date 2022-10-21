@@ -16,7 +16,7 @@ import static it.fabioformosa.quartzmanager.api.common.config.QuartzManagerPaths
 
 @RestController
 @Hidden
-@SecurityRequirement(name = OpenAPIConfigConsts.BASIC_AUTH_SEC_OAS_SCHEME)
+@SecurityRequirement(name = OpenAPIConfigConsts.QUARTZ_MANAGER_SEC_OAS_SCHEMA)
 @RequestMapping(value = QUARTZ_MANAGER_AUTH_PATH, produces = MediaType.APPLICATION_JSON_VALUE)
 public class UserController {
 

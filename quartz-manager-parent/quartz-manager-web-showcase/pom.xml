@@ -18,7 +18,7 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-	    <springfox.version>2.9.2</springfox.version>
+    <springdoc-openapi.version>1.5.12</springdoc-openapi.version>
 		<java.version>9</java.version>
 	</properties>
 
@@ -66,6 +66,12 @@
         </dependency>
 
         <!-- MISC -->
+        <dependency>
+          <groupId>org.springdoc</groupId>
+          <artifactId>springdoc-openapi-ui</artifactId>
+          <version>${springdoc-openapi.version}</version>
+          <optional>true</optional>
+        </dependency>
         <dependency>
             <groupId>io.jsonwebtoken</groupId>
             <artifactId>jjwt</artifactId>

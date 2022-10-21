@@ -1,5 +1,7 @@
 quartz-manager:
   jobClassPackages: it.fabioformosa.quartzmanager.jobs
+  oas:
+    enabled: true
   security:
     jwt:
       secret: "bibidibobidiboo"
@@ -18,6 +20,9 @@ quartz-manager:
         url: "jdbc:postgresql://localhost:5432/quartzmanager"
         user: "quartzmanager"
         password: "quartzmanager"
+
+#springdoc:
+#  paths-to-exclude: "/quartz-manager/**"
 
 spring:
   thymeleaf:
