@@ -11,7 +11,7 @@
         <mat-card-subtitle><b>JOB PROGRESS</b></mat-card-subtitle>
     </mat-card-header>
     <mat-card-content>
-      <div id="progressBarBox">
+      <div id="progressBarBox" *ngIf="progress.percentage !== -1">
           <mat-progress-bar mode="determinate" value="{{progress.percentage}}"></mat-progress-bar>
           {{percentageStr}}
       </div>
