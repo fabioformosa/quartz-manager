@@ -1,5 +1,5 @@
 import {async, ComponentFixture, TestBed} from '@angular/core/testing';
-import {ApiService, ConfigService, TriggerService} from '../../services';
+import {ApiService, ConfigService, CONTEXT_PATH, TriggerService} from '../../services';
 import {HttpClient} from '@angular/common/http';
 import {HttpClientTestingModule, HttpTestingController} from '@angular/common/http/testing';
 import {RouterTestingModule} from '@angular/router/testing';
@@ -45,7 +45,7 @@ describe('TriggerListComponent', () => {
     let actualSelectedTrigger: TriggerKey;
     component.onSelectedTrigger.subscribe(selectedTrigger => actualSelectedTrigger = selectedTrigger);
 
-    const getTriggerListReq = httpTestingController.expectOne('quartz-manager/triggers');
+    const getTriggerListReq = httpTestingController.expectOne(`${CONTEXT_PATH}/triggers`);
     const mockExistingTriggers = new Array<TriggerKey>();
     const firstTriggerKey = new TriggerKey('trigger1', 'group1');
     mockExistingTriggers.push(firstTriggerKey);
@@ -71,7 +71,7 @@ describe('TriggerListComponent', () => {
     let expectedOpenedNewTriggerFormEvent: boolean;
     component.onNewTriggerClicked.subscribe(() => expectedOpenedNewTriggerFormEvent = true);
 
-    const getTriggerListReq = httpTestingController.expectOne('quartz-manager/triggers');
+    const getTriggerListReq = httpTestingController.expectOne(`${CONTEXT_PATH}/triggers`);
     getTriggerListReq.flush(new Array<TriggerKey>());
     fixture.detectChanges();
 

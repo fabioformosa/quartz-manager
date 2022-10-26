@@ -1,7 +1,7 @@
 import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 import {MatCardModule} from '@angular/material/card';
 import {SimpleTriggerConfigComponent} from './simple-trigger-config.component';
-import {ApiService, ConfigService, SchedulerService} from '../../services';
+import {ApiService, ConfigService, CONTEXT_PATH, SchedulerService} from '../../services';
 import {HttpClient} from '@angular/common/http';
 import {HttpClientTestingModule, HttpTestingController} from '@angular/common/http/testing';
 import {DebugElement, NO_ERRORS_SCHEMA} from '@angular/core';
@@ -51,7 +51,7 @@ describe('SimpleTriggerConfig', () => {
 
   it('should fetch no triggers at the init', () => {
     expect(component).toBeTruthy();
-    httpTestingController.expectNone('/quartz-manager/simple-triggers/my-simple-trigger');
+    httpTestingController.expectNone(`${CONTEXT_PATH}/simple-triggers/my-simple-trigger`);
   });
 
   function setInputValue(componentDe: DebugElement, inputSelector: string, value: string) {
@@ -89,7 +89,7 @@ describe('SimpleTriggerConfig', () => {
 
     submitButton.nativeElement.click();
 
-    const postSimpleTriggerReq = httpTestingController.expectOne('/quartz-manager/simple-triggers/test-trigger');
+    const postSimpleTriggerReq = httpTestingController.expectOne(`${CONTEXT_PATH}/simple-triggers/test-trigger`);
     postSimpleTriggerReq.flush(mockTrigger);
 
     expect(actualNewTrigger).toEqual(mockTrigger);
@@ -104,7 +104,7 @@ describe('SimpleTriggerConfig', () => {
     mockTrigger.triggerKeyDTO = new TriggerKey('test-trigger', null);
     mockTrigger.jobDetailDTO = <JobDetail>{jobClassName: 'TestJob', description: null};
     mockTrigger.mayFireAgain = true;
-    const getSimpleTriggerReq = httpTestingController.expectOne('/quartz-manager/simple-triggers/test-trigger');
+    const getSimpleTriggerReq = httpTestingController.expectOne(`${CONTEXT_PATH}/simple-triggers/test-trigger`);
     getSimpleTriggerReq.flush(mockTrigger);
 
     component.simpleTriggerForm = <SimpleTriggerForm>{
@@ -129,7 +129,7 @@ describe('SimpleTriggerConfig', () => {
 
     submitButton.nativeElement.click();
 
-    const putSimpleTriggerReq = httpTestingController.expectOne('/quartz-manager/simple-triggers/test-trigger');
+    const putSimpleTriggerReq = httpTestingController.expectOne(`${CONTEXT_PATH}/simple-triggers/test-trigger`);
     putSimpleTriggerReq.flush(mockTrigger);
 
     expect(actualNewTrigger).toBeUndefined();
@@ -143,7 +143,7 @@ describe('SimpleTriggerConfig', () => {
     const mockTrigger = new Trigger();
     mockTrigger.triggerKeyDTO = mockTriggerKey;
     mockTrigger.jobDetailDTO = <JobDetail>{jobClassName: 'TestJob', description: null};
-    const getSimpleTriggerReq = httpTestingController.expectOne('/quartz-manager/simple-triggers/my-simple-trigger');
+    const getSimpleTriggerReq = httpTestingController.expectOne(`${CONTEXT_PATH}/simple-triggers/my-simple-trigger`);
     getSimpleTriggerReq.flush(mockTrigger);
 
     const componentDe: DebugElement = fixture.debugElement;
