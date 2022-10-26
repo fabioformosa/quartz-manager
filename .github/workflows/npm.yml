@@ -35,6 +35,7 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
+          cache-dependency-path: ./quartz-manager-frontend/package-lock.json
       - name: 'install'
         run: npm ci
       - name: 'test'
