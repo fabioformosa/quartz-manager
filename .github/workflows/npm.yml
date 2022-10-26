@@ -14,6 +14,10 @@ on:
       - develop
       - master
 
+defaults:
+  run:
+    working-directory: ./quartz-manager-frontend
+
 jobs:
   build:
 
@@ -33,10 +37,7 @@ jobs:
           cache: 'npm'
       - name: 'install'
         run: npm ci
-        working-directory: quartz-manager-frontend
       - name: 'test'
         run: npm test
-        working-directory: quartz-manager-frontend
       - name: 'build'
         run: npm run build --if-present
-        working-directory: quartz-manager-frontend
