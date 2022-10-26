@@ -79,6 +79,16 @@
     </dependencies>
   </dependencyManagement>
 
+  <dependencies>
+    <!-- TEST -->
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter</artifactId>
+      <version>5.7.2</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
   <distributionManagement>
     <snapshotRepository>
       <id>ossrh</id>
