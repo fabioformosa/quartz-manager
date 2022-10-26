@@ -3,7 +3,7 @@
 
 name: Node.js CI
 
-n:
+on:
   push:
     branches:
       - develop
