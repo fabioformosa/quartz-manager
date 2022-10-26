@@ -11,13 +11,13 @@ name: Java CI with Maven
 on:
   push:
     branches: 
-      - "develop"
-      - "master"
+      - develop
+      - master
     paths: [ 'quartz-manager-parent/**' ]
   pull_request:
     branches:
-      - "develop"
-      - "master"
+      - develop
+      - master
 
 jobs:
   build:
