@@ -31,10 +31,10 @@
           <groupId>it.fabioformosa.quartz-manager</groupId>
           <artifactId>quartz-manager-starter-ui</artifactId>
         </dependency>
-        <dependency>
-          <groupId>it.fabioformosa.quartz-manager</groupId>
-          <artifactId>quartz-manager-starter-security</artifactId>
-        </dependency>
+<!--        <dependency>-->
+<!--          <groupId>it.fabioformosa.quartz-manager</groupId>-->
+<!--          <artifactId>quartz-manager-starter-security</artifactId>-->
+<!--        </dependency>-->
 <!--        <dependency>-->
 <!--          <groupId>it.fabioformosa.quartz-manager</groupId>-->
 <!--          <artifactId>quartz-manager-starter-persistence</artifactId>-->

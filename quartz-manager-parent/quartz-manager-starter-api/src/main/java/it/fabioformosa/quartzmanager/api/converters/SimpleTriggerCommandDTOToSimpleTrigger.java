@@ -19,14 +19,38 @@ public class SimpleTriggerCommandDTOToSimpleTrigger implements Converter<SimpleT
     if(triggerCommandDTO.getSimpleTriggerInputDTO().getEndDate() != null)
       triggerTriggerBuilder.endAt(triggerCommandDTO.getSimpleTriggerInputDTO().getEndDate());
 
+    SimpleScheduleBuilder scheduleBuilder = SimpleScheduleBuilder.simpleSchedule()
+      .withIntervalInMilliseconds(triggerCommandDTO.getSimpleTriggerInputDTO().getRepeatInterval())
+      .withRepeatCount(triggerCommandDTO.getSimpleTriggerInputDTO().getRepeatCount())
+      .withMisfireHandlingInstructionNextWithRemainingCount();
+
+    setTheMisfireInstruction(triggerCommandDTO, scheduleBuilder);
+
     SimpleTrigger newSimpleTrigger = triggerTriggerBuilder.withSchedule(
-        SimpleScheduleBuilder.simpleSchedule()
-          .withIntervalInMilliseconds(triggerCommandDTO.getSimpleTriggerInputDTO().getRepeatInterval())
-          .withRepeatCount(triggerCommandDTO.getSimpleTriggerInputDTO().getRepeatCount())
-          .withMisfireHandlingInstructionNextWithRemainingCount()
+        scheduleBuilder
       )
-      .withIdentity(triggerCommandDTO.getTriggerName())
-      .build();
+      .withIdentity(triggerCommandDTO.getTriggerName()).build();
+
     return newSimpleTrigger;
+  }
+
+  private static void setTheMisfireInstruction(SimpleTriggerCommandDTO triggerCommandDTO, SimpleScheduleBuilder scheduleBuilder) {
+    switch (triggerCommandDTO.getSimpleTriggerInputDTO().getMisfireInstruction()){
+      case MISFIRE_INSTRUCTION_FIRE_NOW:
+        scheduleBuilder.withMisfireHandlingInstructionFireNow();
+        break;
+      case MISFIRE_INSTRUCTION_RESCHEDULE_NOW_WITH_EXISTING_REPEAT_COUNT:
+        scheduleBuilder.withMisfireHandlingInstructionNowWithExistingCount();
+        break;
+      case MISFIRE_INSTRUCTION_RESCHEDULE_NOW_WITH_REMAINING_REPEAT_COUNT:
+        scheduleBuilder.withMisfireHandlingInstructionNowWithRemainingCount();
+        break;
+      case MISFIRE_INSTRUCTION_RESCHEDULE_NEXT_WITH_REMAINING_COUNT:
+        scheduleBuilder.withMisfireHandlingInstructionNextWithRemainingCount();
+        break;
+      case MISFIRE_INSTRUCTION_RESCHEDULE_NEXT_WITH_EXISTING_COUNT:
+        scheduleBuilder.withMisfireHandlingInstructionNextWithExistingCount();
+        break;
+    }
   }
 }

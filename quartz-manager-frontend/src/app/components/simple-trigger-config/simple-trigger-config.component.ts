@@ -7,6 +7,7 @@ import {SimpleTriggerForm} from '../../model/simple-trigger.form';
 import * as moment from 'moment';
 import {TriggerKey} from '../../model/triggerKey.model';
 import JobService from '../../services/job.service';
+import {MisfireInstruction, MisfireInstructionCaption} from '../../model/misfire-instruction.model';
 
 @Component({
   selector: 'qrzmng-simple-trigger-config',
@@ -112,6 +113,7 @@ export class SimpleTriggerConfigComponent implements OnInit {
     command.repeatInterval = simpleTrigger.repeatInterval;
     command.startDate = moment(simpleTrigger.startTime);
     command.endDate = moment(simpleTrigger.endTime);
+    command.misfireInstruction = MisfireInstruction[simpleTrigger.misfireInstruction];
     return command;
   }
 
@@ -123,7 +125,12 @@ export class SimpleTriggerConfigComponent implements OnInit {
     simpleTriggerCommand.repeatInterval = simpleTriggerForm.repeatInterval;
     simpleTriggerCommand.startDate = simpleTriggerForm.startDate?.toDate();
     simpleTriggerCommand.endDate = simpleTriggerForm.endDate?.toDate();
+    simpleTriggerCommand.misfireInstruction = simpleTriggerForm.misfireInstruction;
     return simpleTriggerCommand;
   }
 
+  getMisfireInstructionCaption(): string {
+    const misfireInstructionKey = this.simpleTriggerForm.misfireInstruction as unknown as keyof typeof MisfireInstruction;
+    return MisfireInstructionCaption.get(MisfireInstruction[misfireInstructionKey]);
+  }
 }

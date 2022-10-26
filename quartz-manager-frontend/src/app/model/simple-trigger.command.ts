@@ -5,4 +5,5 @@ export class SimpleTriggerCommand {
   endDate: Date;
   repeatCount: number;
   repeatInterval: number;
+  misfireInstruction: string;
 }

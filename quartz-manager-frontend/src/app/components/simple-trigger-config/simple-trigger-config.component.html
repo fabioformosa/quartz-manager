@@ -100,18 +100,25 @@
               >
             </mat-form-field>
           </div>
-          <br>
+
           <div>
-            <h5>Misfire Policy</h5>
-            <div>RESCHEDULE NEXT WITH REMAINING COUNT</div>
-            <div class="small">
-              In case of misfire event, the trigger is re-scheduled to the next scheduled time after 'now' with the repeat count set to what it would be, if it had not missed any firings.
-              <br/>
-              <strong>Warning:</strong> This policy could cause the Trigger to go directly to the 'COMPLETE' state if all fire-times where missed.
-            </div>
+            <mat-form-field
+              [appearance]="enabledTriggerForm ? 'standard': 'none'"
+              class="full-size-input"
+            >
+              <mat-label>Misfire Instruction</mat-label>
+              <mat-select id="misfireInstruction" name="misfireInstruction" [(ngModel)]="simpleTriggerForm.misfireInstruction" [disabled]="!enabledTriggerForm">
+                <mat-option value="MISFIRE_INSTRUCTION_FIRE_NOW">FIRE NOW</mat-option>
+                <mat-option value="MISFIRE_INSTRUCTION_RESCHEDULE_NOW_WITH_EXISTING_REPEAT_COUNT">RESCHEDULE NOW WITH EXISTING REPEAT COUNT</mat-option>
+                <mat-option value="MISFIRE_INSTRUCTION_RESCHEDULE_NOW_WITH_REMAINING_REPEAT_COUNT">RESCHEDULE NOW WITH REMAINING REPEAT COUNT</mat-option>
+                <mat-option value="MISFIRE_INSTRUCTION_RESCHEDULE_NEXT_WITH_REMAINING_COUNT">RESCHEDULE NEXT WITH REMAINING COUNT</mat-option>
+                <mat-option value="MISFIRE_INSTRUCTION_RESCHEDULE_NEXT_WITH_EXISTING_COUNT">RESCHEDULE NEXT WITH EXISTING COUNT</mat-option>
+              </mat-select>
+            </mat-form-field>
+            <div class="small" [innerHTML]="getMisfireInstructionCaption()"> </div>
           </div>
 
-          <br>
+          <br><br>
 
           <button mat-raised-button
                   type="button"

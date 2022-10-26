@@ -7,4 +7,5 @@ export class SimpleTriggerForm {
   endDate: Moment;
   repeatCount: number;
   repeatInterval: number;
+  misfireInstruction: string;
 }

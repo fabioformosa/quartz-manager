@@ -13,6 +13,7 @@ public class SimpleTriggerToSimpleTriggerDTO extends TriggerToTriggerDTO<SimpleT
     target.setTimesTriggered(source.getTimesTriggered());
     target.setRepeatCount(source.getRepeatCount());
     target.setRepeatInterval(source.getRepeatInterval());
+    target.setMisfireInstruction(source.getMisfireInstruction());
   }
 
   @Override
