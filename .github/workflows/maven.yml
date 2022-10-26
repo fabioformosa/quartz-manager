@@ -10,10 +10,14 @@ name: Java CI with Maven
 
 on:
   push:
-    branches: [ "develop" ]
+    branches: 
+      - "develop"
+      - "master"
     paths: [ 'quartz-manager-parent/**' ]
   pull_request:
-    branches: [ "master" ]
+    branches:
+      - "develop"
+      - "master"
 
 jobs:
   build:
@@ -29,4 +33,4 @@ jobs:
           distribution: 'temurin'
           cache: maven
       - name: Build with Maven
-        run: mvn -B package --file pom.xml
+        run: mvn -B package --file quartz-manager-parent/pom.xml
