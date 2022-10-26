@@ -8,7 +8,7 @@ on:
     branches:
       - develop
       - master
-    paths: [ 'quartz-manager-frontend/**' ]
+#    paths: [ 'quartz-manager-frontend/**' ]
   pull_request:
     branches:
       - develop
@@ -32,5 +32,8 @@ jobs:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
       - run: npm ci
+        working-directory: ./quartz-manager-frontend
       - run: npm test
+        working-directory: ./quartz-manager-frontend
       - run: npm run build --if-present
+        working-directory: ./quartz-manager-frontend
