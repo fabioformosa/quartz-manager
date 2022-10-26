@@ -31,9 +31,12 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
-      - run: npm ci
-        working-directory: ./quartz-manager-frontend
-      - run: npm test
-        working-directory: ./quartz-manager-frontend
-      - run: npm run build --if-present
-        working-directory: ./quartz-manager-frontend
+      - name: 'install'
+        run: npm ci
+        working-directory: quartz-manager-frontend
+      - name: 'test'
+        run: npm test
+        working-directory: quartz-manager-frontend
+      - name: 'build'
+        run: npm run build --if-present
+        working-directory: quartz-manager-frontend
