@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/fabioformosa/quartz-manager.svg?branch=master)](https://travis-ci.org/fabioformosa/quartz-manager)
+[![Java CI with Maven](https://github.com/fabioformosa/quartz-manager/actions/workflows/maven.yml/badge.svg)](https://github.com/fabioformosa/quartz-manager/actions/workflows/maven.yml)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/it.fabioformosa.quartz-manager/quartz-manager-starter-api/badge.svg)](https://maven-badges.herokuapp.com/maven-central/it.fabioformosa.quartz-manager/quartz-manager-starter-api)
 
 
