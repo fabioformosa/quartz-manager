@@ -1,18 +1,16 @@
 package it.fabioformosa.quartzmanager.api.controllers;
 
 import it.fabioformosa.quartzmanager.api.QuartManagerApplicationTests;
-import it.fabioformosa.quartzmanager.api.controllers.utils.InvalidSimpleTriggerCommandDTOProvider;
+import it.fabioformosa.quartzmanager.api.common.utils.DateUtils;
 import it.fabioformosa.quartzmanager.api.controllers.utils.TestUtils;
 import it.fabioformosa.quartzmanager.api.controllers.utils.TriggerUtils;
+import it.fabioformosa.quartzmanager.api.dto.MisfireInstruction;
 import it.fabioformosa.quartzmanager.api.dto.SimpleTriggerCommandDTO;
 import it.fabioformosa.quartzmanager.api.dto.SimpleTriggerDTO;
 import it.fabioformosa.quartzmanager.api.dto.SimpleTriggerInputDTO;
 import it.fabioformosa.quartzmanager.api.services.SimpleTriggerService;
-import it.fabioformosa.quartzmanager.api.exceptions.TriggerNotFoundException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ArgumentsSource;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -55,16 +53,8 @@ class SimpleTriggerControllerTest {
   }
 
   @Test
-  void givenAnExistingTrigger_whenGetIsCalled_then404IsReturned() throws Exception {
-    Mockito.when(simpleTriggerService.getSimpleTriggerByName("not_existing_trigger_name")).thenThrow(new TriggerNotFoundException("not_existing_trigger_name"));
-
-    mockMvc.perform(get(SimpleTriggerController.SIMPLE_TRIGGER_CONTROLLER_BASE_URL + "/not_existing_trigger_name")
-        .contentType(MediaType.APPLICATION_JSON)).andExpect(MockMvcResultMatchers.status().isNotFound());
-  }
-
-  @Test
-  void givenASimpleTriggerCommandDTO_whenPosted_thenANewSimpleTriggerIsCreated() throws Exception {
-    SimpleTriggerInputDTO simpleTriggerInputDTO = buildSimpleTriggerCommandDTO();
+  void givenACompleteSimpleTriggerCommandDTO_whenPosted_thenANewSimpleTriggerIsCreated() throws Exception {
+    SimpleTriggerInputDTO simpleTriggerInputDTO = buildACompleteSimpleTriggerCommandDTO();
     SimpleTriggerDTO expectedSimpleTriggerDTO = TriggerUtils.getSimpleTriggerInstance("mytrigger", simpleTriggerInputDTO);
     Mockito.when(simpleTriggerService.scheduleSimpleTrigger(any())).thenReturn(expectedSimpleTriggerDTO);
     mockMvc.perform(
@@ -77,27 +67,20 @@ class SimpleTriggerControllerTest {
     ;
   }
 
-  private SimpleTriggerInputDTO buildSimpleTriggerCommandDTO() {
+  private SimpleTriggerInputDTO buildACompleteSimpleTriggerCommandDTO() {
     return SimpleTriggerInputDTO.builder()
       .jobClass("it.fabioformosa.quartzmanager.api.jobs.SampleJob")
       .startDate(new Date())
-      .repeatCount(20)
-      .repeatInterval(20000L)
+      .endDate(DateUtils.addHoursToNow(6))
+      .misfireInstruction(MisfireInstruction.MISFIRE_INSTRUCTION_FIRE_NOW)
+      .repeatCount(5)
+      .repeatInterval(1000L * 60 * 60)
       .build();
-  }
-
-  @ParameterizedTest
-  @ArgumentsSource(InvalidSimpleTriggerCommandDTOProvider.class)
-  void givenAnInvalidSimpleTriggerCommandDTO_whenPostedANewTrigger_thenAnErrorIsReturned(SimpleTriggerInputDTO invalidSimpleTriggerComandDTO) throws Exception {
-    mockMvc.perform(post(SimpleTriggerController.SIMPLE_TRIGGER_CONTROLLER_BASE_URL + "/mytrigger")
-      .contentType(MediaType.APPLICATION_JSON)
-      .content(TestUtils.toJson(invalidSimpleTriggerComandDTO)))
-      .andExpect(MockMvcResultMatchers.status().is4xxClientError());
   }
 
   @Test
   void givenATriggerName_whenPutSimpleTriggerCommandDTO_thenTheSimpleTriggerIsRescheduled() throws Exception {
-    SimpleTriggerInputDTO simpleTriggerInputDTO = buildSimpleTriggerCommandDTO();
+    SimpleTriggerInputDTO simpleTriggerInputDTO = buildACompleteSimpleTriggerCommandDTO();
     SimpleTriggerDTO expectedSimpleTriggerDTO = TriggerUtils.getSimpleTriggerInstance("mytrigger", simpleTriggerInputDTO);
     SimpleTriggerCommandDTO simpleTriggerCommandDTO = SimpleTriggerCommandDTO.builder()
       .triggerName("mytrigger")
@@ -110,15 +93,6 @@ class SimpleTriggerControllerTest {
       .content(TestUtils.toJson(simpleTriggerInputDTO)))
       .andExpect(MockMvcResultMatchers.status().isOk())
       .andExpect(MockMvcResultMatchers.content().json(TestUtils.toJson(expectedSimpleTriggerDTO)));
-  }
-
-  @ParameterizedTest
-  @ArgumentsSource(InvalidSimpleTriggerCommandDTOProvider.class)
-  void givenAnInvalidSimpleTriggerCommandDTO_whenATriggerIsRescheduled_thenAnErrorIsReturned(SimpleTriggerInputDTO invalidSimpleTriggerCommandTO) throws Exception {
-    mockMvc.perform(put(SimpleTriggerController.SIMPLE_TRIGGER_CONTROLLER_BASE_URL + "/mytrigger")
-        .contentType(MediaType.APPLICATION_JSON)
-        .content(TestUtils.toJson(invalidSimpleTriggerCommandTO)))
-      .andExpect(MockMvcResultMatchers.status().is4xxClientError());
   }
 
 }

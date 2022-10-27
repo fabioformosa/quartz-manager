@@ -1,9 +1,8 @@
 package it.fabioformosa.quartzmanager.api.dto;
 
+import it.fabioformosa.quartzmanager.api.validators.ValidRepetition;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
-
-import javax.validation.constraints.NotNull;
 
 @SuperBuilder
 @NoArgsConstructor
@@ -11,11 +10,10 @@ import javax.validation.constraints.NotNull;
 @EqualsAndHashCode(callSuper = true)
 @Data
 @ToString(callSuper = true)
-public class SimpleTriggerInputDTO extends TriggerCommandDTO {
+@ValidRepetition
+public class SimpleTriggerInputDTO extends TriggerCommandDTO implements RepetitionDTO {
 
-  @NotNull
   private Integer repeatCount;
 
-  @NotNull
   private Long repeatInterval;
 }

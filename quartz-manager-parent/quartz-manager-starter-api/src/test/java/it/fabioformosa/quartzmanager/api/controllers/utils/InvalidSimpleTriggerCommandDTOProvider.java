@@ -9,7 +9,7 @@ import java.util.stream.Stream;
 
 public class InvalidSimpleTriggerCommandDTOProvider implements ArgumentsProvider {
   @Override
-  public Stream<? extends Arguments> provideArguments(ExtensionContext extensionContext) throws Exception {
+  public Stream<? extends Arguments> provideArguments(ExtensionContext extensionContext) {
     return Stream.of(
       Arguments.of(SimpleTriggerInputDTO.builder().build()),
       Arguments.of(SimpleTriggerInputDTO.builder().repeatCount(1).build()),
