@@ -23,14 +23,14 @@ class SimpleTriggerServiceIntegrationTest {
 
   @Test
   public void givenASimpleTriggerCommandDTOWithAllData_whenANewSimpleTriggerIsScheduled_thenShouldGetATriggertDTO() throws SchedulerException, ClassNotFoundException {
-    String simpleTriggerTestName = "simpleTriggerTest";
+    String simpleTriggerTestName = "simpleTriggerWithAllData";
     String jobClass = "it.fabioformosa.quartzmanager.api.jobs.SampleJob";
     Date startDate = new Date();
     Date endDate = DateUtils.addHoursToNow(5);
     int repeatCount = 3;
     long repeatInterval = 1000L * 60 * 60;
     LocalDateTime expectedFinalDateTime = DateUtils.fromDateToLocalDateTime(startDate).plus(Duration.ofHours(3));
-    LocalDateTime expectedNextDateTime = DateUtils.fromDateToLocalDateTime(startDate).plus(Duration.ofMinutes(1));
+    LocalDateTime expectedNextDateTime = DateUtils.fromDateToLocalDateTime(startDate).plus(Duration.ofHours(1));
     MisfireInstruction misfireInstructionFireNow = MisfireInstruction.MISFIRE_INSTRUCTION_FIRE_NOW;
 
     SimpleTriggerCommandDTO simpleTriggerCommand = SimpleTriggerCommandDTO.builder()
@@ -54,13 +54,13 @@ class SimpleTriggerServiceIntegrationTest {
     Assertions.assertThat(simpleTriggerDTO.getMisfireInstruction()).isEqualTo(misfireInstructionFireNow.getNum());
     Assertions.assertThat(simpleTriggerDTO.getTimesTriggered()).isEqualTo(0);
     Assertions.assertThat(simpleTriggerDTO.getFinalFireTime()).isEqualTo(DateUtils.fromLocalDateTimeToDate(expectedFinalDateTime));
-    Assertions.assertThat(simpleTriggerDTO.getNextFireTime()).isEqualTo(DateUtils.fromLocalDateTimeToDate(expectedNextDateTime));
+    Assertions.assertThat(simpleTriggerDTO.getNextFireTime()).isEqualTo(startDate);
     Assertions.assertThat(simpleTriggerDTO.getJobKeyDTO().getName()).isNotNull();
   }
 
   @Test
   public void givenASimpleTriggerCommandDTOWithMissingOptionalField_whenANewSimpleTriggerIsScheduled_thenShouldGetATriggertDTO() throws SchedulerException, ClassNotFoundException {
-    String simpleTriggerTestName = "simpleTriggerTest";
+    String simpleTriggerTestName = "simpleTriggerWithoutOptionalData";
     String jobClass = "it.fabioformosa.quartzmanager.api.jobs.SampleJob";
 
     SimpleTriggerCommandDTO simpleTriggerCommand = SimpleTriggerCommandDTO.builder()
