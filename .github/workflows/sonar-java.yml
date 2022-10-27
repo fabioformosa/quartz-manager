@@ -1,12 +1,13 @@
-name: SonarCloud for Java
+name: SonarCloud Analysis for Java
 on:
   push:
     branches:
       - master
       - develop
-    paths: [ 'quartz-manager-parent/**' ]
+#    paths: [ 'quartz-manager-parent/**' ]
   pull_request:
     types: [opened, synchronize, reopened]
+
 jobs:
   build:
     name: Build and analyze
