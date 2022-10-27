@@ -79,6 +79,11 @@
     </dependencies>
   </dependencyManagement>
 
+  <properties>
+    <sonar.organization>fabioformosa</sonar.organization>
+    <sonar.host.url>https://sonarcloud.io</sonar.host.url>
+  </properties>
+
   <dependencies>
     <dependency>
       <groupId>org.junit.jupiter</groupId>
