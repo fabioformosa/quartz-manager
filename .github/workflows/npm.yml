@@ -8,7 +8,7 @@ on:
     branches:
       - develop
       - master
-#    paths: [ 'quartz-manager-frontend/**' ]
+    paths: [ 'quartz-manager-frontend/**' ]
   pull_request:
     branches:
       - develop
