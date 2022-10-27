@@ -22,7 +22,8 @@ public class JobService {
   private List<String> jobClassPackages = new ArrayList<>();
 
   public JobService(@Value("${quartz-manager.jobClassPackages}") String jobClassPackages) {
-    List<String> splitPackages = Arrays.stream(Optional.of(jobClassPackages).map(str -> str.split(",")).get())
+    List<String> splitPackages = Arrays.stream(Optional.of(jobClassPackages).map(str -> str.split(","))
+        .orElseThrow(() -> new RuntimeException("The prop quartz-manager.jobClassPackages  cannot be blank!")))
       .map(String::trim)
       .filter(StringUtils::isNotBlank)
       .collect(Collectors.toList());
