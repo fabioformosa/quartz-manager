@@ -14,15 +14,18 @@ public class SimpleTriggerCommandDTOToSimpleTrigger implements Converter<SimpleT
   @Override
   public SimpleTrigger convert(SimpleTriggerCommandDTO triggerCommandDTO) {
     TriggerBuilder<Trigger> triggerTriggerBuilder = TriggerBuilder.newTrigger();
-    if(triggerCommandDTO.getSimpleTriggerInputDTO().getStartDate() != null)
+    if (triggerCommandDTO.getSimpleTriggerInputDTO().getStartDate() != null)
       triggerTriggerBuilder.startAt(triggerCommandDTO.getSimpleTriggerInputDTO().getStartDate());
-    if(triggerCommandDTO.getSimpleTriggerInputDTO().getEndDate() != null)
+    if (triggerCommandDTO.getSimpleTriggerInputDTO().getEndDate() != null)
       triggerTriggerBuilder.endAt(triggerCommandDTO.getSimpleTriggerInputDTO().getEndDate());
 
-    SimpleScheduleBuilder scheduleBuilder = SimpleScheduleBuilder.simpleSchedule()
-      .withIntervalInMilliseconds(triggerCommandDTO.getSimpleTriggerInputDTO().getRepeatInterval())
-      .withRepeatCount(triggerCommandDTO.getSimpleTriggerInputDTO().getRepeatCount())
-      .withMisfireHandlingInstructionNextWithRemainingCount();
+
+    SimpleScheduleBuilder scheduleBuilder = SimpleScheduleBuilder.simpleSchedule();
+    if (triggerCommandDTO.getSimpleTriggerInputDTO().getRepeatInterval() != null)
+      scheduleBuilder.withIntervalInMilliseconds(triggerCommandDTO.getSimpleTriggerInputDTO().getRepeatInterval());
+
+    if (triggerCommandDTO.getSimpleTriggerInputDTO().getRepeatCount() != null)
+      scheduleBuilder.withRepeatCount(triggerCommandDTO.getSimpleTriggerInputDTO().getRepeatCount());
 
     setTheMisfireInstruction(triggerCommandDTO, scheduleBuilder);
 
@@ -35,7 +38,7 @@ public class SimpleTriggerCommandDTOToSimpleTrigger implements Converter<SimpleT
   }
 
   private static void setTheMisfireInstruction(SimpleTriggerCommandDTO triggerCommandDTO, SimpleScheduleBuilder scheduleBuilder) {
-    switch (triggerCommandDTO.getSimpleTriggerInputDTO().getMisfireInstruction()){
+    switch (triggerCommandDTO.getSimpleTriggerInputDTO().getMisfireInstruction()) {
       case MISFIRE_INSTRUCTION_FIRE_NOW:
         scheduleBuilder.withMisfireHandlingInstructionFireNow();
         break;

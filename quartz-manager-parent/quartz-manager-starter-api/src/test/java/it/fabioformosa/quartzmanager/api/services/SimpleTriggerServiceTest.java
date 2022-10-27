@@ -51,7 +51,7 @@ class SimpleTriggerServiceTest {
       .jobClass("it.fabioformosa.quartzmanager.api.jobs.SampleJob")
       .startDate(new Date())
       .repeatInterval(5000L).repeatCount(5)
-      .endDate(DateUtils.getHoursFromNow(1))
+      .endDate(DateUtils.addHoursToNow(1))
       .build();
 
     String simpleTriggerName = "simpleTrigger";

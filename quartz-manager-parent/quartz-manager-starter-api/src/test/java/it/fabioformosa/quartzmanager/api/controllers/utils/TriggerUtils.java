@@ -10,8 +10,8 @@ public class TriggerUtils {
   static public TriggerDTO getTriggerInstance(String triggerName){
     return TriggerDTO.builder()
       .description("sample trigger")
-      .endTime(DateUtils.getHoursFromNow(2L))
-      .finalFireTime(DateUtils.getHoursFromNow(2L))
+      .endTime(DateUtils.addHoursToNow(2L))
+      .finalFireTime(DateUtils.addHoursToNow(2L))
       .jobKeyDTO(JobKeyDTO.builder()
         .group("defaultJobGroup")
         .name("sampleJob")
@@ -22,9 +22,9 @@ public class TriggerUtils {
         .name(triggerName)
         .build())
       .misfireInstruction(1)
-      .nextFireTime(DateUtils.getHoursFromNow(1L))
+      .nextFireTime(DateUtils.addHoursToNow(1L))
       .priority(1)
-      .startTime(DateUtils.fromLocaleDateTimeToDate(LocalDateTime.now()))
+      .startTime(DateUtils.fromLocalDateTimeToDate(LocalDateTime.now()))
       .build();
   }
 
@@ -33,8 +33,8 @@ public class TriggerUtils {
       .description("simple trigger")
       .repeatCount(simpleTriggerInputDTO.getRepeatCount())
       .repeatInterval(simpleTriggerInputDTO.getRepeatInterval())
-      .endTime(DateUtils.getHoursFromNow(2L))
-      .finalFireTime(DateUtils.getHoursFromNow(2L))
+      .endTime(DateUtils.addHoursToNow(2L))
+      .finalFireTime(DateUtils.addHoursToNow(2L))
       .jobKeyDTO(JobKeyDTO.builder()
         .group("defaultJobGroup")
         .name("sampleJob")
@@ -45,9 +45,9 @@ public class TriggerUtils {
         .name(triggerName)
         .build())
       .misfireInstruction(1)
-      .nextFireTime(DateUtils.getHoursFromNow(1L))
+      .nextFireTime(DateUtils.addHoursToNow(1L))
       .priority(1)
-      .startTime(DateUtils.fromLocaleDateTimeToDate(LocalDateTime.now()))
+      .startTime(DateUtils.fromLocalDateTimeToDate(LocalDateTime.now()))
       .build();
   }
 
@@ -56,8 +56,8 @@ public class TriggerUtils {
       .description("simple trigger")
       .repeatCount(2)
       .repeatInterval(1000L)
-      .endTime(DateUtils.getHoursFromNow(2L))
-      .finalFireTime(DateUtils.getHoursFromNow(2L))
+      .endTime(DateUtils.addHoursToNow(2L))
+      .finalFireTime(DateUtils.addHoursToNow(2L))
       .jobKeyDTO(JobKeyDTO.builder()
         .group("defaultJobGroup")
         .name("sampleJob")
@@ -68,9 +68,9 @@ public class TriggerUtils {
         .name(triggerName)
         .build())
       .misfireInstruction(1)
-      .nextFireTime(DateUtils.getHoursFromNow(1L))
+      .nextFireTime(DateUtils.addHoursToNow(1L))
       .priority(1)
-      .startTime(DateUtils.fromLocaleDateTimeToDate(LocalDateTime.now()))
+      .startTime(DateUtils.fromLocalDateTimeToDate(LocalDateTime.now()))
       .build();
   }
 

@@ -21,14 +21,14 @@ public class SimpleTriggerService extends AbstractSchedulerService {
     return conversionService.convert(trigger, SimpleTriggerDTO.class);
   }
 
-  public SimpleTriggerDTO scheduleSimpleTrigger(SimpleTriggerCommandDTO triggerCommandDTO) throws SchedulerException, ClassNotFoundException {
-    Class<? extends Job> jobClass = (Class<? extends Job>) Class.forName(triggerCommandDTO.getSimpleTriggerInputDTO().getJobClass());
+  public SimpleTriggerDTO scheduleSimpleTrigger(SimpleTriggerCommandDTO simpleTriggerCommandDTO) throws SchedulerException, ClassNotFoundException {
+    Class<? extends Job> jobClass = (Class<? extends Job>) Class.forName(simpleTriggerCommandDTO.getSimpleTriggerInputDTO().getJobClass());
     JobDetail jobDetail = JobBuilder.newJob()
       .ofType(jobClass)
       .storeDurably(false)
       .build();
 
-    SimpleTrigger newSimpleTrigger = conversionService.convert(triggerCommandDTO, SimpleTrigger.class);
+    SimpleTrigger newSimpleTrigger = conversionService.convert(simpleTriggerCommandDTO, SimpleTrigger.class);
     scheduler.scheduleJob(jobDetail, newSimpleTrigger);
 
     return conversionService.convert(newSimpleTrigger, SimpleTriggerDTO.class);

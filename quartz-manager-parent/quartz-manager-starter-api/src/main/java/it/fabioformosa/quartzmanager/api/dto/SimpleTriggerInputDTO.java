@@ -17,5 +17,5 @@ public class SimpleTriggerInputDTO extends TriggerCommandDTO {
   private Integer repeatCount;
 
   @NotNull
-  Long repeatInterval;
+  private Long repeatInterval;
 }

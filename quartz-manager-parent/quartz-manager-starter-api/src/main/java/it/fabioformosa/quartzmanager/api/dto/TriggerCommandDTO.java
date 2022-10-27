@@ -24,6 +24,7 @@ public class TriggerCommandDTO {
   @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
   private Date endDate;
 
+  @Builder.Default
   private MisfireInstruction misfireInstruction = MisfireInstruction.MISFIRE_INSTRUCTION_RESCHEDULE_NEXT_WITH_REMAINING_COUNT;
 
 }
