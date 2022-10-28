@@ -9,7 +9,7 @@ import org.springframework.util.MultiValueMap;
 
 import static it.fabioformosa.quartzmanager.api.common.config.QuartzManagerPaths.QUARTZ_MANAGER_LOGIN_PATH;
 
-public class AbstractSecurityLoginTest {
+public abstract class AbstractSecurityLoginTest {
   @Autowired
   private TestRestTemplate testRestTemplate;
 

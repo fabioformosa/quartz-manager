@@ -27,6 +27,4 @@ class TriggerControllerTest {
     Mockito.reset(triggerService);
   }
 
-
-
 }
