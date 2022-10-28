@@ -19,6 +19,7 @@
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <java.version>9</java.version>
     <springdoc-openapi.version>1.5.12</springdoc-openapi.version>
+    <sonar.exclusions>**/SpringApplicationTest.java</sonar.exclusions>
   </properties>
 
   <dependencies>

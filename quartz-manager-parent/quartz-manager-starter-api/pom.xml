@@ -20,6 +20,7 @@
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <springdoc-openapi.version>1.5.12</springdoc-openapi.version>
     <java.version>9</java.version>
+    <sonar.exclusions>**/QuartManagerApplicationTests.java</sonar.exclusions>
   </properties>
 
   <dependencies>
