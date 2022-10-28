@@ -41,6 +41,8 @@
   </developers>
 
   <properties>
+    <sonar.organization>fabioformosa</sonar.organization>
+    <sonar.host.url>https://sonarcloud.io</sonar.host.url>
     <sonar.exclusions>**/SpringApplicationTest.java, **/QuartManagerApplicationTests.java</sonar.exclusions>
   </properties>
 
@@ -82,11 +84,6 @@
       </dependency>
     </dependencies>
   </dependencyManagement>
-
-  <properties>
-    <sonar.organization>fabioformosa</sonar.organization>
-    <sonar.host.url>https://sonarcloud.io</sonar.host.url>
-  </properties>
 
   <dependencies>
     <dependency>
