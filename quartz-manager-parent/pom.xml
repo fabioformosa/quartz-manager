@@ -40,6 +40,10 @@
     </developer>
   </developers>
 
+  <properties>
+    <sonar.exclusions>**/SpringApplicationTest.java, **/QuartManagerApplicationTests.java</sonar.exclusions>
+  </properties>
+
   <modules>
     <module>quartz-manager-starter-api</module>
     <module>quartz-manager-starter-ui</module>
