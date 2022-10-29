@@ -50,12 +50,12 @@ public class SimpleTriggerController {
 
   @PostMapping("/{name}")
   @ResponseStatus(HttpStatus.CREATED)
-  @Operation(summary = "Create a new simple trigger")
+  @Operation(summary = "Schedule a new simple trigger")
   @ApiResponses(value = {
-    @ApiResponse(responseCode = "201", description = "Created a new simple trigger",
+    @ApiResponse(responseCode = "201", description = "Scheduled a new simple trigger",
       content = { @Content(mediaType = "application/json",
-        schema = @Schema(implementation = TriggerDTO.class)) }),
-    @ApiResponse(responseCode = "400", description = "Invalid config supplied",
+        schema = @Schema(implementation = SimpleTriggerDTO.class)) }),
+    @ApiResponse(responseCode = "400", description = "Invalid trigger configuration",
       content = @Content)
   })
   public SimpleTriggerDTO postSimpleTrigger(@PathVariable String name, @Valid @RequestBody SimpleTriggerInputDTO simpleTriggerInputDTO) throws SchedulerException, ClassNotFoundException {
@@ -75,7 +75,7 @@ public class SimpleTriggerController {
     @ApiResponse(responseCode = "200", description = "Rescheduled a simple trigger",
       content = { @Content(mediaType = "application/json",
         schema = @Schema(implementation = TriggerDTO.class)) }),
-    @ApiResponse(responseCode = "400", description = "Invalid config supplied",
+    @ApiResponse(responseCode = "400", description = "Invalid trigger configuration",
       content = @Content)
   })
   public TriggerDTO rescheduleSimpleTrigger(@PathVariable String name, @Valid @RequestBody SimpleTriggerInputDTO simpleTriggerInputDTO) throws SchedulerException {
