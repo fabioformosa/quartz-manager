@@ -21,6 +21,8 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
+import java.util.Date;
+
 import static org.mockito.ArgumentMatchers.any;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 
@@ -70,6 +72,24 @@ class SimpleTriggerControllerValidationTest {
     return SimpleTriggerInputDTO.builder()
       .jobClass("it.fabioformosa.quartzmanager.api.jobs.SampleJob")
       .build();
+  }
+
+  @Test
+  void givenStartDateAndEndDateEqual_whenScheduled_thenANewSimpleTriggerIsCreated() throws Exception {
+    SimpleTriggerInputDTO simpleTriggerInputDTO = buildAMinimalSimpleTriggerCommandDTO();
+    Date now = new Date();
+    simpleTriggerInputDTO.setStartDate(now);
+    simpleTriggerInputDTO.setEndDate(now);
+    SimpleTriggerDTO expectedSimpleTriggerDTO = TriggerUtils.getSimpleTriggerInstance("my-puntual-trigger");
+    Mockito.when(simpleTriggerService.scheduleSimpleTrigger(any())).thenReturn(expectedSimpleTriggerDTO);
+    mockMvc.perform(
+        post(SimpleTriggerController.SIMPLE_TRIGGER_CONTROLLER_BASE_URL + "/my-puntual-trigger")
+          .contentType(MediaType.APPLICATION_JSON)
+          .content(TestUtils.toJson(simpleTriggerInputDTO))
+      )
+      .andExpect(MockMvcResultMatchers.status().isCreated())
+      .andExpect(MockMvcResultMatchers.content().json(TestUtils.toJson(expectedSimpleTriggerDTO)))
+    ;
   }
 
   @ParameterizedTest

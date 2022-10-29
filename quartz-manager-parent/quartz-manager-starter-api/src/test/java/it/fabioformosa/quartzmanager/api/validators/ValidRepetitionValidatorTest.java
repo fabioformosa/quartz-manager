@@ -1,6 +1,6 @@
 package it.fabioformosa.quartzmanager.api.validators;
 
-import it.fabioformosa.quartzmanager.api.dto.RepetitionDTO;
+import it.fabioformosa.quartzmanager.api.dto.TriggerRepetitionDTO;
 import it.fabioformosa.quartzmanager.api.dto.SimpleTriggerInputDTO;
 import org.apache.commons.lang3.StringUtils;
 import org.assertj.core.api.Assertions;
@@ -14,7 +14,7 @@ class ValidRepetitionValidatorTest {
 
   @Test
   public void givenACountAndIntervalSet_whenTheValidatorIsCalled_shouldReturnValid() {
-    RepetitionDTO repetitionDTO = new SimpleTriggerInputDTO();
+    TriggerRepetitionDTO repetitionDTO = new SimpleTriggerInputDTO();
     repetitionDTO.setRepeatCount(10);
     repetitionDTO.setRepeatInterval(1000L);
     boolean valid = validRepetitionValidator.isValid(repetitionDTO, null);
@@ -23,7 +23,7 @@ class ValidRepetitionValidatorTest {
 
   @Test
   public void givenACountAndIntervalUnSet_whenTheValidatorIsCalled_shouldReturnInValid() {
-    RepetitionDTO repetitionDTO = new SimpleTriggerInputDTO();
+    TriggerRepetitionDTO repetitionDTO = new SimpleTriggerInputDTO();
     boolean valid = validRepetitionValidator.isValid(repetitionDTO, null);
     Assertions.assertThat(valid).isTrue();
   }
@@ -39,7 +39,7 @@ class ValidRepetitionValidatorTest {
     if (StringUtils.isNotBlank(repeatIntervalStr))
       repeatInterval = Long.valueOf(repeatIntervalStr);
 
-    RepetitionDTO repetitionDTO = new SimpleTriggerInputDTO();
+    TriggerRepetitionDTO repetitionDTO = new SimpleTriggerInputDTO();
     repetitionDTO.setRepeatInterval(repeatInterval);
     repetitionDTO.setRepeatCount(repeatCount);
 

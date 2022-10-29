@@ -1,6 +1,6 @@
 package it.fabioformosa.quartzmanager.api.dto;
 
-public interface RepetitionDTO {
+public interface TriggerRepetitionDTO {
   Integer getRepeatCount();
 
   Long getRepeatInterval();

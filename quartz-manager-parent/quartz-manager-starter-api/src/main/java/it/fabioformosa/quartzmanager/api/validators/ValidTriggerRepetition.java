@@ -10,10 +10,8 @@ import java.lang.annotation.Target;
 @Constraint(validatedBy = ValidRepetitionValidator.class)
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface ValidRepetition {
-
-  String message() default "Invalid repetition values";
+public @interface ValidTriggerRepetition {
+  String message() default "Invalid repetition values. Repeat Count and Repeat interval must be both set or unset.";
   Class<?>[] groups() default {};
   Class<? extends Payload>[] payload() default {};
-
 }
