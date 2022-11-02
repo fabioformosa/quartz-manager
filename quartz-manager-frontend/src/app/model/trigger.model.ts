@@ -3,7 +3,7 @@ import {JobKeyModel} from './jobKey.model';
 import {JobDetail} from './jobDetail.model';
 
 export class Trigger {
-  triggerKeyDTO: TriggerKey;
+  triggerKeyDTO: TriggerKey = new TriggerKey();
   priority: number;
   startTime: Date;
   description: string;
@@ -12,6 +12,6 @@ export class Trigger {
   misfireInstruction: number;
   nextFireTime: Date;
   jobKeyDTO: JobKeyModel;
-  jobDetailDTO: JobDetail;
+  jobDetailDTO: JobDetail = new JobDetail();
   mayFireAgain: boolean;
 }
