@@ -133,11 +133,11 @@ export class SimpleTriggerConfigComponent implements OnInit {
     const simpleTriggerReactiveForm = new SimpleTriggerReactiveForm();
     simpleTriggerReactiveForm.triggerName = simpleTrigger.triggerKeyDTO.name;
     simpleTriggerReactiveForm.jobClass = simpleTrigger.jobDetailDTO.jobClassName;
-    simpleTriggerReactiveForm.triggerRecurrence.repeatCount = simpleTrigger.repeatCount;
-    simpleTriggerReactiveForm.triggerRecurrence.repeatInterval = simpleTrigger.repeatInterval;
-    simpleTriggerReactiveForm.triggerPeriod.startDate = simpleTrigger.startTime && moment(simpleTrigger.startTime);
-    simpleTriggerReactiveForm.triggerPeriod.endDate = simpleTrigger.endTime && moment(simpleTrigger.endTime);
-    simpleTriggerReactiveForm.misfireInstruction = MisfireInstruction[simpleTrigger.misfireInstruction];
+    simpleTriggerReactiveForm.triggerRecurrence.repeatCount = simpleTrigger.repeatCount || null;
+    simpleTriggerReactiveForm.triggerRecurrence.repeatInterval = simpleTrigger.repeatInterval || null;
+    simpleTriggerReactiveForm.triggerPeriod.startDate = (simpleTrigger.startTime && moment(simpleTrigger.startTime)) || null;
+    simpleTriggerReactiveForm.triggerPeriod.endDate = (simpleTrigger.endTime && moment(simpleTrigger.endTime)) || null;
+    simpleTriggerReactiveForm.misfireInstruction = (simpleTrigger.misfireInstruction && MisfireInstruction[simpleTrigger.misfireInstruction]) || null;
     return simpleTriggerReactiveForm;
   };
 

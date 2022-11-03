@@ -8,7 +8,7 @@ import {DebugElement, NO_ERRORS_SCHEMA} from '@angular/core';
 import {By} from '@angular/platform-browser';
 import {RouterTestingModule} from '@angular/router/testing';
 import {MatIconModule} from '@angular/material/icon';
-import {FormsModule} from '@angular/forms';
+import {FormBuilder, FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatNativeDateModule} from '@angular/material/core';
 import {MatInputModule} from '@angular/material/input';
@@ -16,10 +16,10 @@ import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {TriggerKey} from '../../model/triggerKey.model';
 import {Trigger} from '../../model/trigger.model';
 import {JobDetail} from '../../model/jobDetail.model';
-import {SimpleTriggerForm} from '../../model/simple-trigger.form';
 import {SimpleTrigger} from '../../model/simple-trigger.model';
 import JobService from '../../services/job.service';
 import {MatSelectModule} from '@angular/material/select';
+import {MisfireInstruction} from '../../model/misfire-instruction.model';
 
 describe('SimpleTriggerConfig', () => {
 
@@ -32,10 +32,10 @@ describe('SimpleTriggerConfig', () => {
   beforeEach(async( () => {
     TestBed.configureTestingModule({
       imports: [FormsModule,  MatFormFieldModule, MatFormFieldModule, MatSelectModule, MatInputModule, BrowserAnimationsModule,
-        MatNativeDateModule,
+        MatNativeDateModule, ReactiveFormsModule,
         MatCardModule, MatIconModule, HttpClientTestingModule, RouterTestingModule],
       declarations: [SimpleTriggerConfigComponent],
-      providers: [SchedulerService, ApiService, ConfigService, JobService],
+      providers: [SchedulerService, ApiService, ConfigService, JobService, FormBuilder],
       schemas: [NO_ERRORS_SCHEMA]
     }).compileComponents();
 
@@ -62,24 +62,46 @@ describe('SimpleTriggerConfig', () => {
     fixture.detectChanges();
   }
 
+  function setDropdownValue(componentDe: DebugElement, dropdownSelector: string, value: string) {
+    const dropdownDe = componentDe.query(By.css(dropdownSelector));
+    const dropdownEl = dropdownDe.nativeElement;
+    dropdownEl.value = value;
+    dropdownEl.dispatchEvent(new Event('change'));
+    fixture.detectChanges();
+  }
+  function setDropdownValueByIndex(componentDe: DebugElement, dropdownSelector: string, index: number) {
+    const dropdownDe = componentDe.query(By.css(dropdownSelector));
+    const dropdownEl = dropdownDe.nativeElement;
+    dropdownEl.value = dropdownEl.options[index].value;
+    dropdownEl.dispatchEvent(new Event('change'));
+    fixture.detectChanges();
+  }
+
+  function setMatSelectValueByIndex(componentDe: DebugElement, dropdownSelector: string, index: number) {
+    const dropdownDe = componentDe.query(By.css(dropdownSelector));
+    dropdownDe.triggerEventHandler('selectionChange', {value: 'MISFIRE_INSTRUCTION_FIRE_NOW'});
+    const dropdownEl = dropdownDe.nativeElement;
+    dropdownEl.dispatchEvent(new Event('change'));
+    fixture.detectChanges();
+  }
+
   it('should emit an event when a new trigger is submitted', () => {
     const mockTrigger = new Trigger();
     mockTrigger.triggerKeyDTO = new TriggerKey('test-trigger', null);
     mockTrigger.jobDetailDTO = <JobDetail>{jobClassName: 'TestJob', description: null};
+    mockTrigger.misfireInstruction = MisfireInstruction.MISFIRE_INSTRUCTION_FIRE_NOW;
 
     component.openTriggerForm();
     fixture.detectChanges();
 
     const componentDe: DebugElement = fixture.debugElement;
     setInputValue(componentDe, '#triggerName', 'test-trigger');
-    expect(component.simpleTriggerForm.triggerName).toEqual('test-trigger');
+    expect(component.simpleTriggerReactiveForm.controls.triggerName.value).toEqual('test-trigger');
     setInputValue(componentDe, '#jobClass', 'TestJob');
-    // setInputValue(componentDe, '#startDate', '19/11/2022, 10:34:00 PM');
-    // setInputValue(componentDe, '#endDate', '21/11/2022, 10:34:00 PM');
     setInputValue(componentDe, '#repeatInterval', '2000');
-    expect(component.simpleTriggerForm.repeatInterval).toEqual(2000);
+    expect(component.simpleTriggerReactiveForm.controls.triggerRecurrence.value.repeatInterval).toEqual(2000);
     setInputValue(componentDe, '#repeatCount', '100');
-    expect(component.simpleTriggerForm.repeatCount).toEqual(100);
+    expect(component.simpleTriggerReactiveForm.controls.triggerRecurrence.value.repeatCount).toEqual(100);
 
     const submitButton = componentDe.query(By.css('form > button[color="primary"]'));
     expect(submitButton.nativeElement.textContent.trim()).toEqual('Submit');
@@ -88,6 +110,9 @@ describe('SimpleTriggerConfig', () => {
     component.onNewTrigger.subscribe(simpleTrigger => actualNewTrigger = simpleTrigger);
 
     submitButton.nativeElement.click();
+
+    const getJobsReq = httpTestingController.expectOne(`${CONTEXT_PATH}/jobs`);
+    getJobsReq.flush(['TestJob']);
 
     const postSimpleTriggerReq = httpTestingController.expectOne(`${CONTEXT_PATH}/simple-triggers/test-trigger`);
     postSimpleTriggerReq.flush(mockTrigger);
@@ -104,22 +129,30 @@ describe('SimpleTriggerConfig', () => {
     mockTrigger.triggerKeyDTO = new TriggerKey('test-trigger', null);
     mockTrigger.jobDetailDTO = <JobDetail>{jobClassName: 'TestJob', description: null};
     mockTrigger.mayFireAgain = true;
+    mockTrigger.misfireInstruction = MisfireInstruction.MISFIRE_INSTRUCTION_FIRE_NOW;
     const getSimpleTriggerReq = httpTestingController.expectOne(`${CONTEXT_PATH}/simple-triggers/test-trigger`);
     getSimpleTriggerReq.flush(mockTrigger);
 
-    component.simpleTriggerForm = <SimpleTriggerForm>{
+    component.simpleTriggerReactiveForm.setValue({
       triggerName: 'test-trigger',
       jobClass: 'TestJob',
-      repeatInterval: 2000,
-      repeatCount: 100
-    };
+      triggerRecurrence: {
+        repeatInterval: 2000,
+        repeatCount: 100,
+      },
+      triggerPeriod: {
+        startDate: null,
+        endDate: null
+      },
+      misfireInstruction: MisfireInstruction.MISFIRE_INSTRUCTION_FIRE_NOW.toString()
+      });
 
     component.openTriggerForm();
     fixture.detectChanges();
 
     const componentDe: DebugElement = fixture.debugElement;
     setInputValue(componentDe, '#repeatInterval', '4000');
-    expect(component.simpleTriggerForm.repeatInterval).toEqual(4000);
+    expect(component.simpleTriggerReactiveForm.controls.triggerRecurrence.value.repeatInterval).toEqual(4000);
 
     const submitButton = componentDe.query(By.css('form > button[color="primary"]'));
     expect(submitButton.nativeElement.textContent.trim()).toEqual('Submit');
