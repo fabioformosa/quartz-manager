@@ -16,6 +16,9 @@
                    [readonly]="!enabledTriggerForm || trigger"
                    matInput placeholder="name of the trigger (unique)"
                    formControlName="triggerName" name="triggerName">
+            <mat-error *ngIf="simpleTriggerReactiveForm.controls.triggerName.errors?.required">
+              Name is <strong>required</strong>
+            </mat-error>
           </mat-form-field>
         </div>
 
@@ -30,6 +33,9 @@
                 {{job}}
               </mat-option>
             </mat-select>
+            <mat-error *ngIf="simpleTriggerReactiveForm.controls.jobClass.errors?.required">
+              Job is <strong>required</strong>
+            </mat-error>
           </mat-form-field>
         </div>
 
@@ -55,6 +61,9 @@
                 COUNT
               </mat-option>
             </mat-select>
+            <mat-error *ngIf="simpleTriggerReactiveForm.controls.misfireInstruction.errors?.required">
+              The misfire instruction is <strong>required</strong>
+            </mat-error>
           </mat-form-field>
           <div class="small" [innerHTML]="getMisfireInstructionCaption()"></div>
         </div>

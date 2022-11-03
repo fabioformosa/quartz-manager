@@ -26,5 +26,5 @@ public class TriggerCommandDTO implements TriggerPeriodDTO {
   private Date endDate;
 
   @Builder.Default
-  private MisfireInstruction misfireInstruction = MisfireInstruction.MISFIRE_INSTRUCTION_RESCHEDULE_NEXT_WITH_REMAINING_COUNT;
+  private MisfireInstruction misfireInstruction = MisfireInstruction.MISFIRE_INSTRUCTION_RESCHEDULE_NOW_WITH_EXISTING_REPEAT_COUNT;
 }
