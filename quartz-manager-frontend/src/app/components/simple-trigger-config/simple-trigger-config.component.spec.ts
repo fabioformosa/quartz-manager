@@ -77,13 +77,14 @@ describe('SimpleTriggerConfig', () => {
     fixture.detectChanges();
   }
 
-  function setMatSelectValueByIndex(componentDe: DebugElement, dropdownSelector: string, index: number) {
+  async function setMatSelectValueByIndex(componentDe: DebugElement, dropdownSelector: string, index: number) {
     const dropdownDe = componentDe.query(By.css(dropdownSelector));
     dropdownDe.nativeElement.click();
     fixture.detectChanges();
     const matOptionDe = componentDe.query(By.css('.mat-select-panel')).queryAll(By.css('.mat-option'));
     matOptionDe[index].nativeElement.click();
     fixture.detectChanges();
+    await fixture.whenStable();
   }
 
   function openFormAndFillAllMandatoryFields() {
