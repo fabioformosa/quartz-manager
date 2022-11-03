@@ -142,6 +142,7 @@
         </button>
         <button mat-raised-button
                 type="submit" color="primary"
+                [disabled]="simpleTriggerReactiveForm.invalid"
                 *ngIf="enabledTriggerForm">
           Submit
         </button>

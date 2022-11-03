@@ -79,25 +79,49 @@ describe('SimpleTriggerConfig', () => {
 
   function setMatSelectValueByIndex(componentDe: DebugElement, dropdownSelector: string, index: number) {
     const dropdownDe = componentDe.query(By.css(dropdownSelector));
-    dropdownDe.triggerEventHandler('selectionChange', {value: 'MISFIRE_INSTRUCTION_FIRE_NOW'});
-    const dropdownEl = dropdownDe.nativeElement;
-    dropdownEl.dispatchEvent(new Event('change'));
+    dropdownDe.nativeElement.click();
+    fixture.detectChanges();
+    const matOptionDe = componentDe.query(By.css('.mat-select-panel')).queryAll(By.css('.mat-option'));
+    matOptionDe[index].nativeElement.click();
     fixture.detectChanges();
   }
 
+  function openFormAndFillAllMandatoryFields() {
+    component.openTriggerForm();
+    fixture.detectChanges();
+
+    const getJobsReq = httpTestingController.expectOne(`${CONTEXT_PATH}/jobs`);
+    getJobsReq.flush(['TestJob']);
+
+    const componentDe: DebugElement = fixture.debugElement;
+
+    const submitButton = componentDe.query(By.css('form > button[color="primary"]'));
+    expect(submitButton.nativeElement.textContent.trim()).toEqual('Submit');
+    expect(submitButton.nativeElement.getAttribute('disabled')).toEqual('');
+
+    setInputValue(componentDe, '#triggerName', 'test-trigger');
+    expect(component.simpleTriggerReactiveForm.controls.triggerName.value).toEqual('test-trigger');
+    expect(submitButton.nativeElement.getAttribute('disabled')).toEqual('');
+    setMatSelectValueByIndex(componentDe, '#jobClass', 0);
+    expect(submitButton.nativeElement.getAttribute('disabled')).toEqual('');
+    setMatSelectValueByIndex(componentDe, '#misfireInstruction', 0);
+    expect(component.simpleTriggerReactiveForm.controls.misfireInstruction.value).toEqual('MISFIRE_INSTRUCTION_FIRE_NOW');
+    expect(submitButton.nativeElement.getAttribute('disabled')).toEqual(null);
+  }
+
+  it('should enabled the submit only when the form is valid', () => {
+    openFormAndFillAllMandatoryFields();
+  });
+
   it('should emit an event when a new trigger is submitted', () => {
+    const componentDe: DebugElement = fixture.debugElement;
     const mockTrigger = new Trigger();
     mockTrigger.triggerKeyDTO = new TriggerKey('test-trigger', null);
     mockTrigger.jobDetailDTO = <JobDetail>{jobClassName: 'TestJob', description: null};
     mockTrigger.misfireInstruction = MisfireInstruction.MISFIRE_INSTRUCTION_FIRE_NOW;
 
-    component.openTriggerForm();
-    fixture.detectChanges();
+    openFormAndFillAllMandatoryFields();
 
-    const componentDe: DebugElement = fixture.debugElement;
-    setInputValue(componentDe, '#triggerName', 'test-trigger');
-    expect(component.simpleTriggerReactiveForm.controls.triggerName.value).toEqual('test-trigger');
-    setInputValue(componentDe, '#jobClass', 'TestJob');
     setInputValue(componentDe, '#repeatInterval', '2000');
     expect(component.simpleTriggerReactiveForm.controls.triggerRecurrence.value.repeatInterval).toEqual(2000);
     setInputValue(componentDe, '#repeatCount', '100');
@@ -110,9 +134,6 @@ describe('SimpleTriggerConfig', () => {
     component.onNewTrigger.subscribe(simpleTrigger => actualNewTrigger = simpleTrigger);
 
     submitButton.nativeElement.click();
-
-    const getJobsReq = httpTestingController.expectOne(`${CONTEXT_PATH}/jobs`);
-    getJobsReq.flush(['TestJob']);
 
     const postSimpleTriggerReq = httpTestingController.expectOne(`${CONTEXT_PATH}/simple-triggers/test-trigger`);
     postSimpleTriggerReq.flush(mockTrigger);
