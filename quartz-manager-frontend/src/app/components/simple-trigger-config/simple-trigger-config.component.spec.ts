@@ -95,7 +95,7 @@ describe('SimpleTriggerConfig', () => {
 
     const componentDe: DebugElement = fixture.debugElement;
 
-    const submitButton = componentDe.query(By.css('form > button[color="primary"]'));
+    const submitButton = componentDe.query(By.css('form button[color="primary"]'));
     expect(submitButton.nativeElement.textContent.trim()).toEqual('Submit');
     expect(submitButton.nativeElement.getAttribute('disabled')).toEqual('');
 
@@ -133,7 +133,7 @@ describe('SimpleTriggerConfig', () => {
     setInputValue(componentDe, '#repeatCount', '100');
     expect(component.simpleTriggerReactiveForm.controls.triggerRecurrence.value.repeatCount).toEqual(100);
 
-    const submitButton = componentDe.query(By.css('form > button[color="primary"]'));
+    const submitButton = componentDe.query(By.css('form button[color="primary"]'));
     expect(submitButton.nativeElement.textContent.trim()).toEqual('Submit');
 
     let actualNewTrigger;
@@ -181,7 +181,7 @@ describe('SimpleTriggerConfig', () => {
     setInputValue(componentDe, '#repeatInterval', '4000');
     expect(component.simpleTriggerReactiveForm.controls.triggerRecurrence.value.repeatInterval).toEqual(4000);
 
-    const submitButton = componentDe.query(By.css('form > button[color="primary"]'));
+    const submitButton = componentDe.query(By.css('form button[color="primary"]'));
     expect(submitButton.nativeElement.textContent.trim()).toEqual('Submit');
 
     let actualNewTrigger;
@@ -207,7 +207,7 @@ describe('SimpleTriggerConfig', () => {
     getSimpleTriggerReq.flush(mockTrigger);
 
     const componentDe: DebugElement = fixture.debugElement;
-    const submitButton = componentDe.query(By.css('form > button'));
+    const submitButton = componentDe.query(By.css('form button'));
     expect(submitButton.nativeElement.textContent.trim()).toEqual('Reschedule');
   });
 
@@ -216,7 +216,7 @@ describe('SimpleTriggerConfig', () => {
     fixture.detectChanges();
 
     const componentDe: DebugElement = fixture.debugElement;
-    const submitButton = componentDe.query(By.css('form > button[color="primary"]'));
+    const submitButton = componentDe.query(By.css('form button[color="primary"]'));
     expect(submitButton.nativeElement.textContent.trim()).toEqual('Submit');
   });
 
