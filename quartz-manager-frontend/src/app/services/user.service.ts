@@ -35,13 +35,15 @@ export class UserService {
       this.currentUser = user;
       this.router.initialNavigation();
     }, err => {
-      console.log(`error retrieving current user due to ` + err);
+      console.log(`error retrieving current user due to ` + JSON.stringify(err));
       const httpErrorResponse = err as HttpErrorResponse;
       if (httpErrorResponse.status === 404) {
         this.isAnAnonymousUser = true;
         this.router.initialNavigation();
+        return;
       }
-      // TODO generic error!
+      if (httpErrorResponse.status < 200 || httpErrorResponse.status > 399)
+        this.router.navigateByUrl('/error');
     });
   }
 

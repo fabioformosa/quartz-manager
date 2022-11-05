@@ -59,9 +59,9 @@ import {
 } from './services';
 import { ForbiddenComponent } from './views/forbidden/forbidden.component';
 import { APP_BASE_HREF } from '@angular/common';
-import { environment } from '../environments/environment';
 import {SimpleTriggerConfigComponent} from './components/simple-trigger-config';
 import JobService from './services/job.service';
+import {GenericErrorComponent} from './views/error/genericError.component';
 
 export function initUserFactory(userService: UserService) {
     return () => userService.fetchLoggedUser();
@@ -116,6 +116,7 @@ export function jwtOptionsFactory(apiService: ApiService) {
     LogsPanelComponent,
     ProgressPanelComponent,
     ForbiddenComponent,
+    GenericErrorComponent,
     TriggerListComponent
   ],
   imports: [

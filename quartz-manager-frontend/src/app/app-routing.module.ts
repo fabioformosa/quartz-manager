@@ -6,6 +6,7 @@ import {NotFoundComponent} from './views/not-found';
 import {ForbiddenComponent} from './views/forbidden';
 
 import {ManagerComponent} from './views/manager';
+import {GenericErrorComponent} from './views/error/genericError.component';
 
 export const routes: Routes = [
   {
@@ -32,6 +33,10 @@ export const routes: Routes = [
   {
     path: '403',
     component: ForbiddenComponent
+  },
+  {
+    path: 'error',
+    component: GenericErrorComponent
   },
   {
     path: '**',
