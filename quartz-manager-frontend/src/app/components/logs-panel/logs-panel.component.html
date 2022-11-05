@@ -3,6 +3,11 @@
       <mat-card-subtitle><b>JOB LOGS</b></mat-card-subtitle>
     </mat-card-header>
     <mat-card-content style="position: relative; height: calc(100% - 3em);">
+      <div *ngIf="!logs || logs.length == 0" fxLayout="row" fxFlexAlign="center stretch" style="text-align: center">
+        <div fxFill style="height: 100%;">
+          <img src="assets/image/logs.svg" alt="no logs" width="480" />
+        </div>
+      </div>
       <div id="logs" style="overflow-y: auto; position: absolute; left: 0; right: 0; top: 0; bottom: 0; overflow: auto;">
         <div
             *ngFor = "let log of logs; let first = first" fxLayout="row" fxLayout.xs="column" fxLayoutAlign="start" fxLayoutGap="10px">
