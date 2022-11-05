@@ -16,22 +16,22 @@
       </div>
     </div>
 
-    <div fxFlex="1 1 350px" >
-      <div fxLayout="column">
-        <qrzmng-simple-trigger-config
-          [triggerKey]="selectedTriggerKey"
-          (onNewTrigger)="onNewTriggerCreated($event)">
-        </qrzmng-simple-trigger-config>
-      </div>
+    <div fxFlex="1 1 350px">
+        <div fxLayout="row" fxFill>
+        <div fxLayout="column" fxFill>
+          <qrzmng-simple-trigger-config fxFill
+            [triggerKey]="selectedTriggerKey"
+            (onNewTrigger)="onNewTriggerCreated($event)">
+          </qrzmng-simple-trigger-config>
+        </div>
+        </div>
     </div>
 
     <div fxFlex="1 1 auto" style="margin-left: 20px;">
-      <div fxLayout="row" fxLayoutAlign="stretch" fxFill>
         <div fxFlex="1 1 auto" fxLayout="column" fxLayoutAlign="start stretch" fxLayoutGap="6px">
           <progress-panel></progress-panel>
           <logs-panel fxFlex="1 1 auto" fxFill></logs-panel>
         </div>
-      </div>
     </div>
 
   </div>
