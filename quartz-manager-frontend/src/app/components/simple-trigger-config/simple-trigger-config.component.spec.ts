@@ -102,12 +102,11 @@ describe('SimpleTriggerConfig', () => {
     setInputValue(componentDe, '#triggerName', 'test-trigger');
     expect(component.simpleTriggerReactiveForm.controls.triggerName.value).toEqual('test-trigger');
     expect(submitButton.nativeElement.getAttribute('disabled')).toEqual('');
-    setMatSelectValueByIndex(componentDe, '#jobClass', 0);
-    expect(component.simpleTriggerReactiveForm.controls.jobClass.value).toBeTruthy();
-    console.log(component.simpleTriggerReactiveForm.controls);
-    expect(submitButton.nativeElement.getAttribute('disabled')).toEqual('');
     setMatSelectValueByIndex(componentDe, '#misfireInstruction', 0);
     expect(component.simpleTriggerReactiveForm.controls.misfireInstruction.value).toEqual('MISFIRE_INSTRUCTION_FIRE_NOW');
+    setMatSelectValueByIndex(componentDe, '#jobClass', 0);
+    expect(submitButton.nativeElement.getAttribute('disabled')).toEqual('');
+
     expect(submitButton.nativeElement.getAttribute('disabled')).toEqual(null);
   }
 
