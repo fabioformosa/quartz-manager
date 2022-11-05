@@ -107,6 +107,12 @@ describe('SimpleTriggerConfig', () => {
     expect(submitButton.nativeElement.getAttribute('disabled')).toEqual('');
     setMatSelectValueByIndex(componentDe, '#jobClass', 0);
     expect(submitButton.nativeElement.getAttribute('disabled')).toEqual(null);
+
+    setInputValue(componentDe, '#repeatCount', '1000');
+    expect(submitButton.nativeElement.getAttribute('disabled')).toEqual('');
+
+    setInputValue(componentDe, '#repeatInterval', '2000');
+    expect(submitButton.nativeElement.getAttribute('disabled')).toEqual(null);
   }
 
   it('should enabled the submit only when the form is valid', () => {

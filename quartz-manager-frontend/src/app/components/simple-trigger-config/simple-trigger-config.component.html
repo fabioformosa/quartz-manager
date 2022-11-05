@@ -29,7 +29,7 @@
           >
             <mat-label>Job Class *</mat-label>
             <mat-select id="jobClass" name="jobClass" formControlName="jobClass" [disabled]="!enabledTriggerForm">
-              <mat-option *ngFor="let job of jobs" [value]="job">
+              <mat-option *ngFor="let job of jobs" [value]="job" style="font-size: 0.8em">
                 {{job}}
               </mat-option>
             </mat-select>
@@ -46,7 +46,7 @@
           >
             <mat-label>Misfire Instruction *</mat-label>
             <mat-select id="misfireInstruction" name="misfireInstruction" formControlName="misfireInstruction"
-                        [disabled]="!enabledTriggerForm">
+                        [disabled]="!enabledTriggerForm" style="font-size: 0.8em">
               <mat-option value="MISFIRE_INSTRUCTION_FIRE_NOW">FIRE NOW</mat-option>
               <mat-option value="MISFIRE_INSTRUCTION_RESCHEDULE_NOW_WITH_EXISTING_REPEAT_COUNT">RESCHEDULE NOW WITH
                 EXISTING REPEAT COUNT
@@ -110,6 +110,9 @@
                 <!--                                       [enableMeridian]="enableMeridian" [disableMinute]="disableMinute" [hideTime]="hideTime">-->
               </ngx-mat-datetime-picker>
             </mat-form-field>
+            <mat-error *ngIf="simpleTriggerReactiveForm.controls.triggerPeriod.errors?.invalidTriggerPeriod" style="font-size: small">
+              the end date cannot be  <strong>before</strong> the start date
+            </mat-error>
           </div>
         </div>
 
@@ -125,9 +128,14 @@
                      matInput placeholder="Repeat Interval [in mills]" type="number"
                      formControlName="repeatInterval" name="repeatInterval"
               >
+              <mat-error *ngIf="simpleTriggerReactiveForm.controls.triggerRecurrence.errors?.invalidTriggerRecurrence">
+                repeatCount and repeatInterval must be <strong>both</strong> set or unset
+              </mat-error>
             </mat-form-field>
+<!--            <mat-error *ngIf="simpleTriggerReactiveForm.controls.triggerRecurrence.errors?.invalidTriggerRecurrence" style="font-size: small">-->
+<!--              repeatCount and repeatInterval must be <strong>both</strong> set or unset-->
+<!--            </mat-error>-->
           </div>
-
           <div>
             <mat-form-field
               [appearance]="enabledTriggerForm ? 'standard': 'none'"
@@ -139,9 +147,15 @@
                      matInput placeholder="Repeat Count (-1 REPEAT INDEFINITELY)" type="number"
                      formControlName="repeatCount" name="repeatCount"
               >
+              <mat-error *ngIf="simpleTriggerReactiveForm.controls.triggerRecurrence.errors?.invalidTriggerRecurrence">
+                repeatCount and repeatInterval must be <strong>both</strong> set or unset
+              </mat-error>
             </mat-form-field>
+
           </div>
         </div>
+
+        <br/>
 
         <button mat-raised-button
                 type="button"
