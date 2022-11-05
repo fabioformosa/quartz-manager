@@ -104,9 +104,8 @@ describe('SimpleTriggerConfig', () => {
     expect(submitButton.nativeElement.getAttribute('disabled')).toEqual('');
     setMatSelectValueByIndex(componentDe, '#misfireInstruction', 0);
     expect(component.simpleTriggerReactiveForm.controls.misfireInstruction.value).toEqual('MISFIRE_INSTRUCTION_FIRE_NOW');
-    setMatSelectValueByIndex(componentDe, '#jobClass', 0);
     expect(submitButton.nativeElement.getAttribute('disabled')).toEqual('');
-
+    setMatSelectValueByIndex(componentDe, '#jobClass', 0);
     expect(submitButton.nativeElement.getAttribute('disabled')).toEqual(null);
   }
 
