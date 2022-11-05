@@ -4,7 +4,8 @@
   </mat-card-header>
   <mat-divider></mat-divider>
   <mat-card-content *ngIf="shouldShowTheTriggerCardContent()" style="position: relative; height: 100%">
-    <div fxLayout="column" style="overflow-y: auto; position: absolute; left: 0; right: 0; top: 0; bottom: 0; overflow: auto;height: calc(100% - 3em)">
+    <div fxLayout="column" style="overflow-y: auto; position: absolute; left: 0; right: 0; top: 0; bottom: 0;
+    overflow: auto;height: calc(100% - 3em); padding-top: 1em;">
       <form name="triggerConfigForm" fxFlex="1 1 100%"
             [formGroup]="simpleTriggerReactiveForm" (ngSubmit)="onSubmitTriggerConfig()">
         <div>
