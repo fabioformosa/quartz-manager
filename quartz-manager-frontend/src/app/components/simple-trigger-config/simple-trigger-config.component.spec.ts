@@ -81,11 +81,9 @@ describe('SimpleTriggerConfig', () => {
     const dropdownDe = componentDe.query(By.css(dropdownSelector));
     dropdownDe.nativeElement.click();
     fixture.detectChanges();
-    await fixture.whenStable();
     const matOptionDe = componentDe.query(By.css('.mat-select-panel')).queryAll(By.css('.mat-option'));
     matOptionDe[index].nativeElement.click();
     fixture.detectChanges();
-    await fixture.whenStable();
   }
 
   function openFormAndFillAllMandatoryFields() {
