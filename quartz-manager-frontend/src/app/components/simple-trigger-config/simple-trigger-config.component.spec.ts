@@ -220,6 +220,28 @@ describe('SimpleTriggerConfig', () => {
     expect(submitButton.nativeElement.textContent.trim()).toEqual('Submit');
   });
 
+  it('should display the warning if there are no eligible jobs', () => {
+    fixture.detectChanges();
+    const getJobsReq = httpTestingController.expectOne(`${CONTEXT_PATH}/jobs`);
+    getJobsReq.flush([]);
+    fixture.detectChanges();
+
+    const componentDe: DebugElement = fixture.debugElement;
+    const warningCard = componentDe.query(By.css('#noEligibleJobsAlert'));
+    expect(warningCard).toBeTruthy();
+  });
+
+  it('should not display the warning if there are eligible jobs', () => {
+    fixture.detectChanges();
+    const getJobsReq = httpTestingController.expectOne(`${CONTEXT_PATH}/jobs`);
+    getJobsReq.flush(['sampleJob']);
+    fixture.detectChanges();
+
+    const componentDe: DebugElement = fixture.debugElement;
+    const warningCard = componentDe.query(By.css('#noEligibleJobsAlert'));
+    expect(warningCard).toBeFalsy();
+  });
+
 
 
 });

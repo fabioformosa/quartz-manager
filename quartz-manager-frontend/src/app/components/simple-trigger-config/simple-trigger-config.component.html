@@ -6,6 +6,14 @@
   <mat-card-content *ngIf="shouldShowTheTriggerCardContent()" style="position: relative; height: 100%">
     <div fxLayout="column" style="overflow-y: auto; position: absolute; left: 0; right: 0; top: 0; bottom: 0;
     overflow: auto;height: calc(100% - 3em); padding-top: 1em;">
+      <mat-card id="noEligibleJobsAlert" *ngIf="jobs?.length === 0" style="background-color: #ff6385">
+        <mat-card-content>
+          <i class="fas fa-exclamation-circle" style="color: #fff"></i>&nbsp;<strong>WARNING</strong>
+          Not found any eligible job classes for quartz-manager! <br/>
+          <p style="font-size: 0.8em">Please, make sure you have extended <i>AbstractQuartzManagerJob</i> and set the
+          app prop <i>quartz-manager.jobClassPackages</i> with the correct java package </p>
+        </mat-card-content>
+      </mat-card>
       <form name="triggerConfigForm" fxFlex="1 1 100%"
             [formGroup]="simpleTriggerReactiveForm" (ngSubmit)="onSubmitTriggerConfig()">
         <div>
