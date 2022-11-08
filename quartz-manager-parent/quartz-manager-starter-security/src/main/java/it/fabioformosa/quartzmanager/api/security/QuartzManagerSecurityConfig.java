@@ -75,9 +75,6 @@ public class QuartzManagerSecurityConfig {
   @Autowired
   private ObjectMapper objectMapper;
 
-  @Autowired
-  private InMemoryAccountProperties inMemoryAccountProps;
-
   @Bean
   public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
     return authenticationConfiguration.getAuthenticationManager();
@@ -89,7 +86,7 @@ public class QuartzManagerSecurityConfig {
   }
 
   @Bean(name = "quartzManagerInMemoryAuthentication")
-  public InMemoryUserDetailsManager  configureInMemoryAuthentication(PasswordEncoder quartzManagerPasswordEncoder) throws Exception {
+  public InMemoryUserDetailsManager  configureInMemoryAuthentication(InMemoryAccountProperties inMemoryAccountProps, PasswordEncoder quartzManagerPasswordEncoder) throws Exception {
     List<UserDetails> users = new ArrayList<>();
     if (inMemoryAccountProps.isEnabled() && inMemoryAccountProps.getUsers() != null && !inMemoryAccountProps.getUsers().isEmpty()) {
       users = inMemoryAccountProps.getUsers().stream()
@@ -122,7 +119,7 @@ public class QuartzManagerSecurityConfig {
 
   @Bean(name = "quartzManagerWebSecurityCustomizer")
   public WebSecurityCustomizer webSecurityCustomizer(@Value("${quartz-manager.oas.enabled:false}") Boolean oasEnabled) {
-    return (web) -> {
+    return web -> {
       web.ignoring()//
         .antMatchers(HttpMethod.GET, QUARTZ_MANAGER_UI_ANT_MATCHER);
       if(BooleanUtils.isNotFalse(oasEnabled))
@@ -132,7 +129,7 @@ public class QuartzManagerSecurityConfig {
   }
 
   @Bean(name = "quartzManagerCorsConfigurationSource")
-  CorsConfigurationSource corsConfigurationSource() {
+  public CorsConfigurationSource corsConfigurationSource() {
     UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
     source.registerCorsConfiguration(QUARTZ_MANAGER_API_ANT_MATCHER, new CorsConfiguration().applyPermitDefaultValues());
     source.registerCorsConfiguration(QUARTZ_MANAGER_UI_ANT_MATCHER, new CorsConfiguration().applyPermitDefaultValues());
@@ -143,15 +140,13 @@ public class QuartzManagerSecurityConfig {
     JwtAuthenticationSuccessHandler jwtAuthenticationSuccessHandler = jwtAuthenticationSuccessHandler();
     AuthenticationSuccessHandler authenticationSuccessHandler = new AuthenticationSuccessHandler(jwtAuthenticationSuccessHandler);
     AuthenticationFailureHandler authenticationFailureHandler = new AuthenticationFailureHandler();
-    LoginConfigurer loginConfigurer = new FormLoginConfig(authenticationSuccessHandler, authenticationFailureHandler);
-    return loginConfigurer;
+    return new FormLoginConfig(authenticationSuccessHandler, authenticationFailureHandler);
   }
 
   @Bean(name = "quartzManagerJwtAuthenticationSuccessHandler")
   public JwtAuthenticationSuccessHandler jwtAuthenticationSuccessHandler() {
     JwtTokenHelper jwtTokenHelper = jwtTokenHelper();
-    JwtAuthenticationSuccessHandler jwtAuthenticationSuccessHandler = new JwtAuthenticationSuccessHandlerImpl(contextPath, jwtSecurityProps, jwtTokenHelper, objectMapper);
-    return jwtAuthenticationSuccessHandler;
+    return new JwtAuthenticationSuccessHandlerImpl(contextPath, jwtSecurityProps, jwtTokenHelper, objectMapper);
   }
 
   public JwtTokenAuthenticationFilter jwtAuthenticationTokenFilter(UserDetailsService userDetailsService) {
@@ -168,7 +163,7 @@ public class QuartzManagerSecurityConfig {
       return userpwdFilterLoginConfigurer();
     if (BooleanUtils.isNotFalse(formLoginEnabled))
       return formLoginConfigurer();
-    throw new RuntimeException("No login configurer enabled!");
+    throw new IllegalStateException("No login configurer enabled!");
   }
 
   public LogoutSuccess logoutConfigurer() {
@@ -181,8 +176,7 @@ public class QuartzManagerSecurityConfig {
   }
 
   public LoginConfigurer userpwdFilterLoginConfigurer() {
-    LoginConfigurer loginConfigurer = new JwtUsernamePasswordFiterLoginConfig(jwtAuthenticationSuccessHandler());
-    return loginConfigurer;
+    return new JwtUsernamePasswordFiterLoginConfig(jwtAuthenticationSuccessHandler());
   }
 
 }
