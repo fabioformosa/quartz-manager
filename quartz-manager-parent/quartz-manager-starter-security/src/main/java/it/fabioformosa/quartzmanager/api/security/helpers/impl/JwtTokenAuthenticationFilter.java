@@ -41,7 +41,7 @@ public class JwtTokenAuthenticationFilter extends OncePerRequestFilter {
   private static final String LOGIN_MATCHER = "/api/login";
   private static final String LOGOUT_MATCHER = "/api/logout";
 
-  private static List<String> PATH_TO_SKIP = Arrays.asList(
+  private final static List<String> PATH_TO_SKIP = Arrays.asList(
       ROOT_MATCHER,
       HTML_MATCHER,
       FAVICON_MATCHER,
@@ -77,9 +77,6 @@ public class JwtTokenAuthenticationFilter extends OncePerRequestFilter {
         SecurityContextHolder.getContext().setAuthentication(authentication);
       } catch (Exception e) {
         log.error("Authentication failed! an expected error occurred authenticating the request {} due to {}", request.getRequestURL(), e.getMessage(), e);
-        //        SecurityContextHolder.getContext().setAuthentication(new AnonAuthentication());
-        //        log.error("Switched to Anonymous Authentication, "
-        //            + "because an error occurred setting authentication in security context holder due to " + e.getMessage(), e);
       }
     }
     else if(skipPathRequest(request, PATH_TO_SKIP)) {
@@ -94,7 +91,7 @@ public class JwtTokenAuthenticationFilter extends OncePerRequestFilter {
 
   private boolean skipPathRequest(HttpServletRequest request, List<String> pathsToSkip ) {
     if(pathsToSkip == null)
-      pathsToSkip = new ArrayList<String>();
+      pathsToSkip = new ArrayList<>();
     List<RequestMatcher> matchers = pathsToSkip.stream().map(path -> new AntPathRequestMatcher(path)).collect(Collectors.toList());
     OrRequestMatcher compositeMatchers = new OrRequestMatcher(matchers);
     return compositeMatchers.matches(request);

@@ -16,11 +16,11 @@ public class Try<R> {
     return success;
   }
 
-  public static <R> Try success(R r){
+  public static <R> Try<R> success(R r){
     return new Try<>(null, r);
   }
 
-  public static <ExceptionType> Try failure(Throwable e){
+  public static <R> Try<R> failure(Throwable e){
     return new Try<>(e, null);
   }
 

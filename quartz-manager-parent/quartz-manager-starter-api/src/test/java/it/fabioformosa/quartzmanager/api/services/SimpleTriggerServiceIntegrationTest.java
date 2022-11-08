@@ -22,7 +22,7 @@ class SimpleTriggerServiceIntegrationTest {
   private SimpleTriggerService simpleTriggerService;
 
   @Test
-  public void givenASimpleTriggerCommandDTOWithAllData_whenANewSimpleTriggerIsScheduled_thenShouldGetATriggertDTO() throws SchedulerException, ClassNotFoundException {
+  void givenASimpleTriggerCommandDTOWithAllData_whenANewSimpleTriggerIsScheduled_thenShouldGetATriggertDTO() throws SchedulerException, ClassNotFoundException {
     String simpleTriggerTestName = "simpleTriggerWithAllData";
     String jobClass = "it.fabioformosa.quartzmanager.api.jobs.SampleJob";
     Date startDate = new Date();
@@ -59,7 +59,7 @@ class SimpleTriggerServiceIntegrationTest {
   }
 
   @Test
-  public void givenASimpleTriggerCommandDTOWithMissingOptionalField_whenANewSimpleTriggerIsScheduled_thenShouldGetATriggertDTO() throws SchedulerException, ClassNotFoundException {
+  void givenASimpleTriggerCommandDTOWithMissingOptionalField_whenANewSimpleTriggerIsScheduled_thenShouldGetATriggertDTO() throws SchedulerException, ClassNotFoundException {
     String simpleTriggerTestName = "simpleTriggerWithoutOptionalData";
     String jobClass = "it.fabioformosa.quartzmanager.api.jobs.SampleJob";
 

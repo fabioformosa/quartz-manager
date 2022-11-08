@@ -33,7 +33,7 @@ public class JwtTokenHelper {
 
   private final JwtSecurityProperties jwtSecurityProps;
 
-  private SignatureAlgorithm SIGNATURE_ALGORITHM = SignatureAlgorithm.HS512;
+  private static final SignatureAlgorithm SIGNATURE_ALGORITHM = SignatureAlgorithm.HS512;
 
   public JwtTokenHelper(String appName, JwtSecurityProperties jwtSecurityProps) {
     super();
@@ -41,16 +41,15 @@ public class JwtTokenHelper {
     this.jwtSecurityProps = jwtSecurityProps;
   }
 
-    public Boolean canTokenBeRefreshed(String token) {
-        try {
-            final Date expirationDate = verifyAndGetClaimsFromToken(token).getExpiration();
-            // String username = getUsernameFromToken(token);
-            // UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-            return expirationDate.compareTo(generateCurrentDate()) > 0;
-        } catch (Exception e) {
-            return false;
-        }
+  public Boolean canTokenBeRefreshed(String token) {
+    try {
+      final Date expirationDate = verifyAndGetClaimsFromToken(token).getExpiration();
+      return expirationDate.compareTo(generateCurrentDate()) > 0;
+    } catch (Exception e) {
+      log.error("Error getting claims from jwt token due to " + e.getMessage(), e);
+      return false;
     }
+  }
 
   private Date generateCurrentDate() {
     return new Date(getCurrentTimeMillis());
@@ -73,14 +72,9 @@ public class JwtTokenHelper {
 
   private Claims verifyAndGetClaimsFromToken(String token) {
     Claims claims;
-    try {
-      claims = Jwts.parser().setSigningKey(base64EncodeSecretKey(jwtSecurityProps.getSecret()))
-        .parseClaimsJws(token).getBody();
-    } catch (Exception e) {
-      log.error("Error getting claims from jwt token due to " + e.getMessage(), e);
-      throw e;
-    }
-    if(claims == null)
+    claims = Jwts.parser().setSigningKey(base64EncodeSecretKey(jwtSecurityProps.getSecret()))
+      .parseClaimsJws(token).getBody();
+    if (claims == null)
       throw new IllegalStateException("Not found any claims into the JWT token!");
     return claims;
   }
