@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 @SecurityRequirement(name = OpenAPIConfigConsts.QUARTZ_MANAGER_SEC_OAS_SCHEMA)
 @RestController
 public class JobController {
-  final private JobService jobService;
+  private final JobService jobService;
 
   public JobController(JobService jobService) {
     this.jobService = jobService;
@@ -30,10 +30,10 @@ public class JobController {
   @Operation(summary = "Get the list of job classes eligible for Quartz-Manager")
   @ApiResponses(value = {
     @ApiResponse(responseCode = "200", description = "Return a list of qualified java classes",
-      content = { @Content(mediaType = "application/json",
-        schema = @Schema(implementation = String.class)) })
+      content = {@Content(mediaType = "application/json",
+        schema = @Schema(implementation = String.class))})
   })
-  public List<String> listJobs(){
+  public List<String> listJobs() {
     return jobService.getJobClasses().stream().map(Class::getName).collect(Collectors.toList());
   }
 

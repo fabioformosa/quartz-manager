@@ -13,7 +13,7 @@ class ValidRepetitionValidatorTest {
   private ValidRepetitionValidator validRepetitionValidator = new ValidRepetitionValidator();
 
   @Test
-  public void givenACountAndIntervalSet_whenTheValidatorIsCalled_shouldReturnValid() {
+  void givenACountAndIntervalSet_whenTheValidatorIsCalled_shouldReturnValid() {
     TriggerRepetitionDTO repetitionDTO = new SimpleTriggerInputDTO();
     repetitionDTO.setRepeatCount(10);
     repetitionDTO.setRepeatInterval(1000L);
@@ -22,7 +22,7 @@ class ValidRepetitionValidatorTest {
   }
 
   @Test
-  public void givenACountAndIntervalUnSet_whenTheValidatorIsCalled_shouldReturnInValid() {
+  void givenACountAndIntervalUnSet_whenTheValidatorIsCalled_shouldReturnInValid() {
     TriggerRepetitionDTO repetitionDTO = new SimpleTriggerInputDTO();
     boolean valid = validRepetitionValidator.isValid(repetitionDTO, null);
     Assertions.assertThat(valid).isTrue();
@@ -30,7 +30,7 @@ class ValidRepetitionValidatorTest {
 
   @ParameterizedTest
   @CsvSource({"10, ", ",1000"})
-  public void givenACountAndIntervalNotSet_whenTheValidatorIsCalled_shouldReturnInValid(String repeatCountStr, String repeatIntervalStr) {
+  void givenACountAndIntervalNotSet_whenTheValidatorIsCalled_shouldReturnInValid(String repeatCountStr, String repeatIntervalStr) {
     Integer repeatCount = null;
     if (StringUtils.isNotBlank(repeatCountStr))
       repeatCount = Integer.valueOf(repeatCountStr);

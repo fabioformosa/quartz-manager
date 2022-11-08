@@ -18,7 +18,7 @@ public enum MisfireInstruction {
     this.num = num;
   }
 
-  static public MisfireInstruction parseInt(int num) {
+  public static MisfireInstruction parseInt(int num) {
     return Arrays.stream(MisfireInstruction.values())
       .filter(misfireInstruction -> misfireInstruction.getNum() == num)
       .findFirst().orElseThrow(() -> new IllegalArgumentException(num + " is not a valid misfire instruction code!"));

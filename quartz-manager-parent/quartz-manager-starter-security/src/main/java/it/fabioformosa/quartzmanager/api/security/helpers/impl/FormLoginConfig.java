@@ -67,8 +67,7 @@ public class FormLoginConfig implements LoginConfigurer {
       login = login.failureHandler(authenticationFailureHandler);
     }
 
-    HttpSecurity httpSecurity = login.and();
-    return httpSecurity;
+    return login.and();
   }
 
 }

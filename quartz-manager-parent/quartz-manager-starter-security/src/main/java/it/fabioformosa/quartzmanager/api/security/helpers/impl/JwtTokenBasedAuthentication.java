@@ -1,9 +1,11 @@
 package it.fabioformosa.quartzmanager.api.security.helpers.impl;
 
+import lombok.EqualsAndHashCode;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
 
 
+@EqualsAndHashCode(callSuper = true)
 public class JwtTokenBasedAuthentication extends AbstractAuthenticationToken {
 
   private static final long serialVersionUID = 1L;
@@ -24,10 +26,6 @@ public class JwtTokenBasedAuthentication extends AbstractAuthenticationToken {
   @Override
   public UserDetails getPrincipal() {
     return principle;
-  }
-
-  public String getToken() {
-    return token;
   }
 
   @Override

@@ -52,7 +52,7 @@ class SimpleTriggerServiceIntegrationTest {
     Assertions.assertThat(simpleTriggerDTO.getRepeatCount()).isEqualTo(repeatCount);
     Assertions.assertThat(simpleTriggerDTO.getRepeatInterval()).isEqualTo(repeatInterval);
     Assertions.assertThat(simpleTriggerDTO.getMisfireInstruction()).isEqualTo(misfireInstructionFireNow.getNum());
-    Assertions.assertThat(simpleTriggerDTO.getTimesTriggered()).isEqualTo(0);
+    Assertions.assertThat(simpleTriggerDTO.getTimesTriggered()).isZero();
     Assertions.assertThat(simpleTriggerDTO.getFinalFireTime()).isEqualTo(DateUtils.fromLocalDateTimeToDate(expectedFinalDateTime));
     Assertions.assertThat(simpleTriggerDTO.getNextFireTime()).isEqualTo(startDate);
     Assertions.assertThat(simpleTriggerDTO.getJobKeyDTO().getName()).isNotNull();
@@ -72,13 +72,13 @@ class SimpleTriggerServiceIntegrationTest {
     SimpleTriggerDTO simpleTriggerDTO = simpleTriggerService.scheduleSimpleTrigger(simpleTriggerCommand);
 
     Assertions.assertThat(simpleTriggerDTO.getTriggerKeyDTO().getName()).isEqualTo(simpleTriggerTestName);
-    Assertions.assertThat(simpleTriggerDTO.getTimesTriggered()).isEqualTo(0);
+    Assertions.assertThat(simpleTriggerDTO.getTimesTriggered()).isZero();
     Assertions.assertThat(simpleTriggerDTO.getJobKeyDTO().getName()).isNotNull();
     Assertions.assertThat(simpleTriggerDTO.getStartTime()).isNotNull();
     Assertions.assertThat(simpleTriggerDTO.getEndTime()).isNull();
     Assertions.assertThat(simpleTriggerDTO.getFinalFireTime()).isNotNull();
-    Assertions.assertThat(simpleTriggerDTO.getRepeatCount()).isEqualTo(0);
-    Assertions.assertThat(simpleTriggerDTO.getRepeatInterval()).isEqualTo(0);
+    Assertions.assertThat(simpleTriggerDTO.getRepeatCount()).isZero();
+    Assertions.assertThat(simpleTriggerDTO.getRepeatInterval()).isZero();
   }
 
 }

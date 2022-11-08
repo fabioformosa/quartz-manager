@@ -25,9 +25,9 @@ import static it.fabioformosa.quartzmanager.api.common.config.QuartzManagerPaths
 @RestController
 public class TriggerController {
 
-  static protected final String TRIGGER_CONTROLLER_BASE_URL = QUARTZ_MANAGER_BASE_CONTEXT_PATH + "/triggers";
+   protected static final String TRIGGER_CONTROLLER_BASE_URL = QUARTZ_MANAGER_BASE_CONTEXT_PATH + "/triggers";
 
-  final private TriggerService triggerService;
+   private final TriggerService triggerService;
 
   public TriggerController(TriggerService triggerService) {
     this.triggerService = triggerService;

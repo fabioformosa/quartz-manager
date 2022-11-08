@@ -27,14 +27,14 @@ public class JobService {
       .map(String::trim)
       .filter(StringUtils::isNotBlank)
       .collect(Collectors.toList());
-    if (splitPackages.size() > 0)
+    if (!splitPackages.isEmpty())
       this.jobClassPackages.addAll(splitPackages);
   }
 
   @PostConstruct
   public void initJobClassList() {
     List<Class<? extends AbstractQuartzManagerJob>> foundJobClasses = jobClassPackages.stream().flatMap(jobClassPackage -> findJobClassesInPackage(jobClassPackage).stream()).collect(Collectors.toList());
-    if (foundJobClasses.size() > 0) {
+    if (!foundJobClasses.isEmpty()) {
       log.info("Found the following eligible job classes: {}", foundJobClasses);
       this.jobClasses.addAll(foundJobClasses);
     }

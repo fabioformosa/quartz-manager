@@ -41,7 +41,7 @@ public class JwtTokenAuthenticationFilter extends OncePerRequestFilter {
   private static final String LOGIN_MATCHER = "/api/login";
   private static final String LOGOUT_MATCHER = "/api/logout";
 
-  private final static List<String> PATH_TO_SKIP = Arrays.asList(
+  private static final List<String> PATH_TO_SKIP = Arrays.asList(
       ROOT_MATCHER,
       HTML_MATCHER,
       FAVICON_MATCHER,
@@ -92,7 +92,7 @@ public class JwtTokenAuthenticationFilter extends OncePerRequestFilter {
   private boolean skipPathRequest(HttpServletRequest request, List<String> pathsToSkip ) {
     if(pathsToSkip == null)
       pathsToSkip = new ArrayList<>();
-    List<RequestMatcher> matchers = pathsToSkip.stream().map(path -> new AntPathRequestMatcher(path)).collect(Collectors.toList());
+    List<RequestMatcher> matchers = pathsToSkip.stream().map(AntPathRequestMatcher::new).collect(Collectors.toList());
     OrRequestMatcher compositeMatchers = new OrRequestMatcher(matchers);
     return compositeMatchers.matches(request);
   }

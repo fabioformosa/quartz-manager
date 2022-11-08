@@ -13,7 +13,7 @@ class JobServiceTest {
     JobService jobService = new JobService("it.fabioformosa.quartzmanager.api.jobs, it.fabioformosa.samplepackage");
     jobService.initJobClassList();
     Assertions.assertThat(jobService).isNotNull();
-    Assertions.assertThat(jobService.getJobClasses().size()).isEqualTo(2);
+    Assertions.assertThat(jobService.getJobClasses()).hasSize(2);
   }
 
   @ParameterizedTest
@@ -26,7 +26,7 @@ class JobServiceTest {
     JobService jobService = new JobService(packageStr);
     jobService.initJobClassList();
     Assertions.assertThat(jobService).isNotNull();
-    Assertions.assertThat(jobService.getJobClasses().size()).isEqualTo(1);
+    Assertions.assertThat(jobService.getJobClasses()).hasSize(1);
   }
 
   @ParameterizedTest

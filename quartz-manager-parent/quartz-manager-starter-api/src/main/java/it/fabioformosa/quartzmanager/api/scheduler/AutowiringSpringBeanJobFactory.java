@@ -9,7 +9,7 @@ import org.springframework.scheduling.quartz.SpringBeanJobFactory;
 public final class AutowiringSpringBeanJobFactory extends SpringBeanJobFactory
 		implements ApplicationContextAware {
 
-	private transient AutowireCapableBeanFactory beanFactory;
+	private AutowireCapableBeanFactory beanFactory;
 
 	@Override
 	protected Object createJobInstance(final TriggerFiredBundle bundle)

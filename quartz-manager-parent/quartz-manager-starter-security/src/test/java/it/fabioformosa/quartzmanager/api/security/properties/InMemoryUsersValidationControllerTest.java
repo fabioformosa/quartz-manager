@@ -54,7 +54,7 @@ public class InMemoryUsersValidationControllerTest {
     Assertions.assertThat(result.isBound()).isTrue();
 
     InMemoryAccountProperties inMemoryAccountProperties = result.get();
-    Assertions.assertThat(propertyValidator.validate(inMemoryAccountProperties).size()).isGreaterThan(0);
+    Assertions.assertThat(propertyValidator.validate(inMemoryAccountProperties).size()).isPositive();
 
   }
 
@@ -73,7 +73,7 @@ public class InMemoryUsersValidationControllerTest {
     Assertions.assertThat(result.isBound()).isTrue();
 
     InMemoryAccountProperties inMemoryAccountProperties = result.get();
-    Assertions.assertThat(propertyValidator.validate(inMemoryAccountProperties).size()).isEqualTo(0);
+    Assertions.assertThat(propertyValidator.validate(inMemoryAccountProperties).size()).isZero();
   }
 
 }

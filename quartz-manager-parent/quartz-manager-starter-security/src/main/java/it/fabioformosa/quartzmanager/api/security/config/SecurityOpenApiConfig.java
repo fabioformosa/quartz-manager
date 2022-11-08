@@ -30,7 +30,7 @@ public class SecurityOpenApiConfig {
   @Bean("quartzManagerOpenApiCustomiser")
   public OpenApiCustomiser configureQuartzManagerOpenAPI(JwtSecurityProperties jwtSecurityProps) {
     return openAPI -> {
-      if (jwtSecurityProps.getCookieStrategy().isEnabled() == false)
+      if (!jwtSecurityProps.getCookieStrategy().isEnabled())
         openAPI
           .components(new Components().addSecuritySchemes(OpenAPIConfigConsts.QUARTZ_MANAGER_SEC_OAS_SCHEMA, buildBasicAuthScheme()));
 

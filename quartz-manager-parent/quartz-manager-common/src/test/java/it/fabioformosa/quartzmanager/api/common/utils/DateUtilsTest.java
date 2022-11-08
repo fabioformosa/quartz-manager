@@ -10,7 +10,7 @@ import java.util.Date;
 class DateUtilsTest {
 
   @Test
-  public void givenALocaleDatetime_whenTheConversionIsCalled_shouldGetADate(){
+  void givenALocaleDatetime_whenTheConversionIsCalled_shouldGetADate(){
     LocalDateTime originalLocalDateTime = LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS);
     Date date = DateUtils.fromLocalDateTimeToDate(originalLocalDateTime);
     LocalDateTime convertedLocalDateTime = DateUtils.fromDateToLocalDateTime(date);

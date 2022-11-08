@@ -22,10 +22,10 @@ public abstract class AbstractQuartzManagerJob implements Job {
   private static final Logger log = LoggerFactory.getLogger(AbstractQuartzManagerJob.class);
 
   @Resource
-  private WebhookSender webSocketProgressNotifier;
+  private WebhookSender<TriggerFiredBundleDTO> webSocketProgressNotifier;
 
   @Resource
-  private WebhookSender webSocketLogsNotifier;
+  private WebhookSender<LogRecord> webSocketLogsNotifier;
 
   /**
    * @param jobExecutionContext

@@ -31,9 +31,9 @@ import static it.fabioformosa.quartzmanager.api.common.config.QuartzManagerPaths
 @RequestMapping(SchedulerController.SCHEDULER_CONTROLLER_BASE_URL)
 public class SchedulerController {
 
-  static protected final String SCHEDULER_CONTROLLER_BASE_URL = QUARTZ_MANAGER_BASE_CONTEXT_PATH + "/scheduler";
+  protected static final String SCHEDULER_CONTROLLER_BASE_URL = QUARTZ_MANAGER_BASE_CONTEXT_PATH + "/scheduler";
 
-  final private SchedulerService schedulerService;
+  private final SchedulerService schedulerService;
 
   public SchedulerController(SchedulerService schedulerService) {
     this.schedulerService = schedulerService;

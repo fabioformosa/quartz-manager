@@ -26,7 +26,7 @@ public class JwtUsernamePasswordFiterLoginConfig implements LoginConfigurer {
     this.jwtAuthenticationSuccessHandler = jwtAuthenticationSuccessHandler;
   }
 
-  public GenericFilterBean authenticationProcessingFilter(String loginPath, AuthenticationManager authenticationManager) throws Exception {
+  public GenericFilterBean authenticationProcessingFilter(String loginPath, AuthenticationManager authenticationManager) {
     JwtAuthenticationFilter authenticationProcessingFilter = new JwtAuthenticationFilter(authenticationManager, jwtAuthenticationSuccessHandler);
     authenticationProcessingFilter.setRequiresAuthenticationRequestMatcher(new RegexRequestMatcher(loginPath, HttpMethod.POST.name(), false));
     return authenticationProcessingFilter;

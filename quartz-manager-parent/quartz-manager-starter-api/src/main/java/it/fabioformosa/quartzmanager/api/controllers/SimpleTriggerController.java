@@ -27,9 +27,9 @@ import javax.validation.Valid;
 @RestController
 public class SimpleTriggerController {
 
-  static protected final String SIMPLE_TRIGGER_CONTROLLER_BASE_URL = QuartzManagerPaths.QUARTZ_MANAGER_BASE_CONTEXT_PATH + "/simple-triggers";
+  protected static final String SIMPLE_TRIGGER_CONTROLLER_BASE_URL = QuartzManagerPaths.QUARTZ_MANAGER_BASE_CONTEXT_PATH + "/simple-triggers";
 
-  final private SimpleTriggerService simpleSchedulerService;
+  private final SimpleTriggerService simpleSchedulerService;
 
   public SimpleTriggerController(SimpleTriggerService simpleSchedulerService) {
     this.simpleSchedulerService = simpleSchedulerService;

@@ -46,7 +46,8 @@ public class SchedulerConfig {
   }
 
   @Bean(name = "quartzManagerScheduler")
-  public SchedulerFactoryBean schedulerFactoryBean(@Qualifier("quartzJobFactory") JobFactory jobFactory, @Autowired(required = false) @Qualifier("ManagedQuartzProperties") Properties quartzProperties) throws IOException {
+  public SchedulerFactoryBean schedulerFactoryBean(@Qualifier("quartzJobFactory") JobFactory jobFactory,
+                                                   @Autowired(required = false) @Qualifier("ManagedQuartzProperties") Properties quartzProperties) {
     SchedulerFactoryBean factory = new SchedulerFactoryBean();
     factory.setJobFactory(jobFactory);
     Properties mergedProperties = new Properties();
