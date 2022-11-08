@@ -45,7 +45,7 @@ public class InMemoryUsersValidationControllerTest {
 
   @ParameterizedTest
   @MethodSource("it.fabioformosa.quartzmanager.api.security.properties.InMemoryUsersValidationControllerTest#getNotValidInMemoryProps")
-  void givenAMissingUsername_whenThePropertyValidationIsApplied_thenShouldRaiseValidationError(Map<String, String> properties) throws Exception {
+  void givenAMissingUsername_whenThePropertyValidationIsApplied_thenShouldRaiseValidationError(Map<String, String> properties) {
     ConfigurationPropertySource source = new MapConfigurationPropertySource(properties);
 
     Binder binder = new Binder(source);
@@ -54,7 +54,7 @@ public class InMemoryUsersValidationControllerTest {
     Assertions.assertThat(result.isBound()).isTrue();
 
     InMemoryAccountProperties inMemoryAccountProperties = result.get();
-    Assertions.assertThat(propertyValidator.validate(inMemoryAccountProperties).size()).isPositive();
+    Assertions.assertThat(propertyValidator.validate(inMemoryAccountProperties)).isNotEmpty();
 
   }
 
@@ -73,7 +73,7 @@ public class InMemoryUsersValidationControllerTest {
     Assertions.assertThat(result.isBound()).isTrue();
 
     InMemoryAccountProperties inMemoryAccountProperties = result.get();
-    Assertions.assertThat(propertyValidator.validate(inMemoryAccountProperties).size()).isZero();
+    Assertions.assertThat(propertyValidator.validate(inMemoryAccountProperties)).isEmpty();
   }
 
 }

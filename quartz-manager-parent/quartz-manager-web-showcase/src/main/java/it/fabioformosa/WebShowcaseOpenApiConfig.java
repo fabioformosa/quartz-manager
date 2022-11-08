@@ -12,7 +12,7 @@ public class WebShowcaseOpenApiConfig {
 
   @Bean
   public OpenAPI webshowcaseOpenAPI() {
-    OpenAPI openAPI = new OpenAPI()
+    return new OpenAPI()
       .info(new Info()
         .title("QUARTZ MANAGER DEMO API")
         .description("Quartz Manager- DEMO - REST API")
@@ -20,7 +20,6 @@ public class WebShowcaseOpenApiConfig {
         .license(new License()
           .name("Apache License 2.0")
           .url("https://github.com/fabioformosa/quartz-manager/blob/master/LICENSE")));
-    return openAPI;
   }
 
   @Bean

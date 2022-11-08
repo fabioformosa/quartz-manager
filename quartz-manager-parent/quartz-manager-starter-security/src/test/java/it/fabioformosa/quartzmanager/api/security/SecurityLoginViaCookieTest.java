@@ -25,7 +25,7 @@ import org.springframework.test.context.TestPropertySource;
   "quartz-manager.security.accounts.in-memory.users[0].password=bar",
   "quartz-manager.security.accounts.in-memory.users[0].roles[0]=admin",
 })
-public class SecurityLoginViaCookieTest extends AbstractSecurityLoginTest {
+class SecurityLoginViaCookieTest extends AbstractSecurityLoginTest {
 
   @Test
   void givenAnAnonymousUser_whenTheLoginIsSubmitted_thenShouldReturn2xx() {

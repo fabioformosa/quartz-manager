@@ -40,7 +40,7 @@ public class OpenApiConfig {
   public GroupedOpenApi quartzManagerStoreOpenApi(@Autowired(required = false) @Qualifier("quartzManagerOpenApiCustomiser") Optional<OpenApiCustomiser> openApiCustomiser) {
     String[] paths = {QuartzManagerPaths.QUARTZ_MANAGER_BASE_CONTEXT_PATH + "/**"};
     GroupedOpenApi.Builder groupedOpenApiBuilder = GroupedOpenApi.builder().group("quartz-manager").pathsToMatch(paths);
-    openApiCustomiser.ifPresent(oaCustomizer -> groupedOpenApiBuilder.addOpenApiCustomiser(oaCustomizer));
+    openApiCustomiser.ifPresent(groupedOpenApiBuilder::addOpenApiCustomiser);
     return groupedOpenApiBuilder.build();
   }
 

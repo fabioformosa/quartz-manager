@@ -35,9 +35,6 @@ public class SimpleTriggerService extends AbstractSchedulerService {
   }
 
   public TriggerDTO rescheduleSimpleTrigger(SimpleTriggerCommandDTO triggerCommandDTO) throws SchedulerException {
-    //Optional<TriggerKey> optionalTriggerKey = getTriggerByKey(name);
-//    TriggerKey triggerKey = optionalTriggerKey.orElse(TriggerKey.triggerKey(name));
-
     SimpleTrigger newSimpleTrigger = conversionService.convert(triggerCommandDTO, SimpleTrigger.class);
 
     TriggerKey triggerKey = TriggerKey.triggerKey(triggerCommandDTO.getTriggerName());
