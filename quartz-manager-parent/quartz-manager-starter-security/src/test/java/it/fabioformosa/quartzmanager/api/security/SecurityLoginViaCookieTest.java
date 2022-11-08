@@ -31,8 +31,8 @@ public class SecurityLoginViaCookieTest extends AbstractSecurityLoginTest {
   void givenAnAnonymousUser_whenTheLoginIsSubmitted_thenShouldReturn2xx() {
     ResponseEntity<UserTokenState> responseEntity = doLogin();
     Assertions.assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
-    Assertions.assertThat(responseEntity.getBody().getAccess_token()).isNotEmpty();
-    Assertions.assertThat(responseEntity.getBody().getExpires_in_sec()).isNotNull().isPositive();
+    Assertions.assertThat(responseEntity.getBody().getAccessToken()).isNotEmpty();
+    Assertions.assertThat(responseEntity.getBody().getExpiresInSec()).isNotNull().isPositive();
     Assertions.assertThat(responseEntity.getHeaders().get("set-cookie")).hasSizeGreaterThan(0);
     Assertions.assertThat(responseEntity.getHeaders().get("set-cookie").get(0)).startsWith("AUTH-TOKEN");
   }

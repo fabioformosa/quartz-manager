@@ -21,7 +21,7 @@ export class UserService {
 
   refreshToken() {
     this.apiService.get(this.config.refresh_token_url).subscribe(res => {
-        if (res.access_token !== null) {
+        if (res.accessToken !== null) {
           return this.getUserInfo().toPromise()
             .then(user => {
               this.currentUser = user;
