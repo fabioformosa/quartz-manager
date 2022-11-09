@@ -4,13 +4,15 @@
 
 
 # QUARTZ MANAGER
-Quartz Manager is a library you can import in your spring webapp to easily enable the [Quartz Scheduler](http://www.quartz-scheduler.org/) and to control it by REST APIs or by a UI Manager Panel (angular-based). 
+In the last decade, the [Quartz Scheduler](http://www.quartz-scheduler.org/) has become the most adopted opensource job scheduling library for Java applications.  
 
-Your Spring Webapp should provide the java class of the job you want to schedule. Including the Quartz Manager lib, your project will provide the REST API and (optionally) the UI to launch and control the job.  
-The UI Dashboard is composed by a management panel to set the quartz trigger, to start/stop the scheduler and a log panel with a progress bar to display the job output. 
+**Quartz Manager** provides a REST API layer and a handy console UI to easily control and monitor a quartz scheduler.  
+Quartz Manager is a Java library you can import in your Spring-Based Web Application to run scheduled jobs, start&stop them and get a stream of execution outcomes, through HTTP calls against the Quartz Manager API or in a visual manner through the Quartz Manager UI dashboard.  
+
+Quartz Manager can either coexist, in your project, with your existing instance of Quartz, it 
 
 ![](https://github.com/fabioformosa/quartz-manager/blob/master/quartz-manager-parent/quartz-manager-web-showcase/src/main/resources/quartz-manager-4-screenshot.png)
-
+![](https://github.com/fabioformosa/quartz-manager/blob/develop/quartz-manager-parent/quartz-manager-web-showcase/src/main/resources/quartz-manager-4-screenshot.png)
 ## FEATURES
 * You can set up a simple trigger in terms of: daily frequency and and max occurrences.
 * You can start, pause and resume the quartz job clicking the play button.
