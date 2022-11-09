@@ -6,65 +6,95 @@
 # QUARTZ MANAGER
 In the last decade, the [Quartz Scheduler](http://www.quartz-scheduler.org/) has become the most adopted opensource job scheduling library for Java applications.  
 
-**Quartz Manager** provides a REST API layer and a handy console UI to easily control and monitor a quartz scheduler.  
-Quartz Manager is a Java library you can import in your Spring-Based Web Application to run scheduled jobs, start&stop them and get a stream of execution outcomes, through HTTP calls against the Quartz Manager API or in a visual manner through the Quartz Manager UI dashboard.  
+**Quartz Manager** enriches it with a REST API layer and a handy console UI to easily control and monitor a Quartz scheduler.  
+Quartz Manager is a Java library you can import in your Spring-Based Web Application to run scheduled jobs, start&stop them and get the job outcomes. You can do it through HTTP calls against the Quartz Manager API or in a visual manner through the Quartz Manager UI dashboard.  
 
-Quartz Manager can either coexist, in your project, with your existing instance of Quartz, it 
 
-![](https://github.com/fabioformosa/quartz-manager/blob/master/quartz-manager-parent/quartz-manager-web-showcase/src/main/resources/quartz-manager-4-screenshot.png)
+## UI DASHBOARD
+THE UI is a single-page-application provided by the Quartz Manager Java library itself. It leverages the websockets to receive in real-time the trigger updates and the outcomes of the job executions.  
+
 ![](https://github.com/fabioformosa/quartz-manager/blob/develop/quartz-manager-parent/quartz-manager-web-showcase/src/main/resources/quartz-manager-4-screenshot.png)
-## FEATURES
-* You can set up a simple trigger in terms of: daily frequency and and max occurrences.
-* You can start, pause and resume the quartz job clicking the play button.
+
+## API
+Quart-Manager exposes REST controllers which are documented by an OpenAPI Specification. 
+
+![](https://github.com/fabioformosa/quartz-manager/blob/develop/quartz-manager-parent/quartz-manager-web-showcase/src/main/resources/quartz-manager-4-swagger.png)
+
+
+# HOW IT WORKS
+Quartz Manager can either coexist, in your project, with your existing instance of Quartz or it can import itself the Quartz dependency. In the latter case, Quartz Manager speeds up the setup of a new project, configuring the Quartz Scheduler and protecting the API and the UI with an authentication model based on [JWT](https://jwt.io). You can, for instance, enable the Quartz persistance with a database, without knowing how to do it in details.
+
+
+**FEATURES**
+* You can schedule a [Quartz Simple Trigger](http://www.quartz-scheduler.org/documentation/quartz-2.3.0/tutorials/tutorial-lesson-05.html) which allows you to start a job now or in a specific datetime and to set it as recurring job with a certain time frequency, in a unlimited way or, alternatevely, limited on the number of fires or within a certain end date.
+* The job classes, which can be eligible to be scheduled and monitored by Quartz Manager, have to extend the  `AbstractQuartzManagerJob`.
+* You can start, pause and resume the quartz scheduler via API or clicking the play button.
 * Leveraging on an active web-socket, the `Quartz-Manager-UI` updates in real time the progress bar and it displays the list of the latest logs produced by your quartz job.
-* You can enable a secure layer, if your project doesn't have any, to give access only to authenticated users.
-* You can enable a persistent layer, to persist the config and the progress of your trigger, in postgresql database.
+* You can enable a secure layer, if your project doesn't have any, to give access at the API and the UI only to authenticated users.
+* You can enable a persistent layer, to persist the config and the progress of your trigger, in a postgresql database.
 
-## LIMITATIONS
-Initially `Quartz-Manager` was born like a pet-project to start&monitor a repetitive job. Now there's a work-in-progress roadmap to convert it in full-fledged library to manager a [Quartz Scheduler](http://www.quartz-scheduler.org/).  
-At the moment, these are the limitations:
+# QUICK START
 
-* Quartz-Manager imports [Quartz Scheduler](http://www.quartz-scheduler.org/) as well, you cannot import Quartz-Manager in a project which has already imported [Quartz Scheduler](http://www.quartz-scheduler.org/).
-* You cannot start multiple triggers or multiple jobs.
-* You can start only a simple trigger based on a daily frequency and a max number of occurencies.
-* You cannot start/stop a trigger, but the entire scheduler.
+**Requirements** 
+  Java 9+, Spring Framework 5+ (Spring Boot 2.x)
+  
+Quart Manager is a modular library:
+* quartz-manager-api (mandatory)
+* quartz-manager-ui (optional)
+* quartz-manager-security (optional)
+* quartz-manager-persistence (optional)
 
-Take a look a the [Project Roadmap](https://github.com/fabioformosa/quartz-manager/projects) and feel free to open an issue or add a commment on an existing one, to give your feedback about planned enhancements. Your opinion is important to understand the priority.
 
-## QUICK START
+Below the list of dependencies and the spring application.properties you can set.
 
-* **Requirements** 
-  Java 8+
+### Quart Manager API Lib
 
-* **add the dependency**
+* **Dependency**
 
-MAVEN
-
+**Maven** 
 ```
 <dependency>
   <groupId>it.fabioformosa.quartz-manager</groupId>
   <artifactId>quartz-manager-starter-api</artifactId>
-  <version>3.1.0</version>
-</dependency>
-
-<!-- OPTIONALLY -->
-<dependency>
-  <groupId>it.fabioformosa.quartz-manager</groupId>
-  <artifactId>quartz-manager-starter-ui</artifactId>
-  <version>3.1.0</version>
+  <version>4.0.0</version>
 </dependency>
 ```
-
-GRADLE
-  
+**Gradle**  
 ```
-compile group: 'it.fabioformosa.quartz-manager', name: 'quartz-manager-starter-api', version: '3.1.0'
-
-//optionally
-compile group: 'it.fabioformosa.quartz-manager', name: 'quartz-manager-starter-ui', version: '3.1.0'
-
+implementation group: 'it.fabioformosa.quartz-manager', name: 'quartz-manager-starter-api', version: '4.0.0'
 ```
-Import  `Quartz-Manager-Starter-UI` as well, if you want to use the Quartz Manager API by the angular frontend.  
+
+* **Quartz Manager Job Classes**
+The job classes, which can be eligible for triggers managed by Quartz Manager, must extend the super-class `AbstractLoggingJob`. 
+In this way, Quartz Manager is able to collect and display the outcomes at the UI console.
+
+ ```
+ public class SampleJob extends AbstractLoggingJob {
+
+    @Override
+    public LogRecord doIt(JobExecutionContext jobExecutionContext) {
+        ... do stuff ...
+        return new LogRecord(LogType.INFO, "Hello from QuartManagerDemo!");
+    }
+
+}
+```
+
+* **App Props**
+
+TBD
+| Property    | Values      | Description     |
+| :---        |:---         |:---             |
+| quartz-manager.foo              | boolean             | TBD   |
+| quartz-manager.foo        | string              |       |
+| quartz-manager.foo    | string              |       |
+
+
+* **REST API**  
+You can access the REST API, through the swagger-ui. Open the URL:  
+[http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html)
+
+(Change the port and the contextPath accordingly with the setup of your webapp)
 
 * **add a `quartz.properties` file in the classpath (`src/main/resources`)**
 
@@ -76,17 +106,7 @@ org.quartz.threadPool.threadCount=1
 
 * **Create the job class that you want to schedule**
  
- ```
- public class SampleJob extends AbstractLoggingJob {
 
-    @Override
-    public LogRecord doIt(JobExecutionContext jobExecutionContext) {
-        return new LogRecord(LogType.INFO, "Hello from QuartManagerDemo!");
-    }
-
-}
-```
-Extend the super-class `AbstractLoggingJob`
 
 
 * **Enable quartz-manager adding into the application.yml**
@@ -99,17 +119,30 @@ quartz-manager:
   jobClass: <QUALIFIED NAME OF THE YOUR JOB CLASS>
 ```
 
-* **REST API**  
-You can access the REST API, through the swagger-ui. Open the URL:  
-[http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html)
+### Quart Manager API
 
-(Change the port and the contextPath accordingly with the setup of your webapp)
+Import  `Quartz-Manager-Starter-UI` as well, if you want to use the Quartz Manager API by the angular frontend.  
+
+TBD
 
 * **Frontend**  
 If you've imported the `quartz-manager-starter-ui` you can open the UI at URL:  
 [http://localhost:8080/quartz-manager-ui/index.html](http://localhost:8080/quartz-manager-ui/index.html)
 
 (Change the port and the contextPath accordingly with the setup of your webapp)
+
+### Quart Manager SEcurity
+
+TBD
+
+### Quart Manager Persistence
+
+TBD
+
+
+
+
+
 
 ## HOW-TO
 
@@ -215,6 +248,16 @@ Take a loot to the project [Quartz-Manager Demo](https://github.com/fabioformosa
 | quartz-manager.accounts.in-memory.enabled              | boolean             | Enable in memory users to login   |
 | quartz-manager.accounts.in-memory.users[0].name        | string              |       |
 | quartz-manager.accounts.in-memory.users[0].password    | string              |       |
+
+## LIMITATIONS
+Initially `Quartz-Manager` was born like a pet-project to start&monitor a repetitive job. Now there's a work-in-progress roadmap to convert it in full-fledged library to manager a [Quartz Scheduler](http://www.quartz-scheduler.org/).  
+At the moment, these are the limitations:
+
+* You cannot start multiple triggers or multiple jobs.
+* You can start only a simple trigger based on a daily frequency and a max number of occurencies.
+* You cannot start/stop a trigger, but the entire scheduler.
+
+Take a look a the [Project Roadmap](https://github.com/fabioformosa/quartz-manager/projects) and feel free to open an issue or add a commment on an existing one, to give your feedback about planned enhancements. Your opinion is important to understand the priority.
 
 ## ROADMAP
 Open the [Project Roadmap](https://github.com/fabioformosa/quartz-manager/projects) to take a look at the plan of Quartz Manager.  
