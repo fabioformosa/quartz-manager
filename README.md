@@ -132,39 +132,40 @@ You can optionally import the following dependency to have the UI Dashboard to i
 implementation group: 'it.fabioformosa.quartz-manager', name: 'quartz-manager-starter-ui', version: '4.0.0'
 ``` 
 
-Reach out the UI Console at URL:  
+### Reach out the UI Console at URL
 [http://localhost:8080/quartz-manager-ui/index.html](http://localhost:8080/quartz-manager-ui/index.html)
 
 ## Quart Manager Security
 
-TBD
+Import this optional dependency, if you want enable a security layer and allow the access to the REST API and to the UI only to authenticated users
 
-If you want enable a security layer and allow the access to the REST API and to the UI only to authenticated users, add the dependency:
+### Dependency
 
-MAVEN
+#### Maven
 
 ```
 <dependency>
   <groupId>it.fabioformosa.quartz-manager</groupId>
   <artifactId>quartz-manager-starter-security</artifactId>
-  <version>3.1.0</version>
+  <version>4.0.0</version>
 </dependency>
 ```
 
-GRADLE
+#### Gradle
 
 ```
-compile group: 'it.fabioformosa.quartz-manager', name: 'quartz-manager-starter-security', version: '3.1.0'
+compile group: 'it.fabioformosa.quartz-manager', name: 'quartz-manager-starter-security', version: '4.0.0'
 ```
 
 
-## APPLICATION PROPERTIES
+### Quart Manager Security - App Props
 
-| Property    | Values      | Description     |
-| :---        |:---         |:---             |
-| quartz-manager.accounts.in-memory.enabled              | boolean             | Enable in memory users to login   |
-| quartz-manager.accounts.in-memory.users[0].name        | string              |       |
-| quartz-manager.accounts.in-memory.users[0].password    | string              |       |
+| Property                        | Values   |Mandatory | Default | Description     |
+| :---                            |:---      |:---      |:---     |:--        |
+| quartz-manager.accounts.in-memory.enabled | boolean   | ??      |         |Enable in memory users to login |
+|quartz-manager.accounts.in-memory.users[0].name      | boolean  | No       | false   |whether to create an OpenAPI instance to expose the OAS and the Swagger UI |
+|quartz-manager.accounts.in-memory.users[0].password      | boolean  | No       | false   |whether to create an OpenAPI instance to expose the OAS and the Swagger UI |
+
 
 and in your application.yml:
 
