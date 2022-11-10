@@ -91,10 +91,10 @@ In this way, Quartz Manager is able to collect and display the outcomes at the U
 
 ### Step 3. Quartz Manager API - App Props
 
-| Property                        | Values   |Mandatory | Default | Description     |
-| :---                            |:---      |:---      |:---     |:--        |
-| quartz-manager.jobClassPackages | string   | Yes      |         |java base package which contains your job classes |
-| quartz-manager.oas.enabled      | boolean  | No       | false   |whether to create an OpenAPI instance to expose the OAS and the Swagger UI |
+| Property                           | Values   |Mandatory | Default | Description                                                               |
+| :---                               |:---      |:---      |:---     |:--                                                                        |
+| quartz-manager.jobClassPackages    | string   | Yes      |         |java base package which contains your job classes                          |
+| quartz-manager.oas.enabled         | boolean  | No       | false   |whether to create an OpenAPI instance to expose the OAS and the Swagger UI |
 
 
 ### REST API & OAS
