@@ -9,12 +9,13 @@
 # QUARTZ MANAGER
 In the last decade, the [Quartz Scheduler](http://www.quartz-scheduler.org/) has become the most adopted opensource job scheduling library for Java applications.  
 
-**Quartz Manager** enriches it with a REST API layer and a handy console UI to easily control and monitor a Quartz scheduler.  
+**Quartz Manager** enriches it with a **REST API** layer and a handy **UI console** to easily control and monitor a Quartz scheduler.  
+
 Quartz Manager is a Java library you can import in your Spring-Based Web Application to run scheduled jobs, start&stop them and get the job outcomes. You can do it through HTTP calls against the Quartz Manager API or in a visual manner through the Quartz Manager UI dashboard.  
 
 
 ## UI DASHBOARD
-Quartz Manager UI is a single-page-application provided by the Quartz Manager Java library itself. It leverages the websockets to receive in real-time the trigger updates and the outcomes of the job executions.  
+The **Quartz Manager UI** is a single-page-application provided by the Quartz Manager Java library itself. It leverages the websockets to receive in real-time the trigger updates and the outcomes of the job executions.  
 
 ![](https://github.com/fabioformosa/quartz-manager/blob/develop/quartz-manager-parent/quartz-manager-web-showcase/src/main/resources/quartz-manager-4-screenshot.png)
 
@@ -29,11 +30,11 @@ Quartz Manager can either coexist with your existing instance of Quartz or it ca
 
 In the first case, Quartz Manager is compatible with Quartz v2.3.x . Quartz Manager creates and configures its own instance of Quartz Scheduler and it manages only the jobs and the triggers created through it. Your other jobs and triggers, running in the existing quartz instance, are out of the scope of Quartz Manager.  
 
-In the latter case, in which there isn't an existing quartz instance, you can rely on Quartz Manager to speeds up the setup of a Quartz instance, with a persistent storage also, if you need. Futhermore, if you started a bare project from scratch, just to run scheduled jobs, Quartz Manager comes with the option to enable an security layer to protect the API and the UI access with an authentication model based on [JWT](https://jwt.io).
+In the latter case, in which there isn't an existing quartz instance, you can rely on Quartz Manager to speed up the setup of a Quartz instance, with a persistent storage also if you need it. Futhermore, if you start a bare project from scratch, just to run scheduled jobs, Quartz Manager comes with the option to enable a security layer to protect the API and the UI with an authentication model based on [JWT](https://jwt.io).
 
 **FEATURES**
-* You can schedule a [Quartz Simple Trigger](http://www.quartz-scheduler.org/documentation/quartz-2.3.0/tutorials/tutorial-lesson-05.html) which allows you to start a job now or in a specific date-time and to set it as recurring job with a certain time frequency, in a unlimited way or, alternatevely, limited on the number of fires or within a certain end date.
-* You can start, pause and resume the quartz scheduler via API or clicking the play button.
+* You can schedule a [Quartz Simple Trigger](http://www.quartz-scheduler.org/documentation/quartz-2.3.0/tutorials/tutorial-lesson-05.html) which allows you to start a job now or in a specific date-time, to set it as a recurring job with a certain time frequency, unlimited or limited on the number of fires and within a certain end date.
+* You can start, pause and resume the quartz scheduler via API or clicking the start/stop buttons at the UI console.
 * Leveraging on an active web-socket, the `Quartz-Manager-UI` updates in real time the progress bar and it displays the list of the latest logs produced by your quartz job.
 * You can enable a secure layer, if your project doesn't have any, to give access at the API and the UI only to authenticated users.
 * You can enable a persistent layer, to persist the config and the progress of your trigger, in a postgresql database.
@@ -57,7 +58,7 @@ Below the list of the quartz-manager modules you can import.
 This is the only mandatory module of the library.   
 Add the dependency, make eligible for Quart Manager the job classes and set the props in your `application.properties` file.
 
-### Dependency
+### Step 1. Dependency
 
 #### Maven
 ```
@@ -72,7 +73,7 @@ Add the dependency, make eligible for Quart Manager the job classes and set the 
 implementation group: 'it.fabioformosa.quartz-manager', name: 'quartz-manager-starter-api', version: '4.0.0'
 ```
 
-### Quartz Manager Job Classes
+### Step 2. Quartz Manager Job Classes
 The job classes, which can be eligible for triggers managed by Quartz Manager, must extend the super-class `AbstractLoggingJob`. 
 In this way, Quartz Manager is able to collect and display the outcomes at the UI console.
 
@@ -88,7 +89,7 @@ In this way, Quartz Manager is able to collect and display the outcomes at the U
 }
 ```
 
-#### Quart Manager API - App Props
+### Step 3. Quart Manager API - App Props
 
 | Property                        | Values   |Mandatory | Default | Description     |
 | :---                            |:---      |:---      |:---     |:--        |
@@ -96,14 +97,14 @@ In this way, Quartz Manager is able to collect and display the outcomes at the U
 | quartz-manager.oas.enabled      | boolean  | No       | false   |whether to create an OpenAPI instance to expose the OAS and the Swagger UI |
 
 
-#### REST API & OAS
+### REST API & OAS
 Set the app prop `quartz-manager.oas.enabled=true` you want to expose the OpenApi Specification of the Quartz Manager APIs.
 Reach out the swagger-ui at the URL:
 [http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html)
 
 If your project has already an OpenAPI instance and you've set `quartz-manager.oas.enabled=true`, then make sure to add an OpenApiGroup to group the API of your application. Quart Manager exposes its API in group called "Quartz Manager".
 
-#### QUARTZ SETTINGS
+### QUARTZ SETTINGS
 Quartz Manager creates its own instance of a [Quartz Scheduler](http://www.quartz-scheduler.org/). You can customize the configuration of the Quartz managed by Quartz Manager creating a file `managed-quartz.properties` in the classpath (`src/main/resources`). For further details about the quartz properties, click [here](http://www.quartz-scheduler.org/documentation/quartz-2.3.0/configuration/).
 By default, the managed quartz instance is instantiated with the following props:
 
@@ -114,6 +115,7 @@ org.quartz.threadPool.threadCount=1
 
 
 ## Quart Manager UI
+You can optionally import the following dependency to have the UI Dashboard to interact with the Quartz Manager API.
 
 ### Dependency
 
@@ -130,10 +132,10 @@ org.quartz.threadPool.threadCount=1
 implementation group: 'it.fabioformosa.quartz-manager', name: 'quartz-manager-starter-ui', version: '4.0.0'
 ``` 
 
-you can open the UI at URL:  
+Reach out the UI Console at URL:  
 [http://localhost:8080/quartz-manager-ui/index.html](http://localhost:8080/quartz-manager-ui/index.html)
 
-### Quart Manager Security
+## Quart Manager Security
 
 TBD
 
