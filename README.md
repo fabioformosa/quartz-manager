@@ -54,7 +54,7 @@ In order to decrease the overall configuration time for the project, all modules
 
 Below the list of the quartz-manager modules you can import.
 
-## Quart Manager API Lib
+## Quartz Manager API Lib
 This is the only mandatory module of the library.   
 Add the dependency, make eligible for Quart Manager the job classes and set the props in your `application.properties` file.
 
@@ -89,7 +89,7 @@ In this way, Quartz Manager is able to collect and display the outcomes at the U
 }
 ```
 
-### Step 3. Quart Manager API - App Props
+### Step 3. Quartz Manager API - App Props
 
 | Property                        | Values   |Mandatory | Default | Description     |
 | :---                            |:---      |:---      |:---     |:--        |
@@ -114,7 +114,7 @@ org.quartz.threadPool.threadCount=1
 ```
 
 
-## Quart Manager UI
+## Quartz Manager UI
 You can optionally import the following dependency to have the UI Dashboard to interact with the Quartz Manager API.
 
 ### Dependency
@@ -135,7 +135,7 @@ implementation group: 'it.fabioformosa.quartz-manager', name: 'quartz-manager-st
 ### Reach out the UI Console at URL
 [http://localhost:8080/quartz-manager-ui/index.html](http://localhost:8080/quartz-manager-ui/index.html)
 
-## Quart Manager Security
+## Quartz Manager Security
 
 Import this optional dependency, if you want enable a security layer and allow the access to the REST API and to the UI only to authenticated users
 
@@ -158,7 +158,7 @@ compile group: 'it.fabioformosa.quartz-manager', name: 'quartz-manager-starter-s
 ```
 
 
-### Quart Manager Security - App Props
+### Quartz Manager Security - App Props
 
 | Property                        | Values   |Mandatory | Default | Description     |
 | :---                            |:---      |:---      |:---     |:--        |
