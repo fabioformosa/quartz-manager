@@ -14,7 +14,7 @@ Quartz Manager is a Java library you can import in your Spring-Based Web Applica
 
 
 ## UI DASHBOARD
-THE UI is a single-page-application provided by the Quartz Manager Java library itself. It leverages the websockets to receive in real-time the trigger updates and the outcomes of the job executions.  
+Quartz Manager UI is a single-page-application provided by the Quartz Manager Java library itself. It leverages the websockets to receive in real-time the trigger updates and the outcomes of the job executions.  
 
 ![](https://github.com/fabioformosa/quartz-manager/blob/develop/quartz-manager-parent/quartz-manager-web-showcase/src/main/resources/quartz-manager-4-screenshot.png)
 
@@ -25,12 +25,12 @@ Quart-Manager exposes REST controllers which are documented by an OpenAPI Specif
 
 
 # HOW IT WORKS
-Quartz Manager can either coexist, in your project, with your existing instance of Quartz or it can import itself the Quartz dependency. In the latter case, Quartz Manager speeds up the setup of a new project, configuring the Quartz Scheduler and protecting the API and the UI with an authentication model based on [JWT](https://jwt.io). You can, for instance, enable the Quartz persistance with a database, without knowing how to do it in details.
+Quartz Manager can either coexist, in your project, with your existing instance of Quartz or it can import itself the Quartz dependency.   
+In the latter case, Quartz Manager speeds up the setup of a new project, configuring the Quartz Scheduler and protecting the API and the UI with an authentication model based on [JWT](https://jwt.io). You can, for instance, enable the Quartz persistance with a database, without knowing how to do it in details.
 
 
 **FEATURES**
-* You can schedule a [Quartz Simple Trigger](http://www.quartz-scheduler.org/documentation/quartz-2.3.0/tutorials/tutorial-lesson-05.html) which allows you to start a job now or in a specific datetime and to set it as recurring job with a certain time frequency, in a unlimited way or, alternatevely, limited on the number of fires or within a certain end date.
-* The job classes, which can be eligible to be scheduled and monitored by Quartz Manager, have to extend the  `AbstractQuartzManagerJob`.
+* You can schedule a [Quartz Simple Trigger](http://www.quartz-scheduler.org/documentation/quartz-2.3.0/tutorials/tutorial-lesson-05.html) which allows you to start a job now or in a specific date-time and to set it as recurring job with a certain time frequency, in a unlimited way or, alternatevely, limited on the number of fires or within a certain end date.
 * You can start, pause and resume the quartz scheduler via API or clicking the play button.
 * Leveraging on an active web-socket, the `Quartz-Manager-UI` updates in real time the progress bar and it displays the list of the latest logs produced by your quartz job.
 * You can enable a secure layer, if your project doesn't have any, to give access at the API and the UI only to authenticated users.
@@ -51,6 +51,8 @@ Quart Manager is a modular library:
 Below the list of dependencies and the spring application.properties you can set.
 
 ### Quart Manager API Lib
+This is the only mandatory module of the library. 
+Add the dependency, make eligible for Quart Manager the job classes and set the props in your `application.properties` file.
 
 * **Dependency**
 
@@ -85,19 +87,18 @@ In this way, Quartz Manager is able to collect and display the outcomes at the U
 
 * **App Props**
 
-TBD
-| Property    | Values      | Description     |
-| :---        |:---         |:---             |
-| quartz-manager.foo              | boolean             | TBD   |
-| quartz-manager.foo        | string              |       |
-| quartz-manager.foo    | string              |       |
+| Property                        | Values   |Mandatory | Default | Description     |
+| :---                            |:---      |:---      |:---     |:--        |
+| quartz-manager.jobClassPackages | string   | Yes      |         |java base package which contains your job classes |
+| quartz-manager.oas.enabled      | boolean  | No       | false   |whether to create an OpenAPI instance to expose the OAS and the Swagger UI |
 
 
 * **REST API**  
-You can access the REST API, through the swagger-ui. Open the URL:  
+Set the app prop `quartz-manager.oas.enabled=true` you want to expose the OpenApi Specification of the Quartz Manager APIs.
+Reach out the swagger-ui at the URL:
 [http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html)
 
-(Change the port and the contextPath accordingly with the setup of your webapp)
+If your project has already an OpenAPI instance and you've set `quartz-manager.oas.enabled=true`, then make sure to add an OpenApiGroup to group the API of your application. Quart Manager exposes its API in group called "Quartz Manager".
 
 * **add a `quartz.properties` file in the classpath (`src/main/resources`)**
 
