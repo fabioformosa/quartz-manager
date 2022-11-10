@@ -114,7 +114,7 @@ org.quartz.threadPool.threadCount=1
 ```
 
 
-## Quartz Manager UI
+## Quartz Manager UI Lib
 You can optionally import the following dependency to have the UI Dashboard to interact with the Quartz Manager API.
 
 ### Dependency
@@ -135,7 +135,7 @@ implementation group: 'it.fabioformosa.quartz-manager', name: 'quartz-manager-st
 ### Reach out the UI Console at URL
 [http://localhost:8080/quartz-manager-ui/index.html](http://localhost:8080/quartz-manager-ui/index.html)
 
-## Quartz Manager Security
+## Quartz Manager Security Lib
 
 Import this optional dependency, if you want enable a security layer and allow the access to the REST API and to the UI only to authenticated users
 
@@ -158,13 +158,16 @@ compile group: 'it.fabioformosa.quartz-manager', name: 'quartz-manager-starter-s
 ```
 
 
-### Quartz Manager Security - App Props
+### Quartz Manager Security Lib - App Props
 
-| Property                        | Values   |Mandatory | Default | Description     |
-| :---                            |:---      |:---      |:---     |:--        |
-| quartz-manager.accounts.in-memory.enabled | boolean   | ??      |         |Enable in memory users to login |
-|quartz-manager.accounts.in-memory.users[0].name      | boolean  | No       | false   |whether to create an OpenAPI instance to expose the OAS and the Swagger UI |
-|quartz-manager.accounts.in-memory.users[0].password      | boolean  | No       | false   |whether to create an OpenAPI instance to expose the OAS and the Swagger UI |
+| Property                                                    | Values   |Mandatory | Default | Description     |
+| :---                                                        |:---      |:---      |:---     |:--              |
+| quartz-manager.security.jwt.secret                          | string   |          |         | Secret to sign the JWT Token |          
+| quartz-manager.security.jwt.expiration-in-sec               | number   | no       | 28800   |                              |
+| quartz-manager.security.accounts.in-memory.enabled          | boolean  | no       | true    |                              |
+|quartz-manager.security.accounts.in-memory.users[0].username | string   | yes      |         |                              | 
+|quartz-manager.security.accounts.in-memory.users[0].password | string   | yes      |         |                              |
+|quartz-manager.security.accounts.in-memory.users[0].roles[0] | string   | yes      |         | set the value ADMIN          |
 
 
 and in your application.yml:
