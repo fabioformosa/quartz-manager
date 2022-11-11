@@ -97,7 +97,7 @@ In this way, Quartz Manager is able to collect and display the outcomes at the U
 | quartz-manager.oas.enabled         | boolean  | No       | false   |whether to create an OpenAPI instance to expose the OAS and the Swagger UI |
 
 
-### REST API & OAS
+### REST API & OpenAPI Specification
 Set the app prop `quartz-manager.oas.enabled=true` you want to expose the OpenApi Specification of the Quartz Manager APIs.
 Reach out the swagger-ui at the URL:
 [http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html)
@@ -137,7 +137,15 @@ implementation group: 'it.fabioformosa.quartz-manager', name: 'quartz-manager-st
 
 ## Quartz Manager Security Lib
 
-Import this optional dependency, if you want enable a security layer and allow the access to the REST API and to the UI only to authenticated users
+Import this optional dependency, if you want enable a security layer and allow the access to the REST API and to the UI only to authenticated users.  
+The authentication model of Quartz Manager is based on [JWT](https://jwt.io/).
+
+If you're going to import Quartz Manager in a project with an existing configuration of Spring Security, consider the following:
+- Quartz Manager Security relies on Spring Security upon a dedicated *HTTP Spring Security Chain* applied to the path `/quartz-manager`. So it doesn't interfere with your existing security setup
+- Quartz Manager Security keeps simple the authentication, adopting the InMemory Model. You have to define the users (in terms of username/credentials passed via `application.properties`) can access to Quartz Manager.
+-By default, the UI attaches the JWT Token to each request in the authorization header in the "Bearer" format.
+
+(To be checked: cookies with no presence of quartz-manager-security + no ADMIN role)
 
 ### Dependency
 
@@ -160,44 +168,14 @@ compile group: 'it.fabioformosa.quartz-manager', name: 'quartz-manager-starter-s
 
 ### Quartz Manager Security Lib - App Props
 
-| Property                                                    | Values   |Mandatory | Default | Description     |
-| :---                                                        |:---      |:---      |:---     |:--              |
-| quartz-manager.security.jwt.secret                          | string   |          |         | Secret to sign the JWT Token |          
-| quartz-manager.security.jwt.expiration-in-sec               | number   | no       | 28800   |                              |
-| quartz-manager.security.accounts.in-memory.enabled          | boolean  | no       | true    |                              |
-|quartz-manager.security.accounts.in-memory.users[0].username | string   | yes      |         |                              | 
-|quartz-manager.security.accounts.in-memory.users[0].password | string   | yes      |         |                              |
-|quartz-manager.security.accounts.in-memory.users[0].roles[0] | string   | yes      |         | set the value ADMIN          |
-
-
-and in your application.yml:
-
-```
-quartz-manager:
-  security:
-    login-model:
-      form-login-enabled: true
-      userpwd-filter-enabled : false
-    jwt:
-      enabled: true
-      secret: "PLEASE_TYPE_HERE_A_SECRET"
-      expiration-in-sec: 28800  # 8 hours
-      header-strategy:
-        enabled: false
-        header: "Authorization"
-      cookie-strategy:
-        enabled: true
-        cookie: AUTH-TOKEN
-  accounts:
-    in-memory:
-      enabled: true
-      users:
-        - name: admin
-          password: admin
-          roles:
-            - ADMIN      
-
-```
+| Property                                                    | Values   |Mandatory         | Default | Description     |
+| :---                                                        |:---      |:---              |:---     |:--              |
+| quartz-manager.security.jwt.secret                          | string   |                  |         | Secret to sign the JWT Token |          
+| quartz-manager.security.jwt.expiration-in-sec               | number   | no               | 28800   |                              |
+| quartz-manager.security.accounts.in-memory.enabled          | boolean  | no               | true    |                              |
+|quartz-manager.security.accounts.in-memory.users[0].username | string   | yes (if enabled) |         |                              | 
+|quartz-manager.security.accounts.in-memory.users[0].password | string   | yes              |         |                              |
+|quartz-manager.security.accounts.in-memory.users[0].roles[0] | string   | yes              |         | set the value ADMIN          |
 
 
 ### Quart Manager Persistence
@@ -210,14 +188,14 @@ MAVEN
 <dependency>
   <groupId>it.fabioformosa.quartz-manager</groupId>
   <artifactId>quartz-manager-starter-persistence</artifactId>
-  <version>3.1.0</version>
+  <version>4.0.0</version>
 </dependency>
 ```
 
 GRADLE
 
 ```
-compile group: 'it.fabioformosa.quartz-manager', name: 'quartz-manager-starter-persistence', version: '3.1.0'
+compile group: 'it.fabioformosa.quartz-manager', name: 'quartz-manager-starter-persistence', version: '4.0.0'
 ```
 
 and in your application.yml:
