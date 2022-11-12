@@ -137,13 +137,13 @@ implementation group: 'it.fabioformosa.quartz-manager', name: 'quartz-manager-st
 
 ## Quartz Manager Security Lib
 
-Import this optional dependency, if you want enable a security layer and allow the access to the REST API and to the UI only to authenticated users.  
+Import this optional dependency, if you want to enable a security layer and allow the access to the REST API and UI only to authenticated users.  
 The authentication model of Quartz Manager is based on [JWT](https://jwt.io/).
 
 If you're going to import Quartz Manager in a project with an existing configuration of Spring Security, consider the following:
-- Quartz Manager Security relies on Spring Security upon a dedicated *HTTP Spring Security Chain* applied to the path `/quartz-manager`. So it doesn't interfere with your existing security setup
+- Quartz Manager Security relies on Spring Security upon a dedicated *HTTP Spring Security Chain* applied to the base path `/quartz-manager`. So it doesn't interfere with your existing security setup.
 - Quartz Manager Security keeps simple the authentication, adopting the InMemory Model. You have to define the users (in terms of username/credentials passed via `application.properties`) can access to Quartz Manager.
--By default, the UI attaches the JWT Token to each request in the authorization header in the "Bearer" format.
+- By default, the UI attaches the JWT Token to each request in the authorization header in the "Bearer" format.
 
 (To be checked: cookies with no presence of quartz-manager-security + no ADMIN role)
 
@@ -178,11 +178,15 @@ compile group: 'it.fabioformosa.quartz-manager', name: 'quartz-manager-starter-s
 |quartz-manager.security.accounts.in-memory.users[0].roles[0] | string   | yes              |         | set the value ADMIN          |
 
 
-### Quart Manager Persistence
+### Quart Manager Persistence Lib
 
-If you don't want to lose your scheduler config and the progress of your trigger, when you stop&start your webapp, you have to enable a security layer which persists data on a postgresql database. The `quartz-manager-persistence-module` needs a postgresql datasource to create its tables. To import the `quartz-manager-persistence-module`, please add the following dependency:
+By default, Quartz Manager runs with a `org.quartz.simpl.RAMJobStore` that stores your managed scheduler in memory. The RAMJobStore is the simplest store and also the most performant. However it comes with the drawback that all scheduling data are lost if your applications ends or crashes. In case of a restarting of your app, you can't resume the scheduler from the point it stopped.
+Import the Quartz Manager Persistence Module if you want to persist your scheduler data.
+The pre-requesite is the availability of Postgresql database where Quartz Manager can store its information. You have to provide it a bare database and a postresql user granted for DDL and DML queries. About the DDL, consider that Quartz Manager Persistence will create all tables it needs to work at the bootstrap.
 
-MAVEN
+### Dependency
+
+#### Maven
 
 ```
 <dependency>
@@ -192,24 +196,19 @@ MAVEN
 </dependency>
 ```
 
-GRADLE
+#### Gradle
 
 ```
 compile group: 'it.fabioformosa.quartz-manager', name: 'quartz-manager-starter-persistence', version: '4.0.0'
 ```
 
-and in your application.yml:
+### Quartz Manager Persistence Lib - App Props
 
-```
-quartz-manager:
-  persistence:
-    quartz:
-      datasource:
-        url: "jdbc:postgresql://localhost:5432/quartzmanager"
-        user: "quartzmanager"
-        password: "quartzmanager"   
-
-```
+| Property                                                    | Values   |Mandatory         | Default | Description     |
+| :---                                                        |:---      |:---              |:---     |:--              |
+| quartz-manager.persistence.quartz.datasource.url            | string   | yes              |         |eg. jdbc:postgresql://localhost:5432/quartzmanager |          
+| quartz-manager.persistence.quartz.datasource.user           | string   | yes              |         |                              |
+| quartz-manager.persistence.quartz.datasource.password       | string   | yes              |         |                              |
 
 
 
