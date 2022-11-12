@@ -135,7 +135,6 @@ If you've created a `SchedulerFactoryBean`, tag it as @Primary to avoid conflict
 ```
 
 
-
 ## Quartz Manager UI Lib
 You can optionally import the following dependency to have the UI Dashboard to interact with the Quartz Manager API.
 
@@ -155,7 +154,7 @@ implementation group: 'it.fabioformosa.quartz-manager', name: 'quartz-manager-st
 ``` 
 
 ### Reach out the UI Console at URL
-[http://localhost:8080/quartz-manager-ui/index.html](http://localhost:8080/quartz-manager-ui/index.html)
+if you run locally [http://localhost:8080/quartz-manager-ui/index.html](http://localhost:8080/quartz-manager-ui/index.html)
 
 ## Quartz Manager Security Lib
 
@@ -163,11 +162,13 @@ Import this optional dependency, if you want to enable a security layer and allo
 The authentication model of Quartz Manager is based on [JWT](https://jwt.io/).
 
 If you're going to import Quartz Manager in a project with an existing configuration of Spring Security, consider the following:
+- Only if your existing security is cookie-based, actually you don't need to import the module `quartz-manager-security-lib`. Simply, Quartz Manager will be under the hat of your security setup. In all other cases (based on HTTP headers, query params, etc) Quartz Manager is not aware about your auth token and it will implement its own authentication model.
 - Quartz Manager Security relies on Spring Security upon a dedicated *HTTP Spring Security Chain* applied to the base path `/quartz-manager`. So it doesn't interfere with your existing security setup.
 - Quartz Manager Security keeps simple the authentication, adopting the InMemory Model. You have to define the users (in terms of username/credentials passed via `application.properties`) can access to Quartz Manager.
 - By default, the UI attaches the JWT Token to each request in the authorization header in the "Bearer" format.
 
-(To be checked: cookies with no presence of quartz-manager-security + no ADMIN role)
+Future development: the Quart Manager Security OAuth2 client.
+
 
 ### Dependency
 
