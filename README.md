@@ -156,7 +156,9 @@ implementation group: 'it.fabioformosa.quartz-manager', name: 'quartz-manager-st
 ``` 
 
 ### Reach out the UI Console at URL
-if you run locally [http://localhost:8080/quartz-manager-ui/index.html](http://localhost:8080/quartz-manager-ui/index.html)
+if you run locally [http://localhost:8080/quartz-manager-ui/index.html](http://localhost:8080/quartz-manager-ui/index.html)  
+
+
 
 ## Quartz Manager Security Lib
 
@@ -248,25 +250,30 @@ You can find some examples of different scenarios of projects which import Quart
 * *existing-quartz-and-storage* - It demonstrates how to Quartz Manager Persistence can coexist with a Quartz instance already present in your project
 
 
-## LIMITATIONS
-Initially `Quartz-Manager` was born like a pet-project to start&monitor a repetitive job. Now there's a work-in-progress roadmap to convert it in full-fledged library to manager a [Quartz Scheduler](http://www.quartz-scheduler.org/).  
-At the moment, these are the limitations:
+## Limitations
 
-* You cannot start multiple triggers or multiple jobs.
-* You can start only a simple trigger based on a daily frequency and a max number of occurencies.
-* You cannot start/stop a trigger, but the entire scheduler.
+> Step by step, day by day
 
-Take a look a the [Project Roadmap](https://github.com/fabioformosa/quartz-manager/projects) and feel free to open an issue or add a commment on an existing one, to give your feedback about planned enhancements. Your opinion is important to understand the priority.
+Quartz Manager has a work-in-progress roadmap to be full-fledged library to manage a [Quartz Scheduler](http://www.quartz-scheduler.org/).
+
+At this stage of the roadmap, these are the limitations:
+* Currently you cannot start multiple triggers or multiple jobs. At the moment a workaround is to launch multiple projects based on Quartz Manager.
+* Currently you can only start [Quartz Simple Trigger](http://www.quartz-scheduler.org/documentation/quartz-2.3.0/tutorials/tutorial-lesson-05.html). The support to other kind of triggers will come soon: [Calendar Interval Trigger](https://www.quartz-scheduler.org/api/2.3.0/org/quartz/CalendarIntervalTrigger.html), [Cron Interval Trigger](https://www.quartz-scheduler.org/api/2.3.0/org/quartz/CronTrigger.html), [Daily Interval Trigger](https://www.quartz-scheduler.org/api/2.3.0/org/quartz/DailyTimeIntervalTrigger.html)
+* Currently the cluster mode is not supported
+* Currently the persistence of Quartz Manager supports only the PostgreSQL. The support to other king of triggers will come soon: MySQL, MariaDB, SqlServer, Oracle, H2.  
 
 ## ROADMAP
-Open the [Project Roadmap](https://github.com/fabioformosa/quartz-manager/projects) to take a look at the plan of Quartz Manager.  
+
+Take a look a the [Project Roadmap](https://github.com/fabioformosa/quartz-manager/projects).  
+Don't hesitate to give your feedback, your opinion is important to understand the priority.
 
 Next steps in the roadmap are:
-* Give to change to import `quartz-manager` in projects which have already imported [Quartz Scheduler](http://www.quartz-scheduler.org/)
 * Manage multiple triggers and jobs
-* Redesign the API and re-styling the UI
-* to add a complete setup UI panel for quartz, in term of cronjobs and multiple jobs.
-* Enabling adapters for integrations: kafka, etc.
+* Cluster mode support
+* Support to other all types of Quartz Triggers:  [Calendar Interval Trigger](https://www.quartz-scheduler.org/api/2.3.0/org/quartz/CalendarIntervalTrigger.html), [Cron Interval Trigger](https://www.quartz-scheduler.org/api/2.3.0/org/quartz/CronTrigger.html), [Daily Interval Trigger](https://www.quartz-scheduler.org/api/2.3.0/org/quartz/DailyTimeIntervalTrigger.html)
+* UI Re-styling
+* OAuth Client
+* Support to other DBMS than PostreSQL: MySQL, MariaDB, SqlServer, Oracle, H2.
 
 
 ## HOW-TO CONTRIBUTE  
@@ -281,7 +288,7 @@ Next steps in the roadmap are:
 
 ### PROJECT DETAILS
 **[requirements]** Make sure you have installed
-* [Java 8](https://java.com/download/) or greater
+* [Java 9](https://java.com/download/) or greater
 * [Maven](https://maven.apache.org/)
 * [npm](https://www.npmjs.com/get-npm), [node](https://nodejs.org) and [angular-cli](https://cli.angular.io/)
 
@@ -324,15 +331,15 @@ Replace the dummy job (class: `it.fabioformosa.quartzmanager.jobs.SampleJob`) wi
 
 ## Tech Overview
 
-**Backend Stack** Java 8, Spring Boot 2.1.4 (Spring MVC 5.1.6, Spring Security 5.1.5, Spring AOP 5.1.6), Quartz Scheduler 2.3.1
+**Backend Stack** Java 9, Spring Boot 2.5.6 (Spring MVC 5.3.12, Spring Security 5.5.3), Quartz Scheduler 2.3.2
 
 **Application Server** Tomcat (embedded)
 
 **Frontend** Angular 9.1.4, Web-Socket (stompjs 2.3.3)
 
-**Style** angular material, FontAwesome 5
+**Style** Angular Material 9, FontAwesome 5
 
-From quartz manager ver 2.x.x, the new structure of project is:
+Starting from Quartz Manager v2.x.x, the new structure of project is:
  * REST API backend
  * Single Page Application frontend (angular 9)
 
@@ -341,9 +348,5 @@ From quartz manager ver 2.x.x, the new structure of project is:
 ## Contributes
 
 Every contribution is welcome. Open a issue, so we can discuss about new features and implement them. 
-
-## Credits
-
-* this project has been created from [angular-spring-starter](https://github.com/bfwg/angular-spring-starter)
 
 
