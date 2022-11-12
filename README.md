@@ -105,13 +105,35 @@ Reach out the swagger-ui at the URL:
 If your project has already an OpenAPI instance and you've set `quartz-manager.oas.enabled=true`, then make sure to add an OpenApiGroup to group the API of your application. Quart Manager exposes its API in group called "Quartz Manager".
 
 ### QUARTZ SETTINGS
-Quartz Manager creates its own instance of a [Quartz Scheduler](http://www.quartz-scheduler.org/). You can customize the configuration of the Quartz managed by Quartz Manager creating a file `managed-quartz.properties` in the classpath (`src/main/resources`). For further details about the quartz properties, click [here](http://www.quartz-scheduler.org/documentation/quartz-2.3.0/configuration/).
+Quartz Manager creates its own instance of a [Quartz Scheduler](http://www.quartz-scheduler.org/). 
+
 By default, the managed quartz instance is instantiated with the following props:
 
 ```
 org.quartz.scheduler.instanceName=quartz-manager-scheduler
 org.quartz.threadPool.threadCount=1
 ```
+
+You can customize the configuration of the Quartz managed by Quartz Manager creating a file `managed-quartz.properties` in the classpath (`src/main/resources`).   
+For further details about the quartz properties, click [here](http://www.quartz-scheduler.org/documentation/quartz-2.3.0/configuration/).
+
+#### Existing Quartz Instance
+Quarz Manager imports transitively the [Quartz Scheduler library](https://mvnrepository.com/artifact/org.quartz-scheduler/quartz) ver 2.3.2.
+However, Quartz Manager can be imported even thought you've already imported the quartz scheduler lib. Indeed Quartz Manager coexists with the existing Quarz Scheduler Instance you've created in your project. In that case, Quartz Manager will manage the triggers created by it and it won't interfere with the other quartz instances.
+The prerequesite is that you've imported a quartz scheduler ver 2.3.x.
+
+If you've created a `SchedulerFactoryBean`, tag it as @Primary to avoid conflicts in-type, since Quartz Manager creates another bean of the same type.
+
+```
+    @Primary
+    @Bean
+    public SchedulerFactoryBean schedulerFactoryBean( JobFactory jobFactory, Properties quartzProperties) {
+        SchedulerFactoryBean factory = new SchedulerFactoryBean();
+        ...
+        return factory;
+    }
+```
+
 
 
 ## Quartz Manager UI Lib
