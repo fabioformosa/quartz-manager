@@ -122,6 +122,8 @@ Quarz Manager imports transitively the [Quartz Scheduler library](https://mvnrep
 However, Quartz Manager can be imported even thought you've already imported the quartz scheduler lib. Indeed Quartz Manager coexists with the existing Quarz Scheduler Instance you've created in your project. In that case, Quartz Manager will manage the triggers created by it and it won't interfere with the other quartz instances.
 The prerequesite is that you've imported a quartz scheduler ver 2.3.x.
 
+You can configure the Quartz instance managed by Quartz Manager through the file `managed-quartz.properties` and your own Quartz instance through the file  `quartz.properties`.
+
 If you've created a `SchedulerFactoryBean`, tag it as @Primary to avoid conflicts in-type, since Quartz Manager creates another bean of the same type.
 
 ```
@@ -235,15 +237,15 @@ compile group: 'it.fabioformosa.quartz-manager', name: 'quartz-manager-starter-p
 
 
 
-* **DEMO**
+## Examples
 
-Take a loot to the project [Quartz-Manager Demo](https://github.com/fabioformosa/quartz-manager-demo), it is an example of how-to:
- * import the quartz-manager-api library in your webapp
- * include the quartz-manager frontend (angular based) through a webjar
- * set properties into the application.yml
- * add a secure layer to allow the API only to logged users
- * schedule a custom job (a dummy `hello world`)
-
+You can find some examples of different scenarios of projects which import Quartz Manager at the repository [quartz-manager-use-cases] (https://github.com/fabioformosa/quartz-manager-use-cases)
+* *simply-spring* - tipical scenario in which you create a minimal spring project from scratch dedicated to launch your scheduled jobs. Imported libraries: Quartz Manager API, Quartz Manager UI and Quartz Manager security.
+* *simply-spring-no-security* - as simple-spring, without the security
+* *existing-security-cookie-based* - It demonstrates how Quartz Manager stays under the security of your project, in case of an auth model based on cookies 
+* *existing-security-header-based* - It demonstrates how Quartz Manager Security can coexists with another Spring Security Config present in your project
+* *existing-quartz* - It demonstrates how to Quartz Manager can coexist with a Quartz instance already present in your project
+* *existing-quartz-and-storage* - It demonstrates how to Quartz Manager Persistence can coexist with a Quartz instance already present in your project
 
 
 ## LIMITATIONS
