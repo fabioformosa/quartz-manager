@@ -5,18 +5,20 @@
 # QUARTZ MANAGER
 In the last decade, the [Quartz Scheduler](http://www.quartz-scheduler.org/) has become the most adopted opensource job scheduling library for Java applications.  
 
-**Quartz Manager** enriches it with a **REST API** layer and a handy **UI console** to easily control and monitor a Quartz scheduler.  
+**Quartz Manager** enriches it with a **REST API** layer and a handy **UI console** to easily control and monitor a Quartz Scheduler.  
 
-Quartz Manager is a Java library you can import in your Spring-Based Web Application to run scheduled jobs, start&stop them and get the job outcomes. You can do it through HTTP calls against the Quartz Manager API or in a visual manner through the Quartz Manager UI dashboard.  
+Quartz Manager is a Java library you can import in your Spring-Based Web Application to run scheduled jobs, start&stop them and get the job outcomes. You can do it through HTTP calls to the the Quartz Manager API or in a visual manner through the Quartz Manager UI dashboard.  
 
 
-## UI DASHBOARD
-The **Quartz Manager UI** is a single-page-application provided by the Quartz Manager Java library itself. It leverages the websockets to receive in real-time the trigger updates and the outcomes of the job executions.  
+## QUARTZ MANAGER UI
+The **Quartz Manager UI** is a dashboard in the form of a single-page-application provided by the Quartz Manager Java library itself. You can have it embedded in your project, as well as you get embedded the Swagger UI.  
+It leverages the websockets to receive in real-time the trigger updates and the outcomes of the job executions.  
 
 ![](https://github.com/fabioformosa/quartz-manager/blob/develop/quartz-manager-parent/quartz-manager-web-showcase/src/main/resources/quartz-manager-4-screenshot.png)
 
-## API
-Quart-Manager exposes REST controllers which are documented by an OpenAPI Specification. 
+## QUARTZ MANAGER API
+Quart-Manager exposes REST endpoints to interact with the Quartz Scheduler. This endpoints are invoked by Quartz Manager UI also.
+The REST API are documented by an OpenAPI Specification interface. 
 
 ![](https://github.com/fabioformosa/quartz-manager/blob/develop/quartz-manager-parent/quartz-manager-web-showcase/src/main/resources/quartz-manager-4-swagger.png)
 
