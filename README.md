@@ -275,9 +275,9 @@ Next steps in the roadmap are:
 
 ## Repository
 
-Checkout the **master branch** to get the sourcecode of the latest released versions.
+Checkout the **master branch** to get the sourcecode of the latest released versions.  
 Checkout the **develop branch** to take a look at the sourcecode of the incoming release.
 
 ## HOW-TO CONTRIBUTE  
-For tech details, how-to run locally the project and how-to contribute, reach out this other [README](https://github.com/fabioformosa/quartz-manager/blob/develop/quartz-manager-parent/README.md)
+For tech details, how-to run locally the project and how-to contribute, reach out this other [README.md](https://github.com/fabioformosa/quartz-manager/blob/develop/quartz-manager-parent/README.md)
 
