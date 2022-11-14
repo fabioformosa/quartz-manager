@@ -203,7 +203,7 @@ compile group: 'it.fabioformosa.quartz-manager', name: 'quartz-manager-starter-s
 |quartz-manager.security.accounts.in-memory.users[0].roles[0] | string   | yes              |         | set the value ADMIN          |
 
 
-### Quart Manager Persistence Lib
+## Quart Manager Persistence Lib
 
 By default, Quartz Manager runs with a `org.quartz.simpl.RAMJobStore` that stores your managed scheduler in memory. The RAMJobStore is the simplest store and also the most performant. However it comes with the drawback that all scheduling data are lost if your applications ends or crashes. In case of a restarting of your app, you can't resume the scheduler from the point it stopped.
 Import the Quartz Manager Persistence Module if you want to persist your scheduler data.
