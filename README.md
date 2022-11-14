@@ -264,7 +264,7 @@ At this stage of the roadmap, these are the limitations:
 
 ## ROADMAP
 
-Take a look a the [Project Roadmap](https://github.com/fabioformosa/quartz-manager/projects).  
+Take a look a the [Project Roadmap](https://github.com/users/fabioformosa/projects/1).  
 Don't hesitate to give your feedback, your opinion is important to understand the priority.
 
 Next steps in the roadmap are:
@@ -275,6 +275,10 @@ Next steps in the roadmap are:
 * OAuth Client
 * Support to other DBMS than PostreSQL: MySQL, MariaDB, SqlServer, Oracle, H2.
 
+## Repository
+
+Checkout the **master branch** to get the sourcecode of the latest released versions.
+Checkout the **develop branch** to take a look at the sourcecode of the incoming release.
 
 ## HOW-TO CONTRIBUTE  
 
