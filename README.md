@@ -279,5 +279,9 @@ Checkout the **master branch** to get the sourcecode of the latest released vers
 Checkout the **develop branch** to take a look at the sourcecode of the incoming release.
 
 ## HOW-TO CONTRIBUTE  
+
 For tech details, how-to run locally the project and how-to contribute, reach out this other [README.md](https://github.com/fabioformosa/quartz-manager/blob/develop/quartz-manager-parent/README.md)
 
+## ❤️ SUPPORT THE PROJECT ❤️
+
+Sometimes it's a matter of a kind action. You can support Quartz Manager and its continuous improvement turning on a github star on this project ⭐
