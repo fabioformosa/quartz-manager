@@ -10,7 +10,7 @@
 
   <groupId>it.fabioformosa.quartz-manager</groupId>
   <artifactId>quartz-manager-parent</artifactId>
-  <version>3.1.1-SNAPSHOT</version>
+  <version>4.0.0</version>
 
   <packaging>pom</packaging>
 
@@ -69,27 +69,27 @@
       <dependency>
         <groupId>it.fabioformosa.quartz-manager</groupId>
         <artifactId>quartz-manager-common</artifactId>
-        <version>3.1.1-SNAPSHOT</version>
+        <version>4.0.0</version>
       </dependency>
       <dependency>
         <groupId>it.fabioformosa.quartz-manager</groupId>
         <artifactId>quartz-manager-starter-api</artifactId>
-        <version>3.1.1-SNAPSHOT</version>
+        <version>4.0.0</version>
       </dependency>
       <dependency>
         <groupId>it.fabioformosa.quartz-manager</groupId>
         <artifactId>quartz-manager-starter-security</artifactId>
-        <version>3.1.1-SNAPSHOT</version>
+        <version>4.0.0</version>
       </dependency>
       <dependency>
         <groupId>it.fabioformosa.quartz-manager</groupId>
         <artifactId>quartz-manager-starter-persistence</artifactId>
-        <version>3.1.1-SNAPSHOT</version>
+        <version>4.0.0</version>
       </dependency>
       <dependency>
         <groupId>it.fabioformosa.quartz-manager</groupId>
         <artifactId>quartz-manager-starter-ui</artifactId>
-        <version>3.1.1-SNAPSHOT</version>
+        <version>4.0.0</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
