@@ -31,7 +31,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
   "quartz-manager.security.accounts.in-memory.users[0].password=bar",
   "quartz-manager.security.accounts.in-memory.users[0].roles[0]=admin",
 })
-public class SecurityControllerTest {
+class SecurityControllerTest {
 
   @Autowired
   private MockMvc mockMvc;

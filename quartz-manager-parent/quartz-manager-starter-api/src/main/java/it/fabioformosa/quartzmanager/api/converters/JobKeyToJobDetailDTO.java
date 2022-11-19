@@ -23,6 +23,5 @@ public class JobKeyToJobDetailDTO extends AbstractBaseConverterToDTO<JobKey, Job
     JobDetail jobDetail = scheduler.getJobDetail(jobKey);
     jobDetailDTO.setJobClassName(jobDetail.getJobClass().getName());
     jobDetailDTO.setDescription(jobDetail.getDescription());
-    //jobDetail.getJobDataMap();
   }
 }

@@ -26,7 +26,7 @@ public class UserController {
     SecurityContext context = SecurityContextHolder.getContext();
     if (context != null && context.getAuthentication() != null)
       return new ResponseEntity<>(context.getAuthentication().getPrincipal(), HttpStatus.OK);
-    return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+    return new ResponseEntity<>(HttpStatus.NOT_FOUND);
   }
 
 }
