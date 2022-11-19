@@ -52,7 +52,7 @@ In order to decrease the overall configuration time for the project, all modules
 
 Below the list of the quartz-manager modules you can import.
 
-## Quartz Manager API Lib
+## Quartz Manager Starter API Lib
 This is the only mandatory module of the library.   
 Add the dependency, make eligible for Quart Manager the job classes and set the props in your `application.properties` file.
 
@@ -96,11 +96,17 @@ In this way, Quartz Manager is able to collect and display the outcomes at the U
 
 
 ### REST API & OpenAPI Specification
-Set the app prop `quartz-manager.oas.enabled=true` you want to expose the OpenApi Specification of the Quartz Manager APIs.
+Set the app prop `quartz-manager.oas.enabled=true` if you want to expose the OpenApi Specification of the Quartz Manager APIs.  
 Reach out the swagger-ui at the URL:
 [http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html)
 
-If your project has already an OpenAPI instance and you've set `quartz-manager.oas.enabled=true`, then make sure to add an OpenApiGroup to group the API of your application. Quart Manager exposes its API in group called "Quartz Manager".
+If your project has already an OpenAPI instance and you've set `quartz-manager.oas.enabled=true`, then make sure to add an OpenApiGroup to group the API of your application. Quart Manager exposes its API in group called "Quartz Manager". If you use OAS Annotations:
+```
+  @Bean
+  public GroupedOpenApi simplySpringDemoGroupedOpenApi() {
+    return GroupedOpenApi.builder().group("myapp").packagesToScan("com.example.myapp").build();
+  }
+```
 
 ### QUARTZ SETTINGS
 Quartz Manager creates its own instance of a [Quartz Scheduler](http://www.quartz-scheduler.org/). 
@@ -122,7 +128,7 @@ The prerequesite is that you've imported a quartz scheduler ver 2.3.x.
 
 You can configure the Quartz instance managed by Quartz Manager through the file `managed-quartz.properties` and your own Quartz instance through the file  `quartz.properties`.
 
-If you've created a `SchedulerFactoryBean`, tag it as @Primary to avoid conflicts in-type, since Quartz Manager creates another bean of the same type.
+If you've created a `SchedulerFactoryBean`, tag it as `@Primary` to avoid conflicts in-type, since Quartz Manager creates another bean of the same type.
 
 ```
     @Primary
@@ -135,7 +141,7 @@ If you've created a `SchedulerFactoryBean`, tag it as @Primary to avoid conflict
 ```
 
 
-## Quartz Manager UI Lib
+## Quartz Manager Starter UI Lib
 You can optionally import the following dependency to have the UI Dashboard to interact with the Quartz Manager API.
 
 ### Dependency
@@ -158,7 +164,7 @@ if you run locally [http://localhost:8080/quartz-manager-ui/index.html](http://l
 
 
 
-## Quartz Manager Security Lib
+## Quartz Manager Starter Security Lib
 
 Import this optional dependency, if you want to enable a security layer and allow the access to the REST API and UI only to authenticated users.  
 The authentication model of Quartz Manager is based on [JWT](https://jwt.io/).
@@ -203,11 +209,11 @@ compile group: 'it.fabioformosa.quartz-manager', name: 'quartz-manager-starter-s
 |quartz-manager.security.accounts.in-memory.users[0].roles[0] | string   | yes              |         | set the value ADMIN          |
 
 
-## Quart Manager Persistence Lib
+## Quart Manager Starter Persistence Lib
 
-By default, Quartz Manager runs with a `org.quartz.simpl.RAMJobStore` that stores your managed scheduler in memory. The RAMJobStore is the simplest store and also the most performant. However it comes with the drawback that all scheduling data are lost if your applications ends or crashes. In case of a restarting of your app, you can't resume the scheduler from the point it stopped.
-Import the Quartz Manager Persistence Module if you want to persist your scheduler data.
-The pre-requesite is the availability of Postgresql database where Quartz Manager can store its information. You have to provide it a bare database and a postresql user granted for DDL and DML queries. About the DDL, consider that Quartz Manager Persistence will create all tables it needs to work at the bootstrap.
+By default, Quartz Manager runs with a `org.quartz.simpl.RAMJobStore` that stores your managed scheduler in memory. The RAMJobStore is the simplest store and also the most performant. However it comes with the drawback that all scheduling data are lost if your applications ends or crashes. In case of a restarting of your app, you can't resume the scheduler from the point it stopped.  
+Import the Quartz Manager Persistence Module if you want to persist your scheduler data.  
+The pre-requesite is the availability of Postgresql database where Quartz Manager can store its information. You have to provide it a bare database and a postresql user granted for DDL and DML queries. About the DDL, consider that Quartz Manager Persistence will create all tables, it needs to work, at the bootstrap.
 
 ### Dependency
 
@@ -240,12 +246,12 @@ compile group: 'it.fabioformosa.quartz-manager', name: 'quartz-manager-starter-p
 ## Examples
 
 You can find some examples of different scenarios of projects which import Quartz Manager at the repository [quartz-manager-use-cases] (https://github.com/fabioformosa/quartz-manager-use-cases)
-* *simply-spring* - tipical scenario in which you create a minimal spring project from scratch dedicated to launch your scheduled jobs. Imported libraries: Quartz Manager API, Quartz Manager UI and Quartz Manager security.
-* *simply-spring-no-security* - as simple-spring, without the security
-* *existing-security-cookie-based* - It demonstrates how Quartz Manager stays under the security of your project, in case of an auth model based on cookies 
-* *existing-security-header-based* - It demonstrates how Quartz Manager Security can coexists with another Spring Security Config present in your project
-* *existing-quartz* - It demonstrates how to Quartz Manager can coexist with a Quartz instance already present in your project
-* *existing-quartz-and-storage* - It demonstrates how to Quartz Manager Persistence can coexist with a Quartz instance already present in your project
+* *simply-spring* - tipical scenario in which you create a minimal spring project from scratch dedicated to launch your scheduled jobs. Imported libraries: Quartz Manager API, Quartz Manager UI and Quartz Manager Security.
+* *simply-spring-no-security* - as simple-spring, without the security. Imported libraries: Quartz Manager API, Quartz Manager UI.
+* *existing-security-cookie-based* - It demonstrates how Quartz Manager stays under the security of your project, in case of an auth model based on cookies. Imported libraries: Quartz Manager API, Quartz Manager UI. 
+* *existing-security-header-based* - It demonstrates how Quartz Manager Security can coexists with another Spring Security Config present in your project. Imported libraries: Quartz Manager API, Quartz Manager UI and Quartz Manager Security.
+* *existing-quartz* - It demonstrates how to Quartz Manager can coexist with a Quartz instance already present in your project Imported libraries: Quartz Manager API, Quartz Manager UI.
+* *existing-quartz-and-storage* - It demonstrates how to Quartz Manager Persistence can coexist with a Quartz instance already present in your project. Imported libraries: Quartz Manager API, Quartz Manager UI and Quartz Manager Persistence.
 
 
 ## Limitations
