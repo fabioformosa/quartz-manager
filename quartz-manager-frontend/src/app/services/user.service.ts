@@ -42,8 +42,9 @@ export class UserService {
         this.router.initialNavigation();
         return;
       }
-      if (httpErrorResponse.status < 200 || httpErrorResponse.status > 399)
+      if (httpErrorResponse.status !== 401 && (httpErrorResponse.status < 200 || httpErrorResponse.status > 399)) {
         this.router.navigateByUrl('/error');
+      }
     });
   }
 
