@@ -14,13 +14,13 @@ Quartz Manager is a Java library you can import in your Spring-Based Web Applica
 The **Quartz Manager UI** is a dashboard in the form of a single-page-application provided by the Quartz Manager Java library itself. You can have it embedded in your project, as well as you get embedded the Swagger UI.  
 It leverages the websockets to receive in real-time the trigger updates and the outcomes of the job executions.  
 
-![](https://github.com/fabioformosa/quartz-manager/blob/develop/quartz-manager-parent/quartz-manager-web-showcase/src/main/resources/quartz-manager-4-screenshot.png)
+![](https://github.com/fabioformosa/quartz-manager/blob/master/quartz-manager-parent/quartz-manager-web-showcase/src/main/resources/quartz-manager-4-screenshot.png)
 
 ## QUARTZ MANAGER API
 Quart-Manager exposes REST endpoints to interact with the Quartz Scheduler. This endpoints are invoked by Quartz Manager UI also.
 The REST API are documented by an OpenAPI Specification interface. 
 
-![](https://github.com/fabioformosa/quartz-manager/blob/develop/quartz-manager-parent/quartz-manager-web-showcase/src/main/resources/quartz-manager-4-swagger.png)
+![](https://github.com/fabioformosa/quartz-manager/blob/master/quartz-manager-parent/quartz-manager-web-showcase/src/main/resources/quartz-manager-4-swagger.png)
 
 
 # HOW IT WORKS
@@ -63,12 +63,12 @@ Add the dependency, make eligible for Quart Manager the job classes and set the 
 <dependency>
   <groupId>it.fabioformosa.quartz-manager</groupId>
   <artifactId>quartz-manager-starter-api</artifactId>
-  <version>4.0.0</version>
+  <version>4.0.3</version>
 </dependency>
 ```
 #### Gradle
 ```
-implementation group: 'it.fabioformosa.quartz-manager', name: 'quartz-manager-starter-api', version: '4.0.0'
+implementation group: 'it.fabioformosa.quartz-manager', name: 'quartz-manager-starter-api', version: '4.0.3'
 ```
 
 ### Step 2. Quartz Manager Job Classes
@@ -145,12 +145,12 @@ You can optionally import the following dependency to have the UI Dashboard to i
 <dependency>
   <groupId>it.fabioformosa.quartz-manager</groupId>
   <artifactId>quartz-manager-starter-ui</artifactId>
-  <version>4.0.0</version>
+  <version>4.0.3</version>
 </dependency>
 ```
 #### Gradle
 ```
-implementation group: 'it.fabioformosa.quartz-manager', name: 'quartz-manager-starter-ui', version: '4.0.0'
+implementation group: 'it.fabioformosa.quartz-manager', name: 'quartz-manager-starter-ui', version: '4.0.3'
 ``` 
 
 ### Reach out the UI Console at URL
@@ -180,14 +180,14 @@ Future development: the Quart Manager Security OAuth2 client.
 <dependency>
   <groupId>it.fabioformosa.quartz-manager</groupId>
   <artifactId>quartz-manager-starter-security</artifactId>
-  <version>4.0.0</version>
+  <version>4.0.3</version>
 </dependency>
 ```
 
 #### Gradle
 
 ```
-compile group: 'it.fabioformosa.quartz-manager', name: 'quartz-manager-starter-security', version: '4.0.0'
+compile group: 'it.fabioformosa.quartz-manager', name: 'quartz-manager-starter-security', version: '4.0.3'
 ```
 
 
@@ -217,14 +217,14 @@ The pre-requesite is the availability of Postgresql database where Quartz Manage
 <dependency>
   <groupId>it.fabioformosa.quartz-manager</groupId>
   <artifactId>quartz-manager-starter-persistence</artifactId>
-  <version>4.0.0</version>
+  <version>4.0.3</version>
 </dependency>
 ```
 
 #### Gradle
 
 ```
-compile group: 'it.fabioformosa.quartz-manager', name: 'quartz-manager-starter-persistence', version: '4.0.0'
+compile group: 'it.fabioformosa.quartz-manager', name: 'quartz-manager-starter-persistence', version: '4.0.3'
 ```
 
 ### Quartz Manager Persistence Lib - App Props
