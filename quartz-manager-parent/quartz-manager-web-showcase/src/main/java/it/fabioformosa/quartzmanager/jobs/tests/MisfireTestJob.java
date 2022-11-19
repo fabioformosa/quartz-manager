@@ -28,8 +28,7 @@ public class MisfireTestJob extends AbstractQuartzManagerJob {
 
       log.info("{} woke up!", Thread.currentThread().getName());
     } catch (InterruptedException e) {
-      log.error(e.getMessage(), e);
-      throw new RuntimeException(e);
+      throw new IllegalStateException(e);
     }
 
     return new LogRecord(LogRecord.LogType.INFO, "Hello!");

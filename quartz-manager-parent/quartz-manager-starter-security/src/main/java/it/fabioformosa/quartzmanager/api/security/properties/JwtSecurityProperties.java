@@ -1,5 +1,6 @@
 package it.fabioformosa.quartzmanager.api.security.properties;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
@@ -12,23 +13,25 @@ import java.util.Base64;
 
 @Configuration
 @ConfigurationProperties(prefix = "quartz-manager.security.jwt")
+@Data
+@AllArgsConstructor
 @Getter
 @Setter
 public class JwtSecurityProperties {
   private String secret;
 
-  {
+  private long expirationInSec = 28800;
+
+  private CookieStrategy cookieStrategy = new CookieStrategy();
+  private HeaderStrategy headerStrategy = new HeaderStrategy();
+
+  public JwtSecurityProperties() {
     SecureRandom random = new SecureRandom();
     byte[] bytes = new byte[20];
     random.nextBytes(bytes);
     Base64.Encoder encoder = Base64.getUrlEncoder().withoutPadding();
     secret = encoder.encodeToString(bytes);
   }
-
-  private long expirationInSec = 28800;
-
-  private CookieStrategy cookieStrategy = new CookieStrategy();
-  private HeaderStrategy headerStrategy = new HeaderStrategy();
 
   @Data
   public static class CookieStrategy {

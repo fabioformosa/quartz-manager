@@ -12,7 +12,7 @@ import javax.validation.Validator;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
 
-public class AbstractPropertyValidatorTest {
+public abstract class AbstractPropertyValidatorTest {
   protected static Validator propertyValidator;
 
   @BeforeAll

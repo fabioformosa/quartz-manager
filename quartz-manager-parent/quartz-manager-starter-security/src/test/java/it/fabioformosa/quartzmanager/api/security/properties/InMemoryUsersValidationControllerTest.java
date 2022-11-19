@@ -10,7 +10,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Stream;
 
-public class InMemoryUsersValidationControllerTest extends AbstractPropertyValidatorTest {
+class InMemoryUsersValidationControllerTest extends AbstractPropertyValidatorTest {
 
   static Stream<Arguments> notValidInMemoryProps = Stream.of(
     Arguments.of(
