@@ -2,13 +2,25 @@ import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {TriggerService} from '../../services/trigger.service';
 import {TriggerKey} from '../../model/triggerKey.model';
 import {SimpleTrigger} from '../../model/simple-trigger.model';
-import {MatDialog} from '@angular/material/dialog';
+import {MatDialog, MatDialogRef} from '@angular/material/dialog';
 
 @Component({
-  template: 'Multiple jobs not supported yet - Coming Soon...',
+  template: `
+    <h3 mat-dialog-title>Coming Soon</h3>
+    <div mat-dialog-content>
+      <p>This feature is in roadmap and it will come with the next releases</p>
+    </div>
+    <div mat-dialog-actions>
+      <button mat-button (click)="closeDialog()" style="padding: 0.5em;width: 5em;">Ok</button>
+    </div>`,
 })
 // tslint:disable-next-line:component-class-suffix
 export class UnsupportedMultipleJobsDialog {
+  constructor(public dialogRef: MatDialogRef<UnsupportedMultipleJobsDialog>) {
+  }
+  closeDialog(): void {
+    this.dialogRef.close();
+  }
 }
 
 @Component({
@@ -69,7 +81,7 @@ export class TriggerListComponent implements OnInit {
   }
 
   onNewTriggerBtnClicked() {
-    if (this.triggerKeys && this.triggerKeys.length > 0) {
+    if (this.getTriggerKeyList() && this.getTriggerKeyList().length > 0) {
       this.dialog.open(UnsupportedMultipleJobsDialog)
     } else {
       this.onNewTriggerClicked.emit();
