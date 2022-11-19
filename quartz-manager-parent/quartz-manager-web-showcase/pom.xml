@@ -5,7 +5,7 @@
     <parent>
       <groupId>it.fabioformosa.quartz-manager</groupId>
       <artifactId>quartz-manager-parent</artifactId>
-      <version>4.0.3</version>
+      <version>4.0.4</version>
     </parent>
 
 	<artifactId>quartz-manager-web-showcase</artifactId>
@@ -31,10 +31,10 @@
           <groupId>it.fabioformosa.quartz-manager</groupId>
           <artifactId>quartz-manager-starter-ui</artifactId>
         </dependency>
-<!--        <dependency>-->
-<!--          <groupId>it.fabioformosa.quartz-manager</groupId>-->
-<!--          <artifactId>quartz-manager-starter-security</artifactId>-->
-<!--        </dependency>-->
+        <dependency>
+          <groupId>it.fabioformosa.quartz-manager</groupId>
+          <artifactId>quartz-manager-starter-security</artifactId>
+        </dependency>
 <!--        <dependency>-->
 <!--          <groupId>it.fabioformosa.quartz-manager</groupId>-->
 <!--          <artifactId>quartz-manager-starter-persistence</artifactId>-->
@@ -129,12 +129,12 @@
 					<groupId>org.springframework.boot</groupId>
 					<artifactId>spring-boot-maven-plugin</artifactId>
 					<executions>
-	                    <execution>
-	                        <goals>
-	                            <goal>repackage</goal>
-	                        </goals>
-	                    </execution>
-	                </executions>
+              <execution>
+                  <goals>
+                      <goal>repackage</goal>
+                  </goals>
+              </execution>
+          </executions>
 				</plugin>
 			    <plugin>
 			      <groupId>org.apache.maven.plugins</groupId>
