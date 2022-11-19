@@ -3,9 +3,11 @@ package it.fabioformosa.quartzmanager.api.security.properties;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
-import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
+
+import java.security.SecureRandom;
+import java.util.Base64;
 
 
 @Configuration
@@ -13,7 +15,16 @@ import org.springframework.context.annotation.Configuration;
 @Getter
 @Setter
 public class JwtSecurityProperties {
-  private String secret = RandomStringUtils.randomAlphabetic(10);
+  private String secret;
+
+  {
+    SecureRandom random = new SecureRandom();
+    byte[] bytes = new byte[20];
+    random.nextBytes(bytes);
+    Base64.Encoder encoder = Base64.getUrlEncoder().withoutPadding();
+    secret = encoder.encodeToString(bytes);
+  }
+
   private long expirationInSec = 28800;
 
   private CookieStrategy cookieStrategy = new CookieStrategy();
