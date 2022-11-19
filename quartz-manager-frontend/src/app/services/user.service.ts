@@ -1,55 +1,55 @@
-import { Injectable } from '@angular/core';
-import { ApiService } from './api.service';
-import { ConfigService } from './config.service';
+import {Injectable} from '@angular/core';
+import {ApiService} from './api.service';
+import {ConfigService} from './config.service';
 
-import { map } from 'rxjs/operators'
-
-export const NO_AUTH: string = 'NO_AUTH'
+import {map} from 'rxjs/operators'
+import {HttpErrorResponse} from '@angular/common/http';
+import {Router} from '@angular/router';
 
 @Injectable()
 export class UserService {
 
-  currentUser;
+  isAnAnonymousUser: boolean;
+  currentUser: any;
 
   constructor(
     private apiService: ApiService,
-    private config: ConfigService
-  ) { }
+    private config: ConfigService,
+    private router: Router
+  ) {
+  }
 
-  jwtInitUser() {
-    const promise = this.apiService.get(this.config.refresh_token_url).toPromise()
-    .then(res => {
-      if (res.access_token !== null) {
-        return this.getMyInfo().toPromise()
-        .then(user => {
-          this.currentUser = user;
-        });
+  refreshToken() {
+    this.apiService.get(this.config.refresh_token_url).subscribe(res => {
+        if (res.accessToken !== null) {
+          return this.getUserInfo().toPromise()
+            .then(user => {
+              this.currentUser = user;
+            });
+        }
+      })
+  }
+
+  fetchLoggedUser() {
+    this.getUserInfo().subscribe(user => {
+      this.currentUser = user;
+      this.router.initialNavigation();
+    }, err => {
+      console.log(`error retrieving current user due to ` + JSON.stringify(err));
+      const httpErrorResponse = err as HttpErrorResponse;
+      if (httpErrorResponse.status === 404) {
+        this.isAnAnonymousUser = true;
+        this.router.initialNavigation();
+        return;
       }
-    })
-    .catch(() => null);
-    return promise;
+      if (httpErrorResponse.status < 200 || httpErrorResponse.status > 399)
+        this.router.navigateByUrl('/error');
+    });
   }
 
-  jsessionInitUser() {
-    return this.getMyInfo().toPromise()
-        .then(user => {
-          this.currentUser = user;
-        }, err => {
-          //not logged
-          console.log(`error retrieving current user due to ` + err);
-        });
-  }
-
-  resetCredentials() {
-    return this.apiService.get(this.config.reset_credentials_url);
-  }
-
-  getMyInfo() {
-    return this.apiService.get(this.config.whoami_url).pipe(map(user => this.currentUser = user));
-  }
-
-  getAll() {
-    return this.apiService.get(this.config.users_url);
+  getUserInfo() {
+    return this.apiService.get(this.config.whoami_url)
+      .pipe(map(user => this.currentUser = user));
   }
 
 }

@@ -1,21 +1,19 @@
 package it.fabioformosa.quartzmanager.jobs.tests;
 
+import it.fabioformosa.quartzmanager.api.jobs.AbstractQuartzManagerJob;
+import it.fabioformosa.quartzmanager.api.jobs.entities.LogRecord;
 import org.quartz.JobExecutionContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import it.fabioformosa.quartzmanager.jobs.AbstractLoggingJob;
-import it.fabioformosa.quartzmanager.jobs.entities.LogRecord;
-import it.fabioformosa.quartzmanager.jobs.entities.LogRecord.LogType;
-
 /**
  * This job can be used to test the misfire policy. It pretends to be a long
  * processing job (sleeping for a while)
- * 
+ *
  * @author Fabio.Formosa
  *
  */
-public class MisfireTestJob extends AbstractLoggingJob {
+public class MisfireTestJob extends AbstractQuartzManagerJob {
 
   private Logger log = LoggerFactory.getLogger(MisfireTestJob.class);
 
@@ -31,7 +29,7 @@ public class MisfireTestJob extends AbstractLoggingJob {
       e.printStackTrace();
     }
 
-    return new LogRecord(LogType.INFO, "Hello!");
+    return new LogRecord(LogRecord.LogType.INFO, "Hello!");
   }
 
 }

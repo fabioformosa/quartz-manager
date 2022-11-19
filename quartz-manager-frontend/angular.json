@@ -5,6 +5,7 @@
   "projects": {
     "angular-spring-starter": {
       "root": "",
+      "prefix": "qrzmng",
       "sourceRoot": "src",
       "projectType": "application",
       "architect": {

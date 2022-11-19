@@ -1,0 +1,17 @@
+<mat-card fxFlex="1 1 auto" style="padding-left: 0; padding-right: 0">
+  <mat-card-header fxLayout="row" fxLayoutAlign="space-between none" style="padding-right: 1em;" >
+    <mat-card-subtitle><b>TRIGGERS</b></mat-card-subtitle>
+    <button *ngIf="!triggerFormIsOpen" mat-raised-button style="top: -0.5em" color="primary" (click)="onNewTriggerBtnClicked()">
+      new
+    </button>
+  </mat-card-header>
+  <mat-divider></mat-divider>
+  <mat-card-content style="position: relative; height: 100%">
+    <mat-nav-list  style="overflow-y: auto; position: absolute; left: 0; right: 0; top: 0; bottom: 0; overflow: auto; height: calc(100% - 3em)">
+      <mat-list-item *ngFor="let triggerKey of getTriggerKeyList()" class="triggerItemList"
+                     [ngClass]="{'selectedTrigger': selectedTrigger && selectedTrigger.name==triggerKey.name}">
+        <a matLine>{{ triggerKey.name }}</a>
+      </mat-list-item>
+    </mat-nav-list>
+  </mat-card-content>
+</mat-card>

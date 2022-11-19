@@ -1,6 +1,11 @@
-import { Injectable } from '@angular/core';
-import { getBaseUrl } from '.';
-import { ApiService } from './api.service';
+import {Injectable} from '@angular/core';
+import {CONTEXT_PATH, getBaseUrl} from '.';
+import {ApiService} from './api.service';
+import {Trigger} from '../model/trigger.model';
+import {Observable} from 'rxjs';
+import {SimpleTriggerCommand} from '../model/simple-trigger.command';
+import {Scheduler} from '../model/scheduler.model';
+
 
 @Injectable()
 export class SchedulerService {
@@ -9,40 +14,40 @@ export class SchedulerService {
     private apiService: ApiService
   ) { }
 
-  startScheduler = () => {
-    return this.apiService.get(getBaseUrl() + '/quartz-manager/scheduler/run')
+  startScheduler = (): Observable<void> => {
+    return this.apiService.get(getBaseUrl() + `${CONTEXT_PATH}/scheduler/run`);
   }
 
-  stopScheduler = () => {
-    return this.apiService.get(getBaseUrl() + '/quartz-manager/scheduler/stop')
+  stopScheduler = (): Observable<void> => {
+    return this.apiService.get(getBaseUrl() + `${CONTEXT_PATH}/scheduler/stop`);
   }
 
-  pauseScheduler = () => {
-    return this.apiService.get(getBaseUrl() + '/quartz-manager/scheduler/pause')
+  pauseScheduler = (): Observable<void> => {
+    return this.apiService.get(getBaseUrl() + `${CONTEXT_PATH}/scheduler/pause`);
   }
 
-  resumeScheduler = () => {
-    return this.apiService.get(getBaseUrl() + '/quartz-manager/scheduler/resume')
+  resumeScheduler = (): Observable<void> => {
+    return this.apiService.get(getBaseUrl() + `${CONTEXT_PATH}/scheduler/resume`);
   }
 
   getStatus = () => {
-    return this.apiService.get(getBaseUrl() + '/quartz-manager/scheduler/status')
+    return this.apiService.get(getBaseUrl() + `${CONTEXT_PATH}/scheduler/status`);
   }
 
-  getScheduler = () => {
-    return this.apiService.get(getBaseUrl() + '/quartz-manager/scheduler')
+  getScheduler = (): Observable<Scheduler> => {
+    return this.apiService.get(getBaseUrl() + `${CONTEXT_PATH}/scheduler`);
   }
 
-  getConfig = () => {
-    return this.apiService.get(getBaseUrl() + '/quartz-manager/scheduler/config')
+  getSimpleTriggerConfig = (triggerName: string): Observable<Trigger> => {
+    return this.apiService.get(getBaseUrl() + `${CONTEXT_PATH}/simple-triggers/${triggerName}`);
   }
 
-  saveConfig = (config: Object) => {
-    return this.apiService.post(getBaseUrl() + '/quartz-manager/triggers/mytrigger', config)
+  saveSimpleTriggerConfig = (config: SimpleTriggerCommand) => {
+    return this.apiService.post(getBaseUrl() + `${CONTEXT_PATH}/simple-triggers/${config.triggerName}`, config)
   }
 
-  updateConfig = (config: Object) => {
-    return this.apiService.put(getBaseUrl() + '/quartz-manager/triggers/mytrigger', config)
+  updateSimpleTriggerConfig = (config: SimpleTriggerCommand) => {
+    return this.apiService.put(getBaseUrl() + `${CONTEXT_PATH}/simple-triggers/${config.triggerName}`, config)
   }
 
 

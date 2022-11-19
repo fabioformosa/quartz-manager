@@ -1,0 +1,198 @@
+<mat-card fxFlex="1 1 auto">
+  <mat-card-header>
+    <mat-card-subtitle><b>TRIGGER DETAILS</b></mat-card-subtitle>
+  </mat-card-header>
+  <mat-divider></mat-divider>
+  <mat-card-content *ngIf="shouldShowTheTriggerCardContent()" style="position: relative; height: 100%">
+    <div fxLayout="column" style="overflow-y: auto; position: absolute; left: 0; right: 0; top: 0; bottom: 0;
+    overflow: auto;height: calc(100% - 3em); padding-top: 1em;">
+      <mat-card id="noEligibleJobsAlert" *ngIf="jobs?.length === 0" style="background-color: #ff6385">
+        <mat-card-content>
+          <i class="fas fa-exclamation-circle" style="color: #fff"></i>&nbsp;<strong>WARNING</strong>
+          Not found any eligible job classes for quartz-manager! <br/>
+          <p style="font-size: 0.8em">Please, make sure you have extended <i>AbstractQuartzManagerJob</i> and set the
+          app prop <i>quartz-manager.jobClassPackages</i> with the correct java package </p>
+        </mat-card-content>
+      </mat-card>
+      <form name="triggerConfigForm" fxFlex="1 1 100%"
+            [formGroup]="simpleTriggerReactiveForm" (ngSubmit)="onSubmitTriggerConfig()">
+        <div>
+          <mat-form-field
+            [appearance]="enabledTriggerForm && !trigger ? 'standard': 'none'"
+            class="full-size-input">
+            <mat-label>Trigger Name *</mat-label>
+            <input id="triggerName"
+                   [readonly]="!enabledTriggerForm || trigger"
+                   matInput placeholder="name of the trigger (unique)"
+                   formControlName="triggerName" name="triggerName">
+            <mat-error *ngIf="simpleTriggerReactiveForm.controls.triggerName.errors?.required">
+              Name is <strong>required</strong>
+            </mat-error>
+          </mat-form-field>
+        </div>
+
+        <div>
+          <mat-form-field
+            [appearance]="enabledTriggerForm ? 'standard': 'none'"
+            class="full-size-input"
+          >
+            <mat-label>Job Class *</mat-label>
+            <mat-select id="jobClass" name="jobClass" formControlName="jobClass" [disabled]="!enabledTriggerForm">
+              <mat-option *ngFor="let job of jobs" [value]="job" style="font-size: 0.8em">
+                {{job}}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="simpleTriggerReactiveForm.controls.jobClass.errors?.required">
+              Job is <strong>required</strong>
+            </mat-error>
+          </mat-form-field>
+        </div>
+
+        <div>
+          <mat-form-field
+            [appearance]="enabledTriggerForm ? 'standard': 'none'"
+            class="full-size-input"
+          >
+            <mat-label>Misfire Instruction *</mat-label>
+            <mat-select id="misfireInstruction" name="misfireInstruction" formControlName="misfireInstruction"
+                        [disabled]="!enabledTriggerForm" style="font-size: 0.8em">
+              <mat-option value="MISFIRE_INSTRUCTION_FIRE_NOW">FIRE NOW</mat-option>
+              <mat-option value="MISFIRE_INSTRUCTION_RESCHEDULE_NOW_WITH_EXISTING_REPEAT_COUNT">RESCHEDULE NOW WITH
+                EXISTING REPEAT COUNT
+              </mat-option>
+              <mat-option value="MISFIRE_INSTRUCTION_RESCHEDULE_NOW_WITH_REMAINING_REPEAT_COUNT">RESCHEDULE NOW WITH
+                REMAINING REPEAT COUNT
+              </mat-option>
+              <mat-option value="MISFIRE_INSTRUCTION_RESCHEDULE_NEXT_WITH_REMAINING_COUNT">RESCHEDULE NEXT WITH
+                REMAINING COUNT
+              </mat-option>
+              <mat-option value="MISFIRE_INSTRUCTION_RESCHEDULE_NEXT_WITH_EXISTING_COUNT">RESCHEDULE NEXT WITH EXISTING
+                COUNT
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="simpleTriggerReactiveForm.controls.misfireInstruction.errors?.required">
+              The misfire instruction is <strong>required</strong>
+            </mat-error>
+          </mat-form-field>
+          <div class="small" [innerHTML]="getMisfireInstructionCaption()"></div>
+        </div>
+
+        <br/>
+
+        <div formGroupName="triggerPeriod">
+          <div>
+            <mat-form-field
+              [appearance]="enabledTriggerForm ? 'standard': 'none'"
+              class="full-size-input"
+            >
+              <mat-label>Start Date (optional)</mat-label>
+              <input id="startDate"
+                     [readonly]="!enabledTriggerForm"
+                     matInput
+                     [ngxMatDatetimePicker]="startDatePicker" placeholder="Choose a start date"
+                     formControlName="startDate" name="startDate">
+              <mat-datepicker-toggle matSuffix [for]="startDatePicker"></mat-datepicker-toggle>
+              <ngx-mat-datetime-picker #startDatePicker showSpinners="true" showSeconds="true">
+                <!--                                       [stepHour]="stepHour"-->
+                <!--                                       [stepMinute]="stepMinute" [stepSecond]="stepSecond" [touchUi]="touchUi" [color]="color"-->
+                <!--                                       [enableMeridian]="enableMeridian" [disableMinute]="disableMinute" [hideTime]="hideTime">-->
+              </ngx-mat-datetime-picker>
+            </mat-form-field>
+          </div>
+
+          <div>
+            <mat-form-field
+              [appearance]="enabledTriggerForm ? 'standard': 'none'"
+              class="full-size-input"
+            >
+              <mat-label>End Date (optional)</mat-label>
+              <input id="endDate"
+                     [readonly]="!enabledTriggerForm"
+                     matInput
+                     [ngxMatDatetimePicker]="endDatePicker" placeholder="Choose a end date"
+                     formControlName="endDate" name="endDate"
+              >
+              <mat-datepicker-toggle matSuffix [for]="endDatePicker"></mat-datepicker-toggle>
+              <ngx-mat-datetime-picker #endDatePicker showSpinners="true" showSeconds="true">
+                <!--                                       [stepHour]="stepHour"-->
+                <!--                                       [stepMinute]="stepMinute" [stepSecond]="stepSecond" [touchUi]="touchUi" [color]="color"-->
+                <!--                                       [enableMeridian]="enableMeridian" [disableMinute]="disableMinute" [hideTime]="hideTime">-->
+              </ngx-mat-datetime-picker>
+            </mat-form-field>
+            <mat-error *ngIf="simpleTriggerReactiveForm.controls.triggerPeriod.errors?.invalidTriggerPeriod" style="font-size: small">
+              the end date cannot be  <strong>before</strong> the start date
+            </mat-error>
+          </div>
+        </div>
+
+        <div formGroupName="triggerRecurrence">
+          <div>
+            <mat-form-field
+              [appearance]="enabledTriggerForm ? 'standard': 'none'"
+              class="full-size-input"
+            >
+              <mat-label>Repeat Interval [in mills]</mat-label>
+              <input id="repeatInterval"
+                     [readonly]="!enabledTriggerForm"
+                     matInput placeholder="Repeat Interval [in mills]" type="number"
+                     formControlName="repeatInterval" name="repeatInterval"
+              >
+              <mat-error *ngIf="simpleTriggerReactiveForm.controls.triggerRecurrence.errors?.invalidTriggerRecurrence">
+                repeatCount and repeatInterval must be <strong>both</strong> set or unset
+              </mat-error>
+            </mat-form-field>
+            <!--            <mat-error *ngIf="simpleTriggerReactiveForm.controls.triggerRecurrence.errors?.invalidTriggerRecurrence" style="font-size: small">-->
+            <!--              repeatCount and repeatInterval must be <strong>both</strong> set or unset-->
+            <!--            </mat-error>-->
+          </div>
+          <div>
+            <mat-form-field
+              [appearance]="enabledTriggerForm ? 'standard': 'none'"
+              class="full-size-input"
+            >
+              <mat-label>Repeat Count</mat-label>
+              <input id="repeatCount"
+                     [readonly]="!enabledTriggerForm"
+                     matInput placeholder="Repeat Count (-1 REPEAT INDEFINITELY)" type="number"
+                     formControlName="repeatCount" name="repeatCount"
+              >
+              <mat-error *ngIf="simpleTriggerReactiveForm.controls.triggerRecurrence.errors?.invalidTriggerRecurrence">
+                repeatCount and repeatInterval must be <strong>both</strong> set or unset
+              </mat-error>
+            </mat-form-field>
+
+          </div>
+        </div>
+
+        <br/>
+
+        <div fxLayout="row" fxFlexAlign="space-evenly center" style="padding-bottom: 1em;">
+          <div fxFlex="1 1 auto" style="text-align: center" *ngIf="enabledTriggerForm">
+            <button mat-raised-button
+                    type="button"
+                    *ngIf="enabledTriggerForm"
+                    (click)="onResetReactiveForm()">
+              Cancel
+            </button>
+          </div>
+          <div fxFlex="1 1 auto" style="text-align: center" *ngIf="enabledTriggerForm">
+            <button mat-raised-button
+                    type="submit" color="primary"
+                    [disabled]="simpleTriggerReactiveForm.invalid"
+                    *ngIf="enabledTriggerForm">
+              Submit
+            </button>
+          </div>
+          <div fxFlex="1 1 auto" style="text-align: center" *ngIf="!enabledTriggerForm">
+            <button mat-raised-button type="button"
+            *ngIf="!enabledTriggerForm"
+            (click)="enabledTriggerForm = true">
+            Reschedule
+            </button>
+          </div>
+        </div>
+
+      </form>
+    </div>
+  </mat-card-content>
+</mat-card>

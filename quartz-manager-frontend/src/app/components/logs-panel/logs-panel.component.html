@@ -1,29 +1,35 @@
-<mat-card>
-    <mat-card-header>
-        <mat-card-title><b>JOB LOGS</b></mat-card-title>
+<mat-card fxFlex="1 1 auto">
+    <mat-card-header fxLayout="row" fxLayoutAlign="space-between none" style="padding-right: 1em;">
+      <mat-card-subtitle><b>JOB LOGS</b></mat-card-subtitle>
     </mat-card-header>
-    <mat-card-content>
-            <div id="logs">
-                <div *ngFor = "let log of logs" fxLayout="row" fxLayout.xs="column">
-                    <div fxFlex="1 1 20%">
-                        <span [ngClass]="{'animated zoomIn firstLog': $first}"> [{{log.time|date:'medium'}}]</span>
-                    </div>
-                    <div fxFlex="1 1 10%">
-                        <span [ngClass]="{'animated zoomIn firstLog': $first}">
-                        <i class = "fas" [ngClass]="{'fa-check-circle green': log.type == 'INFO',
-                                                     'fa-exclamation-triangle yellow': log.type == 'WARN',	
-                                                     'fa-times-circle red': log.type == 'ERROR'}"></i>	  		  
-                        </span>
-                    </div>
-                    <div fxFlex="1 1 20%">
-                        <span [ngClass]="{'animated zoomIn firstLog': $first}">
-                        {{log.threadName}}		  
-                        </span>
-                    </div>
-                    <div fxFlex="1 1 50%">
-                        <span [ngClass]="{'animated zoomIn firstLog': $first}"> {{log.msg}}</span>
-                    </div>
-                </div>
+    <mat-card-content style="position: relative; height: calc(100% - 3em);">
+      <div *ngIf="!logs || logs.length == 0" fxLayout="row" fxFlexAlign="center stretch" style="text-align: center">
+        <div fxFill style="height: 100%;">
+          <img src="assets/image/logs.svg" alt="no logs" width="320" style="margin-top: 6em;" />
+        </div>
+      </div>
+      <div id="logs" style="overflow-y: auto; position: absolute; left: 0; right: 0; top: 0; bottom: 0; overflow: auto;">
+        <div
+            *ngFor = "let log of logs; let first = first" fxLayout="row" fxLayout.xs="column" fxLayoutAlign="start" fxLayoutGap="10px">
+            <div fxFlex="0 1 300px">
+                <span [ngClass]="{'animate__animated animate__zoomIn zoomIn firstLog': first}"> [{{log.time|date:'medium'}}]</span>
             </div>
+            <div fxFlex="1 1 16px">
+                <span [ngClass]="{'animated zoomIn firstLog': first}">
+                <i class = "fas" [ngClass]="{'fa-check-circle green': log.type == 'INFO',
+                                             'fa-exclamation-triangle yellow': log.type == 'WARN',
+                                             'fa-times-circle red': log.type == 'ERROR'}"></i>
+                </span>
+            </div>
+            <div fxFlex="0 1 250px">
+                <span [ngClass]="{'animate__animated animate__zoomIn zoomIn firstLog': first}">
+                {{log.threadName}}
+                </span>
+            </div>
+            <div fxFlex="1 1">
+                <span [ngClass]="{'animate__animated animate__zoomIn zoomIn firstLog': first}"> {{log.msg}}</span>
+            </div>
+        </div>
+      </div>
     </mat-card-content>
 </mat-card>

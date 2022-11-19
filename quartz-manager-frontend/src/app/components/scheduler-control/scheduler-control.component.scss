@@ -4,3 +4,14 @@
 .green{
   color: green;
 }
+
+label{
+  color: grey;
+  font-variant: small-caps;
+  font-size: smaller;
+}
+
+#scheduler-name{
+  text-transform: capitalize;
+  font-size: larger;
+}

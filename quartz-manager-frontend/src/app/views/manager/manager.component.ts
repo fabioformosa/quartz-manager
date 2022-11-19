@@ -1,8 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit, ViewChild} from '@angular/core';
 import {
   ConfigService,
   UserService
 } from '../../services';
+import {SimpleTrigger} from '../../model/simple-trigger.model';
+import {TriggerKey} from '../../model/triggerKey.model';
+import {SimpleTriggerConfigComponent} from '../../components/simple-trigger-config';
+import {TriggerListComponent} from '../../components';
 
 @Component({
   selector: 'manager',
@@ -11,14 +15,32 @@ import {
 })
 export class ManagerComponent implements OnInit {
 
-  whoamIResponse = {};
-  allUserResponse = {};
+  @ViewChild(SimpleTriggerConfigComponent)
+  private triggerConfigComponent!: SimpleTriggerConfigComponent;
+
+  @ViewChild(TriggerListComponent)
+  private triggerListComponent: TriggerListComponent;
+
+  newTriggerFormOpened = false;
+
+  selectedTriggerKey: TriggerKey;
+
   constructor(
-    private config: ConfigService,
-    private userService: UserService
   ) { }
 
   ngOnInit() {
+  }
+
+  onNewTriggerRequested() {
+    this.triggerConfigComponent.openTriggerForm();
+  }
+
+  onNewTriggerCreated(newTrigger: SimpleTrigger) {
+    this.triggerListComponent.onNewTrigger(newTrigger);
+  }
+
+  setSelectedTrigger(triggerKey: TriggerKey) {
+    this.selectedTriggerKey = triggerKey;
   }
 
 }

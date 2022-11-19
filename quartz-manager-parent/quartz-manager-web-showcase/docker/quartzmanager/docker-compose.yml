@@ -1,0 +1,11 @@
+version: "3.9"
+services:
+  quartzmanager-usecase-db:
+    container_name: "quartzmanager"
+    image: postgres:14.5
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_PASSWORD: quartzmanager
+    volumes:
+      - ./init-db.sh:/docker-entrypoint-initdb.d/init-db.sh

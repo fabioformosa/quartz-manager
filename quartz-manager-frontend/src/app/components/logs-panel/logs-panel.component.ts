@@ -1,7 +1,7 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import {Component, OnInit, Input, Output, EventEmitter} from '@angular/core';
 
-import { LogsWebsocketService, ApiService } from '../../services';
-import { Observable } from 'rxjs';
+import {LogsWebsocketService, ApiService} from '../../services';
+import {Observable} from 'rxjs';
 
 @Component({
   selector: 'logs-panel',
@@ -10,39 +10,44 @@ import { Observable } from 'rxjs';
 })
 export class LogsPanelComponent implements OnInit {
 
-  MAX_LOGS : number = 20;
+  MAX_LOGS = 30;
 
-  logs : Array<any> = new Array();
+  logs = new Array();
 
   constructor(
     private logsWebsocketService: LogsWebsocketService,
-    private apiService : ApiService
-  ) { }
+    private apiService: ApiService
+  ) {
+  }
 
   ngOnInit() {
-    let obs = this.logsWebsocketService.getObservable()
+    const obs = this.logsWebsocketService.getObservable()
     obs.subscribe({
-      'next' : this.onNewLogMsg,
-      'error' : (err) => {console.log(err)}
+      'next': this.onNewLogMsg,
+      'error': (err) => {
+        console.log(err)
+      }
     });
   }
 
   onNewLogMsg = (receivedMsg) => {
-    if(receivedMsg.type == 'SUCCESS')
+    if (receivedMsg.type === 'SUCCESS') {
       this._showNewLog(receivedMsg.message);
-    else if(receivedMsg.type == 'ERROR')
-      this._refreshSession(); //if websocket has been closed for session expiration, try to refresh it
+    } else if (receivedMsg.type === 'ERROR') {
+      this._refreshSession();
+    } // if websocket has been closed for session expiration, try to refresh it
   };
 
   _showNewLog = (logRecord) => {
-    if(this.logs.length > this.MAX_LOGS)
+    if (this.logs.length > this.MAX_LOGS) {
       this.logs.pop();
-    
+    }
+
     this.logs.unshift({
-      time : logRecord.date,
-      type : logRecord.type,
-			msg : logRecord.message,
-			threadName : logRecord.threadName
+      time: logRecord.date,
+      type: logRecord.type,
+      msg: logRecord.message,
+      threadName: logRecord.threadName
     });
   }
 

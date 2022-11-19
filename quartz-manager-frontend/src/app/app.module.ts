@@ -3,7 +3,7 @@ import { NgModule, APP_INITIALIZER} from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 
-import {JWT_OPTIONS, JwtModule} from "@auth0/angular-jwt";
+import {JWT_OPTIONS, JwtModule} from '@auth0/angular-jwt';
 
 // material
 import {MatIconRegistry} from '@angular/material/icon';
@@ -17,6 +17,14 @@ import {MatToolbarModule} from '@angular/material/toolbar';
 import {MatIconModule} from '@angular/material/icon';
 import {MatButtonModule} from '@angular/material/button';
 import {MatCardModule} from '@angular/material/card';
+import {MatDatepickerModule} from '@angular/material/datepicker';
+import {MatSelectModule} from '@angular/material/select';
+import {MatListModule} from '@angular/material/list';
+import {MatSidenavModule} from '@angular/material/sidenav';
+
+import {MatNativeDateModule} from '@angular/material/core';
+import { NgxMatTimepickerModule, NgxMatDatetimePickerModule} from '@angular-material-components/datetime-picker';
+import { NgxMatMomentModule } from '@angular-material-components/moment-adapter';
 
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FlexLayoutModule } from '@angular/flex-layout';
@@ -32,10 +40,10 @@ import {
   HeaderComponent,
   FooterComponent,
   GithubComponent,
-  SchedulerConfigComponent,
   SchedulerControlComponent,
   LogsPanelComponent,
-  ProgressPanelComponent
+  ProgressPanelComponent,
+  TriggerListComponent
 } from './components';
 
 import {
@@ -46,15 +54,17 @@ import {
   ConfigService,
   ProgressWebsocketService,
   LogsWebsocketService,
-  getHtmlBaseUrl
+  getHtmlBaseUrl,
+  TriggerService
 } from './services';
-import { ChangePasswordComponent } from './views/change-password/change-password.component';
 import { ForbiddenComponent } from './views/forbidden/forbidden.component';
 import { APP_BASE_HREF } from '@angular/common';
-import { environment } from '../environments/environment';
+import {SimpleTriggerConfigComponent} from './components/simple-trigger-config';
+import JobService from './services/job.service';
+import {GenericErrorComponent} from './views/error/genericError.component';
 
 export function initUserFactory(userService: UserService) {
-    return () => userService.jsessionInitUser();
+    return () => userService.fetchLoggedUser();
 }
 
 
@@ -101,12 +111,13 @@ export function jwtOptionsFactory(apiService: ApiService) {
     LoginComponent,
     NotFoundComponent,
     AccountMenuComponent,
-    SchedulerConfigComponent,
+    SimpleTriggerConfigComponent,
     SchedulerControlComponent,
     LogsPanelComponent,
     ProgressPanelComponent,
-    ChangePasswordComponent,
-    ForbiddenComponent
+    ForbiddenComponent,
+    GenericErrorComponent,
+    TriggerListComponent
   ],
   imports: [
     BrowserAnimationsModule,
@@ -128,10 +139,16 @@ export function jwtOptionsFactory(apiService: ApiService) {
     MatChipsModule,
     MatIconModule,
     MatInputModule,
+    MatSelectModule,
     MatToolbarModule,
     MatCardModule,
+    MatListModule,
     MatProgressSpinnerModule,
     MatProgressBarModule,
+    MatDatepickerModule, MatNativeDateModule,
+    NgxMatMomentModule,
+    NgxMatDatetimePickerModule,
+    MatSidenavModule,
     FlexLayoutModule
   ],
   providers: [
@@ -149,6 +166,8 @@ export function jwtOptionsFactory(apiService: ApiService) {
     GuestGuard,
     AdminGuard,
     SchedulerService,
+    JobService,
+    TriggerService,
     ProgressWebsocketService,
     LogsWebsocketService,
     AuthService,

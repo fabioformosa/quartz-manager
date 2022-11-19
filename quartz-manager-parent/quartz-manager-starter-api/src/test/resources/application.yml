@@ -1,0 +1,11 @@
+quartz:
+  enabled: true
+
+quartz-manager:
+  jobClassPackages: it.fabioformosa.quartzmanager.api.jobs
+
+logging:
+  level:
+    org.springframework.boot.autoconfigure.security: INFO
+    it.fabioformosa: DEBUG
+    org.quartz: INFO

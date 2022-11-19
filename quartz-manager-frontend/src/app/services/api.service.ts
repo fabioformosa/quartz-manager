@@ -1,9 +1,9 @@
-import { HttpClient, HttpHeaders, HttpResponse, HttpRequest, HttpEventType, HttpParams } from '@angular/common/http';
-import { Router} from '@angular/router';
-import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
-import { catchError, map, filter, tap } from 'rxjs/operators'
-import { serialize } from '../shared/utilities/serialize';
+import {HttpClient, HttpHeaders, HttpResponse, HttpRequest, HttpEventType, HttpParams} from '@angular/common/http';
+import {Router} from '@angular/router';
+import {Injectable} from '@angular/core';
+import {Observable} from 'rxjs';
+import {catchError, map, filter, tap} from 'rxjs/operators'
+import {serialize} from '../shared/utilities/serialize';
 
 export enum RequestMethod {
   Get = 'GET',
@@ -18,17 +18,6 @@ export enum RequestMethod {
 @Injectable()
 export class ApiService {
 
-  private static extractTokenFromHttpResponse(res: HttpResponse<any>): string {
-    let authorization: string = null;
-    let headers: HttpHeaders = res.headers;
-    if (headers && headers.has('Authorization')){
-      authorization = headers.get('Authorization');
-      if(authorization.startsWith('Bearer '))
-      authorization = authorization.substring(7);
-    }
-    return authorization;
-  }
-
   headers = new HttpHeaders({
     'Accept': 'application/json',
     'Content-Type': 'application/json'
@@ -36,7 +25,20 @@ export class ApiService {
 
   private jwtToken: string;
 
-  constructor( private http: HttpClient, private router: Router) { }
+  private static extractTokenFromHttpResponse(res: HttpResponse<any>): string {
+    let authorization: string = null;
+    const headers: HttpHeaders = res.headers;
+    if (headers && headers.has('Authorization')) {
+      authorization = headers.get('Authorization');
+      if (authorization.startsWith('Bearer ')) {
+        authorization = authorization.substring(7);
+      }
+    }
+    return authorization;
+  }
+
+  constructor(private http: HttpClient, private router: Router) {
+  }
 
   setToken(token: string) {
     this.jwtToken = token;
@@ -50,8 +52,9 @@ export class ApiService {
       withCredentials: true
     };
 
-    if (args) 
+    if (args) {
       options['params'] = serialize(args);
+    }
 
     return this.http.get(path, options)
       .pipe(catchError(this.checkError.bind(this)));
@@ -73,20 +76,21 @@ export class ApiService {
     const options = {
       headers: customHeaders || this.headers,
       withCredentials: true
-    }    
+    }
 
     const req = new HttpRequest(method, path, body, options);
 
     return this.http.request(req)
       .pipe(
-              filter(response => response instanceof HttpResponse),
-              tap((resp: HttpResponse<any>) => {
-                let jwtToken = ApiService.extractTokenFromHttpResponse(resp);
-                if(jwtToken)
-                  this.setToken(jwtToken);
-              }),
-              map((response: HttpResponse<any>) => response.body),
-              catchError(error => this.checkError(error))
+        filter(response => response instanceof HttpResponse),
+        tap((resp: HttpResponse<any>) => {
+          const jwtToken = ApiService.extractTokenFromHttpResponse(resp);
+          if (jwtToken) {
+            this.setToken(jwtToken);
+          }
+        }),
+        map((response: HttpResponse<any>) => response.body),
+        catchError(error => this.checkError(error))
       )
   }
 
@@ -100,6 +104,5 @@ export class ApiService {
     throw error;
   }
 
-  
 
 }

@@ -1,7 +1,8 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core'
-import {  ProgressWebsocketService } from '../../services';
+import {ProgressWebsocketService, QuartzManagerWebsocketMessage} from '../../services';
 
 import { Observable } from 'rxjs';
+import TriggerFiredBundle from '../../model/trigger-fired-bundle.model';
 // import {Message} from '@stomp/stompjs';
 
 // import { Subscription } from 'rxjs/Subscription';
@@ -19,8 +20,8 @@ import { Observable } from 'rxjs';
 })
 export class ProgressPanelComponent implements OnInit {
 
-  progress : any = {}
-  percentageStr : string
+  progress: TriggerFiredBundle = new TriggerFiredBundle();
+  percentageStr: string;
 
   // // Stream of messages
   // private subscription: Subscription;
@@ -31,24 +32,22 @@ export class ProgressPanelComponent implements OnInit {
   // public mq: Array<string> = [];
 
 
-  // private socketSubscription  
-
   constructor(
     private progressWebsocketService: ProgressWebsocketService,
     // private _stompService: StompService,
     // private serverSocket : ServerSocket
   ) { }
 
-  onNewProgressMsg = (receivedMsg) => {
-    if (receivedMsg.type == 'SUCCESS') {
-      var newStatus = receivedMsg.message;
+  onNewProgressMsg = (receivedMsg: QuartzManagerWebsocketMessage) => {
+    if (receivedMsg.type === 'SUCCESS') {
+      const newStatus = receivedMsg.message;
       this.progress = newStatus;
       this.percentageStr = this.progress.percentage + '%';
     }
   }
 
   ngOnInit() {
-    let obs = this.progressWebsocketService.getObservable()
+    const obs = this.progressWebsocketService.getObservable()
     obs.subscribe({
       'next' : this.onNewProgressMsg,
       'error' : (err) => {console.log(err)}

@@ -1,0 +1,33 @@
+#timesTriggeredCounter{
+  font-size: 2em;
+}
+#totCounter{
+  margin-top: auto;
+  text-align: center;
+  margin-bottom: 5px;
+  font-size: 0.8em;
+}
+#counterBox{
+  margin-bottom: 1em;
+}
+
+.fireBox{
+  width: 100%;
+  border-right: 1px solid rgba(0,0,0,.12);
+  margin: 8px;
+}
+
+.fireBox:last-child {
+  border-right: 0;
+}
+
+.fireBoxHeader{
+  font-size: 0.8em;
+  text-align: center;
+  color: grey;
+  margin-bottom: 0.5em;
+}
+
+.fireBoxContent{
+  text-align: center;
+}

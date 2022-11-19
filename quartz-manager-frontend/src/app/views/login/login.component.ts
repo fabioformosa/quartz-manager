@@ -1,18 +1,11 @@
-import { Inject } from '@angular/core';
-import { Component, OnInit, OnDestroy } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Router, ActivatedRoute } from '@angular/router';
-import { DisplayMessage } from '../../shared/models/display-message';
-import { Subscription } from 'rxjs';
-import { takeUntil, delay } from 'rxjs/operators'
+import {Component, OnDestroy, OnInit} from '@angular/core';
+import {FormBuilder, FormGroup, Validators} from '@angular/forms';
+import {ActivatedRoute, Router} from '@angular/router';
+import {DisplayMessage} from '../../shared/models/display-message';
+import {Subject} from 'rxjs';
+import {delay, takeUntil} from 'rxjs/operators'
 
-import {
-  UserService,
-  AuthService
-} from '../../services';
-
-import { Observable } from 'rxjs';
-import { Subject } from 'rxjs';
+import {AuthService, UserService} from '../../services';
 
 @Component({
   selector: 'app-login',
@@ -58,18 +51,6 @@ export class LoginComponent implements OnInit, OnDestroy {
     this.ngUnsubscribe.next();
     this.ngUnsubscribe.complete();
   }
-
-  // onResetCredentials() {
-  //   this.userService.resetCredentials()
-  //   .takeUntil(this.ngUnsubscribe)
-  //   .subscribe(res => {
-  //     if (res.result === 'success') {
-  //       alert('Password has been reset to 123 for all accounts');
-  //     } else {
-  //       alert('Server error');
-  //     }
-  //   });
-  // }
 
   repository() {
     window.location.href = this.githubLink;

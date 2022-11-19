@@ -1,15 +1,13 @@
-import { NgModule } from '@angular/core';
-import { Routes, RouterModule } from '@angular/router';
-import { AppComponent } from './app.component';
-import { LoginComponent } from './views/login';
-import { LoginGuard } from './guards';
-import { GuestGuard, AdminGuard } from './guards';
-import { NotFoundComponent } from './views/not-found';
-import { ChangePasswordComponent } from './views/change-password';
-import { ForbiddenComponent } from './views/forbidden';
+import {NgModule} from '@angular/core';
+import {RouterModule, Routes} from '@angular/router';
+import {LoginComponent} from './views/login';
+import {AdminGuard, GuestGuard} from './guards';
+import {NotFoundComponent} from './views/not-found';
+import {ForbiddenComponent} from './views/forbidden';
 
-import { ManagerComponent } from './views/manager'; 
- 
+import {ManagerComponent} from './views/manager';
+import {GenericErrorComponent} from './views/error/genericError.component';
+
 export const routes: Routes = [
   {
     path: '',
@@ -28,11 +26,6 @@ export const routes: Routes = [
     component: LoginComponent,
     canActivate: [GuestGuard]
   },
-  // {
-  //   path: 'change-password',
-  //   component: ChangePasswordComponent,
-  //   canActivate: [LoginGuard]
-  // },
   {
     path: '404',
     component: NotFoundComponent
@@ -42,13 +35,19 @@ export const routes: Routes = [
     component: ForbiddenComponent
   },
   {
+    path: 'error',
+    component: GenericErrorComponent
+  },
+  {
     path: '**',
     redirectTo: '/404'
   }
 ];
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes)],
+  imports: [RouterModule.forRoot(routes, {
+    initialNavigation: false
+  })],
   exports: [RouterModule],
   providers: []
 })
