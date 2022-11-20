@@ -34,9 +34,6 @@ import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -101,7 +98,9 @@ public class QuartzManagerSecurityConfig {
 
   @Order(Ordered.HIGHEST_PRECEDENCE)
   @Bean(name = "quartzManagerFilterChain")
-  public SecurityFilterChain filterChain(HttpSecurity http, @Qualifier("quartzManagerInMemoryAuthentication") InMemoryUserDetailsManager userDetailsService, AuthenticationManager authenticationManager) throws Exception {
+  public SecurityFilterChain filterChain(HttpSecurity http,
+                                         @Qualifier("quartzManagerInMemoryAuthentication") InMemoryUserDetailsManager userDetailsService,
+                                         AuthenticationManager authenticationManager) throws Exception {
     http.antMatcher(QUARTZ_MANAGER_API_ANT_MATCHER).csrf().disable() //
       .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and() //
       .exceptionHandling().authenticationEntryPoint(restAuthEntryPoint()).and() //
@@ -126,14 +125,6 @@ public class QuartzManagerSecurityConfig {
         web.ignoring()
           .antMatchers(HttpMethod.GET, PATTERNS_SWAGGER_UI);
     };
-  }
-
-  @Bean(name = "quartzManagerCorsConfigurationSource")
-  public CorsConfigurationSource corsConfigurationSource() {
-    UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-    source.registerCorsConfiguration(QUARTZ_MANAGER_API_ANT_MATCHER, new CorsConfiguration().applyPermitDefaultValues());
-    source.registerCorsConfiguration(QUARTZ_MANAGER_UI_ANT_MATCHER, new CorsConfiguration().applyPermitDefaultValues());
-    return source;
   }
 
   public LoginConfigurer formLoginConfigurer() {

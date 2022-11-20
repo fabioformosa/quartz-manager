@@ -2,6 +2,8 @@ package it.fabioformosa.quartzmanager.api.security;
 
 import it.fabioformosa.quartzmanager.api.common.config.QuartzManagerPaths;
 import it.fabioformosa.quartzmanager.api.security.controllers.TestController;
+import it.fabioformosa.quartzmanager.api.security.properties.JwtSecurityProperties;
+import org.assertj.core.api.Assertions;
 import org.hamcrest.core.IsNot;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -19,9 +21,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @TestPropertySource(properties = {
-  "quartz-manager.security.jwt.enabled=true",
   "quartz-manager.security.jwt.secret=bibidibobidiboo",
-  "quartz-manager.security.jwt.expiration-in-sec=28800",
+  "quartz-manager.security.jwt.expiration-in-sec=36000",
   "quartz-manager.security.jwt.header-strategy.enabled=false",
   "quartz-manager.security.jwt.header-strategy.header=Authorization",
   "quartz-manager.security.jwt.cookie-strategy.enabled=true",
@@ -31,10 +32,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
   "quartz-manager.security.accounts.in-memory.users[0].password=bar",
   "quartz-manager.security.accounts.in-memory.users[0].roles[0]=admin",
 })
-public class SecurityControllerTest {
+class SecurityControllerTest {
 
   @Autowired
   private MockMvc mockMvc;
+
+  @Autowired
+  private JwtSecurityProperties jwtSecurityProperties;
 
   @Test
   void givenAnAnonymousUser_whenCalledADMZController_thenShouldRaiseForbidden() throws Exception {
@@ -70,6 +74,12 @@ public class SecurityControllerTest {
         .param("username", "foo")
         .param("password", "bar"))
       .andExpect(status().isOk());
+  }
+
+  @Test
+  void givenSecurityProps_whenTheBootstrapHasCompleted_thenJWTPropertiesShouldBeSetAccordingly() throws Exception {
+    Assertions.assertThat(jwtSecurityProperties.getExpirationInSec()).isEqualTo(36000);
+    Assertions.assertThat(jwtSecurityProperties.getSecret()).isEqualTo("bibidibobidiboo");
   }
 
 }

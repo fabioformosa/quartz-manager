@@ -9,7 +9,7 @@ import org.springframework.test.context.web.WebAppConfiguration;
 public class QuartManagerApplicationTests {
 
     @Test
-    public void contextLoads() {
+    void contextLoads() {
     }
 
 }

@@ -13,7 +13,6 @@ import org.springframework.test.context.TestPropertySource;
 @TestPropertySource(properties = {
   "quartz-manager.security.login-model.form-login-enabled = false",
   "quartz-manager.security.login-model.userpwd-filter-enabled = true",
-  "quartz-manager.security.jwt.enabled=true",
   "quartz-manager.security.jwt.secret=bibidibobidiboo",
   "quartz-manager.security.jwt.expiration-in-sec=28800",
   "quartz-manager.security.jwt.header-strategy.enabled=true",
