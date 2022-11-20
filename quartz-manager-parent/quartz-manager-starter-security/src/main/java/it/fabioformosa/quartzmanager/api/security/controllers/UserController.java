@@ -20,8 +20,9 @@ import static it.fabioformosa.quartzmanager.api.common.config.QuartzManagerPaths
 @RequestMapping(value = QUARTZ_MANAGER_AUTH_PATH, produces = MediaType.APPLICATION_JSON_VALUE)
 public class UserController {
 
+  public static final String WHOAMI_URL = "/whoami";
 
-  @GetMapping("/whoami")
+  @GetMapping(WHOAMI_URL)
   public ResponseEntity<Object> getLoggedUser() {
     SecurityContext context = SecurityContextHolder.getContext();
     if (context != null && context.getAuthentication() != null)
