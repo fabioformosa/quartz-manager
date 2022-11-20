@@ -6,7 +6,7 @@ import org.springframework.test.context.web.WebAppConfiguration;
 
 @SpringBootTest(classes = QuartManagerDemoApplication.class)
 @WebAppConfiguration
-class QuartManagerApplicationTests {
+public class QuartManagerApplicationTests {
 
     @Test
     void contextLoads() {
