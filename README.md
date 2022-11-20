@@ -245,7 +245,7 @@ compile group: 'it.fabioformosa.quartz-manager', name: 'quartz-manager-starter-p
 
 ## Examples
 
-You can find some examples of different scenarios of projects which import Quartz Manager at the repository [quartz-manager-use-cases] (https://github.com/fabioformosa/quartz-manager-use-cases)
+You can find some examples of different scenarios of projects which import Quartz Manager at the repository [quartz-manager-use-cases](https://github.com/fabioformosa/quartz-manager-use-cases)
 * *simply-spring* - tipical scenario in which you create a minimal spring project from scratch dedicated to launch your scheduled jobs. Imported libraries: Quartz Manager API, Quartz Manager UI and Quartz Manager Security.
 * *simply-spring-no-security* - as simple-spring, without the security. Imported libraries: Quartz Manager API, Quartz Manager UI.
 * *existing-security-cookie-based* - It demonstrates how Quartz Manager stays under the security of your project, in case of an auth model based on cookies. Imported libraries: Quartz Manager API, Quartz Manager UI. 
