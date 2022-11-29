@@ -1,5 +1,8 @@
 package it.fabioformosa.quartzmanager.api.jobs.entities;
 
+import lombok.Data;
+import lombok.ToString;
+
 import java.util.Date;
 
 /**
@@ -8,6 +11,8 @@ import java.util.Date;
  * @author Fabio.Formosa
  *
  */
+@Data
+@ToString
 public class LogRecord {
 
   public enum LogType {
@@ -25,43 +30,6 @@ public class LogRecord {
     this.type = type;
     message = msg;
     date = new Date();
-  }
-
-  public Date getDate() {
-    return date;
-  }
-
-  public String getMessage() {
-    return message;
-  }
-
-  public String getThreadName() {
-    return threadName;
-  }
-
-  public LogType getType() {
-    return type;
-  }
-
-  public void setDate(Date date) {
-    this.date = date;
-  }
-
-  public void setMessage(String msg) {
-    message = msg;
-  }
-
-  public void setThreadName(String threadName) {
-    this.threadName = threadName;
-  }
-
-  public void setType(LogType type) {
-    this.type = type;
-  }
-
-  @Override
-  public String toString() {
-    return "LogRecord [date=" + date + ", type=" + type + ", message=" + message + "]";
   }
 
 }
