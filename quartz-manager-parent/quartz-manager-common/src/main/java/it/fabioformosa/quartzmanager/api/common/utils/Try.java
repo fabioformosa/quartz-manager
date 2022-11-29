@@ -2,25 +2,29 @@ package it.fabioformosa.quartzmanager.api.common.utils;
 
 import java.util.function.Function;
 
+/**
+ *
+ * @param <R> success type
+ */
 public class Try<R> {
 
   private final Throwable failure;
   private final R success;
 
-  public Try(Throwable failure, R success) {
+  private Try(Throwable failure, R success) {
     this.failure = failure;
     this.success = success;
   }
 
-  public R getSuccess() {
+  private R getSuccess() {
     return success;
   }
 
-  public static <R> Try<R> success(R r){
+  private static <R> Try<R> success(R r){
     return new Try<>(null, r);
   }
 
-  public static <R> Try<R> failure(Throwable e){
+  private static <R> Try<R> failure(Throwable e){
     return new Try<>(e, null);
   }
 
@@ -38,11 +42,11 @@ public class Try<R> {
    return t -> Try.with(checkedFunction).apply(t).getSuccess();
   }
 
-  public boolean isSuccess(){
+  private boolean isSuccess(){
     return this.failure == null;
   }
 
-  public boolean isFailure(){
+  private boolean isFailure(){
     return this.failure != null;
   }
 
