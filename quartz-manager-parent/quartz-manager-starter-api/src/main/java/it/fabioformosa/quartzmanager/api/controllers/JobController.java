@@ -16,10 +16,11 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@RequestMapping(QuartzManagerPaths.QUARTZ_MANAGER_BASE_CONTEXT_PATH + "/jobs")
+@RequestMapping(JobController.JOB_CONTROLLER_BASE_URL)
 @SecurityRequirement(name = OpenAPIConfigConsts.QUARTZ_MANAGER_SEC_OAS_SCHEMA)
 @RestController
 public class JobController {
+  public static final String JOB_CONTROLLER_BASE_URL = QuartzManagerPaths.QUARTZ_MANAGER_BASE_CONTEXT_PATH + "/jobs";
   private final JobService jobService;
 
   public JobController(JobService jobService) {

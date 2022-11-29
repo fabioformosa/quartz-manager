@@ -42,14 +42,6 @@ public class Try<R> {
    return t -> Try.with(checkedFunction).apply(t).getSuccess();
   }
 
-  private boolean isSuccess(){
-    return this.failure == null;
-  }
-
-  private boolean isFailure(){
-    return this.failure != null;
-  }
-
   @FunctionalInterface
   public static interface CheckedFunction<T, R> {
     R apply(T t) throws java.lang.Exception;
