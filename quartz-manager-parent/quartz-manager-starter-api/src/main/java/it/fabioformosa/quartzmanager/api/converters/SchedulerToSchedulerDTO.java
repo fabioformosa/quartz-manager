@@ -17,7 +17,8 @@ public class SchedulerToSchedulerDTO extends AbstractBaseConverterToDTO<Schedule
   protected void convert(Scheduler source, SchedulerDTO target) {
     target.setName(source.getSchedulerName());
     target.setInstanceId(source.getSchedulerInstanceId());
-    target.setTriggerKeys(source.getTriggerKeys(GroupMatcher.anyTriggerGroup()));
+    if(!source.isShutdown())
+      target.setTriggerKeys(source.getTriggerKeys(GroupMatcher.anyTriggerGroup()));
     target.setStatus(buildTheSchedulerStatus(source));
   }
 
