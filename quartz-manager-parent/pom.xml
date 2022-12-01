@@ -131,6 +131,8 @@
         <configuration>
           <excludes>
             <exclude>**/OpenApiConfig.class</exclude>
+            <exclude>**/SecurityOpenApiConfig.class</exclude>
+            <exclude>**/QuartzModuleProperties.class</exclude>
           </excludes>
         </configuration>
         <executions>
