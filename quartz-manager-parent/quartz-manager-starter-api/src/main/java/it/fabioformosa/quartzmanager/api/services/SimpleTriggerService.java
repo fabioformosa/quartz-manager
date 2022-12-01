@@ -1,7 +1,6 @@
 package it.fabioformosa.quartzmanager.api.services;
 
 import it.fabioformosa.quartzmanager.api.dto.SimpleTriggerCommandDTO;
-import it.fabioformosa.quartzmanager.api.dto.TriggerDTO;
 import it.fabioformosa.quartzmanager.api.dto.SimpleTriggerDTO;
 import it.fabioformosa.quartzmanager.api.exceptions.TriggerNotFoundException;
 import org.quartz.*;
@@ -34,7 +33,7 @@ public class SimpleTriggerService extends AbstractSchedulerService {
     return conversionService.convert(newSimpleTrigger, SimpleTriggerDTO.class);
   }
 
-  public TriggerDTO rescheduleSimpleTrigger(SimpleTriggerCommandDTO triggerCommandDTO) throws SchedulerException {
+  public SimpleTriggerDTO rescheduleSimpleTrigger(SimpleTriggerCommandDTO triggerCommandDTO) throws SchedulerException {
     SimpleTrigger newSimpleTrigger = conversionService.convert(triggerCommandDTO, SimpleTrigger.class);
 
     TriggerKey triggerKey = TriggerKey.triggerKey(triggerCommandDTO.getTriggerName());
