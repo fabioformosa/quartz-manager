@@ -133,6 +133,10 @@
             <exclude>**/OpenApiConfig.class</exclude>
             <exclude>**/SecurityOpenApiConfig.class</exclude>
             <exclude>**/QuartzModuleProperties.class</exclude>
+            <exclude>**/QuartManagerDemoApplication.class</exclude>
+            <exclude>**/ServletInitializer.class</exclude>
+            <exclude>**/SessionController.class</exclude>
+            <exclude>**/HealthCheckController.class</exclude>
           </excludes>
         </configuration>
         <executions>
