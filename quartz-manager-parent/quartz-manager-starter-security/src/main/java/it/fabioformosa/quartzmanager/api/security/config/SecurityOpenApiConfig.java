@@ -11,6 +11,7 @@ import io.swagger.v3.oas.models.security.SecurityScheme;
 import it.fabioformosa.quartzmanager.api.common.config.OpenAPIConfigConsts;
 import it.fabioformosa.quartzmanager.api.common.config.QuartzManagerPaths;
 import it.fabioformosa.quartzmanager.api.security.properties.JwtSecurityProperties;
+import lombok.Generated;
 import lombok.extern.slf4j.Slf4j;
 import org.springdoc.core.customizers.OpenApiCustomiser;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -24,6 +25,7 @@ import java.util.Arrays;
 @Slf4j
 @ConditionalOnProperty(name = "quartz-manager.oas.enabled")
 @Configuration
+@Generated
 public class SecurityOpenApiConfig {
 
   @Order(Ordered.HIGHEST_PRECEDENCE)

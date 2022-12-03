@@ -4,6 +4,7 @@ import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.info.License;
 import it.fabioformosa.quartzmanager.api.common.config.QuartzManagerPaths;
+import lombok.Generated;
 import lombok.extern.slf4j.Slf4j;
 import org.springdoc.core.GroupedOpenApi;
 import org.springdoc.core.customizers.OpenApiCustomiser;
@@ -19,6 +20,7 @@ import java.util.Optional;
 
 @Slf4j
 @Configuration
+@Generated
 public class OpenApiConfig {
 
   @ConditionalOnProperty(name = "quartz-manager.oas.enabled")

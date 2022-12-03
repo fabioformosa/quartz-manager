@@ -6,9 +6,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @Generated
 @SpringBootApplication
-public class QuartManagerDemoApplication {
+public class QuartzManagerDemoApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(QuartManagerDemoApplication.class, args);
+		SpringApplication.run(QuartzManagerDemoApplication.class, args);
 	}
 }

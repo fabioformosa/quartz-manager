@@ -2,6 +2,7 @@ package it.fabioformosa.quartzmanager.jobs.tests;
 
 import it.fabioformosa.quartzmanager.api.jobs.AbstractQuartzManagerJob;
 import it.fabioformosa.quartzmanager.api.jobs.entities.LogRecord;
+import lombok.Generated;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.quartz.JobExecutionContext;
@@ -15,6 +16,7 @@ import org.quartz.JobExecutionContext;
  */
 @Slf4j
 @NoArgsConstructor
+@Generated
 public class MisfireTestJob extends AbstractQuartzManagerJob {
 
   private long sleepPeriodInMs = 10 * 1000L;

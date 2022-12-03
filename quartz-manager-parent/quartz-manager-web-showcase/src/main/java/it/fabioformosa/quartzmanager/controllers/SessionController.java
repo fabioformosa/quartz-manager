@@ -1,6 +1,7 @@
 package it.fabioformosa.quartzmanager.controllers;
 
 import io.swagger.v3.oas.annotations.Operation;
+import lombok.Generated;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpEntity;
@@ -15,6 +16,7 @@ import javax.servlet.http.HttpSession;
 
 @Controller
 @RequestMapping("/session")
+@Generated
 public class SessionController {
 
 	private final Logger log = LoggerFactory.getLogger(SessionController.class);
