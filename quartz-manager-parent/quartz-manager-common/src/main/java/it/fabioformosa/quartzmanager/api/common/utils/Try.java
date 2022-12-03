@@ -1,11 +1,14 @@
 package it.fabioformosa.quartzmanager.api.common.utils;
 
+import lombok.Getter;
+
 import java.util.function.Function;
 
 /**
  *
  * @param <R> success type
  */
+@Getter
 public class Try<R> {
 
   private final Throwable failure;
@@ -16,7 +19,7 @@ public class Try<R> {
     this.success = success;
   }
 
-  private R getSuccess() {
+  public R getSuccess() {
     return success;
   }
 

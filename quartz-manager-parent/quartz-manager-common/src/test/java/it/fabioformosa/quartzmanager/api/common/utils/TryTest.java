@@ -14,15 +14,29 @@ class TryTest {
   }
 
   @Test
-  void givenAFunction_whenItRaisesAnException_thenItReturnsNull(){
+  void givenAFunctionWhichRaisesAnException_whenSneakyThrowIsCalled_thenItReturnsNull(){
     String hello = Optional.of("hello").map(Try.sneakyThrow(this::raiseExceptionIfHello)).orElse(null);
     Assertions.assertThat(hello).isNull();
   }
 
   @Test
-  void givenAFunction_whenItDoesntRaisesAnException_thenItReturnsTheValue(){
+  void givenAFunctionWhichDoesntRaiseAnException_whenSneakyThrowIsCalled_thenItReturnsTheValue(){
     String hello = Optional.of("not hello").map(Try.sneakyThrow(this::raiseExceptionIfHello)).orElse(null);
     Assertions.assertThat(hello).isEqualTo("not hello");
+  }
+
+  @Test
+  void givenAFunctionWhichRaisesAnException_whenTryWithIsCalled_thenItReturnsAFailureObj(){
+    Try<String> aTry = Optional.of("hello").map(greet -> Try.with(this::raiseExceptionIfHello).apply(greet)).get();
+    Assertions.assertThat(aTry.getFailure()).isNotNull();
+    Assertions.assertThat(aTry.getFailure().getMessage()).isEqualTo("hello");
+  }
+
+  @Test
+  void givenAFunctionWhichDoesntRaiseAnException_whenTryWithIsCalled_thenItReturnsTheValue(){
+    Try<String> aTry = Optional.of("not hello").map(greet -> Try.with(this::raiseExceptionIfHello).apply(greet)).get();
+    Assertions.assertThat(aTry.getFailure()).isNull();
+    Assertions.assertThat(aTry.getSuccess()).isEqualTo("not hello");
   }
 
 }

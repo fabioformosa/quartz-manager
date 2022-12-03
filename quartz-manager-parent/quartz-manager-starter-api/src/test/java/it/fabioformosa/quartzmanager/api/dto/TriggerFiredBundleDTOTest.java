@@ -2,33 +2,24 @@ package it.fabioformosa.quartzmanager.api.dto;
 
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class TriggerFiredBundleDTOTest {
 
-  @Test
-  void givenARecursionOf1000_whenTheTriggerHasFired10_thenThePercentageIs10(){
+  @CsvSource({
+    "10, 100, 10",
+    "23, 1000, 2",
+    "26, 1000, 3"
+  })
+  @ParameterizedTest
+  void givenARepeatCount_whenTheTriggerHasFiredXTimes_thenThePercentageIsCalculatedAccordingly(int timesTriggered, int repeatCount, int expectedPercentage){
     TriggerFiredBundleDTO triggerFiredBundleDTO = TriggerFiredBundleDTO.builder().build();
-    triggerFiredBundleDTO.setTimesTriggered(10);
-    triggerFiredBundleDTO.setRepeatCount(100);
-    Assertions.assertThat(triggerFiredBundleDTO.getPercentage()).isEqualTo(10);
-  }
-
-  @Test
-  void givenARecursionOf1000_whenTheTriggerHasFired23_thenThePercentageIsRoundedDown(){
-    TriggerFiredBundleDTO triggerFiredBundleDTO = TriggerFiredBundleDTO.builder().build();
-    triggerFiredBundleDTO.setTimesTriggered(23);
-    triggerFiredBundleDTO.setRepeatCount(1000);
-    Assertions.assertThat(triggerFiredBundleDTO.getPercentage()).isEqualTo(2);
-  }
-
-  @Test
-  void givenARecursionOf1000_whenTheTriggerHasFired26_thenThePercentageIsRoundedUp(){
-    TriggerFiredBundleDTO triggerFiredBundleDTO = TriggerFiredBundleDTO.builder().build();
-    triggerFiredBundleDTO.setTimesTriggered(26);
-    triggerFiredBundleDTO.setRepeatCount(1000);
-    Assertions.assertThat(triggerFiredBundleDTO.getPercentage()).isEqualTo(3);
+    triggerFiredBundleDTO.setTimesTriggered(timesTriggered);
+    triggerFiredBundleDTO.setRepeatCount(repeatCount);
+    Assertions.assertThat(triggerFiredBundleDTO.getPercentage()).isEqualTo(expectedPercentage);
   }
 
   @Test
