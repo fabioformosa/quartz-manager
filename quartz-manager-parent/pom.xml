@@ -137,6 +137,8 @@
             <exclude>**/ServletInitializer.class</exclude>
             <exclude>**/SessionController.class</exclude>
             <exclude>**/HealthCheckController.class</exclude>
+            <exclude>**/WebShowcaseOpenApiConfig.class</exclude>
+            <exclude>**/MisfireTestJob.class</exclude>
           </excludes>
         </configuration>
         <executions>

@@ -58,6 +58,11 @@ class SampleJobTest {
       Assertions.assertThat(triggerFiredBundleDTO.getJobKey()).isEqualTo("test-job");
       Assertions.assertThat(triggerFiredBundleDTO.getRepeatCount()).isEqualTo(6);
       Assertions.assertThat(triggerFiredBundleDTO.getJobClass()).isEqualTo(SampleJob.class.getName());
+      Assertions.assertThat(triggerFiredBundleDTO.getTimesTriggered()).isZero();
+      Assertions.assertThat(triggerFiredBundleDTO.getNextFireTime()).isNull();
+      Assertions.assertThat(triggerFiredBundleDTO.getPercentage()).isZero();
+      Assertions.assertThat(triggerFiredBundleDTO.getFinalFireTime()).isNotNull();
+      Assertions.assertThat(triggerFiredBundleDTO.getPreviousFireTime()).isNull();
       return true;
     }));
   }
