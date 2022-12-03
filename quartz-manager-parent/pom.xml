@@ -53,10 +53,10 @@
     <sonar.organization>fabioformosa</sonar.organization>
     <sonar.host.url>https://sonarcloud.io</sonar.host.url>
     <sonar.exclusions>
-      **/SpringApplicationTest.java, **/QuartManagerApplicationTests.java, OpenApiConfig.class,
-      **/SecurityOpenApiConfig.class, **/QuartzModuleProperties.class, **/QuartzManagerDemoApplication.class,
-      **/ServletInitializer.class, **/SessionController.class, **/HealthCheckController.class,
-      **/WebShowcaseOpenApiConfig.class, **/MisfireTestJob.class
+      **/SpringApplicationTest.java, **/QuartManagerApplicationTests.java, OpenApiConfig.java,
+      **/SecurityOpenApiConfig.java, **/QuartzModuleProperties.java, **/QuartzManagerDemoApplication.java,
+      **/ServletInitializer.java, **/SessionController.java, **/HealthCheckController.java,
+      **/WebShowcaseOpenApiConfig.java, **/MisfireTestJob.java
     </sonar.exclusions>
   </properties>
 
