@@ -51,10 +51,13 @@
     <maven-release-plugin.version>2.5.3</maven-release-plugin.version>
     <maven-gpg-plugin.version>3.0.1</maven-gpg-plugin.version>
     <sonar.organization>fabioformosa</sonar.organization>
-    <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
-    <sonar.language>java</sonar.language>
     <sonar.host.url>https://sonarcloud.io</sonar.host.url>
-    <sonar.exclusions>**/SpringApplicationTest.java, **/QuartManagerApplicationTests.java</sonar.exclusions>
+    <sonar.exclusions>
+      **/SpringApplicationTest.java, **/QuartManagerApplicationTests.java, OpenApiConfig.class,
+      **/SecurityOpenApiConfig.class, **/QuartzModuleProperties.class, **/QuartzManagerDemoApplication.class,
+      **/ServletInitializer.class, **/SessionController.class, **/HealthCheckController.class,
+      **/WebShowcaseOpenApiConfig.class, **/MisfireTestJob.class
+    </sonar.exclusions>
   </properties>
 
   <modules>
@@ -155,6 +158,13 @@
             <goals>
               <goal>report</goal>
             </goals>
+          </execution>
+          <execution>
+            <id>report-aggregate</id>
+            <goals>
+              <goal>report-aggregate</goal>
+            </goals>
+            <phase>verify</phase>
           </execution>
         </executions>
       </plugin>
