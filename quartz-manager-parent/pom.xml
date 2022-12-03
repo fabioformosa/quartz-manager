@@ -41,7 +41,6 @@
   </developers>
 
   <properties>
-    <sonar.organization>fabioformosa</sonar.organization>
     <java.version>9</java.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven-surefire-plugin.version>2.22.0</maven-surefire-plugin.version>
@@ -51,6 +50,11 @@
     <nexus-staging-maven-plugin.version>1.6.7</nexus-staging-maven-plugin.version>
     <maven-release-plugin.version>2.5.3</maven-release-plugin.version>
     <maven-gpg-plugin.version>3.0.1</maven-gpg-plugin.version>
+    <sonar.organization>fabioformosa</sonar.organization>
+    <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
+    <sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
+    <sonar.jacoco.reportPath>${project.basedir}/../target/jacoco.exec</sonar.jacoco.reportPath>
+    <sonar.language>java</sonar.language>
     <sonar.host.url>https://sonarcloud.io</sonar.host.url>
     <sonar.exclusions>**/SpringApplicationTest.java, **/QuartManagerApplicationTests.java</sonar.exclusions>
   </properties>
@@ -129,11 +133,13 @@
         <artifactId>jacoco-maven-plugin</artifactId>
         <version>${jacoco-maven-plugin.version}</version>
         <configuration>
+          <destFile>${sonar.jacoco.reportPath}</destFile>
+          <append>true</append>
           <excludes>
             <exclude>**/OpenApiConfig.class</exclude>
             <exclude>**/SecurityOpenApiConfig.class</exclude>
             <exclude>**/QuartzModuleProperties.class</exclude>
-            <exclude>**/QuartManagerDemoApplication.class</exclude>
+            <exclude>**/QuartzManagerDemoApplication.class</exclude>
             <exclude>**/ServletInitializer.class</exclude>
             <exclude>**/SessionController.class</exclude>
             <exclude>**/HealthCheckController.class</exclude>
