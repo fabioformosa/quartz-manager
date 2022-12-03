@@ -43,7 +43,7 @@ public class WebSocketProgressNotifier implements WebhookSender<TriggerFiredBund
 
     JobDetail jobDetail = jobExecutionContext.getJobDetail();
     triggerFiredBundleDTO.setJobKey(jobDetail.getKey().getName());
-    triggerFiredBundleDTO.setJobClass(trigger.getClass().getSimpleName());
+    triggerFiredBundleDTO.setJobClass(jobDetail.getJobClass().getName());
     return triggerFiredBundleDTO;
   }
 

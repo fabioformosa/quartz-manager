@@ -5,7 +5,7 @@
   <parent>
     <groupId>it.fabioformosa.quartz-manager</groupId>
     <artifactId>quartz-manager-parent</artifactId>
-    <version>4.0.5</version>
+    <version>4.0.6-SNAPSHOT</version>
   </parent>
 
   <artifactId>quartz-manager-starter-api</artifactId>
@@ -20,7 +20,7 @@
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <springdoc-openapi.version>1.5.12</springdoc-openapi.version>
     <java.version>9</java.version>
-    <sonar.exclusions>**/QuartManagerApplicationTests.java</sonar.exclusions>
+    <sonar.exclusions>**/QuartManagerApplicationTests.java, **/OpenApiConfig.java</sonar.exclusions>
   </properties>
 
   <dependencies>
