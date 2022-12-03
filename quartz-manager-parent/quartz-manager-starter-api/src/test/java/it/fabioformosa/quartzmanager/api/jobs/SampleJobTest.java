@@ -12,7 +12,7 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.quartz.*;
 
-import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.argThat;
 
 class SampleJobTest {
 
@@ -47,8 +47,19 @@ class SampleJobTest {
     Mockito.when(jobExecutionContext.getJobDetail()).thenReturn(jobDetail);
 
     sampleJob.execute(jobExecutionContext);
-    Mockito.verify(webSocketLogsNotifier).send(any(LogRecord.class));
-    Mockito.verify(webSocketProgressNotifier).send(any(TriggerFiredBundleDTO.class));
+    Mockito.verify(webSocketLogsNotifier).send(argThat(actualLogRecord -> {
+      Assertions.assertThat(actualLogRecord.getMessage()).isEqualTo("Hello!");
+      Assertions.assertThat(actualLogRecord.getType()).isEqualTo(LogRecord.LogType.INFO);
+      Assertions.assertThat(actualLogRecord.getDate()).isNotNull();
+      Assertions.assertThat(actualLogRecord.getThreadName()).isNotNull();
+      return true;
+    }));
+    Mockito.verify(webSocketProgressNotifier).send(argThat(triggerFiredBundleDTO -> {
+      Assertions.assertThat(triggerFiredBundleDTO.getJobKey()).isEqualTo("test-job");
+      Assertions.assertThat(triggerFiredBundleDTO.getRepeatCount()).isEqualTo(6);
+      Assertions.assertThat(triggerFiredBundleDTO.getJobClass()).isEqualTo(SampleJob.class.getName());
+      return true;
+    }));
   }
 
   @Test
@@ -57,6 +68,7 @@ class SampleJobTest {
     LogRecord logRecord = sampleJob.doIt(jobExecutionContext);
     Assertions.assertThat(logRecord.getMessage()).isEqualTo("Hello!");
     Assertions.assertThat(logRecord.getType()).isEqualTo(LogRecord.LogType.INFO);
+    Assertions.assertThat(logRecord.getDate()).isNotNull();
   }
 
 }
