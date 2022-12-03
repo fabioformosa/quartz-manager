@@ -52,8 +52,6 @@
     <maven-gpg-plugin.version>3.0.1</maven-gpg-plugin.version>
     <sonar.organization>fabioformosa</sonar.organization>
     <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
-    <sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
-    <sonar.jacoco.reportPath>${project.basedir}/../target/jacoco.exec</sonar.jacoco.reportPath>
     <sonar.language>java</sonar.language>
     <sonar.host.url>https://sonarcloud.io</sonar.host.url>
     <sonar.exclusions>**/SpringApplicationTest.java, **/QuartManagerApplicationTests.java</sonar.exclusions>
@@ -133,8 +131,6 @@
         <artifactId>jacoco-maven-plugin</artifactId>
         <version>${jacoco-maven-plugin.version}</version>
         <configuration>
-          <destFile>${sonar.jacoco.reportPath}</destFile>
-          <append>true</append>
           <excludes>
             <exclude>**/OpenApiConfig.class</exclude>
             <exclude>**/SecurityOpenApiConfig.class</exclude>
