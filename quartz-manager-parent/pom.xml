@@ -59,7 +59,8 @@
       OpenApiConfig.java,
       **/SecurityOpenApiConfig.java, **/QuartzModuleProperties.java, **/QuartzManagerDemoApplication.java,
       **/ServletInitializer.java, **/SessionController.java, **/HealthCheckController.java,
-      **/WebShowcaseOpenApiConfig.java, **/MisfireTestJob.java
+      **/WebShowcaseOpenApiConfig.java, **/MisfireTestJob.java, **/PersistenceConfig.java,
+      **/QuartzManagerSecurityConfig.java
     </sonar.coverage.exclusions>
   </properties>
 
