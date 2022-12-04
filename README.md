@@ -17,7 +17,7 @@
 [ROADMAP](https://github.com/fabioformosa/quartz-manager#roadmap)  
 [REPOSITORY](https://github.com/fabioformosa/quartz-manager#repository)  
 [HOW TO CONTRIBUTE](https://github.com/fabioformosa/quartz-manager#how-to-contribute)  
-[SUPPORT THE PROJECT](https://github.com/fabioformosa/quartz-manager#support-the-project)
+[SUPPORT THE PROJECT](https://github.com/fabioformosa/quartz-manager#%EF%B8%8F-support-the-project-%EF%B8%8F)
 
 # QUARTZ MANAGER
 In the last decade, the [Quartz Scheduler](http://www.quartz-scheduler.org/) has become the most adopted opensource job scheduling library for Java applications.  
