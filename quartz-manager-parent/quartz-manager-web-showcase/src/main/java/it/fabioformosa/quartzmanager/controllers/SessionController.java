@@ -22,7 +22,6 @@ public class SessionController {
 	private final Logger log = LoggerFactory.getLogger(SessionController.class);
 
 	@GetMapping("/invalidate")
-	//@PreAuthorize("hasAuthority('ADMIN')") TODO
 	@ResponseStatus(HttpStatus.NO_CONTENT)
   @Operation(hidden = true)
 	public void invalidateSession(HttpSession session) {
@@ -31,7 +30,6 @@ public class SessionController {
 	}
 
 	@GetMapping("/refresh")
-//	@PreAuthorize("hasAuthority('ADMIN')") TODO
   @Operation(hidden = true)
 	public HttpEntity<Void> refreshSession(HttpSession session) {
 		return new ResponseEntity<>(HttpStatus.OK);

@@ -53,7 +53,7 @@
     <sonar.organization>fabioformosa</sonar.organization>
     <sonar.host.url>https://sonarcloud.io</sonar.host.url>
     <sonar.exclusions>
-      **/SpringApplicationTest.java, **/QuartManagerApplicationTests.java
+      **/SpringApplicationTest.java, **/QuartManagerApplicationTests.java, **/MisfireTestJob.java
     </sonar.exclusions>
     <sonar.coverage.exclusions>
       OpenApiConfig.java,
