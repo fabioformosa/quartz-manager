@@ -17,7 +17,7 @@ import {AbstractControl, FormBuilder, FormControl, FormGroup, ValidationErrors, 
 })
 export class SimpleTriggerConfigComponent implements OnInit {
 
-  trigger: SimpleTrigger;
+  trigger: SimpleTrigger = null;
 
   simpleTriggerReactiveForm: FormGroup = this.formBuilder.group({
     triggerName: [this.trigger?.triggerKeyDTO.name, Validators.required],

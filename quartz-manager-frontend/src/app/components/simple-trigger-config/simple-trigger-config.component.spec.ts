@@ -1,4 +1,4 @@
-import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import {ComponentFixture, TestBed, waitForAsync} from '@angular/core/testing';
 import {MatCardModule} from '@angular/material/card';
 import {SimpleTriggerConfigComponent} from './simple-trigger-config.component';
 import {ApiService, ConfigService, CONTEXT_PATH, SchedulerService} from '../../services';
@@ -29,7 +29,7 @@ describe('SimpleTriggerConfig', () => {
   let httpClient: HttpClient;
   let httpTestingController: HttpTestingController;
 
-  beforeEach(async( () => {
+  beforeEach(waitForAsync( () => {
     TestBed.configureTestingModule({
       imports: [FormsModule,  MatFormFieldModule, MatFormFieldModule, MatSelectModule, MatInputModule, BrowserAnimationsModule,
         MatNativeDateModule, ReactiveFormsModule,

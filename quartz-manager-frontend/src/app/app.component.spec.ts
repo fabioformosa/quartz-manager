@@ -1,4 +1,4 @@
-import { TestBed, async } from '@angular/core/testing';
+import {TestBed, async, waitForAsync} from '@angular/core/testing';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { RouterTestingModule } from '@angular/router/testing';
 import { AppComponent } from './app.component';
@@ -18,7 +18,7 @@ import {
 } from './services';
 
 describe('AppComponent', () => {
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [
         AppComponent,
