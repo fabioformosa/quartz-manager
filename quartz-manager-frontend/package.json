@@ -12,10 +12,10 @@
   },
   "private": true,
   "dependencies": {
-    "@angular-material-components/datetime-picker": "2.0.4",
-    "@angular-material-components/moment-adapter": "2.0.2",
+    "@angular-material-components/datetime-picker": "4.0.5",
+    "@angular-material-components/moment-adapter": "4.0.1",
     "@angular/animations": "9.1.4",
-    "@angular/cdk": "9.2.1",
+    "@angular/cdk": "10.2.7",
     "@angular/common": "9.1.4",
     "@angular/compiler": "9.1.4",
     "@angular/core": "9.1.4",
