@@ -198,6 +198,10 @@ describe('SimpleTriggerConfig', () => {
   it('should fetch and display the trigger when the triggerKey is passed as input', () => {
     const mockTriggerKey = new TriggerKey('my-simple-trigger', null);
     component.triggerKey = mockTriggerKey;
+
+    component.trigger = new SimpleTrigger();
+    component.trigger.triggerKeyDTO = mockTriggerKey;
+
     fixture.detectChanges();
 
     const mockTrigger = new Trigger();
@@ -226,6 +230,9 @@ describe('SimpleTriggerConfig', () => {
     getJobsReq.flush([]);
     fixture.detectChanges();
 
+    component.openTriggerForm();
+    fixture.detectChanges();
+
     const componentDe: DebugElement = fixture.debugElement;
     const warningCard = componentDe.query(By.css('#noEligibleJobsAlert'));
     expect(warningCard).toBeTruthy();
@@ -235,6 +242,9 @@ describe('SimpleTriggerConfig', () => {
     fixture.detectChanges();
     const getJobsReq = httpTestingController.expectOne(`${CONTEXT_PATH}/jobs`);
     getJobsReq.flush(['sampleJob']);
+    fixture.detectChanges();
+
+    component.openTriggerForm();
     fixture.detectChanges();
 
     const componentDe: DebugElement = fixture.debugElement;
