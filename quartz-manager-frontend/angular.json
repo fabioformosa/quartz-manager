@@ -18,6 +18,9 @@
             "main": "src/main.ts",
             "tsConfig": "src/tsconfig.app.json",
             "polyfills": "src/polyfills.ts",
+            "allowedCommonJsDependencies": [
+              "stompjs", "sockjs-client"
+            ],
             "assets": [
               "src/assets",
               "src/favicon.ico"
