@@ -109,7 +109,6 @@
       }
     }
   },
-  "defaultProject": "angular-spring-starter",
   "schematics": {
     "@schematics/angular:component": {
       "prefix": "qrzmng",
