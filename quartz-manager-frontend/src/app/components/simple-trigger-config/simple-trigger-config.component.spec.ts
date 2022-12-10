@@ -12,7 +12,7 @@ import {FormBuilder, FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatNativeDateModule} from '@angular/material/core';
 import {MatInputModule} from '@angular/material/input';
-import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
+import {NoopAnimationsModule} from '@angular/platform-browser/animations';
 import {TriggerKey} from '../../model/triggerKey.model';
 import {Trigger} from '../../model/trigger.model';
 import {JobDetail} from '../../model/jobDetail.model';
@@ -31,7 +31,7 @@ describe('SimpleTriggerConfig', () => {
 
   beforeEach(waitForAsync( () => {
     TestBed.configureTestingModule({
-      imports: [FormsModule,  MatFormFieldModule, MatFormFieldModule, MatSelectModule, MatInputModule, BrowserAnimationsModule,
+      imports: [FormsModule,  MatFormFieldModule, MatFormFieldModule, MatSelectModule, MatInputModule, NoopAnimationsModule,
         MatNativeDateModule, ReactiveFormsModule,
         MatCardModule, MatIconModule, HttpClientTestingModule, RouterTestingModule],
       declarations: [SimpleTriggerConfigComponent],
