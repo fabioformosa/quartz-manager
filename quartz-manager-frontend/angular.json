@@ -18,6 +18,9 @@
             "main": "src/main.ts",
             "tsConfig": "src/tsconfig.app.json",
             "polyfills": "src/polyfills.ts",
+            "allowedCommonJsDependencies": [
+              "stompjs", "sockjs-client", "moment"
+            ],
             "assets": [
               "src/assets",
               "src/favicon.ico"
@@ -38,7 +41,6 @@
               "optimization": true,
               "outputHashing": "all",
               "sourceMap": false,
-              "extractCss": true,
               "namedChunks": false,
               "aot": true,
               "extractLicenses": true,
@@ -71,13 +73,10 @@
           }
         },
         "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
+          "builder": "@angular-eslint/builder:lint",
           "options": {
-            "tsConfig": [
-              "src/tsconfig.app.json",
-              "src/tsconfig.spec.json"
-            ],
-            "exclude": []
+            "eslintConfig": ".eslintrc.json",
+            "lintFilePatterns": ["**/*.spec.ts", "**/*.ts"]
           }
         }
       }
@@ -106,7 +105,6 @@
       }
     }
   },
-  "defaultProject": "angular-spring-starter",
   "schematics": {
     "@schematics/angular:component": {
       "prefix": "qrzmng",
@@ -115,5 +113,8 @@
     "@schematics/angular:directive": {
       "prefix": "qrzmng"
     }
+  },
+  "cli": {
+    "analytics": false
   }
 }

@@ -46,7 +46,7 @@ export const routes: Routes = [
 
 @NgModule({
   imports: [RouterModule.forRoot(routes, {
-    initialNavigation: false
+    initialNavigation: 'disabled'
   })],
   exports: [RouterModule],
   providers: []

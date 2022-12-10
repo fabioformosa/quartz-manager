@@ -3,12 +3,11 @@ import {SchedulerService} from '../../services';
 import {Scheduler} from '../../model/scheduler.model';
 import {SimpleTriggerCommand} from '../../model/simple-trigger.command';
 import {SimpleTrigger} from '../../model/simple-trigger.model';
-import {SimpleTriggerForm} from '../../model/simple-trigger.form';
 import * as moment from 'moment';
 import {TriggerKey} from '../../model/triggerKey.model';
 import JobService from '../../services/job.service';
 import {MisfireInstruction, MisfireInstructionCaption} from '../../model/misfire-instruction.model';
-import {AbstractControl, FormBuilder, FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators} from '@angular/forms';
+import {AbstractControl, UntypedFormBuilder, UntypedFormGroup, ValidationErrors, Validators} from '@angular/forms';
 
 @Component({
   selector: 'qrzmng-simple-trigger-config',
@@ -17,9 +16,9 @@ import {AbstractControl, FormBuilder, FormControl, FormGroup, ValidationErrors, 
 })
 export class SimpleTriggerConfigComponent implements OnInit {
 
-  trigger: SimpleTrigger;
+  trigger: SimpleTrigger = null;
 
-  simpleTriggerReactiveForm: FormGroup = this.formBuilder.group({
+  simpleTriggerReactiveForm: UntypedFormGroup = this.formBuilder.group({
     triggerName: [this.trigger?.triggerKeyDTO.name, Validators.required],
     jobClass: [this.trigger?.jobDetailDTO.jobClassName, Validators.required],
     triggerPeriod: this.formBuilder.group({
@@ -50,7 +49,7 @@ export class SimpleTriggerConfigComponent implements OnInit {
   onNewTrigger = new EventEmitter<SimpleTrigger>();
 
   constructor(
-    private formBuilder: FormBuilder,
+    private formBuilder: UntypedFormBuilder,
     private schedulerService: SchedulerService,
     private jobService: JobService
   ) {

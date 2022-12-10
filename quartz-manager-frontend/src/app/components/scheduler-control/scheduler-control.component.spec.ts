@@ -1,4 +1,4 @@
-import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import {ComponentFixture, TestBed, waitForAsync} from '@angular/core/testing';
 import {SchedulerControlComponent} from './scheduler-control.component';
 import {ApiService, ConfigService, SchedulerService, UserService} from '../../services';
 import {HttpClient} from '@angular/common/http';
@@ -19,7 +19,7 @@ describe('SchedulerControlComponent', () => {
   let httpClient: HttpClient;
   let httpTestingController: HttpTestingController;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       imports: [MatCardModule, MatDividerModule, MatIconModule, HttpClientTestingModule, RouterTestingModule],
       declarations: [SchedulerControlComponent],

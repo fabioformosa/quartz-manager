@@ -1,4 +1,4 @@
-import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import {ComponentFixture, TestBed, waitForAsync} from '@angular/core/testing';
 import {MatCardModule} from '@angular/material/card';
 import {SimpleTriggerConfigComponent} from './simple-trigger-config.component';
 import {ApiService, ConfigService, CONTEXT_PATH, SchedulerService} from '../../services';
@@ -12,7 +12,7 @@ import {FormBuilder, FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatNativeDateModule} from '@angular/material/core';
 import {MatInputModule} from '@angular/material/input';
-import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
+import {NoopAnimationsModule} from '@angular/platform-browser/animations';
 import {TriggerKey} from '../../model/triggerKey.model';
 import {Trigger} from '../../model/trigger.model';
 import {JobDetail} from '../../model/jobDetail.model';
@@ -29,9 +29,9 @@ describe('SimpleTriggerConfig', () => {
   let httpClient: HttpClient;
   let httpTestingController: HttpTestingController;
 
-  beforeEach(async( () => {
+  beforeEach(waitForAsync( () => {
     TestBed.configureTestingModule({
-      imports: [FormsModule,  MatFormFieldModule, MatFormFieldModule, MatSelectModule, MatInputModule, BrowserAnimationsModule,
+      imports: [FormsModule,  MatFormFieldModule, MatFormFieldModule, MatSelectModule, MatInputModule, NoopAnimationsModule,
         MatNativeDateModule, ReactiveFormsModule,
         MatCardModule, MatIconModule, HttpClientTestingModule, RouterTestingModule],
       declarations: [SimpleTriggerConfigComponent],
@@ -198,6 +198,10 @@ describe('SimpleTriggerConfig', () => {
   it('should fetch and display the trigger when the triggerKey is passed as input', () => {
     const mockTriggerKey = new TriggerKey('my-simple-trigger', null);
     component.triggerKey = mockTriggerKey;
+
+    component.trigger = new SimpleTrigger();
+    component.trigger.triggerKeyDTO = mockTriggerKey;
+
     fixture.detectChanges();
 
     const mockTrigger = new Trigger();
@@ -226,6 +230,9 @@ describe('SimpleTriggerConfig', () => {
     getJobsReq.flush([]);
     fixture.detectChanges();
 
+    component.openTriggerForm();
+    fixture.detectChanges();
+
     const componentDe: DebugElement = fixture.debugElement;
     const warningCard = componentDe.query(By.css('#noEligibleJobsAlert'));
     expect(warningCard).toBeTruthy();
@@ -235,6 +242,9 @@ describe('SimpleTriggerConfig', () => {
     fixture.detectChanges();
     const getJobsReq = httpTestingController.expectOne(`${CONTEXT_PATH}/jobs`);
     getJobsReq.flush(['sampleJob']);
+    fixture.detectChanges();
+
+    component.openTriggerForm();
     fixture.detectChanges();
 
     const componentDe: DebugElement = fixture.debugElement;

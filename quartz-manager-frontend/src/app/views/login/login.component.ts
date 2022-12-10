@@ -1,5 +1,5 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import {FormBuilder, FormGroup, Validators} from '@angular/forms';
+import {UntypedFormBuilder, UntypedFormGroup, Validators} from '@angular/forms';
 import {ActivatedRoute, Router} from '@angular/router';
 import {DisplayMessage} from '../../shared/models/display-message';
 import {Subject} from 'rxjs';
@@ -15,7 +15,7 @@ import {AuthService, UserService} from '../../services';
 export class LoginComponent implements OnInit, OnDestroy {
   title = 'Login';
   githubLink = 'https://github.com/fabioformosa/quartz-manager';
-  form: FormGroup;
+  form: UntypedFormGroup;
 
   submitted = false;
 
@@ -29,7 +29,7 @@ export class LoginComponent implements OnInit, OnDestroy {
     private authService: AuthService,
     private router: Router,
     private route: ActivatedRoute,
-    private formBuilder: FormBuilder
+    private formBuilder: UntypedFormBuilder
   ) {
 
   }

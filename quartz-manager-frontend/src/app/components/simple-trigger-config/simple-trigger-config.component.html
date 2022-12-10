@@ -20,7 +20,7 @@
           <mat-form-field
             [appearance]="enabledTriggerForm && !trigger ? 'standard': 'none'"
             class="full-size-input">
-            <mat-label>Trigger Name *</mat-label>
+            <mat-label>Trigger Name</mat-label>
             <input id="triggerName"
                    [readonly]="!enabledTriggerForm || trigger"
                    matInput placeholder="name of the trigger (unique)"
@@ -36,7 +36,7 @@
             [appearance]="enabledTriggerForm ? 'standard': 'none'"
             class="full-size-input"
           >
-            <mat-label>Job Class *</mat-label>
+            <mat-label>Job Class</mat-label>
             <mat-select id="jobClass" name="jobClass" formControlName="jobClass" [disabled]="!enabledTriggerForm">
               <mat-option *ngFor="let job of jobs" [value]="job" style="font-size: 0.8em">
                 {{job}}
@@ -53,7 +53,7 @@
             [appearance]="enabledTriggerForm ? 'standard': 'none'"
             class="full-size-input"
           >
-            <mat-label>Misfire Instruction *</mat-label>
+            <mat-label>Misfire Instruction</mat-label>
             <mat-select id="misfireInstruction" name="misfireInstruction" formControlName="misfireInstruction"
                         [disabled]="!enabledTriggerForm" style="font-size: 0.8em">
               <mat-option value="MISFIRE_INSTRUCTION_FIRE_NOW">FIRE NOW</mat-option>
@@ -93,9 +93,6 @@
                      formControlName="startDate" name="startDate">
               <mat-datepicker-toggle matSuffix [for]="startDatePicker"></mat-datepicker-toggle>
               <ngx-mat-datetime-picker #startDatePicker showSpinners="true" showSeconds="true">
-                <!--                                       [stepHour]="stepHour"-->
-                <!--                                       [stepMinute]="stepMinute" [stepSecond]="stepSecond" [touchUi]="touchUi" [color]="color"-->
-                <!--                                       [enableMeridian]="enableMeridian" [disableMinute]="disableMinute" [hideTime]="hideTime">-->
               </ngx-mat-datetime-picker>
             </mat-form-field>
           </div>
@@ -114,9 +111,6 @@
               >
               <mat-datepicker-toggle matSuffix [for]="endDatePicker"></mat-datepicker-toggle>
               <ngx-mat-datetime-picker #endDatePicker showSpinners="true" showSeconds="true">
-                <!--                                       [stepHour]="stepHour"-->
-                <!--                                       [stepMinute]="stepMinute" [stepSecond]="stepSecond" [touchUi]="touchUi" [color]="color"-->
-                <!--                                       [enableMeridian]="enableMeridian" [disableMinute]="disableMinute" [hideTime]="hideTime">-->
               </ngx-mat-datetime-picker>
             </mat-form-field>
             <mat-error *ngIf="simpleTriggerReactiveForm.controls.triggerPeriod.errors?.invalidTriggerPeriod" style="font-size: small">
@@ -141,9 +135,6 @@
                 repeatCount and repeatInterval must be <strong>both</strong> set or unset
               </mat-error>
             </mat-form-field>
-            <!--            <mat-error *ngIf="simpleTriggerReactiveForm.controls.triggerRecurrence.errors?.invalidTriggerRecurrence" style="font-size: small">-->
-            <!--              repeatCount and repeatInterval must be <strong>both</strong> set or unset-->
-            <!--            </mat-error>-->
           </div>
           <div>
             <mat-form-field
