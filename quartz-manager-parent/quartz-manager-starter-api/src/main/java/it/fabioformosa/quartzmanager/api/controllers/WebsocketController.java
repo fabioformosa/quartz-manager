@@ -8,7 +8,10 @@ import org.springframework.stereotype.Controller;
 @Controller
 public class WebsocketController {
 
-    @MessageMapping({ QuartzManagerPaths.QUARTZ_MANAGER_BASE_CONTEXT_PATH + "/logs", QuartzManagerPaths.QUARTZ_MANAGER_BASE_CONTEXT_PATH + "/progress" })
+    @MessageMapping({
+      QuartzManagerPaths.QUARTZ_MANAGER_BASE_CONTEXT_PATH + "/logs",
+      QuartzManagerPaths.QUARTZ_MANAGER_BASE_CONTEXT_PATH + "/progress"
+    })
     @SendTo("/topic/logs")
     public String subscribe() {
         return "subscribed";
