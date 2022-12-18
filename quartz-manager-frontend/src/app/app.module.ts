@@ -62,35 +62,11 @@ import { APP_BASE_HREF } from '@angular/common';
 import {SimpleTriggerConfigComponent} from './components/simple-trigger-config';
 import JobService from './services/job.service';
 import {GenericErrorComponent} from './views/error/genericError.component';
+import {LogsRxWebsocketService} from './services/logs.rx-websocket.service';
 
 export function initUserFactory(userService: UserService) {
     return () => userService.fetchLoggedUser();
 }
-
-
-// const stompConfig: StompConfig = {
-//   // Which server?
-//   url: 'ws://localhost:8080/quartz-manager/progress',
-
-//   // Headers
-//   // Typical keys: login, passcode, host
-//   headers: {
-//     login: 'admin',
-//     passcode: 'admin'
-//   },
-
-//   // How often to heartbeat?
-//   // Interval in milliseconds, set to 0 to disable
-//   heartbeat_in: 0, // Typical value 0 - disabled
-//   heartbeat_out: 20000, // Typical value 20000 - every 20 seconds
-//   // Wait in milliseconds before attempting auto reconnect
-//   // Set to 0 to disable
-//   // Typical value 5000 (5 seconds)
-//   reconnect_delay: 5000,
-
-//   // Will log diagnostics on console
-//   debug: true
-// };
 
 export function jwtOptionsFactory(apiService: ApiService) {
   return {
@@ -169,18 +145,13 @@ export function jwtOptionsFactory(apiService: ApiService) {
     JobService,
     TriggerService,
     ProgressWebsocketService,
-    LogsWebsocketService,
+    // LogsWebsocketService,
+    LogsRxWebsocketService,
     AuthService,
     ApiService,
     UserService,
     ConfigService,
     MatIconRegistry
-    // StompService,
-    // ServerSocket
-    // {
-    //   provide: StompConfig,
-    //   useValue: stompConfig
-    // }
   ],
   bootstrap: [AppComponent]
 })

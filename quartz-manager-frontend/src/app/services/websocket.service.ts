@@ -77,7 +77,7 @@ export class WebsocketService {
   };
 
   _socketListener = (frame) => {
-    console.log('Connected: ' + frame);
+    console.log(`Connected to ${this._options.socketUrl}: ${frame}`);
     this._socket.stomp.subscribe(
       this._options.topicName,
       data => this.subscribers.forEach(subscriber => subscriber.observer.next(this.getMessage(data)))
@@ -94,7 +94,7 @@ export class WebsocketService {
 
   scheduleReconnection = () => {
     this.reconnectionPromise = setTimeout(() => {
-      console.log('Socket reconnecting... (if it fails, next attempt in ' + this._options.reconnectionTimeout + ' msec)');
+      console.log(`Socket reconnecting to ${this._options.socketUrl}... (if it fails, next attempt in ${this._options.reconnectionTimeout} msec)`);
       this.connect();
     }, this._options.reconnectionTimeout);
   }
