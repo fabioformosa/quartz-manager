@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "angular-spring-starter": {
+    "quartz-manager-ui": {
       "root": "",
       "prefix": "qrzmng",
       "sourceRoot": "src",
@@ -31,6 +31,14 @@
             "scripts": []
           },
           "configurations": {
+            "development": {
+              "buildOptimizer": false,
+              "optimization": false,
+              "vendorChunk": true,
+              "extractLicenses": false,
+              "sourceMap": true,
+              "namedChunks": true
+            },
             "production": {
               "budgets": [
                 {
@@ -58,18 +66,18 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "browserTarget": "angular-spring-starter:build"
+            "browserTarget": "quartz-manager-ui:build:development"
           },
           "configurations": {
             "production": {
-              "browserTarget": "angular-spring-starter:build:production"
+              "browserTarget": "quartz-manager-ui:build:production"
             }
           }
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "angular-spring-starter:build"
+            "browserTarget": "quartz-manager-ui:build"
           }
         },
         "lint": {
@@ -81,7 +89,7 @@
         }
       }
     },
-    "angular-spring-starter-e2e": {
+    "quartz-manager-ui-e2e": {
       "root": "e2e",
       "sourceRoot": "e2e",
       "projectType": "application",
@@ -90,7 +98,7 @@
           "builder": "@angular-devkit/build-angular:protractor",
           "options": {
             "protractorConfig": "./protractor.conf.js",
-            "devServerTarget": "angular-spring-starter:serve"
+            "devServerTarget": "quartz-manager-ui:serve"
           }
         },
         "lint": {
