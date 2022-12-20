@@ -5,3 +5,4 @@ export * from './logs-panel';
 export * from './scheduler-control';
 export * from './progress-panel';
 export * from './trigger-list';
+export * from './simple-trigger-config';
