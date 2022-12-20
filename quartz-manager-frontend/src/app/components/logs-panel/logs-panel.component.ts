@@ -1,12 +1,8 @@
-import {Component, OnInit, Input, Output, EventEmitter, OnDestroy} from '@angular/core';
+import {Component, Input, OnDestroy, OnInit} from '@angular/core';
 
-import {LogsWebsocketService, ApiService, getBaseUrl, CONTEXT_PATH, QuartzManagerWebsocketMessage} from '../../services';
-import {Observable} from 'rxjs';
-import {RxStompService,} from '../../services/rx-stomp.service';
-import {RxStompConfig} from '@stomp/rx-stomp/esm6/rx-stomp-config';
+import {ApiService} from '../../services';
 import {LogsRxWebsocketService} from '../../services/logs.rx-websocket.service';
 import {map} from 'rxjs/operators';
-import {Trigger} from '../../model/trigger.model';
 import {TriggerKey} from '../../model/triggerKey.model';
 
 
