@@ -21,7 +21,7 @@ public class WebSocketProgressNotifier implements WebhookSender<TriggerFiredBund
 
   @Override
   public void send(String triggerName, TriggerFiredBundleDTO triggerFiredBundleDTO) {
-     messagingTemplate.convertAndSend(TOPIC_PROGRESS, triggerFiredBundleDTO);
+    messagingTemplate.convertAndSend(TOPIC_PROGRESS + "/" + triggerName, triggerFiredBundleDTO);
   }
 
   public static TriggerFiredBundleDTO buildTriggerFiredBundle(JobExecutionContext jobExecutionContext) {

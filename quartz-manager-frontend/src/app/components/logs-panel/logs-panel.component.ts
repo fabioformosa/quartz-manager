@@ -26,7 +26,6 @@ export class LogsPanelComponent implements OnInit, OnDestroy {
   private selectedTriggerKey: TriggerKey;
 
   constructor(
-    // private logsWebsocketService: LogsWebsocketService,
     private logsRxWebsocketService: LogsRxWebsocketService,
     private apiService: ApiService
   ) {
@@ -41,21 +40,6 @@ export class LogsPanelComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    // const obs = this.logsWebsocketService.getObservable()
-    // obs.subscribe({
-    //   'next': this.onNewLogMsg,
-    //   'error': (err) => {
-    //     console.log(err)
-    //   }
-    // });
-
-    // this.topicSubscription = this.logsRxWebsocketService.watch('/topic/logs')
-    //   .pipe(map(msg => JSON.parse(msg.body)))
-    //   .subscribe(this._showNewLog, (err) => {
-    //     console.log(err);
-    //     // TODO in case of 401
-    //     // this.apiService.get('/quartz-manager/session/refresh');
-    //   });
   }
 
   private _subscribeToTheTopic = (triggerKey: TriggerKey) => {
@@ -78,14 +62,6 @@ export class LogsPanelComponent implements OnInit, OnDestroy {
     this.topicSubscription.unsubscribe();
     this.topicSubscription = null;
   }
-
-  // onNewLogMsg = (receivedMsg) => {
-  //   if (receivedMsg.body.type === 'SUCCESS') {
-  //     this._showNewLog(receivedMsg.body.message);
-  //   } else if (receivedMsg.body.type === 'ERROR') {
-  //     this._refreshSession();
-  //   } // if websocket has been closed for session expiration, try to refresh it
-  // };
 
   _showNewLog = (logRecord) => {
     if (this.logs.length > this.MAX_LOGS) {

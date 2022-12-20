@@ -43,7 +43,8 @@ import {
   SchedulerControlComponent,
   LogsPanelComponent,
   ProgressPanelComponent,
-  TriggerListComponent
+  TriggerListComponent,
+  SimpleTriggerConfigComponent
 } from './components';
 
 import {
@@ -52,17 +53,15 @@ import {
   UserService,
   SchedulerService,
   ConfigService,
-  ProgressWebsocketService,
-  LogsWebsocketService,
   getHtmlBaseUrl,
+  LogsRxWebsocketService,
+  ProgressRxWebsocketService,
   TriggerService
 } from './services';
 import { ForbiddenComponent } from './views/forbidden/forbidden.component';
 import { APP_BASE_HREF } from '@angular/common';
-import {SimpleTriggerConfigComponent} from './components/simple-trigger-config';
 import JobService from './services/job.service';
 import {GenericErrorComponent} from './views/error/genericError.component';
-import {LogsRxWebsocketService} from './services/logs.rx-websocket.service';
 
 export function initUserFactory(userService: UserService) {
     return () => userService.fetchLoggedUser();
@@ -144,8 +143,7 @@ export function jwtOptionsFactory(apiService: ApiService) {
     SchedulerService,
     JobService,
     TriggerService,
-    ProgressWebsocketService,
-    // LogsWebsocketService,
+    ProgressRxWebsocketService,
     LogsRxWebsocketService,
     AuthService,
     ApiService,
