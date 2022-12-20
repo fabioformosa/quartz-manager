@@ -2,10 +2,12 @@ import {Component, OnInit, Input, Output, EventEmitter, OnDestroy} from '@angula
 
 import {LogsWebsocketService, ApiService, getBaseUrl, CONTEXT_PATH, QuartzManagerWebsocketMessage} from '../../services';
 import {Observable} from 'rxjs';
-import {RxStompService, } from '../../services/rx-stomp.service';
+import {RxStompService,} from '../../services/rx-stomp.service';
 import {RxStompConfig} from '@stomp/rx-stomp/esm6/rx-stomp-config';
 import {LogsRxWebsocketService} from '../../services/logs.rx-websocket.service';
 import {map} from 'rxjs/operators';
+import {Trigger} from '../../model/trigger.model';
+import {TriggerKey} from '../../model/triggerKey.model';
 
 
 @Component({
@@ -21,11 +23,21 @@ export class LogsPanelComponent implements OnInit, OnDestroy {
 
   topicSubscription;
 
+  private selectedTriggerKey: TriggerKey;
+
   constructor(
     // private logsWebsocketService: LogsWebsocketService,
     private logsRxWebsocketService: LogsRxWebsocketService,
     private apiService: ApiService
   ) {
+  }
+
+  @Input()
+  set triggerKey(triggerKey: TriggerKey) {
+    this.selectedTriggerKey = {...triggerKey} as TriggerKey;
+    if (this.selectedTriggerKey && this.selectedTriggerKey.name) {
+      this._subscribeToTheTopic(this.selectedTriggerKey);
+    }
   }
 
   ngOnInit() {
@@ -37,17 +49,34 @@ export class LogsPanelComponent implements OnInit, OnDestroy {
     //   }
     // });
 
-    this.topicSubscription = this.logsRxWebsocketService.watch('/topic/logs')
+    // this.topicSubscription = this.logsRxWebsocketService.watch('/topic/logs')
+    //   .pipe(map(msg => JSON.parse(msg.body)))
+    //   .subscribe(this._showNewLog, (err) => {
+    //     console.log(err);
+    //     // TODO in case of 401
+    //     // this.apiService.get('/quartz-manager/session/refresh');
+    //   });
+  }
+
+  private _subscribeToTheTopic = (triggerKey: TriggerKey) => {
+    if (this.topicSubscription) {
+      this.topicSubscription.unsubscribe();
+    }
+    this.topicSubscription = this.logsRxWebsocketService.watch(`/topic/logs/${triggerKey.name}`)
       .pipe(map(msg => JSON.parse(msg.body)))
       .subscribe(this._showNewLog, (err) => {
         console.log(err);
         // TODO in case of 401
         // this.apiService.get('/quartz-manager/session/refresh');
       });
-  }
+  };
 
   ngOnDestroy() {
+    if (this.topicSubscription) {
+      this.topicSubscription.unsubscribe();
+    }
     this.topicSubscription.unsubscribe();
+    this.topicSubscription = null;
   }
 
   // onNewLogMsg = (receivedMsg) => {

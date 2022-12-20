@@ -73,8 +73,10 @@ export class SimpleTriggerConfigComponent implements OnInit {
 
   @Input()
   set triggerKey(triggerKey: TriggerKey) {
-    this.selectedTriggerKey = {...triggerKey} as TriggerKey;
-    this.fetchSelectedTrigger();
+    if (!this.selectedTriggerKey || this.selectedTriggerKey.name !== triggerKey.name){
+      this.selectedTriggerKey = {...triggerKey} as TriggerKey;
+      this.fetchSelectedTrigger();
+    }
   }
 
 

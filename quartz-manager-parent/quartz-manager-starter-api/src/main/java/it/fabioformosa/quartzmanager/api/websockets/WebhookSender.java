@@ -9,6 +9,6 @@ package it.fabioformosa.quartzmanager.api.websockets;
  */
 public interface WebhookSender<T> {
 
-	void send(T message);
+	void send(String triggerName, T message);
 
 }

@@ -30,7 +30,10 @@
     <div fxFlex="1 1 auto" style="margin-left: 20px;">
         <div fxFlex="1 1 auto" fxLayout="column" fxLayoutAlign="start stretch" fxLayoutGap="6px">
           <progress-panel></progress-panel>
-          <logs-panel fxFlex="1 1 auto" fxFill></logs-panel>
+          <logs-panel fxFlex="1 1 auto" fxFill
+                      [triggerKey]=selectedTriggerKey
+          >
+          </logs-panel>
         </div>
     </div>
 

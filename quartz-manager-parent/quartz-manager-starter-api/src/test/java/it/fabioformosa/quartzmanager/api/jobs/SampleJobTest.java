@@ -32,6 +32,7 @@ class SampleJobTest {
   @Test
   void givenASampleJob_whenTheJobIsExecuted_thenTheWebhookSendersAreCalled() {
     JobExecutionContext jobExecutionContext = Mockito.mock(JobExecutionContext.class);
+    String triggerName = "test-trigger";
 
     ScheduleBuilder schedulerBuilder = SimpleScheduleBuilder.simpleSchedule()
       .withRepeatCount(5)
@@ -40,6 +41,7 @@ class SampleJobTest {
       .newJob(SampleJob.class).withIdentity(JobKey.jobKey("test-job"))
       .build();
     Trigger trigger = TriggerBuilder.newTrigger()
+      .withIdentity(triggerName)
       .forJob(jobDetail)
       .withSchedule(schedulerBuilder)
       .build();
@@ -47,14 +49,14 @@ class SampleJobTest {
     Mockito.when(jobExecutionContext.getJobDetail()).thenReturn(jobDetail);
 
     sampleJob.execute(jobExecutionContext);
-    Mockito.verify(webSocketLogsNotifier).send(argThat(actualLogRecord -> {
+    Mockito.verify(webSocketLogsNotifier).send(triggerName, argThat(actualLogRecord -> {
       Assertions.assertThat(actualLogRecord.getMessage()).isEqualTo("Hello!");
       Assertions.assertThat(actualLogRecord.getType()).isEqualTo(LogRecord.LogType.INFO);
       Assertions.assertThat(actualLogRecord.getDate()).isNotNull();
       Assertions.assertThat(actualLogRecord.getThreadName()).isNotNull();
       return true;
     }));
-    Mockito.verify(webSocketProgressNotifier).send(argThat(triggerFiredBundleDTO -> {
+    Mockito.verify(webSocketProgressNotifier).send(triggerName, argThat(triggerFiredBundleDTO -> {
       Assertions.assertThat(triggerFiredBundleDTO.getJobKey()).isEqualTo("test-job");
       Assertions.assertThat(triggerFiredBundleDTO.getRepeatCount()).isEqualTo(6);
       Assertions.assertThat(triggerFiredBundleDTO.getJobClass()).isEqualTo(SampleJob.class.getName());

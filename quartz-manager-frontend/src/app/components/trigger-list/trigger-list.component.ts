@@ -90,7 +90,7 @@ export class TriggerListComponent implements OnInit {
 
   onNewTrigger(newTrigger: SimpleTrigger) {
     this.newTriggers = [newTrigger, ...this.newTriggers];
-    this.selectedTrigger = newTrigger.triggerKeyDTO;
+    this.selectTrigger(newTrigger.triggerKeyDTO);
   }
 }
 

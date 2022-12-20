@@ -20,7 +20,7 @@ public class WebSocketProgressNotifier implements WebhookSender<TriggerFiredBund
   private SimpMessageSendingOperations messagingTemplate;
 
   @Override
-  public void send(TriggerFiredBundleDTO triggerFiredBundleDTO) {
+  public void send(String triggerName, TriggerFiredBundleDTO triggerFiredBundleDTO) {
      messagingTemplate.convertAndSend(TOPIC_PROGRESS, triggerFiredBundleDTO);
   }
 
