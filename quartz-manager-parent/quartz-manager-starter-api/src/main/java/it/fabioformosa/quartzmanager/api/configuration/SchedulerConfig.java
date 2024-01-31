@@ -55,7 +55,8 @@ public class SchedulerConfig {
     if (quartzProperties != null && quartzProperties.size() > 0)
       mergedProperties.putAll(quartzProperties);
     factory.setQuartzProperties(mergedProperties);
-    factory.setAutoStartup(false);
+    boolean isAutoStartup = mergedProperties.getProperty("org.quartz.scheduler.isAutoStartup") != null && mergedProperties.getProperty("org.quartz.scheduler.isAutoStartup").equals("true");
+    factory.setAutoStartup(isAutoStartup);
     return factory;
   }
 }
