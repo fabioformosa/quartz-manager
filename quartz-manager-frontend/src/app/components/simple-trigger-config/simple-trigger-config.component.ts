@@ -34,9 +34,8 @@ export class SimpleTriggerConfigComponent implements OnInit {
 
   scheduler: Scheduler;
 
-  triggerLoading = true;
+  triggerLoading = false;
 
-  private fetchedTriggers = false;
   private triggerInProgress = false;
 
   private selectedTriggerKey: TriggerKey;
@@ -64,6 +63,9 @@ export class SimpleTriggerConfigComponent implements OnInit {
   }
 
   openTriggerForm() {
+    // this.selectedTriggerKey = null;
+    // this.trigger = null;
+    // this.simpleTriggerReactiveForm.setValue(new SimpleTriggerReactiveForm());
     this.enabledTriggerForm = true;
   }
 
@@ -73,12 +75,25 @@ export class SimpleTriggerConfigComponent implements OnInit {
 
   @Input()
   set triggerKey(triggerKey: TriggerKey) {
-    if (!this.selectedTriggerKey || this.selectedTriggerKey.name !== triggerKey.name){
+    if (!triggerKey) {
+      this.selectedTriggerKey = null;
+      this.trigger = null;
+      this.simpleTriggerReactiveForm.reset(new SimpleTriggerReactiveForm());
+    } else if (!this.selectedTriggerKey || this.selectedTriggerKey.name !== triggerKey.name) {
+      this._resetTheTrigger();
       this.selectedTriggerKey = {...triggerKey} as TriggerKey;
       this.fetchSelectedTrigger();
     }
+    this.openTriggerForm();
   }
 
+
+  private _resetTheTrigger() {
+    this.trigger = null;
+    this.triggerInProgress = false;
+    this.selectedTriggerKey = null;
+    this.simpleTriggerReactiveForm.reset(new SimpleTriggerReactiveForm());
+  }
 
   fetchSelectedTrigger = () => {
     this.triggerLoading = true;
@@ -105,13 +120,13 @@ export class SimpleTriggerConfigComponent implements OnInit {
       this.schedulerService.updateSimpleTriggerConfig : this.schedulerService.saveSimpleTriggerConfig;
 
     const simpleTriggerCommand = this._fromReactiveFormToCommand();
+    this.triggerLoading = true;
     schedulerServiceCall(simpleTriggerCommand)
       .subscribe((retTrigger: SimpleTrigger) => {
         this.trigger = retTrigger;
 
         this.simpleTriggerReactiveForm.setValue(this._fromTriggerToReactiveForm(retTrigger));
 
-        this.fetchedTriggers = true;
         this.triggerInProgress = this.trigger.mayFireAgain;
 
         if (schedulerServiceCall === this.schedulerService.saveSimpleTriggerConfig) {
@@ -121,7 +136,7 @@ export class SimpleTriggerConfigComponent implements OnInit {
         this.closeTriggerForm();
       }, error => {
         this.simpleTriggerReactiveForm.setValue(this._fromTriggerToReactiveForm(this.trigger));
-      });
+      }, () => {this.triggerLoading = true});
 
   }
 

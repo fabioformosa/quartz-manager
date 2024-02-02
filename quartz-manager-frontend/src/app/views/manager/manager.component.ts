@@ -32,7 +32,8 @@ export class ManagerComponent implements OnInit {
   }
 
   onNewTriggerRequested() {
-    this.triggerConfigComponent.openTriggerForm();
+    this.selectedTriggerKey = null;
+    // this.triggerConfigComponent.openTriggerForm();
   }
 
   onNewTriggerCreated(newTrigger: SimpleTrigger) {

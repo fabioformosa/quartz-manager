@@ -222,6 +222,13 @@ describe('SimpleTriggerConfig', () => {
     const componentDe: DebugElement = fixture.debugElement;
     const submitButton = componentDe.query(By.css('form button[color="primary"]'));
     expect(submitButton.nativeElement.textContent.trim()).toEqual('Submit');
+
+    expect(component.simpleTriggerReactiveForm.value.triggerName).toBeNull();
+
+  });
+
+  it('should reset the form when a new trigger is selected', () => {
+
   });
 
   it('should display the warning if there are no eligible jobs', () => {
