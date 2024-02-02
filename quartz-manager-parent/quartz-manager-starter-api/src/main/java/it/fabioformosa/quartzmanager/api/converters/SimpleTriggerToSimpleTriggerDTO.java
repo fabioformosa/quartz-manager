@@ -14,6 +14,7 @@ public class SimpleTriggerToSimpleTriggerDTO extends TriggerToTriggerDTO<SimpleT
     target.setRepeatCount(source.getRepeatCount());
     target.setRepeatInterval(source.getRepeatInterval());
     target.setMisfireInstruction(source.getMisfireInstruction());
+    target.setJobDataMap(source.getJobDataMap());
   }
 
   @Override
