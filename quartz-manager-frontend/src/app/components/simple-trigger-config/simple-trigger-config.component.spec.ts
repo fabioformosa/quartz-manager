@@ -81,7 +81,7 @@ describe('SimpleTriggerConfig', () => {
     const dropdownDe = componentDe.query(By.css(dropdownSelector));
     dropdownDe.nativeElement.click();
     fixture.detectChanges();
-    const matOptionDe = componentDe.query(By.css('.mat-select-panel')).queryAll(By.css('.mat-option'));
+    const matOptionDe = componentDe.query(By.css('.mat-mdc-select-panel')).queryAll(By.css('.mat-mdc-option'));
     matOptionDe[index].nativeElement.click();
     fixture.detectChanges();
   }

@@ -18,7 +18,7 @@
             [formGroup]="simpleTriggerReactiveForm" (ngSubmit)="onSubmitTriggerConfig()">
         <div>
           <mat-form-field
-            [appearance]="enabledTriggerForm && !trigger ? 'standard': 'none'"
+            [appearance]="enabledTriggerForm && !trigger ? 'outline': 'fill'"
             class="full-size-input">
             <mat-label>Trigger Name</mat-label>
             <input id="triggerName"
@@ -33,7 +33,7 @@
 
         <div>
           <mat-form-field
-            [appearance]="enabledTriggerForm ? 'standard': 'none'"
+            [appearance]="enabledTriggerForm ? 'outline': 'fill'"
             class="full-size-input"
           >
             <mat-label>Job Class</mat-label>
@@ -50,7 +50,7 @@
 
         <div>
           <mat-form-field
-            [appearance]="enabledTriggerForm ? 'standard': 'none'"
+            [appearance]="enabledTriggerForm ? 'outline': 'fill'"
             class="full-size-input"
           >
             <mat-label>Misfire Instruction</mat-label>
@@ -82,7 +82,7 @@
         <div formGroupName="triggerPeriod">
           <div>
             <mat-form-field
-              [appearance]="enabledTriggerForm ? 'standard': 'none'"
+              [appearance]="enabledTriggerForm ? 'outline': 'fill'"
               class="full-size-input"
             >
               <mat-label>Start Date (optional)</mat-label>
@@ -99,7 +99,7 @@
 
           <div>
             <mat-form-field
-              [appearance]="enabledTriggerForm ? 'standard': 'none'"
+              [appearance]="enabledTriggerForm ? 'outline': 'fill'"
               class="full-size-input"
             >
               <mat-label>End Date (optional)</mat-label>
@@ -122,7 +122,7 @@
         <div formGroupName="triggerRecurrence">
           <div>
             <mat-form-field
-              [appearance]="enabledTriggerForm ? 'standard': 'none'"
+              [appearance]="enabledTriggerForm ? 'outline': 'fill'"
               class="full-size-input"
             >
               <mat-label>Repeat Interval [in mills]</mat-label>
@@ -138,7 +138,7 @@
           </div>
           <div>
             <mat-form-field
-              [appearance]="enabledTriggerForm ? 'standard': 'none'"
+              [appearance]="enabledTriggerForm ? 'outline': 'fill'"
               class="full-size-input"
             >
               <mat-label>Repeat Count</mat-label>
