@@ -58,13 +58,13 @@ Replace the dummy job (class: `it.fabioformosa.quartzmanager.jobs.SampleJob`) wi
 
 **Backend Stack** Java 9, Spring Boot 2.5.6 (Spring MVC 5.3.12, Spring Security 5.5.3), Quartz Scheduler 2.3.2
 
-**Frontend** Angular 9.1.4, Web-Socket (stompjs 2.3.3)
+**Frontend** Angular 14.2.12, Web-Socket (stompjs 2.3.3)
 
-**Style** Angular Material 9, FontAwesome 5
+**Style** Angular Material 14, FontAwesome 5
 
 Starting from Quartz Manager v2.x.x, the new structure of project is:
 * Multi-module maven project: REST API backend
-* Angular 9: Single Page Application frontend
+* Angular 14: Single Page Application frontend
 
 (The first version of quartz manager was a monolithic backend that provided also frontend developed with angularjs 1.6.x. You can find it at the branch 1.x.x)
 
