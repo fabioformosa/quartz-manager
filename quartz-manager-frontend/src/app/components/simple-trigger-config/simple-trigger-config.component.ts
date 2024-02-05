@@ -43,8 +43,6 @@ export class SimpleTriggerConfigComponent implements OnInit {
 
   private jobs: Array<String>;
 
-  enabledTriggerForm = false;
-
   @Output()
   onNewTrigger = new EventEmitter<SimpleTrigger>();
 
@@ -64,11 +62,11 @@ export class SimpleTriggerConfigComponent implements OnInit {
   }
 
   openTriggerForm() {
-    this.enabledTriggerForm = true;
+    this.simpleTriggerReactiveForm.enable();
   }
 
   private closeTriggerForm() {
-    this.enabledTriggerForm = false;
+    this.simpleTriggerReactiveForm.disable();
   }
 
   @Input()
@@ -86,10 +84,11 @@ export class SimpleTriggerConfigComponent implements OnInit {
         this.simpleTriggerReactiveForm.setValue(this._fromTriggerToReactiveForm(retTrigger))
         this.triggerLoading = false;
         this.triggerInProgress = this.trigger.mayFireAgain;
+        this.simpleTriggerReactiveForm.disable();
       })
   }
 
-  shouldShowTheTriggerCardContent = (): boolean => this.trigger !== null || this.enabledTriggerForm;
+  shouldShowTheTriggerCardContent = (): boolean => this.trigger !== null || this.simpleTriggerReactiveForm.enabled;
 
   existsATriggerInProgress = (): boolean => this.trigger && this.triggerInProgress;
 

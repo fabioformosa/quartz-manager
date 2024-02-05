@@ -81,7 +81,7 @@ describe('SimpleTriggerConfig', () => {
     const dropdownDe = componentDe.query(By.css(dropdownSelector));
     dropdownDe.nativeElement.click();
     fixture.detectChanges();
-    const matOptionDe = componentDe.query(By.css('.mat-select-panel')).queryAll(By.css('.mat-option'));
+    const matOptionDe = componentDe.query(By.css('.mat-mdc-select-panel')).queryAll(By.css('.mat-mdc-option'));
     matOptionDe[index].nativeElement.click();
     fixture.detectChanges();
   }
@@ -202,13 +202,13 @@ describe('SimpleTriggerConfig', () => {
     component.trigger = new SimpleTrigger();
     component.trigger.triggerKeyDTO = mockTriggerKey;
 
-    fixture.detectChanges();
-
     const mockTrigger = new Trigger();
     mockTrigger.triggerKeyDTO = mockTriggerKey;
     mockTrigger.jobDetailDTO = <JobDetail>{jobClassName: 'TestJob', description: null};
     const getSimpleTriggerReq = httpTestingController.expectOne(`${CONTEXT_PATH}/simple-triggers/my-simple-trigger`);
     getSimpleTriggerReq.flush(mockTrigger);
+
+    fixture.detectChanges();
 
     const componentDe: DebugElement = fixture.debugElement;
     const submitButton = componentDe.query(By.css('form button'));
