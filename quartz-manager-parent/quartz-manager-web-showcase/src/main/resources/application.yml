@@ -1,3 +1,5 @@
+server:
+  port: 8090
 quartz-manager:
   jobClassPackages: it.fabioformosa.quartzmanager.jobs
   oas:
@@ -17,9 +19,9 @@ quartz-manager:
   persistence:
     quartz:
       datasource:
-        url: "jdbc:postgresql://localhost:5432/quartzmanager"
-        user: "quartzmanager"
-        password: "quartzmanager"
+        url: "jdbc:postgresql://localhost:5432/trasdb"
+        user: "tradmin"
+        password: "tradmin"
 
 #springdoc:
 #  paths-to-exclude: "/quartz-manager/**"

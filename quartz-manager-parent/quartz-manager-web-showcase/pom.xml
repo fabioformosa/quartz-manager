@@ -33,12 +33,8 @@
         </dependency>
         <dependency>
           <groupId>it.fabioformosa.quartz-manager</groupId>
-          <artifactId>quartz-manager-starter-security</artifactId>
+          <artifactId>quartz-manager-starter-persistence</artifactId>
         </dependency>
-<!--        <dependency>-->
-<!--          <groupId>it.fabioformosa.quartz-manager</groupId>-->
-<!--          <artifactId>quartz-manager-starter-persistence</artifactId>-->
-<!--        </dependency>-->
 
         <!-- SPRING -->
         <dependency>
