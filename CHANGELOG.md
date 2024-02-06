@@ -1,3 +1,6 @@
+## **v4.0.9**
+Fixed a bug which prevented to run the liquibase migration scripts in case of usage of quartz-manager-starter-persistence 
+
 ## **v4.0.8**
 Upgraded the frontend to angular v14
 
