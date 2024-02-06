@@ -56,7 +56,7 @@ public class PersistenceConfig {
 
     @Primary
     @Bean
-    public DataSource quartzManagerDatasource(PersistenceDatasourceProps persistenceDatasourceProps) {
+    public DataSource quartzManagerDatasource() {
         return DataSourceBuilder.create()
                 .url(quartzDatasourceUrl)
                 .driverClassName("org.postgresql.Driver")
