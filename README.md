@@ -80,12 +80,12 @@ Add the dependency, make eligible for Quart Manager the job classes and set the 
 <dependency>
   <groupId>it.fabioformosa.quartz-manager</groupId>
   <artifactId>quartz-manager-starter-api</artifactId>
-  <version>4.0.8</version>
+  <version>4.0.9</version>
 </dependency>
 ```
 #### Gradle
 ```
-implementation group: 'it.fabioformosa.quartz-manager', name: 'quartz-manager-starter-api', version: '4.0.8'
+implementation group: 'it.fabioformosa.quartz-manager', name: 'quartz-manager-starter-api', version: '4.0.9'
 ```
 
 ### Step 2. Quartz Manager Job Classes
@@ -168,12 +168,12 @@ You can optionally import the following dependency to have the UI Dashboard to i
 <dependency>
   <groupId>it.fabioformosa.quartz-manager</groupId>
   <artifactId>quartz-manager-starter-ui</artifactId>
-  <version>4.0.8</version>
+  <version>4.0.9</version>
 </dependency>
 ```
 #### Gradle
 ```
-implementation group: 'it.fabioformosa.quartz-manager', name: 'quartz-manager-starter-ui', version: '4.0.8'
+implementation group: 'it.fabioformosa.quartz-manager', name: 'quartz-manager-starter-ui', version: '4.0.9'
 ``` 
 
 ### Reach out the UI Console at URL
@@ -203,14 +203,14 @@ Future development: the Quart Manager Security OAuth2 client.
 <dependency>
   <groupId>it.fabioformosa.quartz-manager</groupId>
   <artifactId>quartz-manager-starter-security</artifactId>
-  <version>4.0.8</version>
+  <version>4.0.9</version>
 </dependency>
 ```
 
 #### Gradle
 
 ```
-compile group: 'it.fabioformosa.quartz-manager', name: 'quartz-manager-starter-security', version: '4.0.8'
+compile group: 'it.fabioformosa.quartz-manager', name: 'quartz-manager-starter-security', version: '4.0.9'
 ```
 
 
@@ -240,14 +240,14 @@ The pre-requesite is the availability of Postgresql database where Quartz Manage
 <dependency>
   <groupId>it.fabioformosa.quartz-manager</groupId>
   <artifactId>quartz-manager-starter-persistence</artifactId>
-  <version>4.0.8</version>
+  <version>4.0.9</version>
 </dependency>
 ```
 
 #### Gradle
 
 ```
-compile group: 'it.fabioformosa.quartz-manager', name: 'quartz-manager-starter-persistence', version: '4.0.8'
+compile group: 'it.fabioformosa.quartz-manager', name: 'quartz-manager-starter-persistence', version: '4.0.9'
 ```
 
 ### Quartz Manager Persistence Lib - App Props
