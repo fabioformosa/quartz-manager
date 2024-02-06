@@ -21,7 +21,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.util.Date;
-
+import java.util.Map;
+import static java.util.Map.entry;
 import static org.mockito.ArgumentMatchers.any;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 
@@ -68,6 +69,10 @@ class SimpleTriggerControllerTest {
   }
 
   private SimpleTriggerInputDTO buildACompleteSimpleTriggerCommandDTO() {
+    Map<String, ?> triggerJobDataMap = Map.ofEntries(
+        entry("customTriggerData1", "value1"),
+        entry("customTriggerData2",  "value2")
+    );
     return SimpleTriggerInputDTO.builder()
       .jobClass("it.fabioformosa.quartzmanager.api.jobs.SampleJob")
       .startDate(new Date())
@@ -75,6 +80,7 @@ class SimpleTriggerControllerTest {
       .misfireInstruction(MisfireInstruction.MISFIRE_INSTRUCTION_FIRE_NOW)
       .repeatCount(5)
       .repeatInterval(1000L * 60 * 60)
+      .jobDataMap(triggerJobDataMap)
       .build();
   }
 

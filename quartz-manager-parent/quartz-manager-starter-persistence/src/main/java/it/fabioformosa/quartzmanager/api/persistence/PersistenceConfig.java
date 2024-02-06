@@ -11,7 +11,6 @@ import org.springframework.context.annotation.*;
 import javax.sql.DataSource;
 
 @Configuration
-@PropertySource("classpath:quartz-persistence.properties")
 public class PersistenceConfig {
 
     @Value("${quartz-manager.persistence.quartz.datasource.url}")
@@ -57,7 +56,7 @@ public class PersistenceConfig {
 
     @Primary
     @Bean
-    public DataSource quartzManagerDatasource(PersistenceDatasourceProps persistenceDatasourceProps) {
+    public DataSource quartzManagerDatasource() {
         return DataSourceBuilder.create()
                 .url(quartzDatasourceUrl)
                 .driverClassName("org.postgresql.Driver")

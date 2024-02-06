@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
+import org.quartz.JobDataMap;
 
 import java.util.Date;
 
@@ -23,4 +24,5 @@ public class TriggerDTO {
   private JobKeyDTO jobKeyDTO;
   private JobDetailDTO jobDetailDTO;
   private boolean mayFireAgain;
+  private JobDataMap jobDataMap;
 }
