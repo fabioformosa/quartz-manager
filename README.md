@@ -269,6 +269,7 @@ You can find some examples of different scenarios of projects which import Quart
 * *existing-security-header-based* - It demonstrates how Quartz Manager Security can coexists with another Spring Security Config present in your project. Imported libraries: Quartz Manager API, Quartz Manager UI and Quartz Manager Security.
 * *existing-quartz* - It demonstrates how to Quartz Manager can coexist with a Quartz instance already present in your project Imported libraries: Quartz Manager API, Quartz Manager UI.
 * *existing-quartz-and-storage* - It demonstrates how to Quartz Manager Persistence can coexist with a Quartz instance already present in your project. Imported libraries: Quartz Manager API, Quartz Manager UI and Quartz Manager Persistence.
+* *with-persistence* - It demonstrates how to import the Quartz Manager Persistence and get created the quartz tables automatically at the bootstrap
 
 
 ## Limitations
