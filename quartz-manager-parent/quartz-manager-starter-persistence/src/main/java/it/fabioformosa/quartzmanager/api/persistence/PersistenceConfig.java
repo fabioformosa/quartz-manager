@@ -11,7 +11,6 @@ import org.springframework.context.annotation.*;
 import javax.sql.DataSource;
 
 @Configuration
-@PropertySource("classpath:quartz-persistence.properties")
 public class PersistenceConfig {
 
     @Value("${quartz-manager.persistence.quartz.datasource.url}")
