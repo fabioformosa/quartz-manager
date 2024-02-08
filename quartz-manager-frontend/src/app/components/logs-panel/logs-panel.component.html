@@ -8,25 +8,25 @@
           <img src="assets/image/logs.svg" alt="no logs" width="320" style="margin-top: 6em;" />
         </div>
       </div>
-      <div id="logs" style="overflow-y: auto; position: absolute; left: 0; right: 0; top: 0; bottom: 0; overflow: auto;">
+      <div id="logs" style="overflow-y: auto; overflow: auto;">
         <div
             *ngFor = "let log of logs; let first = first" fxLayout="row" fxLayout.xs="column" fxLayoutAlign="start" fxLayoutGap="10px">
-            <div fxFlex="0 1 300px">
+            <div style="flex:1; max-width: 300px" >
                 <span [ngClass]="{'animate__animated animate__zoomIn zoomIn firstLog': first}"> [{{log.time|date:'medium'}}]</span>
             </div>
-            <div fxFlex="1 1 16px">
+            <div style="flex:1; max-width: 16px">
                 <span [ngClass]="{'animated zoomIn firstLog': first}">
                 <i class = "fas" [ngClass]="{'fa-check-circle green': log.type == 'INFO',
                                              'fa-exclamation-triangle yellow': log.type == 'WARN',
                                              'fa-times-circle red': log.type == 'ERROR'}"></i>
                 </span>
             </div>
-            <div fxFlex="0 1 250px">
+            <div style="flex:1; max-width: 250px">
                 <span [ngClass]="{'animate__animated animate__zoomIn zoomIn firstLog': first}">
                 {{log.threadName}}
                 </span>
             </div>
-            <div fxFlex="1 1">
+            <div style="flex:1">
                 <span [ngClass]="{'animate__animated animate__zoomIn zoomIn firstLog': first}"> {{log.msg}}</span>
             </div>
         </div>

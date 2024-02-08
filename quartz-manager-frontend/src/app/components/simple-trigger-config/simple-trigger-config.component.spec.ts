@@ -202,13 +202,13 @@ describe('SimpleTriggerConfig', () => {
     component.trigger = new SimpleTrigger();
     component.trigger.triggerKeyDTO = mockTriggerKey;
 
-    fixture.detectChanges();
-
     const mockTrigger = new Trigger();
     mockTrigger.triggerKeyDTO = mockTriggerKey;
     mockTrigger.jobDetailDTO = <JobDetail>{jobClassName: 'TestJob', description: null};
     const getSimpleTriggerReq = httpTestingController.expectOne(`${CONTEXT_PATH}/simple-triggers/my-simple-trigger`);
     getSimpleTriggerReq.flush(mockTrigger);
+
+    fixture.detectChanges();
 
     const componentDe: DebugElement = fixture.debugElement;
     const submitButton = componentDe.query(By.css('form button'));

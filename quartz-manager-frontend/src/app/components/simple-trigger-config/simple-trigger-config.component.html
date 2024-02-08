@@ -1,11 +1,11 @@
 <mat-card fxFlex="1 1 auto">
-  <mat-card-header>
+  <mat-card-header style="padding-bottom: 16px;">
     <mat-card-subtitle><b>TRIGGER DETAILS</b></mat-card-subtitle>
   </mat-card-header>
   <mat-divider></mat-divider>
   <mat-card-content *ngIf="shouldShowTheTriggerCardContent()" style="position: relative; height: 100%">
     <div fxLayout="column" style="overflow-y: auto; position: absolute; left: 0; right: 0; top: 0; bottom: 0;
-    overflow: auto;height: calc(100% - 3em); padding-top: 1em;">
+    overflow: auto;padding: 1em;">
       <mat-card id="noEligibleJobsAlert" *ngIf="jobs?.length === 0" style="background-color: #ff6385">
         <mat-card-content>
           <i class="fas fa-exclamation-circle" style="color: #fff"></i>&nbsp;<strong>WARNING</strong>
@@ -18,11 +18,9 @@
             [formGroup]="simpleTriggerReactiveForm" (ngSubmit)="onSubmitTriggerConfig()">
         <div>
           <mat-form-field
-            [appearance]="enabledTriggerForm && !trigger ? 'outline': 'fill'"
             class="full-size-input">
             <mat-label>Trigger Name</mat-label>
             <input id="triggerName"
-                   [readonly]="!enabledTriggerForm || trigger"
                    matInput placeholder="name of the trigger (unique)"
                    formControlName="triggerName" name="triggerName">
             <mat-error *ngIf="simpleTriggerReactiveForm.controls.triggerName.errors?.required">
@@ -33,11 +31,10 @@
 
         <div>
           <mat-form-field
-            [appearance]="enabledTriggerForm ? 'outline': 'fill'"
             class="full-size-input"
           >
             <mat-label>Job Class</mat-label>
-            <mat-select id="jobClass" name="jobClass" formControlName="jobClass" [disabled]="!enabledTriggerForm">
+            <mat-select id="jobClass" name="jobClass" formControlName="jobClass">
               <mat-option *ngFor="let job of jobs" [value]="job" style="font-size: 0.8em">
                 {{job}}
               </mat-option>
@@ -50,12 +47,11 @@
 
         <div>
           <mat-form-field
-            [appearance]="enabledTriggerForm ? 'outline': 'fill'"
             class="full-size-input"
           >
             <mat-label>Misfire Instruction</mat-label>
             <mat-select id="misfireInstruction" name="misfireInstruction" formControlName="misfireInstruction"
-                        [disabled]="!enabledTriggerForm" style="font-size: 0.8em">
+                        style="font-size: 0.8em">
               <mat-option value="MISFIRE_INSTRUCTION_FIRE_NOW">FIRE NOW</mat-option>
               <mat-option value="MISFIRE_INSTRUCTION_RESCHEDULE_NOW_WITH_EXISTING_REPEAT_COUNT">RESCHEDULE NOW WITH
                 EXISTING REPEAT COUNT
@@ -82,12 +78,10 @@
         <div formGroupName="triggerPeriod">
           <div>
             <mat-form-field
-              [appearance]="enabledTriggerForm ? 'outline': 'fill'"
               class="full-size-input"
             >
               <mat-label>Start Date (optional)</mat-label>
               <input id="startDate"
-                     [readonly]="!enabledTriggerForm"
                      matInput
                      [ngxMatDatetimePicker]="startDatePicker" placeholder="Choose a start date"
                      formControlName="startDate" name="startDate">
@@ -99,12 +93,10 @@
 
           <div>
             <mat-form-field
-              [appearance]="enabledTriggerForm ? 'outline': 'fill'"
               class="full-size-input"
             >
               <mat-label>End Date (optional)</mat-label>
               <input id="endDate"
-                     [readonly]="!enabledTriggerForm"
                      matInput
                      [ngxMatDatetimePicker]="endDatePicker" placeholder="Choose a end date"
                      formControlName="endDate" name="endDate"
@@ -122,12 +114,10 @@
         <div formGroupName="triggerRecurrence">
           <div>
             <mat-form-field
-              [appearance]="enabledTriggerForm ? 'outline': 'fill'"
               class="full-size-input"
             >
               <mat-label>Repeat Interval [in mills]</mat-label>
               <input id="repeatInterval"
-                     [readonly]="!enabledTriggerForm"
                      matInput placeholder="Repeat Interval [in mills]" type="number"
                      formControlName="repeatInterval" name="repeatInterval"
               >
@@ -138,12 +128,10 @@
           </div>
           <div>
             <mat-form-field
-              [appearance]="enabledTriggerForm ? 'outline': 'fill'"
               class="full-size-input"
             >
               <mat-label>Repeat Count</mat-label>
               <input id="repeatCount"
-                     [readonly]="!enabledTriggerForm"
                      matInput placeholder="Repeat Count (-1 REPEAT INDEFINITELY)" type="number"
                      formControlName="repeatCount" name="repeatCount"
               >
@@ -158,26 +146,24 @@
         <br/>
 
         <div fxLayout="row" fxFlexAlign="space-evenly center" style="padding-bottom: 1em;">
-          <div fxFlex="1 1 auto" style="text-align: center" *ngIf="enabledTriggerForm">
+          <div fxFlex="1 1 auto" style="text-align: center" *ngIf="simpleTriggerReactiveForm.enabled">
             <button mat-raised-button
                     type="button"
-                    *ngIf="enabledTriggerForm"
                     (click)="onResetReactiveForm()">
               Cancel
             </button>
           </div>
-          <div fxFlex="1 1 auto" style="text-align: center" *ngIf="enabledTriggerForm">
+          <div fxFlex="1 1 auto" style="text-align: center" *ngIf="simpleTriggerReactiveForm.enabled">
             <button mat-raised-button
                     type="submit" color="primary"
-                    [disabled]="simpleTriggerReactiveForm.invalid"
-                    *ngIf="enabledTriggerForm">
+                    [disabled]="simpleTriggerReactiveForm.invalid">
               Submit
             </button>
           </div>
-          <div fxFlex="1 1 auto" style="text-align: center" *ngIf="!enabledTriggerForm">
+          <div fxFlex="1 1 auto" style="text-align: center" *ngIf="!simpleTriggerReactiveForm.enabled">
             <button mat-raised-button type="button"
-            *ngIf="!enabledTriggerForm"
-            (click)="enabledTriggerForm = true">
+            
+            (click)="simpleTriggerReactiveForm.enable()">
             Reschedule
             </button>
           </div>
