@@ -12,3 +12,70 @@ body {
   flex:1;
   background-color: #f1f1f1;
 }
+
+/**
+  TODO: Remove the below utility classes once tailwind is integrated.
+*/
+.font-large {
+  font-size: large;
+}
+
+.font-larger {
+  font-size: larger;
+}
+
+.justify-space-between {
+  justify-content: space-between;
+}
+
+.flex {
+  display: flex;
+} 
+
+.flex-row {
+  flex-direction: row;
+}
+
+.flex-column {
+  flex-direction: column;
+}
+
+.flex-1 {
+  flex: 1;
+}
+
+.h-100 {
+  height: 100%;
+}
+
+.min-h-100 {
+  min-height: 100%;
+}
+
+.max-h-100 {
+  max-height: 100%;
+}
+
+.w-100 {
+  width: 100%;
+}
+
+.gap-6 {
+  gap: 6px;
+}
+
+.overflow-hidden {
+  overflow: hidden;
+}
+
+.overflow-y-auto {
+  overflow-y: auto;
+}
+
+.pb-16 {
+  padding-bottom: 16px !important;
+}
+
+.mdc-list-item__primary-text {
+  font-size: 0.8em !important;
+}

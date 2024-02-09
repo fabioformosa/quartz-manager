@@ -1,40 +1,40 @@
-<div id="managerViewContainer" fxLayout="column" fxLayoutAlign="left stretch" fxLayoutGap="10px" fxFill>
-
-  <div id="schedulerBarContainer" fxLayout="column" fxLayoutAlign="left stretch">
+<div id="managerViewContainer" class="flex flex-column flex-1 gap-6 h-100">
+  <div id="schedulerBarContainer">
     <qrzmng-scheduler-control></qrzmng-scheduler-control>
   </div>
 
-  <div fxLayout="row" fxLayoutGap="8px" fxLayoutAlign="center stretch" fxFlex="1 1 auto">
-
-    <div fxFlex="0 0 250px">
+  <div id="manager-content-container" class="flex flex-row flex-1 gap-6">
+    <div class="flex-1" style="max-width: 250px">
       <div fxLayout="row" fxLayoutAlign="stretch" fxFill>
         <qrzmng-trigger-list
-            (onNewTriggerClicked)="onNewTriggerRequested()"
-            [openedNewTriggerForm]="newTriggerFormOpened"
-            (onSelectedTrigger)="setSelectedTrigger($event)"
-             fxFill></qrzmng-trigger-list>
+          (onNewTriggerClicked)="onNewTriggerRequested()"
+          [openedNewTriggerForm]="newTriggerFormOpened"
+          (onSelectedTrigger)="setSelectedTrigger($event)"
+          fxFill></qrzmng-trigger-list>
       </div>
     </div>
 
-    <div fxFlex="1 1 350px">
-        <div fxLayout="row" fxFill>
+    <div class="flex-1" style="max-width: 350px">
+      <div fxLayout="row" fxFill>
         <div fxLayout="column" fxFill>
-          <qrzmng-simple-trigger-config fxFill
+          <qrzmng-simple-trigger-config
+            fxFill
             [triggerKey]="selectedTriggerKey"
             (onNewTrigger)="onNewTriggerCreated($event)">
           </qrzmng-simple-trigger-config>
         </div>
-        </div>
+      </div>
     </div>
 
-    <div fxFlex="1 1 auto" style="margin-left: 20px;">
-        <div fxFlex="1 1 auto" fxLayout="column" fxLayoutAlign="start stretch" fxLayoutGap="6px">
-          <progress-panel></progress-panel>
-          <logs-panel fxFlex="1 1 auto" fxFill></logs-panel>
+    <div class="flex-1">
+      <div class="h-100 min-h-100 flex flex-column gap-6">
+        <div class="flex flex-column" >
+          <progress-panel class="flex-1"></progress-panel>
         </div>
+        <div class="flex flex-column flex-1" style="max-height: calc(100% - 136px); min-height: calc(100% - 210px);">
+          <logs-panel class="flex flex-1 h-100 max-h-100"></logs-panel>
+        </div>
+      </div>
     </div>
-
   </div>
 </div>
-
-
