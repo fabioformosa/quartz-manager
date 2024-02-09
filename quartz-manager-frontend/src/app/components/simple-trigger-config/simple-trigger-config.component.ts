@@ -57,13 +57,42 @@ export class SimpleTriggerConfigComponent implements OnInit {
     this.fetchJobs();
   }
 
-  private fetchJobs() {
-    this.jobService.fetchJobs().subscribe(jobs => this.jobs = jobs);
+  onSubmitTriggerConfig = () => {
+    console.log(this.existsATriggerInProgress());
+    const schedulerServiceCall = this.existsATriggerInProgress() ?
+      this.schedulerService.updateSimpleTriggerConfig : this.schedulerService.saveSimpleTriggerConfig;
+
+    const simpleTriggerCommand = this._fromReactiveFormToCommand();
+    schedulerServiceCall(simpleTriggerCommand)
+      .subscribe((retTrigger: SimpleTrigger) => {
+        console.log(retTrigger);
+        this.trigger = retTrigger;
+
+        this.simpleTriggerReactiveForm.setValue(this._fromTriggerToReactiveForm(retTrigger));
+
+        this.fetchedTriggers = true;
+        this.triggerInProgress = this.trigger.mayFireAgain;
+
+        if (schedulerServiceCall === this.schedulerService.saveSimpleTriggerConfig) {
+          this.onNewTrigger.emit(retTrigger);
+        }
+
+        this.closeTriggerForm();
+      }, error => {
+        console.error(error);
+        this.simpleTriggerReactiveForm.setValue(this._fromTriggerToReactiveForm(this.trigger));
+      });
   }
 
   openTriggerForm() {
     this.simpleTriggerReactiveForm.enable();
   }
+
+  private fetchJobs() {
+    this.jobService.fetchJobs().subscribe(jobs => this.jobs = jobs);
+  }
+
+
 
   private closeTriggerForm() {
     this.simpleTriggerReactiveForm.disable();
@@ -96,31 +125,6 @@ export class SimpleTriggerConfigComponent implements OnInit {
     this.simpleTriggerReactiveForm.setValue(this._fromTriggerToReactiveForm(this.trigger));
     this.closeTriggerForm();
   };
-
-  onSubmitTriggerConfig = () => {
-    const schedulerServiceCall = this.existsATriggerInProgress() ?
-      this.schedulerService.updateSimpleTriggerConfig : this.schedulerService.saveSimpleTriggerConfig;
-
-    const simpleTriggerCommand = this._fromReactiveFormToCommand();
-    schedulerServiceCall(simpleTriggerCommand)
-      .subscribe((retTrigger: SimpleTrigger) => {
-        this.trigger = retTrigger;
-
-        this.simpleTriggerReactiveForm.setValue(this._fromTriggerToReactiveForm(retTrigger));
-
-        this.fetchedTriggers = true;
-        this.triggerInProgress = this.trigger.mayFireAgain;
-
-        if (schedulerServiceCall === this.schedulerService.saveSimpleTriggerConfig) {
-          this.onNewTrigger.emit(retTrigger);
-        }
-
-        this.closeTriggerForm();
-      }, error => {
-        this.simpleTriggerReactiveForm.setValue(this._fromTriggerToReactiveForm(this.trigger));
-      });
-
-  }
 
   private _triggerPeriodValidator(control: AbstractControl): ValidationErrors | null {
     const startDate = control.get('startDate');
@@ -160,7 +164,7 @@ export class SimpleTriggerConfigComponent implements OnInit {
   };
 
   private _fromReactiveFormToCommand = (): SimpleTriggerCommand => {
-    const reactiveFormValue = this.simpleTriggerReactiveForm.value;
+    const reactiveFormValue = this.simpleTriggerReactiveForm.getRawValue();
     const simpleTriggerCommand = new SimpleTriggerCommand();
     simpleTriggerCommand.triggerName = reactiveFormValue.triggerName;
     simpleTriggerCommand.jobClass = reactiveFormValue.jobClass;
