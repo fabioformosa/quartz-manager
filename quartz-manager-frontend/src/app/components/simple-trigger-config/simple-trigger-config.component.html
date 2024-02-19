@@ -35,7 +35,7 @@
           >
             <mat-label>Job Class</mat-label>
             <mat-select id="jobClass" name="jobClass" formControlName="jobClass">
-              <mat-option *ngFor="let job of jobs" [value]="job" style="font-size: 0.8em">
+              <mat-option *ngFor="let job of jobs" [value]="job">
                 {{job}}
               </mat-option>
             </mat-select>
@@ -50,8 +50,7 @@
             class="full-size-input"
           >
             <mat-label>Misfire Instruction</mat-label>
-            <mat-select id="misfireInstruction" name="misfireInstruction" formControlName="misfireInstruction"
-                        style="font-size: 0.8em">
+            <mat-select id="misfireInstruction" name="misfireInstruction" formControlName="misfireInstruction">
               <mat-option value="MISFIRE_INSTRUCTION_FIRE_NOW">FIRE NOW</mat-option>
               <mat-option value="MISFIRE_INSTRUCTION_RESCHEDULE_NOW_WITH_EXISTING_REPEAT_COUNT">RESCHEDULE NOW WITH
                 EXISTING REPEAT COUNT
@@ -162,8 +161,7 @@
           </div>
           <div fxFlex="1 1 auto" style="text-align: center" *ngIf="!simpleTriggerReactiveForm.enabled">
             <button mat-raised-button type="button"
-            
-            (click)="simpleTriggerReactiveForm.enable()">
+            (click)="simpleTriggerReactiveForm.enable();simpleTriggerReactiveForm.controls['triggerName'].disable();">
             Reschedule
             </button>
           </div>
