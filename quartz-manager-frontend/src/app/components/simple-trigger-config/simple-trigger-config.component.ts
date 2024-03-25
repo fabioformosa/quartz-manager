@@ -43,8 +43,6 @@ export class SimpleTriggerConfigComponent implements OnInit {
 
   private jobs: Array<String>;
 
-  enabledTriggerForm = false;
-
   @Output()
   onNewTrigger = new EventEmitter<SimpleTrigger>();
 
@@ -59,16 +57,45 @@ export class SimpleTriggerConfigComponent implements OnInit {
     this.fetchJobs();
   }
 
+  onSubmitTriggerConfig = () => {
+    console.log(this.existsATriggerInProgress());
+    const schedulerServiceCall = this.existsATriggerInProgress() ?
+      this.schedulerService.updateSimpleTriggerConfig : this.schedulerService.saveSimpleTriggerConfig;
+
+    const simpleTriggerCommand = this._fromReactiveFormToCommand();
+    schedulerServiceCall(simpleTriggerCommand)
+      .subscribe((retTrigger: SimpleTrigger) => {
+        console.log(retTrigger);
+        this.trigger = retTrigger;
+
+        this.simpleTriggerReactiveForm.setValue(this._fromTriggerToReactiveForm(retTrigger));
+
+        this.fetchedTriggers = true;
+        this.triggerInProgress = this.trigger.mayFireAgain;
+
+        if (schedulerServiceCall === this.schedulerService.saveSimpleTriggerConfig) {
+          this.onNewTrigger.emit(retTrigger);
+        }
+
+        this.closeTriggerForm();
+      }, error => {
+        console.error(error);
+        this.simpleTriggerReactiveForm.setValue(this._fromTriggerToReactiveForm(this.trigger));
+      });
+  }
+
+  openTriggerForm() {
+    this.simpleTriggerReactiveForm.enable();
+  }
+
   private fetchJobs() {
     this.jobService.fetchJobs().subscribe(jobs => this.jobs = jobs);
   }
 
-  openTriggerForm() {
-    this.enabledTriggerForm = true;
-  }
+
 
   private closeTriggerForm() {
-    this.enabledTriggerForm = false;
+    this.simpleTriggerReactiveForm.disable();
   }
 
   @Input()
@@ -86,10 +113,11 @@ export class SimpleTriggerConfigComponent implements OnInit {
         this.simpleTriggerReactiveForm.setValue(this._fromTriggerToReactiveForm(retTrigger))
         this.triggerLoading = false;
         this.triggerInProgress = this.trigger.mayFireAgain;
+        this.simpleTriggerReactiveForm.disable();
       })
   }
 
-  shouldShowTheTriggerCardContent = (): boolean => this.trigger !== null || this.enabledTriggerForm;
+  shouldShowTheTriggerCardContent = (): boolean => this.trigger !== null || this.simpleTriggerReactiveForm.enabled;
 
   existsATriggerInProgress = (): boolean => this.trigger && this.triggerInProgress;
 
@@ -97,31 +125,6 @@ export class SimpleTriggerConfigComponent implements OnInit {
     this.simpleTriggerReactiveForm.setValue(this._fromTriggerToReactiveForm(this.trigger));
     this.closeTriggerForm();
   };
-
-  onSubmitTriggerConfig = () => {
-    const schedulerServiceCall = this.existsATriggerInProgress() ?
-      this.schedulerService.updateSimpleTriggerConfig : this.schedulerService.saveSimpleTriggerConfig;
-
-    const simpleTriggerCommand = this._fromReactiveFormToCommand();
-    schedulerServiceCall(simpleTriggerCommand)
-      .subscribe((retTrigger: SimpleTrigger) => {
-        this.trigger = retTrigger;
-
-        this.simpleTriggerReactiveForm.setValue(this._fromTriggerToReactiveForm(retTrigger));
-
-        this.fetchedTriggers = true;
-        this.triggerInProgress = this.trigger.mayFireAgain;
-
-        if (schedulerServiceCall === this.schedulerService.saveSimpleTriggerConfig) {
-          this.onNewTrigger.emit(retTrigger);
-        }
-
-        this.closeTriggerForm();
-      }, error => {
-        this.simpleTriggerReactiveForm.setValue(this._fromTriggerToReactiveForm(this.trigger));
-      });
-
-  }
 
   private _triggerPeriodValidator(control: AbstractControl): ValidationErrors | null {
     const startDate = control.get('startDate');
@@ -161,7 +164,7 @@ export class SimpleTriggerConfigComponent implements OnInit {
   };
 
   private _fromReactiveFormToCommand = (): SimpleTriggerCommand => {
-    const reactiveFormValue = this.simpleTriggerReactiveForm.value;
+    const reactiveFormValue = this.simpleTriggerReactiveForm.getRawValue();
     const simpleTriggerCommand = new SimpleTriggerCommand();
     simpleTriggerCommand.triggerName = reactiveFormValue.triggerName;
     simpleTriggerCommand.jobClass = reactiveFormValue.jobClass;

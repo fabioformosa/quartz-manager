@@ -21,6 +21,7 @@ import {MatDatepickerModule} from '@angular/material/datepicker';
 import {MatSelectModule} from '@angular/material/select';
 import {MatListModule} from '@angular/material/list';
 import {MatSidenavModule} from '@angular/material/sidenav';
+import {MatDialogModule} from '@angular/material/dialog';
 
 import {MatNativeDateModule} from '@angular/material/core';
 import { NgxMatTimepickerModule, NgxMatDatetimePickerModule} from '@angular-material-components/datetime-picker';
@@ -133,6 +134,7 @@ export function jwtOptionsFactory(apiService: ApiService) {
         deps: [ApiService]
       }
     }),
+    MatDialogModule,
     MatMenuModule,
     MatTooltipModule,
     MatButtonModule,
