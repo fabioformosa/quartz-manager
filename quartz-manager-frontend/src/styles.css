@@ -16,6 +16,10 @@ body {
 /**
   TODO: Remove the below utility classes once tailwind is integrated.
 */
+.font-13 {
+  font-size: 13px;
+}
+
 .font-large {
   font-size: large;
 }

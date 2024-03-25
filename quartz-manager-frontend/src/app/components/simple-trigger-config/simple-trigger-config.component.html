@@ -35,7 +35,7 @@
           >
             <mat-label>Job Class</mat-label>
             <mat-select id="jobClass" name="jobClass" formControlName="jobClass">
-              <mat-option *ngFor="let job of jobs" [value]="job">
+              <mat-option *ngFor="let job of jobs" [value]="job" class="font-13">
                 {{job}}
               </mat-option>
             </mat-select>
@@ -51,17 +51,17 @@
           >
             <mat-label>Misfire Instruction</mat-label>
             <mat-select id="misfireInstruction" name="misfireInstruction" formControlName="misfireInstruction">
-              <mat-option value="MISFIRE_INSTRUCTION_FIRE_NOW">FIRE NOW</mat-option>
-              <mat-option value="MISFIRE_INSTRUCTION_RESCHEDULE_NOW_WITH_EXISTING_REPEAT_COUNT">RESCHEDULE NOW WITH
+              <mat-option class="font-13" value="MISFIRE_INSTRUCTION_FIRE_NOW">FIRE NOW</mat-option>
+              <mat-option class="font-13" value="MISFIRE_INSTRUCTION_RESCHEDULE_NOW_WITH_EXISTING_REPEAT_COUNT">RESCHEDULE NOW WITH
                 EXISTING REPEAT COUNT
               </mat-option>
-              <mat-option value="MISFIRE_INSTRUCTION_RESCHEDULE_NOW_WITH_REMAINING_REPEAT_COUNT">RESCHEDULE NOW WITH
+              <mat-option class="font-13" value="MISFIRE_INSTRUCTION_RESCHEDULE_NOW_WITH_REMAINING_REPEAT_COUNT">RESCHEDULE NOW WITH
                 REMAINING REPEAT COUNT
               </mat-option>
-              <mat-option value="MISFIRE_INSTRUCTION_RESCHEDULE_NEXT_WITH_REMAINING_COUNT">RESCHEDULE NEXT WITH
+              <mat-option class="font-13" value="MISFIRE_INSTRUCTION_RESCHEDULE_NEXT_WITH_REMAINING_COUNT">RESCHEDULE NEXT WITH
                 REMAINING COUNT
               </mat-option>
-              <mat-option value="MISFIRE_INSTRUCTION_RESCHEDULE_NEXT_WITH_EXISTING_COUNT">RESCHEDULE NEXT WITH EXISTING
+              <mat-option class="font-13" value="MISFIRE_INSTRUCTION_RESCHEDULE_NEXT_WITH_EXISTING_COUNT">RESCHEDULE NEXT WITH EXISTING
                 COUNT
               </mat-option>
             </mat-select>
