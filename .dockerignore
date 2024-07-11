@@ -1,0 +1,2 @@
+# .dockerignore
+quartz-manager-frontend/node_modules

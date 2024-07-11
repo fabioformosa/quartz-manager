@@ -43,6 +43,7 @@
   <properties>
     <java.version>9</java.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <org.projectlombok.version>1.18.30</org.projectlombok.version>
     <maven-surefire-plugin.version>2.22.0</maven-surefire-plugin.version>
     <maven-failsafe-plugin.version>2.22.0</maven-failsafe-plugin.version>
     <jacoco-maven-plugin.version>0.8.8</jacoco-maven-plugin.version>
@@ -99,6 +100,11 @@
         <groupId>it.fabioformosa.quartz-manager</groupId>
         <artifactId>quartz-manager-starter-ui</artifactId>
         <version>4.0.10-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+        <groupId>org.projectlombok</groupId>
+        <artifactId>lombok</artifactId>
+        <version>${org.projectlombok.version}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
