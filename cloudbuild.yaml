@@ -1,0 +1,20 @@
+substitutions:
+  _REGION: europe-west8
+steps:
+
+  # Step 1: Docker build&push
+  - name: 'gcr.io/k8s-skaffold/skaffold'
+    entrypoint: 'sh'
+    args:
+      - -xe
+      - -c
+      - |
+        # Build and push images
+        sed -i s/_IMAGE_TAG_POLICY/$SHORT_SHA/g skaffold.yaml
+        sed -i s/_HELM_CHART_VERSION/0.0.0/g ./quartz-manager-parent/quartz-manager-web-showcase/helm/Chart.yaml
+        sed -i s/_HELM_APP_VERSION/$SHORT_SHA/g ./quartz-manager-parent/quartz-manager-web-showcase/helm/quartzmanager-standalone/Chart.yaml
+        sed -i s/_HELM_CHART_NAME/quartzmanager-standalone/g skaffold.yaml
+        sed -i s/_HELM_NAMESPACE/quartzmanager/g skaffold.yaml
+        skaffold build --file-output=/workspace/artifacts.json \
+                       --default-repo=${_REGION}-docker.pkg.dev/quartz-manager-test/quartz-manager/quartz-manager-standalone \
+                       --push=true
