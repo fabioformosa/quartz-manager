@@ -25,7 +25,7 @@ FROM openjdk:11-jre-slim
 WORKDIR /app
 
 # Copy the JAR file from the build stage
-COPY --from=build /app/quartz-manager-parent/quartz-manager-web-showcase/target/*.jar app.jar
+COPY --from=build /app/quartz-manager-parent/quartz-manager-web-showcase/target/*-SNAPSHOT.jar app.jar
 
 # Expose the application port
 EXPOSE 8080
