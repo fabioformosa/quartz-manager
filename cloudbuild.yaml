@@ -12,7 +12,7 @@ steps:
         # Build and push images
         sed -i s/_IMAGE_TAG_POLICY/$SHORT_SHA/g skaffold.yaml
         sed -i s/_HELM_CHART_VERSION/0.0.0/g ./quartz-manager-parent/quartz-manager-web-showcase/helm/Chart.yaml
-        sed -i s/_HELM_APP_VERSION/$SHORT_SHA/g ./quartz-manager-parent/quartz-manager-web-showcase/helm/quartzmanager-standalone/Chart.yaml
+        sed -i s/_HELM_APP_VERSION/$SHORT_SHA/g ./quartz-manager-parent/quartz-manager-web-showcase/helm/Chart.yaml
         sed -i s/_HELM_CHART_NAME/quartzmanager-standalone/g skaffold.yaml
         sed -i s/_HELM_NAMESPACE/quartzmanager/g skaffold.yaml
         skaffold build --file-output=/workspace/artifacts.json \
