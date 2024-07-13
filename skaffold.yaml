@@ -1,0 +1,9 @@
+apiVersion: skaffold/v4beta7
+kind: Config
+build:
+  tagPolicy:
+    envTemplate:
+      template: "_IMAGE_TAG_POLICY"
+  artifacts:
+    - image: quartz-manager-standalone
+      context: ./

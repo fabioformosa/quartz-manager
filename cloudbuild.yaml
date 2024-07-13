@@ -18,3 +18,6 @@ steps:
         skaffold build --file-output=/workspace/artifacts.json \
                        --default-repo=${_REGION}-docker.pkg.dev/quartz-manager-test/quartz-manager/quartz-manager-standalone \
                        --push=true
+
+options:
+  logging: CLOUD_LOGGING_ONLY
