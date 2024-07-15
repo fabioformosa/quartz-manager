@@ -19,7 +19,7 @@ steps:
                        --default-repo=${_REGION}-docker.pkg.dev/quartz-manager-test/quartz-manager/quartz-manager-standalone \
                        --push=true
 
-  # Step 2: deploy
+  # Step 2: cloud deploy
   - name: 'google/cloud-sdk:latest'
     entrypoint: 'sh'
     args:
