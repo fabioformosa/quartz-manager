@@ -1,0 +1,12 @@
+apiVersion: deploy.cloud.google.com/v1
+kind: DeliveryPipeline
+metadata:
+  name: quartz-manager-pipeline
+  labels:
+    app: quartz-manager-standalone
+description: quartz-manager-standalone delivery pipeline
+serialPipeline:
+  stages:
+    - targetId: dev
+      profiles:
+        - dev

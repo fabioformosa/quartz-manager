@@ -7,3 +7,16 @@ build:
   artifacts:
     - image: quartz-manager-standalone
       context: ./
+profiles:
+  - name: dev
+    deploy:
+      helm:
+        releases:
+          - name: _HELM_CHART_NAME
+            createNamespace: true
+            namespace: _HELM_NAMESPACE
+            chartPath: quartz-manager-parent/quartz-manager-web-showcase/helm/hello-world
+#            valuesFiles:
+#              - helm/envs/dev/values.yaml
+            setValueTemplates:
+              image.tag: "_IMAGE_TAG_POLICY"

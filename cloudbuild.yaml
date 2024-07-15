@@ -14,10 +14,31 @@ steps:
         sed -i s/_HELM_CHART_VERSION/0.0.0/g ./quartz-manager-parent/quartz-manager-web-showcase/helm/Chart.yaml
         sed -i s/_HELM_APP_VERSION/$SHORT_SHA/g ./quartz-manager-parent/quartz-manager-web-showcase/helm/Chart.yaml
         sed -i s/_HELM_CHART_NAME/quartzmanager-standalone/g skaffold.yaml
-        sed -i s/_HELM_NAMESPACE/quartzmanager/g skaffold.yaml
+        sed -i s/_HELM_NAMESPACE/quartzmanager-dev/g skaffold.yaml
         skaffold build --file-output=/workspace/artifacts.json \
                        --default-repo=${_REGION}-docker.pkg.dev/quartz-manager-test/quartz-manager/quartz-manager-standalone \
                        --push=true
+
+  # Step 2: deploy
+  - name: 'google/cloud-sdk:latest'
+    entrypoint: 'sh'
+    args:
+      - -xe
+      - -c
+      - |
+        gcloud config set deploy/region ${_REGION}
+        gcloud deploy apply --file deploy/pipeline.yaml
+        gcloud deploy apply --file deploy/dev.yaml
+        gcloud deploy releases create rel-${SHORT_SHA} \
+                            --delivery-pipeline quartz-manager-standalone-pipeline \
+                            --description "$(git log -1  --pretty='%s')" \
+                            --build-artifacts /workspace/artifacts.json \
+                            --annotations "commit_ui=https://source.cloud.google.com/$PROJECT_ID/quartz-manager-standalone/+/$COMMIT_SHA"
+artifacts:
+  objects:
+    location: 'gs://$PROJECT_ID-gcdeploy-artifacts/'
+    paths:
+      - '/workspace/artifacts.json'
 
 options:
   logging: CLOUD_LOGGING_ONLY
