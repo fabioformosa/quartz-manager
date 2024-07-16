@@ -15,7 +15,7 @@ profiles:
           - name: _HELM_CHART_NAME
             createNamespace: true
             namespace: _HELM_NAMESPACE
-            chartPath: quartz-manager-parent/quartz-manager-web-showcase/helm/hello-world
+            chartPath: quartz-manager-parent/quartz-manager-web-showcase/helm
 #            valuesFiles:
 #              - helm/envs/dev/values.yaml
             setValueTemplates:
