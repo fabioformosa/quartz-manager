@@ -6,4 +6,4 @@ metadata:
   labels: {}
 description: dev
 gke:
-  cluster: projects/quartz-manager-test/locations/europe-west8/clusters/gke-cluster
+  cluster: projects/quartz-manager-test/locations/europe-west8-a/clusters/gke-cluster
