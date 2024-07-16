@@ -5,7 +5,7 @@
 replicaCount: 1
 
 image:
-  repository: "europe-west8-docker.pkg.dev/quartz-manager-test/quartz-manager/quartz-manager-standalone"
+  repository: "europe-west8-docker.pkg.dev/quartz-manager-test/quartz-manager/quartz-manager-standalone/quartz-manager-standalone"
   pullPolicy: IfNotPresent
 
 imagePullSecrets: []
