@@ -37,6 +37,7 @@ steps:
                             --delivery-pipeline quartz-manager-pipeline \
                             --description "$(git log -1  --pretty='%s')" \
                             --build-artifacts /workspace/artifacts.json \
+                            --verbosity \
                             --annotations "commit_ui=https://source.cloud.google.com/$PROJECT_ID/quartz-manager-standalone/+/$COMMIT_SHA"
 artifacts:
   objects:
