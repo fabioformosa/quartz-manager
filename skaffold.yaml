@@ -14,9 +14,33 @@ profiles:
         releases:
           - name: quartzmanager-standalone
             createNamespace: true
-            namespace: _HELM_NAMESPACE
+            namespace: quartzmanager-dev
             chartPath: quartz-manager-parent/quartz-manager-web-showcase/helm
 #            valuesFiles:
 #              - helm/envs/dev/values.yaml
+            setValueTemplates:
+              image.tag: "_IMAGE_TAG_POLICY"
+  - name: staging
+    deploy:
+      helm:
+        releases:
+            - name: quartzmanager-standalone
+              createNamespace: true
+              namespace: quartzmanager-staging
+              chartPath: quartz-manager-parent/quartz-manager-web-showcase/helm
+          #            valuesFiles:
+          #              - helm/envs/dev/values.yaml
+              setValueTemplates:
+                image.tag: "_IMAGE_TAG_POLICY"
+  - name: prod
+    deploy:
+      helm:
+        releases:
+          - name: quartzmanager-standalone
+            createNamespace: true
+            namespace: quartzmanager-prod
+            chartPath: quartz-manager-parent/quartz-manager-web-showcase/helm
+            #            valuesFiles:
+            #              - helm/envs/dev/values.yaml
             setValueTemplates:
               image.tag: "_IMAGE_TAG_POLICY"

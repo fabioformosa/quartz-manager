@@ -12,7 +12,6 @@ steps:
         # Build and push images
         sed -i s/_IMAGE_TAG_POLICY/$SHORT_SHA/g skaffold.yaml
         sed -i s/_HELM_APP_VERSION/$SHORT_SHA/g ./quartz-manager-parent/quartz-manager-web-showcase/helm/Chart.yaml
-        sed -i s/_HELM_NAMESPACE/quartzmanager-dev/g skaffold.yaml
         skaffold build --file-output=/workspace/artifacts.json \
                        --default-repo=${_REGION}-docker.pkg.dev/quartz-manager-test/quartz-manager/quartz-manager-standalone \
                        --push=true
@@ -25,7 +24,6 @@ steps:
       - -c
       - |
         sed -i s/_HELM_APP_VERSION/$SHORT_SHA/g ./quartz-manager-parent/quartz-manager-web-showcase/helm/Chart.yaml
-        sed -i s/_HELM_NAMESPACE/quartzmanager-dev/g skaffold.yaml
         gcloud config set deploy/region ${_REGION}
         gcloud deploy apply --file ./quartz-manager-parent/quartz-manager-web-showcase/deploy/pipeline.yaml
         gcloud deploy apply --file ./quartz-manager-parent/quartz-manager-web-showcase/deploy/dev.yaml
