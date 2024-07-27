@@ -12,7 +12,7 @@ profiles:
     deploy:
       helm:
         releases:
-          - name: _HELM_CHART_NAME
+          - name: quartzmanager-standalone
             createNamespace: true
             namespace: _HELM_NAMESPACE
             chartPath: quartz-manager-parent/quartz-manager-web-showcase/helm
