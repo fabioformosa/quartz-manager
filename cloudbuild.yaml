@@ -27,6 +27,8 @@ steps:
         gcloud config set deploy/region ${_REGION}
         gcloud deploy apply --file ./quartz-manager-parent/quartz-manager-web-showcase/deploy/pipeline.yaml
         gcloud deploy apply --file ./quartz-manager-parent/quartz-manager-web-showcase/deploy/dev.yaml
+        gcloud deploy apply --file ./quartz-manager-parent/quartz-manager-web-showcase/deploy/staging.yaml
+        gcloud deploy apply --file ./quartz-manager-parent/quartz-manager-web-showcase/deploy/prod.yaml
         gcloud deploy releases create rel-${SHORT_SHA} \
                             --delivery-pipeline quartz-manager-pipeline \
                             --description "$(git log -1  --pretty='%s')" \
