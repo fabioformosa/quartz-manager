@@ -29,21 +29,23 @@ export class LogsPanelComponent implements OnInit, OnDestroy {
 
   @Input()
   set triggerKey(triggerKey: TriggerKey) {
-    this.selectedTriggerKey = {...triggerKey} as TriggerKey;
-    if (this.selectedTriggerKey && this.selectedTriggerKey.name) {
-      this._subscribeToTheTopic(this.selectedTriggerKey);
+    if (!triggerKey || !triggerKey.name) {
+      this._unsubscribeFromTopic();
+      this.selectedTriggerKey = null;
+      return;
     }
+
+    this.selectedTriggerKey = {...triggerKey} as TriggerKey;
+    this._subscribeToTheTopic(this.selectedTriggerKey);
   }
 
   ngOnInit() {
   }
 
   private _subscribeToTheTopic = (triggerKey: TriggerKey) => {
-    if (this.topicSubscription) {
-      this.topicSubscription.unsubscribe();
-    }
+    this._unsubscribeFromTopic();
     this.topicSubscription = this.logsRxWebsocketService.watch(`/topic/logs/${triggerKey.name}`)
-      .pipe(map(msg => JSON.parse(msg.body)))
+      .pipe(map((msg: any) => JSON.parse(msg.body)))
       .subscribe(this._showNewLog, (err) => {
         console.log(err);
         // TODO in case of 401
@@ -52,11 +54,14 @@ export class LogsPanelComponent implements OnInit, OnDestroy {
   };
 
   ngOnDestroy() {
+    this._unsubscribeFromTopic();
+  }
+
+  private _unsubscribeFromTopic() {
     if (this.topicSubscription) {
       this.topicSubscription.unsubscribe();
+      this.topicSubscription = null;
     }
-    this.topicSubscription.unsubscribe();
-    this.topicSubscription = null;
   }
 
   _showNewLog = (logRecord) => {

@@ -47,6 +47,9 @@ export class SimpleTriggerConfigComponent implements OnInit {
   @Output()
   onNewTrigger = new EventEmitter<SimpleTrigger>();
 
+  @Output()
+  triggerFormOpenChange = new EventEmitter<boolean>();
+
   constructor(
     private formBuilder: UntypedFormBuilder,
     private schedulerService: SchedulerService,
@@ -63,30 +66,31 @@ export class SimpleTriggerConfigComponent implements OnInit {
   }
 
   openTriggerForm() {
-    // this.selectedTriggerKey = null;
-    // this.trigger = null;
-    // this.simpleTriggerReactiveForm.setValue(new SimpleTriggerReactiveForm());
     this.enabledTriggerForm = true;
+    this.triggerFormOpenChange.emit(this.enabledTriggerForm);
   }
 
   private closeTriggerForm() {
     this.enabledTriggerForm = false;
+    this.triggerFormOpenChange.emit(this.enabledTriggerForm);
   }
 
   @Input()
   set triggerKey(triggerKey: TriggerKey) {
     if (!triggerKey) {
-      this.selectedTriggerKey = null;
-      this.trigger = null;
-      this.simpleTriggerReactiveForm.reset(new SimpleTriggerReactiveForm());
+      this.openNewTriggerForm();
     } else if (!this.selectedTriggerKey || this.selectedTriggerKey.name !== triggerKey.name) {
       this._resetTheTrigger();
       this.selectedTriggerKey = {...triggerKey} as TriggerKey;
       this.fetchSelectedTrigger();
+      this.closeTriggerForm();
     }
-    this.openTriggerForm();
   }
 
+  openNewTriggerForm() {
+    this._resetTheTrigger();
+    this.openTriggerForm();
+  }
 
   private _resetTheTrigger() {
     this.trigger = null;
@@ -111,7 +115,11 @@ export class SimpleTriggerConfigComponent implements OnInit {
   existsATriggerInProgress = (): boolean => this.trigger && this.triggerInProgress;
 
   onResetReactiveForm = () => {
-    this.simpleTriggerReactiveForm.setValue(this._fromTriggerToReactiveForm(this.trigger));
+    if (this.trigger) {
+      this.simpleTriggerReactiveForm.setValue(this._fromTriggerToReactiveForm(this.trigger));
+    } else {
+      this.simpleTriggerReactiveForm.reset(new SimpleTriggerReactiveForm());
+    }
     this.closeTriggerForm();
   };
 
@@ -135,8 +143,13 @@ export class SimpleTriggerConfigComponent implements OnInit {
 
         this.closeTriggerForm();
       }, error => {
-        this.simpleTriggerReactiveForm.setValue(this._fromTriggerToReactiveForm(this.trigger));
-      }, () => {this.triggerLoading = true});
+        if (this.trigger) {
+          this.simpleTriggerReactiveForm.setValue(this._fromTriggerToReactiveForm(this.trigger));
+        }
+        this.triggerLoading = false;
+      }, () => {
+this.triggerLoading = false
+});
 
   }
 

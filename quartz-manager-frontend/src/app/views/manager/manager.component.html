@@ -21,6 +21,7 @@
         <div fxLayout="column" fxFill>
           <qrzmng-simple-trigger-config fxFill
             [triggerKey]="selectedTriggerKey"
+            (triggerFormOpenChange)="setNewTriggerFormOpened($event)"
             (onNewTrigger)="onNewTriggerCreated($event)">
           </qrzmng-simple-trigger-config>
         </div>

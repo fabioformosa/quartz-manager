@@ -1,12 +1,12 @@
 import { TestBed } from '@angular/core/testing';
-
-import { LogsRxWebsocketService } from './logs.rx-websocket.service';
-import {ApiService} from './api.service';
 import {RxStomp} from '@stomp/rx-stomp';
 import {jest} from '@jest/globals';
 
-describe('LogsRxWebsocketService', () => {
-  let service: LogsRxWebsocketService;
+import { ProgressRxWebsocketService } from './progress.rx-websocket.service';
+import {ApiService} from './api.service';
+
+describe('ProgressRxWebsocketService', () => {
+  let service: ProgressRxWebsocketService;
   let configureSpy;
   let activateSpy;
 
@@ -19,14 +19,14 @@ describe('LogsRxWebsocketService', () => {
         {provide: ApiService, useValue: {getToken: () => 'test-token'}}
       ]
     });
-    service = TestBed.inject(LogsRxWebsocketService);
+    service = TestBed.inject(ProgressRxWebsocketService);
   });
 
   it('should be created', () => {
     expect(service).toBeTruthy();
   });
 
-  it('should configure rx-stomp with the logs websocket endpoint', () => {
+  it('should configure rx-stomp with the progress websocket endpoint', () => {
     expect(configureSpy).toHaveBeenCalled();
     expect(activateSpy).toHaveBeenCalled();
 
@@ -34,6 +34,6 @@ describe('LogsRxWebsocketService', () => {
     expect(config.heartbeatIncoming).toEqual(0);
     expect(config.heartbeatOutgoing).toEqual(20000);
     expect(config.reconnectDelay).toEqual(200);
-    expect(config.webSocketFactory.toString()).toContain('/logs?access_token=');
+    expect(config.webSocketFactory.toString()).toContain('/progress?access_token=');
   });
 });
