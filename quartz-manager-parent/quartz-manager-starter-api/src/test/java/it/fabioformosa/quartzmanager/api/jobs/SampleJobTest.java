@@ -13,6 +13,7 @@ import org.mockito.MockitoAnnotations;
 import org.quartz.*;
 
 import static org.mockito.ArgumentMatchers.argThat;
+import static org.mockito.ArgumentMatchers.eq;
 
 class SampleJobTest {
 
@@ -49,14 +50,14 @@ class SampleJobTest {
     Mockito.when(jobExecutionContext.getJobDetail()).thenReturn(jobDetail);
 
     sampleJob.execute(jobExecutionContext);
-    Mockito.verify(webSocketLogsNotifier).send(triggerName, argThat(actualLogRecord -> {
+    Mockito.verify(webSocketLogsNotifier).send(eq(triggerName), argThat(actualLogRecord -> {
       Assertions.assertThat(actualLogRecord.getMessage()).isEqualTo("Hello!");
       Assertions.assertThat(actualLogRecord.getType()).isEqualTo(LogRecord.LogType.INFO);
       Assertions.assertThat(actualLogRecord.getDate()).isNotNull();
       Assertions.assertThat(actualLogRecord.getThreadName()).isNotNull();
       return true;
     }));
-    Mockito.verify(webSocketProgressNotifier).send(triggerName, argThat(triggerFiredBundleDTO -> {
+    Mockito.verify(webSocketProgressNotifier).send(eq(triggerName), argThat(triggerFiredBundleDTO -> {
       Assertions.assertThat(triggerFiredBundleDTO.getJobKey()).isEqualTo("test-job");
       Assertions.assertThat(triggerFiredBundleDTO.getRepeatCount()).isEqualTo(6);
       Assertions.assertThat(triggerFiredBundleDTO.getJobClass()).isEqualTo(SampleJob.class.getName());
