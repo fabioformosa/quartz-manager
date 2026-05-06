@@ -2,6 +2,7 @@ package it.fabioformosa.quartzmanager.api.converters;
 
 
 import it.fabioformosa.quartzmanager.api.dto.SimpleTriggerCommandDTO;
+import org.quartz.JobDataMap;
 import org.quartz.SimpleScheduleBuilder;
 import org.quartz.SimpleTrigger;
 import org.quartz.Trigger;
@@ -19,6 +20,8 @@ public class SimpleTriggerCommandDTOToSimpleTrigger implements Converter<SimpleT
     if (triggerCommandDTO.getSimpleTriggerInputDTO().getEndDate() != null)
       triggerTriggerBuilder.endAt(triggerCommandDTO.getSimpleTriggerInputDTO().getEndDate());
 
+    if (triggerCommandDTO.getSimpleTriggerInputDTO().getJobDataMap() != null)
+      triggerTriggerBuilder.usingJobData(new JobDataMap(triggerCommandDTO.getSimpleTriggerInputDTO().getJobDataMap()));
 
     SimpleScheduleBuilder scheduleBuilder = SimpleScheduleBuilder.simpleSchedule();
     if (triggerCommandDTO.getSimpleTriggerInputDTO().getRepeatInterval() != null)

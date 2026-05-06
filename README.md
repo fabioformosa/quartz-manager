@@ -3,6 +3,8 @@
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/it.fabioformosa.quartz-manager/quartz-manager-starter-api/badge.svg)](https://maven-badges.herokuapp.com/maven-central/it.fabioformosa.quartz-manager/quartz-manager-starter-api)  
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=fabioformosa_quartz-manager&metric=coverage)](https://sonarcloud.io/summary/new_code?id=fabioformosa_quartz-manager) [![Bugs](https://sonarcloud.io/api/project_badges/measure?project=fabioformosa_quartz-manager&metric=bugs)](https://sonarcloud.io/summary/new_code?id=fabioformosa_quartz-manager) [![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=fabioformosa_quartz-manager&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=fabioformosa_quartz-manager) [![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=fabioformosa_quartz-manager&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=fabioformosa_quartz-manager)
 
+# Table Of Contents
+
 
 [QUARTZ MANAGER](https://github.com/fabioformosa/quartz-manager#quartz-manager)  
     &nbsp;&nbsp;&nbsp;&nbsp;[Quartz Manager UI](https://github.com/fabioformosa/quartz-manager#quartz-manager-ui)  
@@ -80,12 +82,12 @@ Add the dependency, make eligible for Quart Manager the job classes and set the 
 <dependency>
   <groupId>it.fabioformosa.quartz-manager</groupId>
   <artifactId>quartz-manager-starter-api</artifactId>
-  <version>4.0.8</version>
+  <version>4.0.9</version>
 </dependency>
 ```
 #### Gradle
 ```
-implementation group: 'it.fabioformosa.quartz-manager', name: 'quartz-manager-starter-api', version: '4.0.8'
+implementation group: 'it.fabioformosa.quartz-manager', name: 'quartz-manager-starter-api', version: '4.0.9'
 ```
 
 ### Step 2. Quartz Manager Job Classes
@@ -168,12 +170,12 @@ You can optionally import the following dependency to have the UI Dashboard to i
 <dependency>
   <groupId>it.fabioformosa.quartz-manager</groupId>
   <artifactId>quartz-manager-starter-ui</artifactId>
-  <version>4.0.8</version>
+  <version>4.0.9</version>
 </dependency>
 ```
 #### Gradle
 ```
-implementation group: 'it.fabioformosa.quartz-manager', name: 'quartz-manager-starter-ui', version: '4.0.8'
+implementation group: 'it.fabioformosa.quartz-manager', name: 'quartz-manager-starter-ui', version: '4.0.9'
 ``` 
 
 ### Reach out the UI Console at URL
@@ -203,14 +205,14 @@ Future development: the Quart Manager Security OAuth2 client.
 <dependency>
   <groupId>it.fabioformosa.quartz-manager</groupId>
   <artifactId>quartz-manager-starter-security</artifactId>
-  <version>4.0.8</version>
+  <version>4.0.9</version>
 </dependency>
 ```
 
 #### Gradle
 
 ```
-compile group: 'it.fabioformosa.quartz-manager', name: 'quartz-manager-starter-security', version: '4.0.8'
+compile group: 'it.fabioformosa.quartz-manager', name: 'quartz-manager-starter-security', version: '4.0.9'
 ```
 
 
@@ -240,14 +242,14 @@ The pre-requesite is the availability of Postgresql database where Quartz Manage
 <dependency>
   <groupId>it.fabioformosa.quartz-manager</groupId>
   <artifactId>quartz-manager-starter-persistence</artifactId>
-  <version>4.0.8</version>
+  <version>4.0.9</version>
 </dependency>
 ```
 
 #### Gradle
 
 ```
-compile group: 'it.fabioformosa.quartz-manager', name: 'quartz-manager-starter-persistence', version: '4.0.8'
+compile group: 'it.fabioformosa.quartz-manager', name: 'quartz-manager-starter-persistence', version: '4.0.9'
 ```
 
 ### Quartz Manager Persistence Lib - App Props
@@ -269,6 +271,7 @@ You can find some examples of different scenarios of projects which import Quart
 * *existing-security-header-based* - It demonstrates how Quartz Manager Security can coexists with another Spring Security Config present in your project. Imported libraries: Quartz Manager API, Quartz Manager UI and Quartz Manager Security.
 * *existing-quartz* - It demonstrates how to Quartz Manager can coexist with a Quartz instance already present in your project Imported libraries: Quartz Manager API, Quartz Manager UI.
 * *existing-quartz-and-storage* - It demonstrates how to Quartz Manager Persistence can coexist with a Quartz instance already present in your project. Imported libraries: Quartz Manager API, Quartz Manager UI and Quartz Manager Persistence.
+* *with-persistence* - It demonstrates how to import the Quartz Manager Persistence and get created the quartz tables automatically at the bootstrap
 
 
 ## Limitations

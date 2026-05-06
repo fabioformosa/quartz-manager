@@ -1,0 +1,45 @@
+substitutions:
+  _REGION: europe-west8
+steps:
+
+  # Step 1: Google Cloud Build - Docker build&push
+  - name: 'gcr.io/k8s-skaffold/skaffold'
+    entrypoint: 'sh'
+    args:
+      - -xe
+      - -c
+      - |
+        # Build and push images
+        sed -i s/_IMAGE_TAG_POLICY/$SHORT_SHA/g skaffold.yaml
+        sed -i s/_HELM_APP_VERSION/$SHORT_SHA/g ./quartz-manager-parent/quartz-manager-web-showcase/helm/Chart.yaml
+        skaffold build --file-output=/workspace/artifacts.json \
+                       --default-repo=${_REGION}-docker.pkg.dev/quartz-manager-test/quartz-manager/quartz-manager-standalone \
+                       --push=true
+
+  # Step 2: Google Cloud Deploy - deploy
+  - name: 'google/cloud-sdk:latest'
+    entrypoint: 'sh'
+    args:
+      - -xe
+      - -c
+      - |
+        sed -i s/_HELM_APP_VERSION/$SHORT_SHA/g ./quartz-manager-parent/quartz-manager-web-showcase/helm/Chart.yaml
+        gcloud config set deploy/region ${_REGION}
+        gcloud deploy apply --file ./quartz-manager-parent/quartz-manager-web-showcase/deploy/pipeline.yaml
+        gcloud deploy apply --file ./quartz-manager-parent/quartz-manager-web-showcase/deploy/dev.yaml
+        gcloud deploy apply --file ./quartz-manager-parent/quartz-manager-web-showcase/deploy/staging.yaml
+        gcloud deploy apply --file ./quartz-manager-parent/quartz-manager-web-showcase/deploy/prod.yaml
+        gcloud deploy releases create rel-${SHORT_SHA} \
+                            --delivery-pipeline quartz-manager-pipeline \
+                            --description "$(git log -1  --pretty='%s')" \
+                            --build-artifacts /workspace/artifacts.json \
+                            --verbosity=debug \
+                            --annotations "commit_ui=https://source.cloud.google.com/$PROJECT_ID/quartz-manager-standalone/+/$COMMIT_SHA"
+artifacts:
+  objects:
+    location: 'gs://$PROJECT_ID-gcdeploy-artifacts/'
+    paths:
+      - '/workspace/artifacts.json'
+
+options:
+  logging: CLOUD_LOGGING_ONLY

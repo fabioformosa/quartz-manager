@@ -5,12 +5,12 @@
     <parent>
       <groupId>it.fabioformosa.quartz-manager</groupId>
       <artifactId>quartz-manager-parent</artifactId>
-      <version>4.0.9-SNAPSHOT</version>
+      <version>4.0.11-SNAPSHOT</version>
     </parent>
 
-	<artifactId>quartz-manager-web-showcase</artifactId>
+  <packaging>jar</packaging>
 
-    <packaging>war</packaging>
+	<artifactId>quartz-manager-web-showcase</artifactId>
 
 	<name>Quartz Manager Web Showcase</name>
 	<description>A webapp that imports Quartz Manager API lib and the frontend webjar</description>
@@ -49,15 +49,10 @@
           <groupId>org.springframework.boot</groupId>
           <artifactId>spring-boot-devtools</artifactId>
         </dependency>
-            <dependency>
-              <groupId>org.springframework.boot</groupId>
-              <artifactId>spring-boot-configuration-processor</artifactId>
-              <optional>true</optional>
-            </dependency>
-          <dependency>
+        <dependency>
           <groupId>org.springframework.boot</groupId>
-          <artifactId>spring-boot-starter-tomcat</artifactId>
-          <scope>provided</scope>
+          <artifactId>spring-boot-configuration-processor</artifactId>
+          <optional>true</optional>
         </dependency>
         <dependency>
           <groupId>org.springframework.boot</groupId>
@@ -123,30 +118,28 @@
 
 
 	<build>
-		<pluginManagement>
-			<plugins>
-				<plugin>
-					<groupId>org.springframework.boot</groupId>
-					<artifactId>spring-boot-maven-plugin</artifactId>
-					<executions>
-              <execution>
-                  <goals>
-                      <goal>repackage</goal>
-                  </goals>
-              </execution>
-          </executions>
-				</plugin>
-			    <plugin>
-			      <groupId>org.apache.maven.plugins</groupId>
-			      <artifactId>maven-compiler-plugin</artifactId>
-			      <version>3.8.0</version>
-			      <configuration>
-			        <source>9</source>
-			        <target>9</target>
-			      </configuration>
-			    </plugin>
-			</plugins>
-		</pluginManagement>
+    <plugins>
+      <plugin>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-maven-plugin</artifactId>
+        <executions>
+            <execution>
+                <goals>
+                    <goal>repackage</goal>
+                </goals>
+            </execution>
+        </executions>
+      </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <version>3.8.0</version>
+          <configuration>
+            <source>9</source>
+            <target>9</target>
+          </configuration>
+        </plugin>
+    </plugins>
 	</build>
 
 
