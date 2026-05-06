@@ -11,8 +11,9 @@ import {map} from 'rxjs/operators';
 })
 export class ProgressPanelComponent implements OnInit, OnDestroy {
 
-  progress: TriggerFiredBundle = new TriggerFiredBundle();
+  progress: TriggerFiredBundle = ProgressPanelComponent._buildEmptyProgress();
   percentageStr: string;
+  progressUpdated = false;
 
   topicSubscription;
   private selectedTriggerKey: TriggerKey;
@@ -26,9 +27,15 @@ export class ProgressPanelComponent implements OnInit, OnDestroy {
     if (!triggerKey || !triggerKey.name) {
       this._unsubscribeFromTopic();
       this.selectedTriggerKey = null;
+      this._resetProgress();
       return;
     }
 
+    if (this.selectedTriggerKey?.name === triggerKey.name) {
+      return;
+    }
+
+    this._resetProgress();
     this.selectedTriggerKey = {...triggerKey} as TriggerKey;
     this._subscribeToTheTopic(this.selectedTriggerKey);
   }
@@ -47,6 +54,7 @@ export class ProgressPanelComponent implements OnInit, OnDestroy {
   onNewProgressMsg = (receivedMsg) => {
       this.progress = receivedMsg;
       this.percentageStr = this.progress.percentage + '%';
+      this._markProgressUpdated();
   }
 
   ngOnInit() {
@@ -61,6 +69,23 @@ export class ProgressPanelComponent implements OnInit, OnDestroy {
       this.topicSubscription.unsubscribe();
       this.topicSubscription = null;
     }
+  }
+
+  private _resetProgress() {
+    this.progress = ProgressPanelComponent._buildEmptyProgress();
+    this.percentageStr = null;
+    this.progressUpdated = false;
+  }
+
+  private _markProgressUpdated() {
+    this.progressUpdated = false;
+    setTimeout(() => this.progressUpdated = true);
+  }
+
+  private static _buildEmptyProgress() {
+    const progress = new TriggerFiredBundle();
+    progress.percentage = -1;
+    return progress;
   }
 
 }

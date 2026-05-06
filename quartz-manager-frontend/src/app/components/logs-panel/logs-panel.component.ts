@@ -17,6 +17,8 @@ export class LogsPanelComponent implements OnInit, OnDestroy {
 
   logs = new Array();
 
+  selectedTriggerName: string;
+
   topicSubscription;
 
   private selectedTriggerKey: TriggerKey;
@@ -32,12 +34,22 @@ export class LogsPanelComponent implements OnInit, OnDestroy {
     if (!triggerKey || !triggerKey.name) {
       this._unsubscribeFromTopic();
       this.selectedTriggerKey = null;
+      this.selectedTriggerName = null;
+      this._resetLogs();
       return;
     }
 
+    if (this.selectedTriggerKey?.name === triggerKey.name) {
+      return;
+    }
+
+    this._resetLogs();
     this.selectedTriggerKey = {...triggerKey} as TriggerKey;
+    this.selectedTriggerName = triggerKey.name;
     this._subscribeToTheTopic(this.selectedTriggerKey);
   }
+
+  isWaitingForLogs = (): boolean => !!this.selectedTriggerName && (!this.logs || this.logs.length === 0);
 
   ngOnInit() {
   }
@@ -62,6 +74,10 @@ export class LogsPanelComponent implements OnInit, OnDestroy {
       this.topicSubscription.unsubscribe();
       this.topicSubscription = null;
     }
+  }
+
+  private _resetLogs() {
+    this.logs = [];
   }
 
   _showNewLog = (logRecord) => {
