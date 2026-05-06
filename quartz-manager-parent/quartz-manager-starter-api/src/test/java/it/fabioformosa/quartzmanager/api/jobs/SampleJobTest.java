@@ -4,17 +4,26 @@ import it.fabioformosa.quartzmanager.api.dto.TriggerFiredBundleDTO;
 import it.fabioformosa.quartzmanager.api.jobs.entities.LogRecord;
 import it.fabioformosa.quartzmanager.api.websockets.WebhookSender;
 import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
-import org.quartz.*;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.quartz.JobBuilder;
+import org.quartz.JobDetail;
+import org.quartz.JobExecutionContext;
+import org.quartz.JobKey;
+import org.quartz.ScheduleBuilder;
+import org.quartz.SimpleScheduleBuilder;
+import org.quartz.Trigger;
+import org.quartz.TriggerBuilder;
 
-import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.ArgumentMatchers.eq;
 
+@ExtendWith(MockitoExtension.class)
 class SampleJobTest {
 
   @InjectMocks
@@ -25,10 +34,11 @@ class SampleJobTest {
   @Mock
   private WebhookSender<LogRecord> webSocketLogsNotifier;
 
-  @BeforeEach
-  void setUp() {
-    MockitoAnnotations.openMocks(this);
-  }
+  @Captor
+  private ArgumentCaptor<LogRecord> logRecordCaptor;
+
+  @Captor
+  private ArgumentCaptor<TriggerFiredBundleDTO> triggerFiredBundleDTOCaptor;
 
   @Test
   void givenASampleJob_whenTheJobIsExecuted_thenTheWebhookSendersAreCalled() {
@@ -50,24 +60,23 @@ class SampleJobTest {
     Mockito.when(jobExecutionContext.getJobDetail()).thenReturn(jobDetail);
 
     sampleJob.execute(jobExecutionContext);
-    Mockito.verify(webSocketLogsNotifier).send(eq(triggerName), argThat(actualLogRecord -> {
-      Assertions.assertThat(actualLogRecord.getMessage()).isEqualTo("Hello!");
-      Assertions.assertThat(actualLogRecord.getType()).isEqualTo(LogRecord.LogType.INFO);
-      Assertions.assertThat(actualLogRecord.getDate()).isNotNull();
-      Assertions.assertThat(actualLogRecord.getThreadName()).isNotNull();
-      return true;
-    }));
-    Mockito.verify(webSocketProgressNotifier).send(eq(triggerName), argThat(triggerFiredBundleDTO -> {
-      Assertions.assertThat(triggerFiredBundleDTO.getJobKey()).isEqualTo("test-job");
-      Assertions.assertThat(triggerFiredBundleDTO.getRepeatCount()).isEqualTo(6);
-      Assertions.assertThat(triggerFiredBundleDTO.getJobClass()).isEqualTo(SampleJob.class.getName());
-      Assertions.assertThat(triggerFiredBundleDTO.getTimesTriggered()).isZero();
-      Assertions.assertThat(triggerFiredBundleDTO.getNextFireTime()).isNull();
-      Assertions.assertThat(triggerFiredBundleDTO.getPercentage()).isZero();
-      Assertions.assertThat(triggerFiredBundleDTO.getFinalFireTime()).isNotNull();
-      Assertions.assertThat(triggerFiredBundleDTO.getPreviousFireTime()).isNull();
-      return true;
-    }));
+    Mockito.verify(webSocketLogsNotifier).send(eq(triggerName), logRecordCaptor.capture());
+    LogRecord actualLogRecord = logRecordCaptor.getValue();
+    Assertions.assertThat(actualLogRecord.getMessage()).isEqualTo("Hello!");
+    Assertions.assertThat(actualLogRecord.getType()).isEqualTo(LogRecord.LogType.INFO);
+    Assertions.assertThat(actualLogRecord.getDate()).isNotNull();
+    Assertions.assertThat(actualLogRecord.getThreadName()).isNotNull();
+
+    Mockito.verify(webSocketProgressNotifier).send(eq(triggerName), triggerFiredBundleDTOCaptor.capture());
+    TriggerFiredBundleDTO triggerFiredBundleDTO = triggerFiredBundleDTOCaptor.getValue();
+    Assertions.assertThat(triggerFiredBundleDTO.getJobKey()).isEqualTo("test-job");
+    Assertions.assertThat(triggerFiredBundleDTO.getRepeatCount()).isEqualTo(6);
+    Assertions.assertThat(triggerFiredBundleDTO.getJobClass()).isEqualTo(SampleJob.class.getName());
+    Assertions.assertThat(triggerFiredBundleDTO.getTimesTriggered()).isZero();
+    Assertions.assertThat(triggerFiredBundleDTO.getNextFireTime()).isNull();
+    Assertions.assertThat(triggerFiredBundleDTO.getPercentage()).isZero();
+    Assertions.assertThat(triggerFiredBundleDTO.getFinalFireTime()).isNotNull();
+    Assertions.assertThat(triggerFiredBundleDTO.getPreviousFireTime()).isNull();
   }
 
   @Test
