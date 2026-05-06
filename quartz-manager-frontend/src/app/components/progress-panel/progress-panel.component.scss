@@ -31,3 +31,21 @@
 .fireBoxContent{
   text-align: center;
 }
+
+.progress-updated {
+  animation: progressUpdatePulse 700ms ease-out;
+}
+
+@keyframes progressUpdatePulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(63, 81, 181, 0.35);
+  }
+
+  45% {
+    box-shadow: 0 0 0 6px rgba(63, 81, 181, 0.16);
+  }
+
+  100% {
+    box-shadow: 0 0 0 0 rgba(63, 81, 181, 0);
+  }
+}

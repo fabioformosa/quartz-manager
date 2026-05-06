@@ -35,7 +35,7 @@ export class UserService {
       this.currentUser = user;
       this.router.initialNavigation();
     }, err => {
-      console.log(`error retrieving current user due to ` + JSON.stringify(err));
+      console.log('error retrieving current user due to ' + JSON.stringify(err));
       const httpErrorResponse = err as HttpErrorResponse;
       if (httpErrorResponse.status === 404) {
         this.isAnAnonymousUser = true;
