@@ -14,7 +14,7 @@ public class WebSocketLogsNotifier implements WebhookSender<LogRecord> {
   private SimpMessageSendingOperations messagingTemplate;
 
   @Override
-  public void send(LogRecord logRecord) {
-    messagingTemplate.convertAndSend(TOPIC_LOGS, logRecord);
+  public void send(String triggerName, LogRecord logRecord) {
+    messagingTemplate.convertAndSend(TOPIC_LOGS + "/" + triggerName, logRecord);
   }
 }

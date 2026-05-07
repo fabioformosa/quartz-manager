@@ -1,0 +1,10 @@
+apiVersion: deploy.cloud.google.com/v1
+kind: Target
+metadata:
+  name: staging
+  annotations: {}
+  labels: {}
+description: staging
+requireApproval: true
+gke:
+  cluster: projects/quartz-manager-test/locations/europe-west8-a/clusters/gke-cluster

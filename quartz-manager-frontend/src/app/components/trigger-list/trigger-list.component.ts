@@ -81,16 +81,17 @@ export class TriggerListComponent implements OnInit {
   }
 
   onNewTriggerBtnClicked() {
-    if (this.getTriggerKeyList() && this.getTriggerKeyList().length > 0) {
-      this.dialog.open(UnsupportedMultipleJobsDialog)
-    } else {
-      this.onNewTriggerClicked.emit();
-    }
+    this.onNewTriggerClicked.emit();
+    // if (this.getTriggerKeyList() && this.getTriggerKeyList().length > 0) {
+    //   this.dialog.open(UnsupportedMultipleJobsDialog)
+    // } else {
+    //   this.onNewTriggerClicked.emit();
+    // }
   }
 
   onNewTrigger(newTrigger: SimpleTrigger) {
     this.newTriggers = [newTrigger, ...this.newTriggers];
-    this.selectedTrigger = newTrigger.triggerKeyDTO;
+    this.selectTrigger(newTrigger.triggerKeyDTO);
   }
 }
 

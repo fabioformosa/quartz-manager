@@ -38,11 +38,13 @@ public abstract class AbstractQuartzManagerJob implements Job {
     LogRecord logMsg = doIt(jobExecutionContext);
     log.info(logMsg.getMessage());
 
+    String triggerName = jobExecutionContext.getTrigger().getKey().getName();
+
     logMsg.setThreadName(Thread.currentThread().getName());
-    webSocketLogsNotifier.send(logMsg);
+    webSocketLogsNotifier.send(triggerName, logMsg);
 
     TriggerFiredBundleDTO triggerFiredBundleDTO = WebSocketProgressNotifier.buildTriggerFiredBundle(jobExecutionContext);
-    webSocketProgressNotifier.send(triggerFiredBundleDTO);
+    webSocketProgressNotifier.send(triggerName, triggerFiredBundleDTO);
   }
 
 }

@@ -13,6 +13,12 @@ import {MatDividerModule} from '@angular/material/divider';
 
 describe('SchedulerControlComponent', () => {
 
+  const schedulerUrl = '/quartz-manager/scheduler';
+  const schedulerButtonSelector = '#schedulerControllerBtn';
+  const schedulerName = 'test-scheduler';
+  const schedulerId = 'test-id';
+  const stoppedStatus = 'STOPPED';
+
   let component: SchedulerControlComponent;
   let fixture: ComponentFixture<SchedulerControlComponent>;
 
@@ -38,16 +44,16 @@ describe('SchedulerControlComponent', () => {
 
   it('should display the play button at the beginning since the scheduler is stopped', () => {
     expect(component).toBeDefined();
-    const getSchedulerReq = httpTestingController.expectOne('/quartz-manager/scheduler');
-    const mockScheduler = new Scheduler('test-scheduler', 'test-id', 'STOPPED', []);
+    const getSchedulerReq = httpTestingController.expectOne(schedulerUrl);
+    const mockScheduler = new Scheduler(schedulerName, schedulerId, stoppedStatus, []);
     getSchedulerReq.flush(mockScheduler);
 
     expect(component.scheduler).toEqual(mockScheduler);
-    expect(component.scheduler.status).toEqual('STOPPED');
+    expect(component.scheduler.status).toEqual(stoppedStatus);
     fixture.detectChanges();
 
     const schedulerControlComponentDe: DebugElement = fixture.debugElement;
-    const schedulerBtnDe = schedulerControlComponentDe.query(By.css('#schedulerControllerBtn'));
+    const schedulerBtnDe = schedulerControlComponentDe.query(By.css(schedulerButtonSelector));
     expect(schedulerBtnDe).toBeTruthy();
 
     const playIconDe = schedulerBtnDe.query(By.css('.fa-play'));
@@ -56,13 +62,13 @@ describe('SchedulerControlComponent', () => {
 
   it('should switch the button to pause when the scheduler is started', () => {
     expect(component).toBeDefined();
-    const getSchedulerReq = httpTestingController.expectOne('/quartz-manager/scheduler');
-    const mockScheduler = new Scheduler('test-scheduler', 'test-id', 'STOPPED', []);
+    const getSchedulerReq = httpTestingController.expectOne(schedulerUrl);
+    const mockScheduler = new Scheduler(schedulerName, schedulerId, stoppedStatus, []);
     getSchedulerReq.flush(mockScheduler);
     fixture.detectChanges();
 
     const schedulerControlComponentDe: DebugElement = fixture.debugElement;
-    let schedulerBtnDe = schedulerControlComponentDe.query(By.css('#schedulerControllerBtn'));
+    let schedulerBtnDe = schedulerControlComponentDe.query(By.css(schedulerButtonSelector));
     expect(schedulerBtnDe).toBeTruthy();
     const playIconDe = schedulerBtnDe.query(By.css('.fa-play'));
     expect(playIconDe).toBeTruthy();
@@ -72,7 +78,7 @@ describe('SchedulerControlComponent', () => {
     startSchedulerReq.flush(null);
     fixture.detectChanges();
 
-    schedulerBtnDe = schedulerControlComponentDe.query(By.css('#schedulerControllerBtn'));
+    schedulerBtnDe = schedulerControlComponentDe.query(By.css(schedulerButtonSelector));
     const pauseIconDe = schedulerBtnDe.query(By.css('.fa-pause'));
     expect(pauseIconDe).toBeTruthy();
 
@@ -80,13 +86,13 @@ describe('SchedulerControlComponent', () => {
 
   it('should switch the button to play when the scheduler is stopped', () => {
     expect(component).toBeDefined();
-    const getSchedulerReq = httpTestingController.expectOne('/quartz-manager/scheduler');
-    const mockScheduler = new Scheduler('test-scheduler', 'test-id', 'RUNNING', []);
+    const getSchedulerReq = httpTestingController.expectOne(schedulerUrl);
+    const mockScheduler = new Scheduler(schedulerName, schedulerId, 'RUNNING', []);
     getSchedulerReq.flush(mockScheduler);
     fixture.detectChanges();
 
     const schedulerControlComponentDe: DebugElement = fixture.debugElement;
-    let schedulerBtnDe = schedulerControlComponentDe.query(By.css('#schedulerControllerBtn'));
+    let schedulerBtnDe = schedulerControlComponentDe.query(By.css(schedulerButtonSelector));
     expect(schedulerBtnDe).toBeTruthy();
     const pauseIconDe = schedulerBtnDe.query(By.css('.fa-pause'));
     expect(pauseIconDe).toBeTruthy();
@@ -96,7 +102,7 @@ describe('SchedulerControlComponent', () => {
     startSchedulerReq.flush(null);
     fixture.detectChanges();
 
-    schedulerBtnDe = schedulerControlComponentDe.query(By.css('#schedulerControllerBtn'));
+    schedulerBtnDe = schedulerControlComponentDe.query(By.css(schedulerButtonSelector));
     const playIconDe = schedulerBtnDe.query(By.css('.fa-play'));
     expect(playIconDe).toBeTruthy();
 
