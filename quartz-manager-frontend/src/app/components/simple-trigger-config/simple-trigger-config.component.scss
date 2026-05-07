@@ -5,6 +5,22 @@
 .full-size-input{
   width: 100%;
 }
+
+:host ::ng-deep .trigger-config-form .mat-mdc-form-field {
+  font-size: 13px;
+}
+
+:host ::ng-deep .trigger-config-form .mat-mdc-select-value,
+:host ::ng-deep .trigger-config-form .mat-mdc-select-value-text,
+:host ::ng-deep .trigger-config-form .mat-mdc-input-element,
+:host ::ng-deep .trigger-config-form .mdc-floating-label {
+  font-size: 13px;
+}
+
+:host ::ng-deep .trigger-config-form .mat-mdc-select-trigger {
+  min-height: 20px;
+}
+
 /* ===== Scrollbar CSS ===== */
 /* Firefox */
 * {

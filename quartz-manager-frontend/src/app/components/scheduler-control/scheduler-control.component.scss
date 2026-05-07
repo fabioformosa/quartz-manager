@@ -11,6 +11,12 @@ label{
   font-size: smaller;
 }
 
-#scheduler-name, #scheduler-instance {
+#scheduler-name{
   text-transform: capitalize;
+  font-size: 14px;
+}
+
+#scheduler-instance {
+  text-transform: capitalize;
+  font-size: 14px;
 }
