@@ -1,84 +1,91 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core'
-import {ProgressWebsocketService, QuartzManagerWebsocketMessage} from '../../services';
-
-import { Observable } from 'rxjs';
+import {Component, Input, OnDestroy, OnInit} from '@angular/core'
 import TriggerFiredBundle from '../../model/trigger-fired-bundle.model';
-// import {Message} from '@stomp/stompjs';
-
-// import { Subscription } from 'rxjs/Subscription';
-// import {StompService} from '@stomp/ng2-stompjs';
-
-// import { QueueingSubject } from 'queueing-subject'
-// import websocketConnect from 'rxjs-websockets'
-// import 'rxjs/add/operator/share'
-// import {ServerSocket} from '../../services/qz.socket.service'
+import {TriggerKey} from '../../model/triggerKey.model';
+import {ProgressRxWebsocketService} from '../../services/progress.rx-websocket.service';
+import {map} from 'rxjs/operators';
 
 @Component({
   selector: 'progress-panel',
   templateUrl: './progress-panel.component.html',
   styleUrls: ['./progress-panel.component.scss']
 })
-export class ProgressPanelComponent implements OnInit {
+export class ProgressPanelComponent implements OnInit, OnDestroy {
 
-  progress: TriggerFiredBundle = new TriggerFiredBundle();
+  progress: TriggerFiredBundle = ProgressPanelComponent._buildEmptyProgress();
   percentageStr: string;
+  progressUpdated = false;
 
-  // // Stream of messages
-  // private subscription: Subscription;
-  // public messages: Observable<Message>;
-  // // Subscription status
-  // public subscribed: boolean;
-  // // Array of historic message (bodies)
-  // public mq: Array<string> = [];
-
+  topicSubscription;
+  private selectedTriggerKey: TriggerKey;
 
   constructor(
-    private progressWebsocketService: ProgressWebsocketService,
-    // private _stompService: StompService,
-    // private serverSocket : ServerSocket
+    private progressRxWebsocketService: ProgressRxWebsocketService
   ) { }
 
-  onNewProgressMsg = (receivedMsg: QuartzManagerWebsocketMessage) => {
-    if (receivedMsg.type === 'SUCCESS') {
-      const newStatus = receivedMsg.message;
-      this.progress = newStatus;
-      this.percentageStr = this.progress.percentage + '%';
+  @Input()
+  set triggerKey(triggerKey: TriggerKey) {
+    if (!triggerKey || !triggerKey.name) {
+      this._unsubscribeFromTopic();
+      this.selectedTriggerKey = null;
+      this._resetProgress();
+      return;
     }
+
+    if (this.selectedTriggerKey?.name === triggerKey.name) {
+      return;
+    }
+
+    this._resetProgress();
+    this.selectedTriggerKey = {...triggerKey} as TriggerKey;
+    this._subscribeToTheTopic(this.selectedTriggerKey);
+  }
+
+  private _subscribeToTheTopic = (triggerKey: TriggerKey) => {
+    this._unsubscribeFromTopic();
+    this.topicSubscription = this.progressRxWebsocketService.watch(`/topic/progress/${triggerKey.name}`)
+      .pipe(map((msg: any) => JSON.parse(msg.body)))
+      .subscribe(this.onNewProgressMsg, (err) => {
+        console.log(err);
+        // TODO in case of 401
+        // this.apiService.get('/quartz-manager/session/refresh');
+      });
+  };
+
+  onNewProgressMsg = (receivedMsg) => {
+      this.progress = receivedMsg;
+      this.percentageStr = this.progress.percentage + '%';
+      this._markProgressUpdated();
   }
 
   ngOnInit() {
-    const obs = this.progressWebsocketService.getObservable()
-    obs.subscribe({
-      'next' : this.onNewProgressMsg,
-      'error' : (err) => {console.log(err)}
-    });
-
-    // this.subscribed = false;
-    // this.subscribe();
-
-    // this.serverSocket.connect()
-    // this.socketSubscription = this.serverSocket.messages.subscribe((message: string) => {
-    //   console.log('received message from server: ', message)
-    // })
   }
 
-  // public subscribe() {
-  //   if (this.subscribed) {
-  //     return;
-  //   }
+  ngOnDestroy() {
+    this._unsubscribeFromTopic();
+  }
 
-  //   // Stream of messages
-  //   this.messages = this._stompService.subscribe('/topic/progress');
+  private _unsubscribeFromTopic() {
+    if (this.topicSubscription) {
+      this.topicSubscription.unsubscribe();
+      this.topicSubscription = null;
+    }
+  }
 
-  //   // Subscribe a function to be run on_next message
-  //   this.subscription = this.messages.subscribe(this.on_next);
+  private _resetProgress() {
+    this.progress = ProgressPanelComponent._buildEmptyProgress();
+    this.percentageStr = null;
+    this.progressUpdated = false;
+  }
 
-  //   this.subscribed = true;
-  // }
+  private _markProgressUpdated() {
+    this.progressUpdated = false;
+    setTimeout(() => this.progressUpdated = true);
+  }
 
-  // public on_next = (message: Message) => {
-  //   this.mq.push(message.body + '\n');
-  //   console.log(message);
-  // }
+  private static _buildEmptyProgress() {
+    const progress = new TriggerFiredBundle();
+    progress.percentage = -1;
+    return progress;
+  }
 
 }

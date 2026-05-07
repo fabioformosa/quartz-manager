@@ -1,6 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { ConfigService, UserService } from '../../services';
-import { SimpleTrigger } from '../../model/simple-trigger.model';
+import {  SimpleTrigger } from '../../model/simple-trigger.model';
 import { TriggerKey } from '../../model/triggerKey.model';
 import { SimpleTriggerConfigComponent } from '../../components/simple-trigger-config';
 import { TriggerListComponent } from '../../components';
@@ -26,14 +25,24 @@ export class ManagerComponent implements OnInit {
   ngOnInit() {}
 
   onNewTriggerRequested() {
-    this.triggerConfigComponent.openTriggerForm();
+    this.selectedTriggerKey = null;
+    this.newTriggerFormOpened = true;
+    if (this.triggerConfigComponent) {
+      this.triggerConfigComponent.openNewTriggerForm();
+    }
   }
 
   onNewTriggerCreated(newTrigger: SimpleTrigger) {
     this.triggerListComponent.onNewTrigger(newTrigger);
+    this.newTriggerFormOpened = false;
   }
 
   setSelectedTrigger(triggerKey: TriggerKey) {
     this.selectedTriggerKey = triggerKey;
+    this.newTriggerFormOpened = false;
+  }
+
+  setNewTriggerFormOpened(opened: boolean) {
+    this.newTriggerFormOpened = opened;
   }
 }

@@ -20,6 +20,7 @@
           <qrzmng-simple-trigger-config
             fxFill
             [triggerKey]="selectedTriggerKey"
+            (triggerFormOpenChange)="setNewTriggerFormOpened($event)"
             (onNewTrigger)="onNewTriggerCreated($event)">
           </qrzmng-simple-trigger-config>
         </div>
@@ -27,14 +28,20 @@
     </div>
 
     <div class="flex-1">
-      <div class="h-100 min-h-100 flex flex-column gap-6">
-        <div class="flex flex-column" >
-          <progress-panel class="flex-1"></progress-panel>
-        </div>
-        <div class="flex flex-column flex-1" style="max-height: calc(100% - 136px); min-height: calc(100% - 210px);">
-          <logs-panel class="flex flex-1 h-100 max-h-100"></logs-panel>
+        <div class="h-100 min-h-100 flex flex-column gap-6">
+          <div class="flex flex-column" >
+            <progress-panel class="flex-1"
+              [triggerKey]=selectedTriggerKey
+            >
+            </progress-panel>
+          </div>
+          <div class="flex flex-column flex-1" style="max-height: calc(100% - 136px); min-height: calc(100% - 210px);">
+            <logs-panel  class="flex flex-1 h-100 max-h-100"
+                         [triggerKey]=selectedTriggerKey
+            >
+            </logs-panel>
+          </div>
         </div>
       </div>
-    </div>
   </div>
 </div>

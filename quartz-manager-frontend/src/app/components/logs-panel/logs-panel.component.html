@@ -4,12 +4,16 @@
   </mat-card-header>
   <mat-card-content class="flex flex-1 overflow-y-auto">
     <div class="flex-1">
-      <div *ngIf="!logs || logs.length == 0" fxFill class="h-100" style="text-align: center;">
+      <div *ngIf="!selectedTriggerName && (!logs || logs.length == 0)" fxFill class="h-100" style="text-align: center;">
         <img
           src="assets/image/logs.svg"
           alt="no logs"
           width="320"
           style="margin-top: 6em" />
+      </div>
+      <div *ngIf="isWaitingForLogs()" class="waitingLogs" fxLayout="column" fxLayoutAlign="center center" fxLayoutGap="12px">
+        <mat-spinner diameter="36"></mat-spinner>
+        <div>Waiting for logs from {{selectedTriggerName}}...</div>
       </div>
 
       <div id="logs" fxFill style="height: 100%">
