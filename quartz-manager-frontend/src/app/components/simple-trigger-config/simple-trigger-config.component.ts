@@ -42,13 +42,14 @@ export class SimpleTriggerConfigComponent implements OnInit {
 
   private jobs: Array<String>;
 
-  enabledTriggerForm = false;
-
   @Output()
   onNewTrigger = new EventEmitter<SimpleTrigger>();
 
   @Output()
   triggerFormOpenChange = new EventEmitter<boolean>();
+
+  @Output()
+  onTriggerSubmitting = new EventEmitter<TriggerKey>();
 
   constructor(
     private formBuilder: UntypedFormBuilder,
@@ -58,11 +59,8 @@ export class SimpleTriggerConfigComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.simpleTriggerReactiveForm.disable();
     this.fetchJobs();
-  }
-
-  openTriggerForm() {
-    this.simpleTriggerReactiveForm.enable();
   }
 
   private fetchJobs() {
@@ -70,24 +68,24 @@ export class SimpleTriggerConfigComponent implements OnInit {
   }
 
   openTriggerForm() {
-    this.enabledTriggerForm = true;
-    this.triggerFormOpenChange.emit(this.enabledTriggerForm);
+    this.simpleTriggerReactiveForm.enable();
+    this.triggerFormOpenChange.emit(true);
   }
 
   private closeTriggerForm() {
-    this.enabledTriggerForm = false;
-    this.triggerFormOpenChange.emit(this.enabledTriggerForm);
+    this.simpleTriggerReactiveForm.disable();
+    this.triggerFormOpenChange.emit(false);
   }
 
   @Input()
   set triggerKey(triggerKey: TriggerKey) {
     if (!triggerKey) {
-      this.openNewTriggerForm();
+      return;
     } else if (!this.selectedTriggerKey || this.selectedTriggerKey.name !== triggerKey.name) {
       this._resetTheTrigger();
       this.selectedTriggerKey = {...triggerKey} as TriggerKey;
       this.fetchSelectedTrigger();
-      this.closeTriggerForm();
+      this.simpleTriggerReactiveForm.disable();
     }
   }
 
@@ -133,6 +131,17 @@ export class SimpleTriggerConfigComponent implements OnInit {
       this.schedulerService.updateSimpleTriggerConfig : this.schedulerService.saveSimpleTriggerConfig;
 
     const simpleTriggerCommand = this._fromReactiveFormToCommand();
+    if (!this.trigger) {
+      this.onTriggerSubmitting.emit(new TriggerKey(simpleTriggerCommand.triggerName, null));
+      setTimeout(() => this.submitTriggerConfig(schedulerServiceCall, simpleTriggerCommand));
+      return;
+    }
+
+    this.submitTriggerConfig(schedulerServiceCall, simpleTriggerCommand);
+
+  }
+
+  private submitTriggerConfig(schedulerServiceCall, simpleTriggerCommand: SimpleTriggerCommand) {
     this.triggerLoading = true;
     schedulerServiceCall(simpleTriggerCommand)
       .subscribe((retTrigger: SimpleTrigger) => {
@@ -153,9 +162,8 @@ export class SimpleTriggerConfigComponent implements OnInit {
         }
         this.triggerLoading = false;
       }, () => {
-this.triggerLoading = false
-});
-
+        this.triggerLoading = false;
+      });
   }
 
   private _triggerPeriodValidator(control: AbstractControl): ValidationErrors | null {

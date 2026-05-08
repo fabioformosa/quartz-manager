@@ -20,12 +20,15 @@ export class ManagerComponent implements OnInit {
 
   selectedTriggerKey: TriggerKey;
 
+  monitoredTriggerKey: TriggerKey;
+
   constructor() {}
 
   ngOnInit() {}
 
   onNewTriggerRequested() {
     this.selectedTriggerKey = null;
+    this.monitoredTriggerKey = null;
     this.newTriggerFormOpened = true;
     if (this.triggerConfigComponent) {
       this.triggerConfigComponent.openNewTriggerForm();
@@ -39,7 +42,12 @@ export class ManagerComponent implements OnInit {
 
   setSelectedTrigger(triggerKey: TriggerKey) {
     this.selectedTriggerKey = triggerKey;
+    this.monitoredTriggerKey = triggerKey;
     this.newTriggerFormOpened = false;
+  }
+
+  monitorTrigger(triggerKey: TriggerKey) {
+    this.monitoredTriggerKey = triggerKey;
   }
 
   setNewTriggerFormOpened(opened: boolean) {
