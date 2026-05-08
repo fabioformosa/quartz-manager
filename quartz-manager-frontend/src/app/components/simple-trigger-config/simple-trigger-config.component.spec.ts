@@ -1,4 +1,4 @@
-import {ComponentFixture, TestBed, waitForAsync} from '@angular/core/testing';
+import {ComponentFixture, fakeAsync, flush, TestBed, waitForAsync} from '@angular/core/testing';
 import {MatCardModule} from '@angular/material/card';
 import {SimpleTriggerConfigComponent} from './simple-trigger-config.component';
 import {ApiService, ConfigService, CONTEXT_PATH, SchedulerService} from '../../services';
@@ -86,7 +86,7 @@ describe('SimpleTriggerConfig', () => {
     const dropdownDe = componentDe.query(By.css(dropdownSelector));
     dropdownDe.nativeElement.click();
     fixture.detectChanges();
-    const matOptionDe = componentDe.query(By.css('.mat-select-panel')).queryAll(By.css('.mat-option'));
+    const matOptionDe = componentDe.query(By.css('.mat-mdc-select-panel')).queryAll(By.css('.mat-mdc-option'));
     matOptionDe[index].nativeElement.click();
     fixture.detectChanges();
   }
@@ -124,7 +124,7 @@ describe('SimpleTriggerConfig', () => {
     openFormAndFillAllMandatoryFields();
   });
 
-  it('should emit an event when a new trigger is submitted', () => {
+  it('should emit an event when a new trigger is submitted', fakeAsync(() => {
     const componentDe: DebugElement = fixture.debugElement;
     const mockTrigger = new Trigger();
     mockTrigger.triggerKeyDTO = new TriggerKey(testTriggerName, null);
@@ -143,14 +143,18 @@ describe('SimpleTriggerConfig', () => {
 
     let actualNewTrigger;
     component.onNewTrigger.subscribe(simpleTrigger => actualNewTrigger = simpleTrigger);
+    let submittedTriggerKey: TriggerKey;
+    component.onTriggerSubmitting.subscribe(triggerKey => submittedTriggerKey = triggerKey);
 
     submitButton.nativeElement.click();
+    expect(submittedTriggerKey).toEqual(new TriggerKey(testTriggerName, null));
+    flush();
 
     const postSimpleTriggerReq = httpTestingController.expectOne(`${CONTEXT_PATH}/simple-triggers/${testTriggerName}`);
     postSimpleTriggerReq.flush(mockTrigger);
 
     expect(actualNewTrigger).toEqual(mockTrigger);
-  });
+  }));
 
   it('should not emit an event when an existing trigger is edited', () => {
     const mockTriggerKey = new TriggerKey(testTriggerName, null);
@@ -207,13 +211,13 @@ describe('SimpleTriggerConfig', () => {
     component.trigger = new SimpleTrigger();
     component.trigger.triggerKeyDTO = mockTriggerKey;
 
-    fixture.detectChanges();
-
     const mockTrigger = new Trigger();
     mockTrigger.triggerKeyDTO = mockTriggerKey;
     mockTrigger.jobDetailDTO = <JobDetail>{jobClassName: 'TestJob', description: null};
     const getSimpleTriggerReq = httpTestingController.expectOne(`${CONTEXT_PATH}/simple-triggers/my-simple-trigger`);
     getSimpleTriggerReq.flush(mockTrigger);
+
+    fixture.detectChanges();
 
     const componentDe: DebugElement = fixture.debugElement;
     const submitButton = componentDe.query(By.css('form button'));
@@ -247,12 +251,22 @@ describe('SimpleTriggerConfig', () => {
 
     expect(component.simpleTriggerReactiveForm.value.triggerName).toEqual(testTriggerName);
 
-    component.triggerKey = null;
+    component.openNewTriggerForm();
 
     expect(component.simpleTriggerReactiveForm.value.triggerName).toBeNull();
     expect(component.simpleTriggerReactiveForm.value.jobClass).toBeNull();
     expect(component.shouldShowTheTriggerCardContent()).toBeTruthy();
 
+  });
+
+  it('should not emit form open changes while applying a null trigger input', () => {
+    let formOpenChangeEmitted = false;
+    component.triggerFormOpenChange.subscribe(() => formOpenChangeEmitted = true);
+
+    component.triggerKey = null;
+
+    expect(formOpenChangeEmitted).toBeFalsy();
+    expect(component.shouldShowTheTriggerCardContent()).toBeFalsy();
   });
 
   it('should display the warning if there are no eligible jobs', () => {

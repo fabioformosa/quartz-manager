@@ -6,12 +6,14 @@ import {MatDialog, MatDialogRef} from '@angular/material/dialog';
 
 @Component({
   template: `
-    <h3 mat-dialog-title>Coming Soon</h3>
-    <div mat-dialog-content>
-      <p>This feature is in roadmap and it will come with the next releases</p>
-    </div>
-    <div mat-dialog-actions>
-      <button mat-button (click)="closeDialog()" style="padding: 0.5em;width: 5em;">Ok</button>
+    <div style="padding:16px">
+      <h3 mat-dialog-title>Coming Soon</h3>
+      <div mat-dialog-content>
+        <p>This feature is in roadmap and it will come with the next releases</p>
+      </div>
+      <div mat-dialog-actions>
+        <button mat-button (click)="closeDialog()" style="padding: 0.5em;width: 5em;">Ok</button>
+      </div>
     </div>`,
 })
 // tslint:disable-next-line:component-class-suffix

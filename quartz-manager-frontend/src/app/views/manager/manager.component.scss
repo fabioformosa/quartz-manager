@@ -1,1 +1,10 @@
+:host {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
 
+#manager-content-container {
+    height: calc(100% - 80px);
+    max-height: calc(100% - 80px);
+}
