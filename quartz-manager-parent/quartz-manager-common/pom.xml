@@ -3,9 +3,13 @@
   <parent>
     <groupId>it.fabioformosa.quartz-manager</groupId>
     <artifactId>quartz-manager-parent</artifactId>
-    <version>4.1.0</version>
+    <version>4.1.1</version>
   </parent>
   <artifactId>quartz-manager-common</artifactId>
+
+  <name>Quartz Manager Common</name>
+  <description>Common components shared by Quartz Manager modules</description>
+  <url>https://github.com/fabioformosa/quartz-manager</url>
 
   <dependencies>
     <dependency>

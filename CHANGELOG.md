@@ -1,4 +1,4 @@
-## **v4.1.0**
+## **v4.1.1**
 **NEW FEATURE** support for multiple triggers
 
 ## **v4.0.10**

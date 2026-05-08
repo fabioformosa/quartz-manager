@@ -3,12 +3,12 @@
   <parent>
     <groupId>it.fabioformosa.quartz-manager</groupId>
     <artifactId>quartz-manager-parent</artifactId>
-    <version>4.1.0</version>
+    <version>4.1.1</version>
   </parent>
 
   <artifactId>quartz-manager-starter-persistence</artifactId>
 
-  <name>Quartz Manager Starter Security</name>
+  <name>Quartz Manager Starter Persistence</name>
   <description>Persist quartz jobs into a database</description>
 
   <url>https://github.com/fabioformosa/quartz-manager</url>
