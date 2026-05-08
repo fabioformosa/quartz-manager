@@ -1,3 +1,6 @@
+## **v4.1.0**
+**NEW FEATURE** support for multiple triggers
+
 ## **v4.0.10**
 Migrated to the new maven central repo
 
