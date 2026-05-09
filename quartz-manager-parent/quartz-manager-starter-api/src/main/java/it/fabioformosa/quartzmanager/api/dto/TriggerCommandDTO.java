@@ -5,7 +5,7 @@ import it.fabioformosa.quartzmanager.api.validators.ValidTriggerPeriod;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
-import javax.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotBlank;
 import java.util.Date;
 
 @ValidTriggerPeriod

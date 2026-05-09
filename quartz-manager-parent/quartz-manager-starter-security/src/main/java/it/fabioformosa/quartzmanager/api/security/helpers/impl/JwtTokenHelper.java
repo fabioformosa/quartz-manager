@@ -2,18 +2,20 @@ package it.fabioformosa.quartzmanager.api.security.helpers.impl;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 import it.fabioformosa.quartzmanager.api.security.properties.JwtSecurityProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.Base64;
 import java.util.Date;
 import java.util.Map;
 
@@ -25,15 +27,18 @@ public class JwtTokenHelper {
 
   private static final Logger log = LoggerFactory.getLogger(JwtTokenHelper.class);
 
-  private static String base64EncodeSecretKey(String secretKey) {
-    return Base64.getEncoder().encodeToString(secretKey.getBytes(StandardCharsets.UTF_8));
+  private static SecretKey signingKey(String secretKey) {
+    try {
+      byte[] keyBytes = MessageDigest.getInstance("SHA-512").digest(secretKey.getBytes(StandardCharsets.UTF_8));
+      return new SecretKeySpec(keyBytes, "HmacSHA512");
+    } catch (NoSuchAlgorithmException e) {
+      throw new IllegalStateException("Unable to create JWT signing key", e);
+    }
   }
 
   private final String appName;
 
   private final JwtSecurityProperties jwtSecurityProps;
-
-  private static final SignatureAlgorithm SIGNATURE_ALGORITHM = SignatureAlgorithm.HS512;
 
   public JwtTokenHelper(String appName, JwtSecurityProperties jwtSecurityProps) {
     super();
@@ -60,20 +65,20 @@ public class JwtTokenHelper {
   }
 
   private String generateToken(Map<String, Object> claims) {
-    return Jwts.builder().setClaims(claims).setExpiration(generateExpirationDate())
-      .signWith(SIGNATURE_ALGORITHM, base64EncodeSecretKey(jwtSecurityProps.getSecret())).compact();
+    return Jwts.builder().claims(claims).expiration(generateExpirationDate())
+      .signWith(signingKey(jwtSecurityProps.getSecret()), Jwts.SIG.HS512).compact();
   }
 
   public String generateToken(String username) {
-    return Jwts.builder().setIssuer(appName).setSubject(username).setIssuedAt(generateCurrentDate())
-      .setExpiration(generateExpirationDate())
-      .signWith(SIGNATURE_ALGORITHM, base64EncodeSecretKey(jwtSecurityProps.getSecret())).compact();
+    return Jwts.builder().issuer(appName).subject(username).issuedAt(generateCurrentDate())
+      .expiration(generateExpirationDate())
+      .signWith(signingKey(jwtSecurityProps.getSecret()), Jwts.SIG.HS512).compact();
   }
 
   private Claims verifyAndGetClaimsFromToken(String token) {
     Claims claims;
-    claims = Jwts.parser().setSigningKey(base64EncodeSecretKey(jwtSecurityProps.getSecret()))
-      .parseClaimsJws(token).getBody();
+    claims = Jwts.parser().verifyWith(signingKey(jwtSecurityProps.getSecret())).build()
+      .parseSignedClaims(token).getPayload();
     if (claims == null)
       throw new IllegalStateException("Not found any claims into the JWT token!");
     return claims;
@@ -108,8 +113,8 @@ public class JwtTokenHelper {
     String refreshedToken;
     try {
       final Claims claims = verifyAndGetClaimsFromToken(token);
-      claims.setIssuedAt(generateCurrentDate());
-      refreshedToken = generateToken(claims);
+      refreshedToken = Jwts.builder().claims(claims).issuedAt(generateCurrentDate()).expiration(generateExpirationDate())
+        .signWith(signingKey(jwtSecurityProps.getSecret()), Jwts.SIG.HS512).compact();
     } catch (Exception e) {
       log.error("Error refreshing jwt token due to " + e.getMessage(), e);
       refreshedToken = null;

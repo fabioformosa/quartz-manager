@@ -19,7 +19,7 @@ import org.quartz.SchedulerException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 
 @Slf4j
 @RequestMapping(SimpleTriggerController.SIMPLE_TRIGGER_CONTROLLER_BASE_URL)

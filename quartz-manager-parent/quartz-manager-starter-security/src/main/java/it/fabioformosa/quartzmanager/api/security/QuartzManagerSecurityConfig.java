@@ -7,6 +7,7 @@ import it.fabioformosa.quartzmanager.api.security.helpers.impl.*;
 import it.fabioformosa.quartzmanager.api.security.properties.InMemoryAccountProperties;
 import it.fabioformosa.quartzmanager.api.security.properties.JwtSecurityProperties;
 import org.apache.commons.lang3.BooleanUtils;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,10 +20,11 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -48,7 +50,7 @@ import static it.fabioformosa.quartzmanager.api.common.config.QuartzManagerPaths
 @ComponentScan(basePackages = {"it.fabioformosa.quartzmanager.api.security"})
 @Configuration
 @EnableWebSecurity
-@EnableGlobalMethodSecurity(prePostEnabled = true)
+@EnableMethodSecurity(prePostEnabled = true)
 public class QuartzManagerSecurityConfig {
 
   private static final String[] PATTERNS_SWAGGER_UI = {"/swagger-ui/**", "/swagger-ui.html", "/v3/api-docs/**", "/swagger-resources/**", "/webjars/**"};
@@ -71,6 +73,12 @@ public class QuartzManagerSecurityConfig {
 
   @Autowired
   private ObjectMapper objectMapper;
+
+  @Bean
+  @ConditionalOnMissingBean(ObjectMapper.class)
+  public static ObjectMapper objectMapper() {
+    return new ObjectMapper();
+  }
 
   @Bean
   public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
@@ -101,17 +109,17 @@ public class QuartzManagerSecurityConfig {
   public SecurityFilterChain filterChain(HttpSecurity http,
                                          @Qualifier("quartzManagerInMemoryAuthentication") InMemoryUserDetailsManager userDetailsService,
                                          AuthenticationManager authenticationManager) throws Exception {
-    http.antMatcher(QUARTZ_MANAGER_API_ANT_MATCHER).csrf().disable() //
-      .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and() //
-      .exceptionHandling().authenticationEntryPoint(restAuthEntryPoint()).and() //
-      .addFilterBefore(jwtAuthenticationTokenFilter(userDetailsService), BasicAuthenticationFilter.class) //
-      .authorizeRequests();
+    http.securityMatcher(QUARTZ_MANAGER_API_ANT_MATCHER)
+      .csrf(AbstractHttpConfigurer::disable)
+      .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+      .exceptionHandling(exception -> exception.authenticationEntryPoint(restAuthEntryPoint()))
+      .addFilterBefore(jwtAuthenticationTokenFilter(userDetailsService), BasicAuthenticationFilter.class);
 
     QuartzManagerHttpSecurity.from(http).withLoginConfigurer(loginConfigurer(), logoutConfigurer()) //
       .login(QUARTZ_MANAGER_LOGIN_PATH, authenticationManager).logout(QUARTZ_MANAGER_LOGOUT_PATH);
 
-    http.authorizeRequests()
-      .antMatchers(QUARTZ_MANAGER_API_ANT_MATCHER).authenticated();
+    http.authorizeHttpRequests(authorize -> authorize
+      .requestMatchers(QUARTZ_MANAGER_API_ANT_MATCHER).authenticated());
 
     return http.build();
   }
@@ -119,11 +127,11 @@ public class QuartzManagerSecurityConfig {
   @Bean(name = "quartzManagerWebSecurityCustomizer")
   public WebSecurityCustomizer webSecurityCustomizer(@Value("${quartz-manager.oas.enabled:false}") Boolean oasEnabled) {
     return web -> {
-      web.ignoring()//
-        .antMatchers(HttpMethod.GET, QUARTZ_MANAGER_UI_ANT_MATCHER);
+      web.ignoring()
+        .requestMatchers(QUARTZ_MANAGER_UI_ANT_MATCHER);
       if(BooleanUtils.isNotFalse(oasEnabled))
         web.ignoring()
-          .antMatchers(HttpMethod.GET, PATTERNS_SWAGGER_UI);
+          .requestMatchers(PATTERNS_SWAGGER_UI);
     };
   }
 

@@ -2,8 +2,8 @@ package it.fabioformosa.quartzmanager.api.validators;
 
 import it.fabioformosa.quartzmanager.api.dto.TriggerRepetitionDTO;
 
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorContext;
 
 public class ValidRepetitionValidator implements ConstraintValidator<ValidTriggerRepetition, TriggerRepetitionDTO> {
 

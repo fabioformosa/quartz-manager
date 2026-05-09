@@ -17,7 +17,7 @@
 		<main.basedir>${basedir}/../..</main.basedir>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <java.version>9</java.version>
+        <java.version>17</java.version>
         <frontend.folderName>quartz-manager-frontend</frontend.folderName>
         <node.version>v16.14.1</node.version>
         <npm.version>8.19.3</npm.version>

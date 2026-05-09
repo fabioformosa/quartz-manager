@@ -3,12 +3,14 @@ package it.fabioformosa.quartzmanager.api.security.helpers.impl;
 import lombok.EqualsAndHashCode;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 
-@EqualsAndHashCode
+import java.util.Collections;
+
+@EqualsAndHashCode(callSuper = false)
 public class AnonAuthentication extends AbstractAuthenticationToken {
 	private static final long serialVersionUID = 1L;
 
 	public AnonAuthentication() {
-		super( null );
+		super(Collections.emptyList());
 	}
 
 	@Override

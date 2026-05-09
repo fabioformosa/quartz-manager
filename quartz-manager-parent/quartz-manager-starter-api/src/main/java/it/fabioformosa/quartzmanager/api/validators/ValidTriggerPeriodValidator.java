@@ -2,8 +2,8 @@ package it.fabioformosa.quartzmanager.api.validators;
 
 import it.fabioformosa.quartzmanager.api.dto.TriggerPeriodDTO;
 
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorContext;
 
 public class ValidTriggerPeriodValidator implements ConstraintValidator<ValidTriggerPeriod, TriggerPeriodDTO> {
   @Override

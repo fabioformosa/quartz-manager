@@ -45,7 +45,7 @@ class SampleJobTest {
     JobExecutionContext jobExecutionContext = Mockito.mock(JobExecutionContext.class);
     String triggerName = "test-trigger";
 
-    ScheduleBuilder schedulerBuilder = SimpleScheduleBuilder.simpleSchedule()
+    ScheduleBuilder<?> schedulerBuilder = SimpleScheduleBuilder.simpleSchedule()
       .withRepeatCount(5)
       .withIntervalInMilliseconds(1000L);
     JobDetail jobDetail = JobBuilder

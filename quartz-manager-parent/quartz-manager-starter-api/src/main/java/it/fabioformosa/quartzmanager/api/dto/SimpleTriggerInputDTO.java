@@ -3,8 +3,8 @@ package it.fabioformosa.quartzmanager.api.dto;
 import it.fabioformosa.quartzmanager.api.validators.ValidTriggerRepetition;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
-import javax.annotation.Nullable;
-import javax.validation.constraints.Positive;
+import jakarta.annotation.Nullable;
+import jakarta.validation.constraints.Positive;
 import java.util.Map;
 
 @ValidTriggerRepetition

@@ -7,7 +7,6 @@ import org.quartz.TriggerKey;
 import org.quartz.impl.matchers.GroupMatcher;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.convert.ConversionService;
-import org.springframework.core.convert.TypeDescriptor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -26,9 +25,9 @@ public class TriggerService {
 
   public List<TriggerKeyDTO> fetchTriggers() throws SchedulerException {
     Set<TriggerKey> triggerKeys = scheduler.getTriggerKeys(GroupMatcher.anyTriggerGroup());
-    return (List<TriggerKeyDTO>) conversionService.convert(triggerKeys,
-      TypeDescriptor.collection(Set.class, TypeDescriptor.valueOf(TriggerKey.class)),
-      TypeDescriptor.collection(List.class, TypeDescriptor.valueOf(TriggerKeyDTO.class)));
+    return triggerKeys.stream()
+      .map(triggerKey -> conversionService.convert(triggerKey, TriggerKeyDTO.class))
+      .toList();
   }
 
 }
