@@ -12,12 +12,12 @@ import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.TriggerKey;
 import org.springframework.core.convert.ConversionService;
-import org.springframework.core.convert.TypeDescriptor;
 
 import java.util.List;
 import java.util.Set;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 
 class TriggerServiceTest {
 
@@ -39,8 +39,8 @@ class TriggerServiceTest {
   void givenATrigger_whenTheyAreFecthed_TheServiceReturnsTheDtos() throws SchedulerException {
     String triggerTestName = "triggerTest";
     Mockito.when(scheduler.getTriggerKeys(any())).thenReturn(Set.of(TriggerKey.triggerKey(triggerTestName)));
-    Mockito.when(conversionService.convert(any(Set.class), any(TypeDescriptor.class), any(TypeDescriptor.class)))
-      .thenReturn(List.of(TriggerKeyDTO.builder().name(triggerTestName).build()));
+    Mockito.when(conversionService.convert(any(TriggerKey.class), eq(TriggerKeyDTO.class)))
+      .thenReturn(TriggerKeyDTO.builder().name(triggerTestName).build());
 
     List<TriggerKeyDTO> triggerKeyDTOs = triggerService.fetchTriggers();
     Assertions.assertThat(triggerKeyDTOs).hasSize(1);
