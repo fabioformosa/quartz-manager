@@ -18,7 +18,7 @@ describe('LogsPanelComponent', () => {
 
     component.triggerKey = new TriggerKey('trigger-1', null);
 
-    expect(logsRxWebsocketService.watch).toHaveBeenCalledWith('/topic/logs/trigger-1');
+    expect(logsRxWebsocketService.watch.mock.calls[0]).toEqual(['/topic/logs/trigger-1']);
     expect(component.selectedTriggerName).toEqual('trigger-1');
     expect(component.isWaitingForLogs()).toBeTruthy();
 
@@ -57,7 +57,7 @@ describe('LogsPanelComponent', () => {
     component.triggerKey = new TriggerKey('trigger-2', null);
 
     expect(firstSubscription.unsubscribe).toHaveBeenCalled();
-    expect(logsRxWebsocketService.watch).toHaveBeenCalledWith('/topic/logs/trigger-2');
+    expect(logsRxWebsocketService.watch.mock.calls[1]).toEqual(['/topic/logs/trigger-2']);
   });
 
   it('should clear logs when the trigger changes', () => {

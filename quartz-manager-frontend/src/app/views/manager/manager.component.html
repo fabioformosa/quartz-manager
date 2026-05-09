@@ -5,20 +5,20 @@
 
   <div id="manager-content-container" class="flex flex-row flex-1 gap-6">
     <div class="flex-1" style="max-width: 250px">
-      <div fxLayout="row" fxLayoutAlign="stretch" fxFill>
+      <div class="flex h-100">
         <qrzmng-trigger-list
           (onNewTriggerClicked)="onNewTriggerRequested()"
           [openedNewTriggerForm]="newTriggerFormOpened"
           (onSelectedTrigger)="setSelectedTrigger($event)"
-          fxFill></qrzmng-trigger-list>
+          class="h-100 w-100"></qrzmng-trigger-list>
       </div>
     </div>
 
     <div class="flex-1" style="max-width: 350px">
-      <div fxLayout="row" fxFill>
-        <div fxLayout="column" fxFill>
+      <div class="flex h-100">
+        <div class="flex flex-column h-100 w-100">
           <qrzmng-simple-trigger-config
-            fxFill
+            class="h-100 w-100"
             [triggerKey]="selectedTriggerKey"
             (triggerFormOpenChange)="setNewTriggerFormOpened($event)"
             (onTriggerSubmitting)="monitorTrigger($event)"

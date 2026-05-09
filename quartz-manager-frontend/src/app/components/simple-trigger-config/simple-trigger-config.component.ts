@@ -3,16 +3,16 @@ import {SchedulerService} from '../../services';
 import {Scheduler} from '../../model/scheduler.model';
 import {SimpleTriggerCommand} from '../../model/simple-trigger.command';
 import {SimpleTrigger} from '../../model/simple-trigger.model';
-import * as moment from 'moment';
 import {TriggerKey} from '../../model/triggerKey.model';
 import JobService from '../../services/job.service';
 import {MisfireInstruction, MisfireInstructionCaption} from '../../model/misfire-instruction.model';
 import {AbstractControl, UntypedFormBuilder, UntypedFormGroup, ValidationErrors, Validators} from '@angular/forms';
 
 @Component({
-  selector: 'qrzmng-simple-trigger-config',
-  templateUrl: './simple-trigger-config.component.html',
-  styleUrls: ['./simple-trigger-config.component.scss']
+    selector: 'qrzmng-simple-trigger-config',
+    templateUrl: './simple-trigger-config.component.html',
+    styleUrls: ['./simple-trigger-config.component.scss'],
+    standalone: false
 })
 export class SimpleTriggerConfigComponent implements OnInit {
 
@@ -22,8 +22,8 @@ export class SimpleTriggerConfigComponent implements OnInit {
     triggerName: [this.trigger?.triggerKeyDTO.name, Validators.required],
     jobClass: [this.trigger?.jobDetailDTO.jobClassName, Validators.required],
     triggerPeriod: this.formBuilder.group({
-      startDate: [this.trigger?.startTime && moment(this.trigger?.startTime)],
-      endDate: [this.trigger?.endTime && moment(this.trigger?.endTime)]
+      startDate: [this.trigger?.startTime && new Date(this.trigger.startTime)],
+      endDate: [this.trigger?.endTime && new Date(this.trigger.endTime)]
     }, {validators: this._triggerPeriodValidator}),
     triggerRecurrence: this.formBuilder.group({
       repeatCount: [this.trigger?.repeatCount],
@@ -170,7 +170,7 @@ export class SimpleTriggerConfigComponent implements OnInit {
     const startDate = control.get('startDate');
     const endDate = control.get('endDate');
     if (startDate.value && endDate.value) {
-      return endDate.value.isBefore(startDate.value) ?
+      return endDate.value < startDate.value ?
         <ValidationErrors>{invalidTriggerPeriod: true} : null;
     }
     return null;
@@ -196,8 +196,8 @@ export class SimpleTriggerConfigComponent implements OnInit {
     simpleTriggerReactiveForm.jobClass = simpleTrigger.jobDetailDTO.jobClassName;
     simpleTriggerReactiveForm.triggerRecurrence.repeatCount = simpleTrigger.repeatCount || null;
     simpleTriggerReactiveForm.triggerRecurrence.repeatInterval = simpleTrigger.repeatInterval || null;
-    simpleTriggerReactiveForm.triggerPeriod.startDate = (simpleTrigger.startTime && moment(simpleTrigger.startTime)) || null;
-    simpleTriggerReactiveForm.triggerPeriod.endDate = (simpleTrigger.endTime && moment(simpleTrigger.endTime)) || null;
+    simpleTriggerReactiveForm.triggerPeriod.startDate = (simpleTrigger.startTime && new Date(simpleTrigger.startTime)) || null;
+    simpleTriggerReactiveForm.triggerPeriod.endDate = (simpleTrigger.endTime && new Date(simpleTrigger.endTime)) || null;
     simpleTriggerReactiveForm.misfireInstruction = (simpleTrigger.misfireInstruction
       && MisfireInstruction[simpleTrigger.misfireInstruction]) || null;
     return simpleTriggerReactiveForm;
@@ -210,8 +210,8 @@ export class SimpleTriggerConfigComponent implements OnInit {
     simpleTriggerCommand.jobClass = reactiveFormValue.jobClass;
     simpleTriggerCommand.repeatCount = reactiveFormValue.triggerRecurrence.repeatCount;
     simpleTriggerCommand.repeatInterval = reactiveFormValue.triggerRecurrence.repeatInterval;
-    simpleTriggerCommand.startDate = reactiveFormValue.triggerPeriod.startDate?.toDate();
-    simpleTriggerCommand.endDate = reactiveFormValue.triggerPeriod.endDate?.toDate();
+    simpleTriggerCommand.startDate = reactiveFormValue.triggerPeriod.startDate;
+    simpleTriggerCommand.endDate = reactiveFormValue.triggerPeriod.endDate;
     simpleTriggerCommand.misfireInstruction = reactiveFormValue.misfireInstruction;
     return simpleTriggerCommand;
   }

@@ -220,7 +220,7 @@ describe('SimpleTriggerConfig', () => {
     fixture.detectChanges();
 
     const componentDe: DebugElement = fixture.debugElement;
-    const submitButton = componentDe.query(By.css('form button'));
+    const submitButton = componentDe.query(By.css('form button:not(.datetime-picker-trigger)'));
     expect(submitButton.nativeElement.textContent.trim()).toEqual('Reschedule');
   });
 

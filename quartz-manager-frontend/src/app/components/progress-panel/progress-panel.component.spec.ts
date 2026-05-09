@@ -19,7 +19,7 @@ describe('ProgressPanelComponent', () => {
 
     component.triggerKey = new TriggerKey('trigger-1', null);
 
-    expect(progressRxWebsocketService.watch).toHaveBeenCalledWith('/topic/progress/trigger-1');
+    expect(progressRxWebsocketService.watch.mock.calls[0]).toEqual(['/topic/progress/trigger-1']);
 
     messages.next({body: JSON.stringify({percentage: 75, timesTriggered: 3})});
     jest.runOnlyPendingTimers();
@@ -48,7 +48,7 @@ describe('ProgressPanelComponent', () => {
     component.triggerKey = new TriggerKey('trigger-2', null);
 
     expect(firstSubscription.unsubscribe).toHaveBeenCalled();
-    expect(progressRxWebsocketService.watch).toHaveBeenCalledWith('/topic/progress/trigger-2');
+    expect(progressRxWebsocketService.watch.mock.calls[1]).toEqual(['/topic/progress/trigger-2']);
   });
 
   it('should reset progress when the trigger changes', () => {

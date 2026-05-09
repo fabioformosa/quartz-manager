@@ -1,3 +1,23 @@
+:host {
+  display: flex;
+  height: 100%;
+  min-height: 0;
+  width: 100%;
+}
+
+.trigger-config-card {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.trigger-config-content {
+  flex: 1;
+  min-height: 0;
+  position: relative;
+}
+
 .small{
     font-size: 0.8em;
 }

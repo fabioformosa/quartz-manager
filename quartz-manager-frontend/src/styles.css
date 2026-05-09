@@ -1,5 +1,6 @@
 /* You can add global styles to this file, and also import other style files */
-@import '~@angular/material/prebuilt-themes/deeppurple-amber.css';
+@import '@angular/material/prebuilt-themes/deeppurple-amber.css';
+@import '@danielmoncada/angular-datetime-picker/assets/style/picker.min.css';
 @import "animate.css";
 
 html {
@@ -32,6 +33,22 @@ body {
   justify-content: space-between;
 }
 
+.justify-space-around {
+  justify-content: space-around;
+}
+
+.justify-space-evenly {
+  justify-content: space-evenly;
+}
+
+.justify-center {
+  justify-content: center;
+}
+
+.justify-flex-end {
+  justify-content: flex-end;
+}
+
 .flex {
   display: flex;
 }
@@ -46,6 +63,10 @@ body {
 
 .flex-1 {
   flex: 1;
+}
+
+.flex-none {
+  flex: 0 0 auto;
 }
 
 .h-100 {
@@ -66,6 +87,18 @@ body {
 
 .gap-6 {
   gap: 6px;
+}
+
+.gap-10 {
+  gap: 10px;
+}
+
+.gap-12 {
+  gap: 12px;
+}
+
+.gap-30 {
+  gap: 30px;
 }
 
 .overflow-hidden {
@@ -100,3 +133,12 @@ body {
   align-items: center;
 }
 
+.align-items-stretch {
+  align-items: stretch;
+}
+
+@media (max-width: 599px) {
+  .log-row {
+    flex-direction: column;
+  }
+}

@@ -5,9 +5,10 @@ import {ProgressRxWebsocketService} from '../../services/progress.rx-websocket.s
 import {map} from 'rxjs/operators';
 
 @Component({
-  selector: 'progress-panel',
-  templateUrl: './progress-panel.component.html',
-  styleUrls: ['./progress-panel.component.scss']
+    selector: 'progress-panel',
+    templateUrl: './progress-panel.component.html',
+    styleUrls: ['./progress-panel.component.scss'],
+    standalone: false
 })
 export class ProgressPanelComponent implements OnInit, OnDestroy {
 

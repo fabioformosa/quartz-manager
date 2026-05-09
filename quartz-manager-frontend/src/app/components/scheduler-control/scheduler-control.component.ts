@@ -3,9 +3,10 @@ import {SchedulerService, UserService} from '../../services';
 import {Scheduler} from '../../model/scheduler.model';
 
 @Component({
-  selector: 'qrzmng-scheduler-control',
-  templateUrl: './scheduler-control.component.html',
-  styleUrls: ['./scheduler-control.component.scss']
+    selector: 'qrzmng-scheduler-control',
+    templateUrl: './scheduler-control.component.html',
+    styleUrls: ['./scheduler-control.component.scss'],
+    standalone: false
 })
 export class SchedulerControlComponent implements OnInit {
 

@@ -8,9 +8,10 @@ import {delay, takeUntil} from 'rxjs/operators'
 import {AuthService, UserService} from '../../services';
 
 @Component({
-  selector: 'app-login',
-  templateUrl: './login.component.html',
-  styleUrls: ['./login.component.scss']
+    selector: 'app-login',
+    templateUrl: './login.component.html',
+    styleUrls: ['./login.component.scss'],
+    standalone: false
 })
 export class LoginComponent implements OnInit, OnDestroy {
   title = 'Login';

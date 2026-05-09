@@ -50,7 +50,8 @@ export const MisfireInstructionCaption = new Map<number, string>([
     `In case of misfire event, the trigger is re-scheduled to the next scheduled time after 'now'
     with the repeat count set to what it would be if it had not missed any firings.<br/>
     Use this policy if no jobs must run after the end date time.<br/>
-    <strong>Warning</strong> The actual number of job executions could be less than initially set, because the misfired trigger are ignored.<br/>
+    <strong>Warning</strong> The actual number of job executions could be less than initially set,
+    because the misfired trigger are ignored.<br/>
     This policy could cause the Trigger to go directly to the 'COMPLETE' state if all fire-times where missed.`
   ]
 ]);

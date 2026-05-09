@@ -7,9 +7,10 @@ import {TriggerKey} from '../../model/triggerKey.model';
 
 
 @Component({
-  selector: 'logs-panel',
-  templateUrl: './logs-panel.component.html',
-  styleUrls: ['./logs-panel.component.scss']
+    selector: 'logs-panel',
+    templateUrl: './logs-panel.component.html',
+    styleUrls: ['./logs-panel.component.scss'],
+    standalone: false
 })
 export class LogsPanelComponent implements OnInit, OnDestroy {
 

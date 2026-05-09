@@ -1,28 +1,29 @@
 <mat-card class="flex flex-1 max-h-100">
   <mat-card-header class="pb-16">
-    <mat-card-subtitle ><b>JOB LOGS</b></mat-card-subtitle>
+    <mat-card-subtitle><b>JOB LOGS</b></mat-card-subtitle>
   </mat-card-header>
   <mat-card-content class="flex flex-1 overflow-y-auto">
     <div class="flex-1">
-      <div *ngIf="!selectedTriggerName && (!logs || logs.length == 0)" fxFill class="h-100" style="text-align: center;">
+      @if (!selectedTriggerName && (!logs || logs.length == 0)) {
+      <div class="h-100 w-100" style="text-align: center">
         <img
           src="assets/image/logs.svg"
           alt="no logs"
           width="320"
           style="margin-top: 6em" />
       </div>
-      <div *ngIf="isWaitingForLogs()" class="waitingLogs" fxLayout="column" fxLayoutAlign="center center" fxLayoutGap="12px">
+      } @if (isWaitingForLogs()) {
+      <div
+        class="waitingLogs flex flex-column align-items-center justify-center gap-12">
         <mat-spinner diameter="36"></mat-spinner>
-        <div>Waiting for logs from {{selectedTriggerName}}...</div>
+        <div>Waiting for logs from {{ selectedTriggerName }}...</div>
       </div>
+      }
 
-      <div id="logs" fxFill style="height: 100%">
+      <div id="logs" class="w-100" style="height: 100%">
+        @for (log of logs; track log; let first = $first) {
         <div
-          *ngFor="let log of logs; let first = first"
-          fxLayout="row"
-          fxLayout.xs="column"
-          fxLayoutAlign="start"
-          fxLayoutGap="10px">
+          class="log-row flex flex-row gap-10">
           <div style="flex: 1; max-width: 300px">
             <span
               [ngClass]="{
@@ -59,6 +60,7 @@
             >
           </div>
         </div>
+        }
       </div>
     </div>
   </mat-card-content>

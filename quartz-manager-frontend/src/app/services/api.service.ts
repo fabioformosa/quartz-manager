@@ -1,4 +1,4 @@
-import {HttpClient, HttpHeaders, HttpResponse, HttpRequest, HttpEventType, HttpParams} from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpResponse, HttpRequest, HttpEventType, HttpParams } from '@angular/common/http';
 import {Router} from '@angular/router';
 import {Injectable} from '@angular/core';
 import {Observable} from 'rxjs';

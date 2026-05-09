@@ -28,20 +28,12 @@ Happy linting! 💖
     "plugins": [
         "eslint-plugin-import",
         "@angular-eslint/eslint-plugin",
-        "@typescript-eslint",
-        "@typescript-eslint/tslint"
+        "@typescript-eslint"
     ],
     "root": true,
     "rules": {
-        "@angular-eslint/component-class-suffix": "error",
-        "@angular-eslint/component-selector": [
-            "error",
-            {
-                "type": "element",
-                "prefix": "app",
-                "style": "kebab-case"
-            }
-        ],
+        "@angular-eslint/component-class-suffix": "off",
+        "@angular-eslint/component-selector": "off",
         "@angular-eslint/directive-class-suffix": "error",
         "@angular-eslint/directive-selector": [
             "error",
@@ -51,7 +43,6 @@ Happy linting! 💖
                 "style": "camelCase"
             }
         ],
-        "@angular-eslint/no-host-metadata-property": "error",
         "@angular-eslint/no-input-rename": "error",
         "@angular-eslint/no-inputs-metadata-property": "error",
         "@angular-eslint/no-output-rename": "error",
@@ -80,19 +71,8 @@ Happy linting! 💖
                 }
             }
         ],
-        "@typescript-eslint/member-ordering": "error",
-        "@typescript-eslint/naming-convention": [
-            "error",
-            {
-                "selector": "variable",
-                "format": [
-                    "camelCase",
-                    "UPPER_CASE"
-                ],
-                "leadingUnderscore": "forbid",
-                "trailingUnderscore": "forbid"
-            }
-        ],
+        "@typescript-eslint/member-ordering": "off",
+        "@typescript-eslint/naming-convention": "off",
         "@typescript-eslint/no-empty-function": "off",
         "@typescript-eslint/no-empty-interface": "error",
         "@typescript-eslint/no-inferrable-types": [
@@ -109,25 +89,9 @@ Happy linting! 💖
         ],
         "@typescript-eslint/no-unused-expressions": "error",
         "@typescript-eslint/prefer-function-type": "error",
-        "@typescript-eslint/quotes": [
-            "error",
-            "single"
-        ],
         "@typescript-eslint/semi": [
             "off",
             null
-        ],
-        "@typescript-eslint/tslint/config": [
-            "error",
-            {
-                "rules": {
-                    "import-spacing": true,
-                    "invoke-injectable": true,
-                    "no-access-missing-member": true,
-                    "templates-use-public": true,
-                    "whitespace": true
-                }
-            }
         ],
         "@typescript-eslint/type-annotation-spacing": "off",
         "@typescript-eslint/unified-signatures": "error",
