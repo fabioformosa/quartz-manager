@@ -19,7 +19,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <springdoc-openapi.version>3.0.3</springdoc-openapi.version>
- 		<java.version>17</java.version>
+		<java.version>21</java.version>
 	</properties>
 
 	<dependencies>

@@ -8,23 +8,15 @@ import it.fabioformosa.quartzmanager.api.dto.TriggerKeyDTO;
 import org.quartz.JobKey;
 import org.quartz.Trigger;
 import org.quartz.TriggerKey;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
-public abstract class TriggerToTriggerDTO<S extends Trigger, T extends TriggerDTO> extends AbstractBaseConverter<S, T> {
-
-  @Autowired
-  private TriggerKeyToTriggerKeyDTO triggerKeyToTriggerKeyDTO;
-
-  @Autowired
-  private JobKeyToJobKeyDTO jobKeyToJobKeyDTO;
-
-  @Autowired
-  private JobKeyToJobDetailDTO jobKeyToJobDetailDTO;
+@Component
+public class TriggerToTriggerDTO<S extends Trigger, T extends TriggerDTO> extends AbstractBaseConverter<S, T> {
 
   @Override
   protected void convert(S source, T target) {
     TriggerKey triggerKey = source.getKey();
-    TriggerKeyDTO triggerKeyDTO = triggerKeyToTriggerKeyDTO.convert(triggerKey);
+    TriggerKeyDTO triggerKeyDTO = conversionService.convert(triggerKey, TriggerKeyDTO.class);
     target.setTriggerKeyDTO(triggerKeyDTO);
 
     target.setStartTime(source.getStartTime());
@@ -37,15 +29,16 @@ public abstract class TriggerToTriggerDTO<S extends Trigger, T extends TriggerDT
     target.setMayFireAgain(source.mayFireAgain());
 
     JobKey jobKey = source.getJobKey();
-    if (jobKey == null) {
-      return;
-    }
-
-    JobKeyDTO jobKeyDTO = jobKeyToJobKeyDTO.convert(jobKey);
+    JobKeyDTO jobKeyDTO = conversionService.convert(jobKey, JobKeyDTO.class);
     target.setJobKeyDTO(jobKeyDTO);
 
-    JobDetailDTO jobDetailDTO = jobKeyToJobDetailDTO.convert(jobKey);
+    JobDetailDTO jobDetailDTO = conversionService.convert(jobKey, JobDetailDTO.class);
     target.setJobDetailDTO(jobDetailDTO);
+  }
+
+  @Override
+  protected T createOrRetrieveTarget(S source) {
+    return (T) new TriggerDTO();
   }
 
 }
