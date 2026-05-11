@@ -1,4 +1,5 @@
 import {Component} from '@angular/core';
+import {Router} from '@angular/router';
 
 import fontawesome from '@fortawesome/fontawesome';
 import {
@@ -20,4 +21,11 @@ fontawesome.library.add(faCheckCircle, faExclamationCircle, faExclamationTriangl
 })
 
 export class AppComponent {
+  constructor(private router: Router) {
+  }
+
+  isOperationsConsoleRoute(): boolean {
+    const url = this.router.url || '/';
+    return url === '/' || url.startsWith('/manager');
+  }
 }

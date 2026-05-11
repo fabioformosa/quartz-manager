@@ -1,0 +1,1120 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Quartz Operations Console Prototype</title>
+  <style>
+    :root {
+      --bg: oklch(98% 0.005 250);
+      --surface: oklch(100% 0 0);
+      --fg: oklch(22% 0.02 240);
+      --muted: oklch(50% 0.018 240);
+      --border: oklch(90% 0.008 240);
+      --accent: oklch(56% 0.19 302);
+      --font-display: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', system-ui, sans-serif;
+      --font-body: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', system-ui, sans-serif;
+      --font-mono: 'JetBrains Mono', 'IBM Plex Mono', ui-monospace, Menlo, monospace;
+      --success: oklch(58% 0.16 145);
+      --warning: oklch(72% 0.15 82);
+      --danger: oklch(58% 0.19 28);
+      --info: oklch(58% 0.18 255);
+      --radius: 8px;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: var(--bg);
+      color: var(--fg);
+      font-family: var(--font-body);
+      font-size: 14px;
+      line-height: 1.45;
+      letter-spacing: 0;
+    }
+    button, input, select, textarea { font: inherit; }
+    .app {
+      display: grid;
+      grid-template-columns: 248px minmax(920px, 1fr) 420px;
+      min-height: 100vh;
+    }
+    .app.object-mode {
+      grid-template-columns: 248px minmax(920px, 1fr);
+    }
+    .app.object-mode .wizard {
+      display: none;
+    }
+    .rail {
+      border-right: 1px solid var(--border);
+      background: oklch(99% 0.003 250);
+      padding: 18px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 4px 8px 14px;
+      border-bottom: 1px solid var(--border);
+    }
+    .brand-mark {
+      width: 30px;
+      height: 30px;
+      border-radius: 7px;
+      display: grid;
+      place-items: center;
+      color: white;
+      background: var(--accent);
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: 700;
+    }
+    .brand-title { font-weight: 700; font-size: 14px; line-height: 1.15; }
+    .brand-subtitle { color: var(--muted); font-family: var(--font-mono); font-size: 11px; }
+    .nav { display: flex; flex-direction: column; gap: 3px; }
+    .nav button {
+      border: 0;
+      background: transparent;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--muted);
+      padding: 9px 10px;
+      border-radius: 7px;
+      cursor: default;
+      text-align: left;
+    }
+    .nav button.active {
+      background: oklch(56% 0.19 302 / 0.10);
+      color: var(--fg);
+      box-shadow: inset 3px 0 0 var(--accent);
+    }
+    .nav svg { width: 17px; height: 17px; stroke-width: 1.8; }
+    .rail-card {
+      margin-top: auto;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--surface);
+      padding: 12px;
+    }
+    .rail-card h3 {
+      margin: 0 0 7px;
+      font-size: 12px;
+      text-transform: uppercase;
+      color: var(--muted);
+      font-family: var(--font-mono);
+      font-weight: 600;
+    }
+    .connection {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      font-family: var(--font-mono);
+      font-size: 12px;
+    }
+    .main { min-width: 0; display: flex; flex-direction: column; }
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 3;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 14px;
+      align-items: center;
+      min-height: 60px;
+      padding: 10px 20px;
+      border-bottom: 1px solid var(--border);
+      background: oklch(99% 0.002 250 / 0.92);
+      backdrop-filter: blur(14px);
+    }
+    .scheduler-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; min-width: 0; }
+    .scheduler-title { min-width: 210px; }
+    h1 { margin: 0; font-family: var(--font-display); font-size: 21px; font-weight: 700; letter-spacing: 0; }
+    .caption { color: var(--muted); font-family: var(--font-mono); font-size: 11px; }
+    .kv { display: grid; gap: 2px; min-width: 118px; }
+    .kv span:first-child { color: var(--muted); font-size: 11px; }
+    .kv span:last-child {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--fg);
+      white-space: nowrap;
+    }
+    .actions { display: flex; align-items: center; gap: 8px; }
+    .compact-actions { gap: 7px; }
+    .btn {
+      border: 1px solid var(--border);
+      border-radius: 7px;
+      padding: 8px 11px;
+      min-height: 36px;
+      background: var(--surface);
+      color: var(--fg);
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      cursor: default;
+      white-space: nowrap;
+    }
+    .btn.primary { background: var(--accent); border-color: var(--accent); color: white; }
+    .btn.compact {
+      min-height: 32px;
+      padding: 6px 10px;
+      font-size: 12px;
+    }
+    .btn.danger {
+      color: var(--danger);
+      border-color: oklch(58% 0.19 28 / 0.35);
+      background: oklch(58% 0.19 28 / 0.06);
+    }
+    .btn svg { width: 16px; height: 16px; stroke-width: 2; }
+    .content { padding: 18px 20px 22px; display: grid; gap: 16px; }
+    .page { display: none; }
+    .page.active { display: grid; gap: 16px; }
+    .page-kicker {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      gap: 14px;
+      margin-bottom: 2px;
+    }
+    .page-kicker h2 {
+      margin: 0;
+      font-size: 19px;
+      letter-spacing: 0;
+    }
+    .page-kicker p {
+      margin: 4px 0 0;
+      max-width: 760px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: repeat(12, minmax(0, 1fr));
+      gap: 14px;
+    }
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      min-width: 0;
+    }
+    .card-header {
+      min-height: 48px;
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .card-title {
+      margin: 0;
+      font-size: 12px;
+      font-family: var(--font-mono);
+      text-transform: uppercase;
+      color: var(--muted);
+      font-weight: 700;
+    }
+    .card-body { padding: 14px; }
+    .span-3 { grid-column: span 3; }
+    .span-5 { grid-column: span 5; }
+    .span-7 { grid-column: span 7; }
+    .span-12 { grid-column: span 12; }
+    .span-4 { grid-column: span 4; }
+    .span-8 { grid-column: span 8; }
+    .scheduler-command-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.1fr) minmax(360px, 0.9fr);
+      gap: 14px;
+      align-items: stretch;
+    }
+    .command-panel {
+      display: grid;
+      gap: 12px;
+    }
+    .command-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .metadata-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+    }
+    .metric { display: grid; gap: 7px; min-height: 112px; }
+    .metric-value {
+      font-family: var(--font-mono);
+      font-size: 27px;
+      font-weight: 720;
+      font-variant-numeric: tabular-nums;
+      letter-spacing: 0;
+    }
+    .metric-label { color: var(--muted); font-size: 12px; }
+    .metric-line {
+      height: 5px;
+      border-radius: 999px;
+      background: var(--border);
+      overflow: hidden;
+      margin-top: auto;
+    }
+    .metric-line > span { display: block; height: 100%; background: var(--success); width: var(--w); }
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      height: 24px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      padding: 0 8px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 650;
+      white-space: nowrap;
+      background: var(--surface);
+      color: var(--muted);
+    }
+    .chip::before {
+      content: "";
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: currentColor;
+    }
+    .chip.running, .chip.normal, .chip.success {
+      color: var(--success);
+      background: oklch(58% 0.16 145 / 0.08);
+      border-color: oklch(58% 0.16 145 / 0.25);
+    }
+    .chip.paused, .chip.warn {
+      color: var(--warning);
+      background: oklch(72% 0.15 82 / 0.12);
+      border-color: oklch(72% 0.15 82 / 0.30);
+    }
+    .chip.error, .chip.danger {
+      color: var(--danger);
+      background: oklch(58% 0.19 28 / 0.08);
+      border-color: oklch(58% 0.19 28 / 0.25);
+    }
+    .chip.blocked {
+      color: var(--info);
+      background: oklch(58% 0.18 255 / 0.08);
+      border-color: oklch(58% 0.18 255 / 0.25);
+    }
+    .chip.accent {
+      color: var(--accent);
+      background: oklch(56% 0.19 302 / 0.08);
+      border-color: oklch(56% 0.19 302 / 0.25);
+    }
+    .table-wrap { overflow: hidden; }
+    table { width: 100%; border-collapse: collapse; table-layout: fixed; font-size: 12px; }
+    th, td {
+      border-bottom: 1px solid var(--border);
+      padding: 10px 10px;
+      text-align: left;
+      vertical-align: middle;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    th {
+      color: var(--muted);
+      font-family: var(--font-mono);
+      font-weight: 650;
+      background: oklch(98% 0.004 250);
+    }
+    td.mono, .mono { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+    tr.selected {
+      background: oklch(56% 0.19 302 / 0.06);
+      box-shadow: inset 3px 0 0 var(--accent);
+    }
+    .split { display: grid; grid-template-columns: minmax(0, 1fr) 310px; min-height: 420px; }
+    .object-mode .split { grid-template-columns: minmax(0, 1fr) 360px; }
+    .detail {
+      border-left: 1px solid var(--border);
+      background: oklch(99% 0.003 250);
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .detail h2 { margin: 0; font-size: 17px; letter-spacing: 0; }
+    .tabs { display: flex; gap: 4px; border-bottom: 1px solid var(--border); }
+    .tab {
+      padding: 8px 9px;
+      border-bottom: 2px solid transparent;
+      color: var(--muted);
+      font-size: 12px;
+    }
+    .tab.active { color: var(--fg); border-color: var(--accent); }
+    .field-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .field {
+      display: grid;
+      gap: 4px;
+      padding: 9px;
+      border: 1px solid var(--border);
+      border-radius: 7px;
+      background: var(--surface);
+      min-width: 0;
+    }
+    .field label { color: var(--muted); font-size: 11px; }
+    .field strong {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .progress-card { display: grid; gap: 10px; }
+    .progress-line {
+      height: 8px;
+      border-radius: 999px;
+      background: var(--border);
+      overflow: hidden;
+    }
+    .progress-line span { display: block; width: 72%; height: 100%; background: var(--success); }
+    .wizard {
+      border-left: 1px solid var(--border);
+      background: oklch(99% 0.002 250);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    .side-page { display: none; min-height: 100vh; flex-direction: column; }
+    .side-page.active { display: flex; }
+    .wizard-header {
+      min-height: 76px;
+      padding: 16px 18px;
+      border-bottom: 1px solid var(--border);
+      background: var(--surface);
+    }
+    .wizard-header h2 { margin: 0; font-size: 17px; }
+    .stepper {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 7px;
+      padding: 14px 18px;
+      border-bottom: 1px solid var(--border);
+    }
+    .step { display: grid; gap: 5px; color: var(--muted); font-size: 11px; }
+    .step span:first-child { height: 4px; border-radius: 999px; background: var(--border); }
+    .step.done span:first-child, .step.active span:first-child { background: var(--accent); }
+    .step.active { color: var(--fg); font-weight: 650; }
+    .wizard-scroll { padding: 16px 18px; overflow: auto; display: grid; gap: 14px; }
+    .form-card {
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--surface);
+      overflow: hidden;
+    }
+    .form-card h3 {
+      margin: 0;
+      padding: 12px 13px;
+      border-bottom: 1px solid var(--border);
+      font-size: 12px;
+      font-family: var(--font-mono);
+      color: var(--muted);
+      text-transform: uppercase;
+    }
+    .form-section { padding: 13px; display: grid; gap: 12px; }
+    .control { display: grid; gap: 6px; }
+    .control label { font-size: 12px; color: var(--muted); }
+    .input-row { display: grid; grid-template-columns: 1fr 118px; gap: 8px; }
+    .input, .select, .textarea {
+      width: 100%;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      background: oklch(99% 0.002 250);
+      min-height: 38px;
+      padding: 8px 10px;
+      color: var(--fg);
+      outline: none;
+    }
+    .textarea { min-height: 70px; resize: none; }
+    .help { color: var(--muted); font-size: 12px; }
+    .radio-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .type-option {
+      border: 1px solid var(--border);
+      border-radius: 7px;
+      padding: 10px;
+      display: grid;
+      gap: 4px;
+      background: oklch(99% 0.002 250);
+    }
+    .type-option.active {
+      border-color: oklch(56% 0.19 302 / 0.55);
+      box-shadow: inset 0 0 0 1px oklch(56% 0.19 302 / 0.22);
+      background: oklch(56% 0.19 302 / 0.06);
+    }
+    .type-option strong { font-size: 12px; }
+    .preview {
+      display: grid;
+      gap: 9px;
+      padding: 13px;
+      border-radius: var(--radius);
+      background: oklch(56% 0.19 302 / 0.07);
+      border: 1px solid oklch(56% 0.19 302 / 0.18);
+    }
+    .preview h4 { margin: 0; font-size: 13px; }
+    .fire-list { display: grid; gap: 5px; font-family: var(--font-mono); font-size: 12px; }
+    .warning-box {
+      border: 1px solid oklch(58% 0.19 28 / 0.30);
+      background: oklch(58% 0.19 28 / 0.07);
+      color: var(--fg);
+      border-radius: 7px;
+      padding: 10px;
+      display: grid;
+      gap: 5px;
+    }
+    .warning-box strong { color: var(--danger); font-size: 12px; }
+    .wizard-footer {
+      margin-top: auto;
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 14px 18px;
+      border-top: 1px solid var(--border);
+      background: var(--surface);
+    }
+    .danger-zone {
+      border: 1px solid oklch(58% 0.19 28 / 0.35);
+      border-radius: var(--radius);
+      background: oklch(58% 0.19 28 / 0.06);
+      padding: 12px;
+      display: grid;
+      gap: 8px;
+    }
+    .code-block {
+      margin: 0;
+      padding: 10px;
+      border: 1px solid var(--border);
+      border-radius: 7px;
+      background: oklch(97% 0.006 250);
+      font-family: var(--font-mono);
+      font-size: 12px;
+      overflow: auto;
+      white-space: pre-wrap;
+    }
+    .stream { display: grid; grid-template-columns: 1fr; gap: 0; max-height: 310px; overflow: auto; }
+    .stream-row {
+      display: grid;
+      grid-template-columns: 92px 78px 112px 140px 1fr;
+      gap: 10px;
+      align-items: center;
+      padding: 9px 12px;
+      border-bottom: 1px solid var(--border);
+      font-size: 12px;
+    }
+    .stream-row:first-child {
+      background: oklch(98% 0.004 250);
+      color: var(--muted);
+      font-family: var(--font-mono);
+      font-weight: 650;
+      position: sticky;
+      top: 0;
+      z-index: 1;
+    }
+    .toolbar { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .search {
+      min-width: 220px;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      background: var(--surface);
+      height: 32px;
+      padding: 0 12px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+    .mini-chart {
+      height: 154px;
+      display: grid;
+      grid-template-columns: repeat(18, 1fr);
+      align-items: end;
+      gap: 5px;
+      border-bottom: 1px solid var(--border);
+      padding-top: 18px;
+    }
+    .bar {
+      background: color-mix(in oklch, var(--success), white 38%);
+      border-radius: 4px 4px 0 0;
+      height: var(--h);
+      min-height: 12px;
+    }
+    .bar.warn { background: color-mix(in oklch, var(--warning), white 35%); }
+    .bar.error { background: color-mix(in oklch, var(--danger), white 35%); }
+    .two-column {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 320px;
+      gap: 14px;
+    }
+    .filter-panel {
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--surface);
+      padding: 12px;
+      display: grid;
+      gap: 12px;
+      align-content: start;
+    }
+    .filter-panel h3 {
+      margin: 0;
+      color: var(--muted);
+      font: 700 12px var(--font-mono);
+      text-transform: uppercase;
+    }
+    .calendar-grid {
+      display: grid;
+      grid-template-columns: repeat(7, minmax(0, 1fr));
+      gap: 6px;
+    }
+    .calendar-cell {
+      min-height: 44px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      background: var(--surface);
+      padding: 6px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--muted);
+    }
+    .calendar-cell.excluded {
+      color: var(--danger);
+      background: oklch(58% 0.19 28 / 0.06);
+      border-color: oklch(58% 0.19 28 / 0.25);
+    }
+    .time-grid {
+      display: grid;
+      grid-template-columns: 64px repeat(6, minmax(0, 1fr));
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+    .time-grid span {
+      min-height: 30px;
+      background: var(--surface);
+      padding: 7px;
+      font-size: 11px;
+      color: var(--muted);
+    }
+    .time-grid .open {
+      background: oklch(58% 0.16 145 / 0.10);
+      color: var(--success);
+      font-family: var(--font-mono);
+    }
+    .node-list {
+      display: grid;
+      gap: 8px;
+    }
+    .node-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 8px;
+      align-items: center;
+      padding: 10px;
+      border: 1px solid var(--border);
+      border-radius: 7px;
+      background: var(--surface);
+    }
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+    }
+    @media (max-width: 1280px) {
+      .app { grid-template-columns: 78px minmax(760px, 1fr) 390px; }
+      .app.object-mode { grid-template-columns: 78px minmax(760px, 1fr); }
+      .brand-title, .brand-subtitle, .nav span, .rail-card { display: none; }
+      .rail { align-items: center; }
+      .nav button { justify-content: center; }
+      .brand { padding-inline: 0; border-bottom: 0; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app" id="app-shell">
+    <aside class="rail" aria-label="Primary navigation">
+      <div class="brand">
+        <div class="brand-mark">QM</div>
+        <div>
+          <div class="brand-title">Quartz Manager</div>
+          <div class="brand-subtitle">Operations Console</div>
+        </div>
+      </div>
+      <nav class="nav">
+        <button class="active" aria-current="page" data-page="dashboard"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 13h8V3H3v10Zm10 8h8V3h-8v18ZM3 21h8v-6H3v6Z"/></svg><span>Dashboard</span></button>
+        <button data-page="jobs"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M7 8h10M7 12h10M7 16h6"/><rect x="4" y="4" width="16" height="16" rx="2"/></svg><span>Jobs</span></button>
+        <button data-page="triggers"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 6v6l4 2"/><circle cx="12" cy="12" r="9"/></svg><span>Triggers</span></button>
+        <button data-page="calendars"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M7 3v4M17 3v4M4 9h16M5 5h14v15H5z"/></svg><span>Calendars</span></button>
+        <button data-page="executions"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 17h16M7 17V7m5 10V4m5 13v-6"/></svg><span>Executions</span></button>
+        <button data-page="events"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 7h16M4 12h16M4 17h10"/></svg><span>Event Stream</span></button>
+        <button data-page="scheduler"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 15.5A3.5 3.5 0 1 0 12 8a3.5 3.5 0 0 0 0 7.5Z"/><path d="m19.4 15 .6 2-1.7 3-2.1-.5a8.3 8.3 0 0 1-2 1.1L13.5 23h-3l-.7-2.4a8.3 8.3 0 0 1-2-1.1l-2.1.5-1.7-3 .6-2a8.9 8.9 0 0 1 0-2.1l-.6-2 1.7-3 2.1.5a8.3 8.3 0 0 1 2-1.1l.7-2.4h3l.7 2.4a8.3 8.3 0 0 1 2 1.1l2.1-.5 1.7 3-.6 2a8.9 8.9 0 0 1 0 2.1Z"/></svg><span>Scheduler</span></button>
+      </nav>
+      <div class="rail-card">
+        <h3>Live channel</h3>
+        <div class="connection"><span>WebSocket</span><span class="chip success">OPEN</span></div>
+      </div>
+    </aside>
+    <main class="main">
+      <header class="topbar">
+        <div class="scheduler-meta">
+          <div class="scheduler-title">
+            <h1>Quartz Operations Console</h1>
+            <div class="caption">quartz-manager-scheduler / compact context</div>
+          </div>
+          <span class="chip running">RUNNING</span>
+          <div class="kv"><span>Instance ID</span><span>node-a7f3</span></div>
+          <div class="kv"><span>Cluster</span><span>2 nodes</span></div>
+          <div class="kv"><span>WebSocket</span><span>OPEN</span></div>
+        </div>
+        <div class="actions compact-actions" aria-label="Compact scheduler status actions">
+          <button class="btn compact"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M8 5v14M16 5v14"/></svg>Standby</button>
+          <button class="btn compact" data-jump-page="scheduler">Scheduler</button>
+        </div>
+      </header>
+      <section class="content">
+        <div class="page active" id="dashboard-page">
+        <div class="dashboard-grid">
+          <section class="card span-12">
+            <div class="card-header"><h2 class="card-title">Scheduler Command Center</h2><span class="caption">Expanded controls live on Dashboard and Scheduler / Settings only</span></div>
+            <div class="card-body scheduler-command-grid">
+              <div class="command-panel">
+                <div class="command-row" aria-label="Dashboard scheduler actions">
+                  <button class="btn primary"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="m8 5 11 7-11 7V5Z"/></svg>Start</button>
+                  <button class="btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M8 5v14M16 5v14"/></svg>Standby</button>
+                  <button class="btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 12h16M12 4v16"/></svg>Resume All</button>
+                  <button class="btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M5 12h14"/></svg>Pause All</button>
+                  <button class="btn danger"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 7h16M9 11v6M15 11v6M6 7l1 14h10l1-14M10 7V4h4v3"/></svg>Clear</button>
+                  <button class="btn danger"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M6 6h12v12H6z"/></svg>Shutdown</button>
+                </div>
+                <div class="help">Global scheduler operations are intentionally centralized here because they affect every job and trigger. Object pages keep only compact scheduler context.</div>
+              </div>
+              <div class="metadata-grid">
+                <div class="field"><label>Running since</label><strong>2026-05-11 08:14:03</strong></div>
+                <div class="field"><label>Quartz version</label><strong>2.3.2</strong></div>
+                <div class="field"><label>Job store</label><strong>JDBC / clustered</strong></div>
+                <div class="field"><label>Thread pool</label><strong>8 / 12 active</strong></div>
+                <div class="field"><label>Persistence</label><strong>enabled</strong></div>
+                <div class="field"><label>Instance ID</label><strong>node-a7f3</strong></div>
+              </div>
+            </div>
+          </section>
+          <article class="card span-3"><div class="card-body metric"><span class="chip running">NORMAL</span><div class="metric-value">42</div><div class="metric-label">Jobs scheduled across 7 groups</div><div class="metric-line"><span style="--w: 64%"></span></div></div></article>
+          <article class="card span-3"><div class="card-body metric"><span class="chip blocked">BLOCKED</span><div class="metric-value">3</div><div class="metric-label">Currently executing jobs</div><div class="metric-line"><span style="--w: 18%"></span></div></div></article>
+          <article class="card span-3"><div class="card-body metric"><span class="chip warn">MISFIRE</span><div class="metric-value">5</div><div class="metric-label">Misfires in the last hour</div><div class="metric-line"><span style="--w: 32%"></span></div></div></article>
+          <article class="card span-3"><div class="card-body metric"><span class="chip accent">THREADS</span><div class="metric-value">8 / 12</div><div class="metric-label">Thread pool active capacity</div><div class="metric-line"><span style="--w: 67%"></span></div></div></article>
+          <section class="card span-7">
+            <div class="card-header"><h2 class="card-title">Next Scheduled Fires</h2><div class="toolbar"><span class="chip normal">LIVE</span><button class="btn">Open Triggers</button></div></div>
+            <div class="split">
+              <div class="table-wrap">
+                <table>
+                  <thead><tr><th style="width:18%">Trigger</th><th style="width:15%">Group</th><th style="width:16%">Type</th><th style="width:13%">State</th><th style="width:19%">Job</th><th style="width:19%">Next fire</th></tr></thead>
+                  <tbody>
+                    <tr class="selected"><td class="mono">invoice-sync-5m</td><td class="mono">billing</td><td>SimpleTrigger</td><td><span class="chip normal">NORMAL</span></td><td class="mono">InvoiceSyncJob</td><td class="mono">09:45:00 Europe/Rome</td></tr>
+                    <tr><td class="mono">daily-ledger-close</td><td class="mono">finance</td><td>CronTrigger</td><td><span class="chip normal">NORMAL</span></td><td class="mono">LedgerCloseJob</td><td class="mono">18:00:00 Europe/Rome</td></tr>
+                    <tr><td class="mono">tenant-cleanup</td><td class="mono">maintenance</td><td>DailyTimeInterval</td><td><span class="chip paused">PAUSED</span></td><td class="mono">TenantCleanupJob</td><td class="mono">paused</td></tr>
+                    <tr><td class="mono">erp-retry-window</td><td class="mono">integrations</td><td>CalendarInterval</td><td><span class="chip error">ERROR</span></td><td class="mono">ErpRetryJob</td><td class="mono">requires reset</td></tr>
+                    <tr><td class="mono">cache-warmup</td><td class="mono">platform</td><td>SimpleTrigger</td><td><span class="chip blocked">BLOCKED</span></td><td class="mono">CacheWarmupJob</td><td class="mono">09:47:30 Europe/Rome</td></tr>
+                    <tr><td class="mono">welcome-email-once</td><td class="mono">crm</td><td>SimpleTrigger</td><td><span class="chip">COMPLETE</span></td><td class="mono">WelcomeEmailJob</td><td class="mono">complete</td></tr>
+                  </tbody>
+                </table>
+              </div>
+              <aside class="detail">
+                <div><span class="chip normal">NORMAL</span><h2>invoice-sync-5m</h2><div class="caption">billing / linked to InvoiceSyncJob</div></div>
+                <div class="tabs"><div class="tab active">Overview</div><div class="tab">Executions</div><div class="tab">Logs</div></div>
+                <div class="field-grid">
+                  <div class="field"><label>Previous fire</label><strong>09:40:00</strong></div>
+                  <div class="field"><label>Next fire</label><strong>09:45:00</strong></div>
+                  <div class="field"><label>Priority</label><strong>5</strong></div>
+                  <div class="field"><label>Calendar</label><strong>business-days</strong></div>
+                  <div class="field"><label>Misfire</label><strong>FIRE_NOW</strong></div>
+                  <div class="field"><label>Repeat</label><strong>Every 5 min</strong></div>
+                </div>
+                <div class="progress-card"><div class="caption">Current run progress</div><div class="progress-line"><span></span></div><div class="mono">72% / fireInstanceId: node-a7f3-119238</div></div>
+                <div class="actions"><button class="btn">Pause</button><button class="btn">Reschedule</button><button class="btn danger">Unschedule</button></div>
+              </aside>
+            </div>
+          </section>
+          <section class="card span-5">
+            <div class="card-header"><h2 class="card-title">Execution Load</h2><span class="caption">Last 30 minutes</span></div>
+            <div class="card-body">
+              <div class="mini-chart" aria-label="Execution load chart">
+                <span class="bar" style="--h:34%"></span><span class="bar" style="--h:42%"></span><span class="bar" style="--h:28%"></span><span class="bar" style="--h:62%"></span><span class="bar warn" style="--h:52%"></span><span class="bar" style="--h:38%"></span><span class="bar" style="--h:55%"></span><span class="bar" style="--h:72%"></span><span class="bar error" style="--h:44%"></span><span class="bar" style="--h:67%"></span><span class="bar" style="--h:46%"></span><span class="bar" style="--h:58%"></span><span class="bar warn" style="--h:81%"></span><span class="bar" style="--h:64%"></span><span class="bar" style="--h:35%"></span><span class="bar" style="--h:50%"></span><span class="bar" style="--h:70%"></span><span class="bar" style="--h:40%"></span>
+              </div>
+              <div class="field-grid" style="margin-top:14px">
+                <div class="field"><label>Total jobs executed</label><strong>18,942</strong></div>
+                <div class="field"><label>Recent errors</label><strong>2</strong></div>
+                <div class="field"><label>Paused groups</label><strong>maintenance</strong></div>
+                <div class="field"><label>Recovering jobs</label><strong>1</strong></div>
+              </div>
+            </div>
+          </section>
+          <section class="card span-12">
+            <div class="card-header"><h2 class="card-title">Event Stream</h2><div class="toolbar"><input class="search" value="Filter: job, trigger, group, severity"><span class="chip normal">STREAMING</span><button class="btn">Pause</button><button class="btn">Export</button></div></div>
+            <div class="stream">
+              <div class="stream-row"><span>Time</span><span>Severity</span><span>Type</span><span>Source</span><span>Message</span></div>
+              <div class="stream-row"><span class="mono">09:44:18</span><span class="chip success">INFO</span><span>JOB_PROGRESS</span><span class="mono">billing</span><span>InvoiceSyncJob processed 144 of 200 invoices for trigger invoice-sync-5m.</span></div>
+              <div class="stream-row"><span class="mono">09:43:56</span><span class="chip warn">WARN</span><span>MISFIRE</span><span class="mono">finance</span><span>daily-ledger-close missed scheduled fire; policy SMART_POLICY resolved to FIRE_ONCE_NOW.</span></div>
+              <div class="stream-row"><span class="mono">09:42:31</span><span class="chip danger">ERROR</span><span>TRIGGER_ERROR</span><span class="mono">integrations</span><span>erp-retry-window moved to ERROR after job threw ResourceAccessException.</span></div>
+              <div class="stream-row"><span class="mono">09:41:05</span><span class="chip success">INFO</span><span>SCHEDULER</span><span class="mono">node-a7f3</span><span>Cluster check-in completed. 2 scheduler instances active.</span></div>
+            </div>
+          </section>
+        </div>
+        </div>
+        <div class="page" id="jobs-page">
+          <div class="page-kicker">
+            <div><h2>Jobs</h2><p>Jobs become first-class Quartz objects: class, group, durability, recovery, concurrency, data map, associated triggers, and execution history are visible in one operational surface.</p></div>
+            <div class="toolbar"><input class="search" value="Filter jobs, groups, classes"><button class="btn primary">New Job</button></div>
+          </div>
+          <section class="card">
+            <div class="card-header"><h2 class="card-title">Job Registry</h2><div class="toolbar"><span class="chip normal">42 JOBS</span><button class="btn">Pause Group</button><button class="btn">Export</button></div></div>
+            <div class="split">
+              <div class="table-wrap">
+                <table>
+                  <thead><tr><th style="width:16%">Job key</th><th style="width:12%">Group</th><th style="width:22%">Class</th><th style="width:10%">Durable</th><th style="width:10%">Recovery</th><th style="width:11%">Concurrent</th><th style="width:9%">Triggers</th><th style="width:10%">Next run</th></tr></thead>
+                  <tbody>
+                    <tr class="selected"><td class="mono">InvoiceSyncJob</td><td class="mono">billing</td><td class="mono">it.fabioformosa.jobs.InvoiceSyncJob</td><td><span class="chip success">YES</span></td><td><span class="chip success">YES</span></td><td><span class="chip blocked">DISALLOW</span></td><td class="mono">3</td><td class="mono">09:45</td></tr>
+                    <tr><td class="mono">LedgerCloseJob</td><td class="mono">finance</td><td class="mono">it.fabioformosa.jobs.LedgerCloseJob</td><td><span class="chip success">YES</span></td><td><span class="chip warn">NO</span></td><td><span class="chip">ALLOW</span></td><td class="mono">1</td><td class="mono">18:00</td></tr>
+                    <tr><td class="mono">TenantCleanupJob</td><td class="mono">maintenance</td><td class="mono">it.fabioformosa.jobs.TenantCleanupJob</td><td><span class="chip success">YES</span></td><td><span class="chip success">YES</span></td><td><span class="chip blocked">DISALLOW</span></td><td class="mono">2</td><td class="mono">paused</td></tr>
+                    <tr><td class="mono">ErpRetryJob</td><td class="mono">integrations</td><td class="mono">it.fabioformosa.jobs.ErpRetryJob</td><td><span class="chip success">YES</span></td><td><span class="chip success">YES</span></td><td><span class="chip">ALLOW</span></td><td class="mono">4</td><td class="mono">error</td></tr>
+                    <tr><td class="mono">CacheWarmupJob</td><td class="mono">platform</td><td class="mono">it.fabioformosa.jobs.CacheWarmupJob</td><td><span class="chip warn">NO</span></td><td><span class="chip warn">NO</span></td><td><span class="chip blocked">DISALLOW</span></td><td class="mono">1</td><td class="mono">09:47</td></tr>
+                    <tr><td class="mono">WelcomeEmailJob</td><td class="mono">crm</td><td class="mono">it.fabioformosa.jobs.WelcomeEmailJob</td><td><span class="chip warn">NO</span></td><td><span class="chip warn">NO</span></td><td><span class="chip">ALLOW</span></td><td class="mono">0</td><td class="mono">complete</td></tr>
+                  </tbody>
+                </table>
+              </div>
+              <aside class="detail">
+                <div><span class="chip blocked">RUNNING</span><h2>InvoiceSyncJob</h2><div class="caption">billing / DisallowConcurrentExecution</div></div>
+                <div class="tabs"><div class="tab active">Overview</div><div class="tab">Triggers</div><div class="tab">Data Map</div><div class="tab">Executions</div><div class="tab">Logs</div></div>
+                <div class="field-grid">
+                  <div class="field"><label>Job class</label><strong>InvoiceSyncJob</strong></div>
+                  <div class="field"><label>Trigger count</label><strong>3</strong></div>
+                  <div class="field"><label>Last execution</label><strong>09:40:03</strong></div>
+                  <div class="field"><label>Next execution</label><strong>09:45:00</strong></div>
+                  <div class="field"><label>Persist data</label><strong>true</strong></div>
+                  <div class="field"><label>Requests recovery</label><strong>true</strong></div>
+                </div>
+                <pre class="code-block">JobDataMap
+tenant = eu-west
+batchSize = 200
+source = invoice-api</pre>
+                <div class="actions"><button class="btn primary">Trigger Now</button><button class="btn">Pause</button><button class="btn">Add Trigger</button></div>
+                <div class="danger-zone"><strong>Danger zone</strong><span class="help">Interrupt running executions or delete the job only after explicit confirmation. Durable jobs may outlive their triggers.</span><div class="actions"><button class="btn danger">Interrupt</button><button class="btn danger">Delete Job</button></div></div>
+              </aside>
+            </div>
+          </section>
+        </div>
+        <div class="page" id="triggers-page">
+          <div class="page-kicker">
+            <div><h2>Triggers</h2><p>The trigger page expands beyond SimpleTrigger: every row shows type, state, linked job, fire times, calendar, priority, and misfire policy, with operational actions exposed close to the selected trigger.</p></div>
+            <div class="toolbar"><input class="search" value="Filter triggers, jobs, groups"><button class="btn primary">Create Trigger</button></div>
+          </div>
+          <section class="card">
+            <div class="card-header"><h2 class="card-title">Trigger Inventory</h2><div class="toolbar"><span class="chip normal">38 ACTIVE</span><span class="chip warn">4 PAUSED</span><span class="chip error">1 ERROR</span></div></div>
+            <div class="split">
+              <div class="table-wrap">
+                <table>
+                  <thead><tr><th style="width:14%">Trigger</th><th style="width:10%">Group</th><th style="width:14%">Type</th><th style="width:10%">State</th><th style="width:15%">Job</th><th style="width:13%">Next fire</th><th style="width:13%">Previous fire</th><th style="width:11%">Misfire</th></tr></thead>
+                  <tbody>
+                    <tr class="selected"><td class="mono">invoice-sync-5m</td><td class="mono">billing</td><td>SimpleTrigger</td><td><span class="chip normal">NORMAL</span></td><td class="mono">InvoiceSyncJob</td><td class="mono">09:45</td><td class="mono">09:40</td><td class="mono">FIRE_NOW</td></tr>
+                    <tr><td class="mono">daily-ledger-close</td><td class="mono">finance</td><td>CronTrigger</td><td><span class="chip normal">NORMAL</span></td><td class="mono">LedgerCloseJob</td><td class="mono">18:00</td><td class="mono">yesterday</td><td class="mono">SMART</td></tr>
+                    <tr><td class="mono">tenant-cleanup</td><td class="mono">maintenance</td><td>DailyTimeInterval</td><td><span class="chip paused">PAUSED</span></td><td class="mono">TenantCleanupJob</td><td class="mono">paused</td><td class="mono">08:30</td><td class="mono">DO_NOTHING</td></tr>
+                    <tr><td class="mono">erp-retry-window</td><td class="mono">integrations</td><td>CalendarInterval</td><td><span class="chip error">ERROR</span></td><td class="mono">ErpRetryJob</td><td class="mono">reset</td><td class="mono">09:20</td><td class="mono">FIRE_ONCE</td></tr>
+                    <tr><td class="mono">weekly-report</td><td class="mono">analytics</td><td>CronTrigger</td><td><span class="chip normal">NORMAL</span></td><td class="mono">ReportJob</td><td class="mono">Mon 07:00</td><td class="mono">Mon 07:00</td><td class="mono">SMART</td></tr>
+                    <tr><td class="mono">cache-warmup</td><td class="mono">platform</td><td>SimpleTrigger</td><td><span class="chip blocked">BLOCKED</span></td><td class="mono">CacheWarmupJob</td><td class="mono">09:47</td><td class="mono">09:42</td><td class="mono">IGNORE</td></tr>
+                  </tbody>
+                </table>
+              </div>
+              <aside class="detail">
+                <div><span class="chip normal">NORMAL</span><h2>invoice-sync-5m</h2><div class="caption">SimpleTrigger / billing</div></div>
+                <div class="tabs"><div class="tab active">Overview</div><div class="tab">Schedule</div><div class="tab">Calendar</div><div class="tab">Executions</div></div>
+                <div class="field-grid">
+                  <div class="field"><label>Linked job</label><strong>InvoiceSyncJob</strong></div>
+                  <div class="field"><label>Priority</label><strong>5</strong></div>
+                  <div class="field"><label>Final fire</label><strong>none</strong></div>
+                  <div class="field"><label>Timezone</label><strong>Europe/Rome</strong></div>
+                  <div class="field"><label>Repeat interval</label><strong>5 minutes</strong></div>
+                  <div class="field"><label>Calendar</label><strong>business-days</strong></div>
+                </div>
+                <section class="preview">
+                  <h4>Schedule summary</h4>
+                  <div>Runs every 5 minutes indefinitely. If a misfire occurs, execute once immediately and continue the cadence from the next scheduled fire time.</div>
+                  <div class="fire-list"><span>09:45:00 Europe/Rome</span><span>09:50:00 Europe/Rome</span><span>09:55:00 Europe/Rome</span></div>
+                </section>
+                <div class="actions"><button class="btn">Pause</button><button class="btn">Reschedule</button><button class="btn">Duplicate</button></div>
+                <div class="danger-zone"><strong>Danger zone</strong><span class="help">Unschedule removes this trigger from its job. Reset from ERROR should require the operator to confirm the failed cause was handled.</span><div class="actions"><button class="btn danger">Unschedule</button><button class="btn danger">Reset Error</button></div></div>
+              </aside>
+            </div>
+          </section>
+        </div>
+        <div class="page" id="calendars-page">
+          <div class="page-kicker">
+            <div><h2>Calendars</h2><p>Quartz calendars are exclusion rules, not date pickers. This page makes the calendar type, base calendar, trigger usage, excluded windows, and next included time testable before operators attach them to triggers.</p></div>
+            <div class="toolbar"><input class="search" value="Filter calendars, groups, trigger usage"><button class="btn primary">New Calendar</button></div>
+          </div>
+          <section class="card">
+            <div class="card-header"><h2 class="card-title">Calendar Registry</h2><div class="toolbar"><span class="chip normal">7 CALENDARS</span><span class="chip accent">21 TRIGGERS USING CALENDARS</span></div></div>
+            <div class="split">
+              <div class="table-wrap">
+                <table>
+                  <thead><tr><th style="width:18%">Calendar</th><th style="width:15%">Type</th><th style="width:15%">Base calendar</th><th style="width:12%">Triggers</th><th style="width:20%">Next excluded</th><th style="width:20%">Description</th></tr></thead>
+                  <tbody>
+                    <tr class="selected"><td class="mono">business-days</td><td>WeeklyCalendar</td><td class="mono">company-holidays</td><td class="mono">14</td><td class="mono">2026-05-16 00:00</td><td>Exclude Saturday and Sunday.</td></tr>
+                    <tr><td class="mono">company-holidays</td><td>HolidayCalendar</td><td class="mono">none</td><td class="mono">9</td><td class="mono">2026-06-02 00:00</td><td>Italian public holidays.</td></tr>
+                    <tr><td class="mono">month-end-freeze</td><td>MonthlyCalendar</td><td class="mono">business-days</td><td class="mono">3</td><td class="mono">2026-05-31 00:00</td><td>Exclude month-end close window.</td></tr>
+                    <tr><td class="mono">batch-window</td><td>DailyCalendar</td><td class="mono">business-days</td><td class="mono">4</td><td class="mono">2026-05-11 20:00</td><td>Allow 06:00 to 20:00 only.</td></tr>
+                    <tr><td class="mono">cron-blackout</td><td>CronCalendar</td><td class="mono">none</td><td class="mono">1</td><td class="mono">Fri 23:00</td><td>Exclude release windows.</td></tr>
+                  </tbody>
+                </table>
+              </div>
+              <aside class="detail">
+                <div><span class="chip normal">ACTIVE</span><h2>business-days</h2><div class="caption">WeeklyCalendar / base: company-holidays</div></div>
+                <div class="tabs"><div class="tab active">Overview</div><div class="tab">Rules</div><div class="tab">Triggers</div><div class="tab">Test</div></div>
+                <div class="field-grid">
+                  <div class="field"><label>Calendar type</label><strong>WeeklyCalendar</strong></div>
+                  <div class="field"><label>Base calendar</label><strong>company-holidays</strong></div>
+                  <div class="field"><label>Triggers using</label><strong>14</strong></div>
+                  <div class="field"><label>Timezone</label><strong>Europe/Rome</strong></div>
+                </div>
+                <div class="calendar-grid" aria-label="Calendar exclusion preview">
+                  <div class="calendar-cell">Mon 11</div><div class="calendar-cell">Tue 12</div><div class="calendar-cell">Wed 13</div><div class="calendar-cell">Thu 14</div><div class="calendar-cell">Fri 15</div><div class="calendar-cell excluded">Sat 16</div><div class="calendar-cell excluded">Sun 17</div>
+                </div>
+                <section class="preview"><h4>Test timestamp</h4><div class="mono">Input: 2026-05-17 09:00 Europe/Rome<br>Included: false<br>Next included time: 2026-05-18 00:00 Europe/Rome</div></section>
+                <div class="actions"><button class="btn">Edit Rules</button><button class="btn">Show Triggers</button><button class="btn danger">Delete Calendar</button></div>
+              </aside>
+            </div>
+          </section>
+          <section class="card">
+            <div class="card-header"><h2 class="card-title">Weekly Time Grid</h2><span class="caption">A visual editor for DailyCalendar / WeeklyCalendar windows</span></div>
+            <div class="card-body">
+              <div class="time-grid">
+                <span></span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span>
+                <span>06:00</span><span class="open">open</span><span class="open">open</span><span class="open">open</span><span class="open">open</span><span class="open">open</span><span>closed</span>
+                <span>12:00</span><span class="open">open</span><span class="open">open</span><span class="open">open</span><span class="open">open</span><span class="open">open</span><span>closed</span>
+                <span>20:00</span><span>closed</span><span>closed</span><span>closed</span><span>closed</span><span>release freeze</span><span>closed</span>
+              </div>
+            </div>
+          </section>
+        </div>
+        <div class="page" id="executions-page">
+          <div class="page-kicker">
+            <div><h2>Executions</h2><p>Currently executing jobs are treated as live operational objects with fire instance id, scheduled versus actual fire time, run time, refire count, recovery state, and node ownership.</p></div>
+            <div class="toolbar"><input class="search" value="Filter running jobs, trigger, node"><button class="btn">Refresh</button></div>
+          </div>
+          <section class="card">
+            <div class="card-header"><h2 class="card-title">Currently Executing Jobs</h2><div class="toolbar"><span class="chip blocked">3 RUNNING</span><span class="chip warn">1 RECOVERING</span></div></div>
+            <div class="split">
+              <div class="table-wrap">
+                <table>
+                  <thead><tr><th style="width:16%">Fire instance</th><th style="width:14%">Job</th><th style="width:13%">Trigger</th><th style="width:13%">Scheduled</th><th style="width:13%">Actual</th><th style="width:10%">Run time</th><th style="width:9%">Refire</th><th style="width:12%">Node</th></tr></thead>
+                  <tbody>
+                    <tr class="selected"><td class="mono">node-a7f3-119238</td><td class="mono">InvoiceSyncJob</td><td class="mono">invoice-sync-5m</td><td class="mono">09:40:00</td><td class="mono">09:40:03</td><td class="mono">04:21</td><td class="mono">0</td><td class="mono">node-a7f3</td></tr>
+                    <tr><td class="mono">node-b912-119239</td><td class="mono">CacheWarmupJob</td><td class="mono">cache-warmup</td><td class="mono">09:42:30</td><td class="mono">09:42:31</td><td class="mono">01:53</td><td class="mono">0</td><td class="mono">node-b912</td></tr>
+                    <tr><td class="mono">node-a7f3-119240</td><td class="mono">ErpRetryJob</td><td class="mono">erp-retry-window</td><td class="mono">09:43:00</td><td class="mono">09:43:08</td><td class="mono">00:46</td><td class="mono">2</td><td class="mono">node-a7f3</td></tr>
+                  </tbody>
+                </table>
+              </div>
+              <aside class="detail">
+                <div><span class="chip blocked">RUNNING</span><h2>node-a7f3-119238</h2><div class="caption">InvoiceSyncJob / billing</div></div>
+                <div class="tabs"><div class="tab active">Overview</div><div class="tab">Progress</div><div class="tab">Logs</div><div class="tab">Data Map</div></div>
+                <div class="field-grid">
+                  <div class="field"><label>Recovering</label><strong>false</strong></div>
+                  <div class="field"><label>Refire count</label><strong>0</strong></div>
+                  <div class="field"><label>Scheduled fire</label><strong>09:40:00</strong></div>
+                  <div class="field"><label>Actual fire</label><strong>09:40:03</strong></div>
+                  <div class="field"><label>Run time</label><strong>04:21</strong></div>
+                  <div class="field"><label>Instance</label><strong>node-a7f3</strong></div>
+                </div>
+                <div class="progress-card"><div class="caption">Live progress from WebSocketProgressNotifier</div><div class="progress-line"><span></span></div><div class="mono">144 / 200 invoices processed</div></div>
+                <div class="warning-box"><strong>Interrupt confirmation</strong><span>Interrupt by job key affects all matching running instances when the scheduler supports interruption. Prefer fire-instance interruption where available.</span></div>
+                <div class="actions"><button class="btn danger">Interrupt Fire Instance</button><button class="btn danger">Interrupt Job Key</button></div>
+              </aside>
+            </div>
+          </section>
+          <section class="card">
+            <div class="card-header"><h2 class="card-title">Recent Execution History</h2><button class="btn">Open History</button></div>
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th>Completed</th><th>Job</th><th>Trigger</th><th>Duration</th><th>Result</th><th>Node</th><th>Message</th></tr></thead>
+                <tbody>
+                  <tr><td class="mono">09:39:58</td><td class="mono">ReportJob</td><td class="mono">weekly-report</td><td class="mono">00:11</td><td><span class="chip success">SUCCESS</span></td><td class="mono">node-b912</td><td>Report generated for analytics group.</td></tr>
+                  <tr><td class="mono">09:38:22</td><td class="mono">ErpRetryJob</td><td class="mono">erp-retry-window</td><td class="mono">00:31</td><td><span class="chip error">FAILED</span></td><td class="mono">node-a7f3</td><td>ResourceAccessException from ERP endpoint.</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+        </div>
+        <div class="page" id="events-page">
+          <div class="page-kicker">
+            <div><h2>Event Stream</h2><p>The old logs and progress panels become one observable stream with live mode, pause, text search, severity filtering, event-type filtering, and export for incident review.</p></div>
+            <div class="toolbar"><input class="search" value="Search messages, job keys, fire ids"><button class="btn">Pause Stream</button><button class="btn">Export CSV</button></div>
+          </div>
+          <div class="two-column">
+            <section class="card">
+              <div class="card-header"><h2 class="card-title">Live Events</h2><div class="toolbar"><span class="chip normal">STREAMING</span><span class="chip accent">142 EVENTS / HOUR</span></div></div>
+              <div class="stream" style="max-height:560px">
+                <div class="stream-row"><span>Time</span><span>Severity</span><span>Type</span><span>Source</span><span>Message</span></div>
+                <div class="stream-row"><span class="mono">09:44:18</span><span class="chip success">INFO</span><span>JOB_PROGRESS</span><span class="mono">billing</span><span>InvoiceSyncJob processed 144 of 200 invoices for fireInstanceId node-a7f3-119238.</span></div>
+                <div class="stream-row"><span class="mono">09:43:56</span><span class="chip warn">WARN</span><span>MISFIRE</span><span class="mono">finance</span><span>daily-ledger-close missed fire at 09:30; SMART_POLICY resolved to FIRE_ONCE_NOW.</span></div>
+                <div class="stream-row"><span class="mono">09:42:31</span><span class="chip danger">ERROR</span><span>TRIGGER_ERROR</span><span class="mono">integrations</span><span>erp-retry-window entered ERROR after ErpRetryJob threw ResourceAccessException.</span></div>
+                <div class="stream-row"><span class="mono">09:41:05</span><span class="chip success">INFO</span><span>SCHEDULER</span><span class="mono">node-a7f3</span><span>Cluster check-in completed. 2 scheduler instances active.</span></div>
+                <div class="stream-row"><span class="mono">09:40:03</span><span class="chip success">INFO</span><span>JOB_STARTED</span><span class="mono">billing</span><span>InvoiceSyncJob started from trigger invoice-sync-5m.</span></div>
+                <div class="stream-row"><span class="mono">09:39:58</span><span class="chip success">INFO</span><span>JOB_COMPLETED</span><span class="mono">analytics</span><span>ReportJob completed in 11 seconds on node-b912.</span></div>
+              </div>
+            </section>
+            <aside class="filter-panel">
+              <h3>Filters</h3>
+              <div class="control"><label>Severity</label><select class="select"><option>INFO, WARN, ERROR</option><option>WARN and ERROR</option><option>ERROR only</option></select></div>
+              <div class="control"><label>Event type</label><select class="select"><option>All event types</option><option>Scheduler events</option><option>Job lifecycle</option><option>Misfires</option><option>Progress updates</option></select></div>
+              <div class="control"><label>Job / trigger / group</label><input class="input" value="billing OR integrations"></div>
+              <div class="control"><label>Scheduler instance</label><select class="select"><option>All nodes</option><option>node-a7f3</option><option>node-b912</option></select></div>
+              <div class="control"><label>Time range</label><select class="select"><option>Last 30 minutes</option><option>Last 4 hours</option><option>Custom range</option></select></div>
+              <section class="preview"><h4>Saved view</h4><div>Production incident filter: ERROR + MISFIRE across integrations and finance groups, last 4 hours.</div></section>
+            </aside>
+          </div>
+        </div>
+        <div class="page" id="scheduler-page">
+          <div class="page-kicker">
+            <div><h2>Scheduler / Settings</h2><p>The full scheduler command surface belongs here: global lifecycle actions, delayed start, shutdown, clear, cluster metadata, nodes, currently executing jobs, and safety warnings for destructive operations.</p></div>
+            <div class="toolbar"><span class="chip running">RUNNING</span><button class="btn">Refresh Metadata</button></div>
+          </div>
+          <div class="dashboard-grid">
+            <section class="card span-12">
+              <div class="card-header"><h2 class="card-title">Lifecycle Controls</h2><span class="caption">Global actions affect all jobs, triggers, calendars, and running executions</span></div>
+              <div class="card-body command-panel">
+                <div class="command-row"><button class="btn primary">Start</button><button class="btn">Delayed Start 60s</button><button class="btn">Standby</button><button class="btn">Resume All</button><button class="btn">Pause All</button><button class="btn danger">Shutdown</button><button class="btn danger">Clear Scheduler</button></div>
+                <div class="warning-box"><strong>Strong confirmation required</strong><span>Shutdown stops the scheduler instance. Clear removes all scheduling data from the scheduler. Both actions should require typed confirmation and role checks.</span></div>
+              </div>
+            </section>
+            <section class="card span-8">
+              <div class="card-header"><h2 class="card-title">Scheduler Metadata</h2><span class="chip accent">JDBC JOB STORE</span></div>
+              <div class="card-body summary-grid">
+                <div class="field"><label>Scheduler name</label><strong>quartz-manager-scheduler</strong></div>
+                <div class="field"><label>Instance ID</label><strong>node-a7f3</strong></div>
+                <div class="field"><label>Quartz version</label><strong>2.3.2</strong></div>
+                <div class="field"><label>Started</label><strong>2026-05-11 08:14:03</strong></div>
+                <div class="field"><label>Thread pool class</label><strong>SimpleThreadPool</strong></div>
+                <div class="field"><label>Thread count</label><strong>12</strong></div>
+                <div class="field"><label>Job store class</label><strong>JobStoreTX</strong></div>
+                <div class="field"><label>Clustered</label><strong>true</strong></div>
+              </div>
+            </section>
+            <section class="card span-4">
+              <div class="card-header"><h2 class="card-title">Cluster Nodes</h2><span class="chip normal">2 ACTIVE</span></div>
+              <div class="card-body node-list">
+                <div class="node-row"><div><strong class="mono">node-a7f3</strong><div class="caption">last check-in 2s ago / 8 active threads</div></div><span class="chip running">LOCAL</span></div>
+                <div class="node-row"><div><strong class="mono">node-b912</strong><div class="caption">last check-in 4s ago / 4 active threads</div></div><span class="chip normal">REMOTE</span></div>
+                <div class="node-row"><div><strong class="mono">node-c401</strong><div class="caption">last check-in 19m ago / stale</div></div><span class="chip warn">STALE</span></div>
+              </div>
+            </section>
+            <section class="card span-12">
+              <div class="card-header"><h2 class="card-title">Global State Overview</h2><div class="toolbar"><span class="chip blocked">3 EXECUTING</span><span class="chip warn">4 PAUSED GROUPS</span><span class="chip error">1 ERROR TRIGGER</span></div></div>
+              <div class="table-wrap">
+                <table>
+                  <thead><tr><th>Area</th><th>Current state</th><th>Count</th><th>Representative key</th><th>Recommended action</th></tr></thead>
+                  <tbody>
+                    <tr><td>Executing jobs</td><td><span class="chip blocked">RUNNING</span></td><td class="mono">3</td><td class="mono">InvoiceSyncJob</td><td>Open Executions before interrupting anything.</td></tr>
+                    <tr><td>Paused groups</td><td><span class="chip paused">PAUSED</span></td><td class="mono">4</td><td class="mono">maintenance</td><td>Resume group only after maintenance window closes.</td></tr>
+                    <tr><td>Error triggers</td><td><span class="chip error">ERROR</span></td><td class="mono">1</td><td class="mono">erp-retry-window</td><td>Resolve root cause, then reset from Triggers page.</td></tr>
+                    <tr><td>Misfires</td><td><span class="chip warn">MISFIRE</span></td><td class="mono">5 / hour</td><td class="mono">daily-ledger-close</td><td>Review thread pool saturation and misfire policy.</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </section>
+          </div>
+        </div>
+      </section>
+    </main>
+    <aside class="wizard" aria-label="Trigger creation wizard">
+      <div class="wizard-header"><h2>Create Trigger</h2><div class="caption">Wizard keeps Quartz precision while removing raw-form friction.</div></div>
+      <div class="stepper">
+        <div class="step done"><span></span><span>Identity</span></div>
+        <div class="step active"><span></span><span>Type</span></div>
+        <div class="step"><span></span><span>Schedule</span></div>
+        <div class="step"><span></span><span>Advanced</span></div>
+        <div class="step"><span></span><span>Preview</span></div>
+      </div>
+      <div class="wizard-scroll">
+        <section class="form-card">
+          <h3>Identity</h3>
+          <div class="form-section">
+            <div class="control"><label>Trigger key</label><div class="input-row"><input class="input" value="invoice-sync-5m"><input class="input mono" value="billing"></div><div class="help">Use Quartz key naming directly: name + group. Grouping becomes important once jobs and triggers scale.</div></div>
+            <div class="control"><label>Target job</label><select class="select"><option>billing.InvoiceSyncJob</option></select><div class="help">Jobs are first-class objects. Pick an existing job or create one from the Jobs page.</div></div>
+          </div>
+        </section>
+        <section class="form-card">
+          <h3>Trigger Type</h3>
+          <div class="form-section">
+            <div class="radio-grid">
+              <div class="type-option active"><strong>Simple</strong><span class="help">Repeat every fixed interval.</span></div>
+              <div class="type-option"><strong>Cron</strong><span class="help">Calendar expression builder.</span></div>
+              <div class="type-option"><strong>Daily Time</strong><span class="help">Run in a daily time window.</span></div>
+              <div class="type-option"><strong>Calendar Interval</strong><span class="help">Every N days, weeks, months.</span></div>
+            </div>
+          </div>
+        </section>
+        <section class="form-card">
+          <h3>Schedule Editor</h3>
+          <div class="form-section">
+            <div class="control"><label>Start</label><input class="input mono" value="2026-05-11 09:45:00 Europe/Rome"></div>
+            <div class="control"><label>Repeat interval</label><div class="input-row"><input class="input mono" value="5"><select class="select"><option>minutes</option><option>seconds</option><option>hours</option><option>days</option></select></div><div class="help">No raw milliseconds. Persist as Quartz repeatInterval, but edit in operational units.</div></div>
+            <div class="control"><label>Repeat count</label><select class="select"><option>Repeat indefinitely</option><option>Run 10 times</option><option>Run once</option></select></div>
+          </div>
+        </section>
+        <section class="form-card">
+          <h3>Advanced</h3>
+          <div class="form-section">
+            <div class="control"><label>Misfire policy</label><select class="select"><option>MISFIRE_INSTRUCTION_FIRE_NOW</option><option>RESCHEDULE_NOW_WITH_EXISTING_REPEAT_COUNT</option><option>RESCHEDULE_NEXT_WITH_REMAINING_COUNT</option></select><div class="help">If a fire is missed, run once immediately, then keep the original five-minute cadence.</div></div>
+            <div class="input-row"><div class="control"><label>Priority</label><input class="input mono" value="5"></div><div class="control"><label>Calendar</label><select class="select"><option>business-days</option><option>none</option></select></div></div>
+            <div class="control"><label>Job data map override</label><textarea class="textarea mono">{ "tenant": "eu-west", "batchSize": 200 }</textarea></div>
+          </div>
+        </section>
+        <section class="preview">
+          <h4>Plain-language summary</h4>
+          <div>Run <strong>billing.InvoiceSyncJob</strong> every <strong>5 minutes</strong>, starting today at <strong>09:45 Europe/Rome</strong>, excluding non-business days, and fire once immediately if a misfire occurs.</div>
+          <div class="fire-list">
+            <span>1. 2026-05-11 09:45:00 Europe/Rome</span>
+            <span>2. 2026-05-11 09:50:00 Europe/Rome</span>
+            <span>3. 2026-05-11 09:55:00 Europe/Rome</span>
+            <span>4. 2026-05-11 10:00:00 Europe/Rome</span>
+            <span>5. 2026-05-11 10:05:00 Europe/Rome</span>
+          </div>
+        </section>
+        <div class="warning-box"><strong>Confirmation required before create</strong><span>This trigger will be attached to a durable job and may execute immediately if the start time is in the past.</span></div>
+      </div>
+      <div class="wizard-footer"><button class="btn">Back</button><button class="btn primary">Review & Create</button></div>
+    </aside>
+  </div>
+  <script>
+    const appShell = document.querySelector('#app-shell');
+    const pages = [...document.querySelectorAll('.page')];
+    const navButtons = [...document.querySelectorAll('.nav button[data-page]')];
+
+    navButtons.forEach((button) => {
+      button.addEventListener('click', () => {
+        const pageName = button.dataset.page;
+        navButtons.forEach((item) => {
+          item.classList.toggle('active', item === button);
+          item.toggleAttribute('aria-current', item === button);
+        });
+        pages.forEach((page) => {
+          const active = page.id === `${pageName}-page`;
+          page.classList.toggle('active', active);
+        });
+        if (appShell) appShell.classList.toggle('object-mode', pageName !== 'dashboard');
+      });
+    });
+
+    document.querySelectorAll('[data-jump-page]').forEach((button) => {
+      button.addEventListener('click', () => {
+        const target = button.dataset.jumpPage;
+        document.querySelector(`.nav button[data-page="${target}"]`)?.click();
+      });
+    });
+  </script>
+</body>
+</html>

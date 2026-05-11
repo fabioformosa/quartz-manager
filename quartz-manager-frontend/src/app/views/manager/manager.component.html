@@ -1,48 +1,353 @@
-<div id="managerViewContainer" class="flex flex-column flex-1 gap-6 h-100">
-  <div id="schedulerBarContainer">
-    <qrzmng-scheduler-control></qrzmng-scheduler-control>
-  </div>
-
-  <div id="manager-content-container" class="flex flex-row flex-1 gap-6">
-    <div class="flex-1" style="max-width: 250px">
-      <div class="flex h-100">
-        <qrzmng-trigger-list
-          (onNewTriggerClicked)="onNewTriggerRequested()"
-          [openedNewTriggerForm]="newTriggerFormOpened"
-          (onSelectedTrigger)="setSelectedTrigger($event)"
-          class="h-100 w-100"></qrzmng-trigger-list>
+<div class="qm-app" [class.object-mode]="activePage !== 'dashboard'" (click)="handleConsoleClick($event)">
+  <aside class="rail" aria-label="Primary navigation">
+    <div class="brand">
+      <div class="brand-mark">QM</div>
+      <div>
+        <div class="brand-title">Quartz Manager</div>
+        <div class="brand-subtitle">Operations Console</div>
       </div>
     </div>
 
-    <div class="flex-1" style="max-width: 350px">
-      <div class="flex h-100">
-        <div class="flex flex-column h-100 w-100">
-          <qrzmng-simple-trigger-config
-            class="h-100 w-100"
-            [triggerKey]="selectedTriggerKey"
-            (triggerFormOpenChange)="setNewTriggerFormOpened($event)"
-            (onTriggerSubmitting)="monitorTrigger($event)"
-            (onNewTrigger)="onNewTriggerCreated($event)">
-          </qrzmng-simple-trigger-config>
-        </div>
-      </div>
-    </div>
+    <nav class="nav">
+      <button type="button" [class.active]="activePage === 'dashboard'" [attr.aria-current]="activePage === 'dashboard' ? 'page' : null" (click)="selectPage('dashboard')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 13h8V3H3v10Zm10 8h8V3h-8v18ZM3 21h8v-6H3v6Z"/></svg><span>Dashboard</span>
+      </button>
+      <button type="button" [class.active]="activePage === 'jobs'" [attr.aria-current]="activePage === 'jobs' ? 'page' : null" (click)="selectPage('jobs')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M7 8h10M7 12h10M7 16h6"/><rect x="4" y="4" width="16" height="16" rx="2"/></svg><span>Jobs</span>
+      </button>
+      <button type="button" [class.active]="activePage === 'triggers'" [attr.aria-current]="activePage === 'triggers' ? 'page' : null" (click)="selectPage('triggers')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 6v6l4 2"/><circle cx="12" cy="12" r="9"/></svg><span>Triggers</span>
+      </button>
+      <button type="button" [class.active]="activePage === 'calendars'" [attr.aria-current]="activePage === 'calendars' ? 'page' : null" (click)="selectPage('calendars')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M7 3v4M17 3v4M4 9h16M5 5h14v15H5z"/></svg><span>Calendars</span>
+      </button>
+      <button type="button" [class.active]="activePage === 'executions'" [attr.aria-current]="activePage === 'executions' ? 'page' : null" (click)="selectPage('executions')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 17h16M7 17V7m5 10V4m5 13v-6"/></svg><span>Executions</span>
+      </button>
+      <button type="button" [class.active]="activePage === 'events'" [attr.aria-current]="activePage === 'events' ? 'page' : null" (click)="selectPage('events')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 7h16M4 12h16M4 17h10"/></svg><span>Event Stream</span>
+      </button>
+      <button type="button" [class.active]="activePage === 'scheduler'" [attr.aria-current]="activePage === 'scheduler' ? 'page' : null" (click)="selectPage('scheduler')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 15.5A3.5 3.5 0 1 0 12 8a3.5 3.5 0 0 0 0 7.5Z"/><path d="m19.4 15 .6 2-1.7 3-2.1-.5a8.3 8.3 0 0 1-2 1.1L13.5 23h-3l-.7-2.4a8.3 8.3 0 0 1-2-1.1l-2.1.5-1.7-3 .6-2a8.9 8.9 0 0 1 0-2.1l-.6-2 1.7-3 2.1.5a8.3 8.3 0 0 1 2-1.1l.7-2.4h3l.7 2.4a8.3 8.3 0 0 1 2 1.1l2.1-.5 1.7 3-.6 2a8.9 8.9 0 0 1 0 2.1Z"/></svg><span>Scheduler</span>
+      </button>
+    </nav>
 
-    <div class="flex-1">
-        <div class="h-100 min-h-100 flex flex-column gap-6">
-          <div class="flex flex-column" >
-            <progress-panel class="flex-1"
-              [triggerKey]=monitoredTriggerKey
-            >
-            </progress-panel>
-          </div>
-          <div class="flex flex-column flex-1" style="max-height: calc(100% - 136px); min-height: calc(100% - 210px);">
-            <logs-panel  class="flex flex-1 h-100 max-h-100"
-                         [triggerKey]=monitoredTriggerKey
-            >
-            </logs-panel>
-          </div>
+    <div class="rail-card">
+      <h3>Live channel</h3>
+      <div class="connection"><span>WebSocket</span><span class="chip success">OPEN</span></div>
+    </div>
+  </aside>
+
+  <main class="main">
+    <header class="topbar">
+      <div class="scheduler-meta">
+        <div class="scheduler-title">
+          <h1>Quartz Operations Console</h1>
+          <div class="caption">{{ scheduler?.name || 'quartz-manager-scheduler' }} / compact context</div>
+        </div>
+        <span class="chip" [ngClass]="getSchedulerStatusClass()">{{ scheduler?.status || 'LOADING' }}</span>
+        <div class="kv"><span>Instance ID</span><span>{{ scheduler?.instanceId || '-' }}</span></div>
+        <button type="button" class="kv kv-button" data-roadmap="Cluster metadata is not exposed by the current backend"><span>Cluster</span><span>Roadmap</span></button>
+        <div class="kv"><span>WebSocket</span><span>OPEN</span></div>
+      </div>
+      <div class="actions compact-actions" aria-label="Compact scheduler status actions">
+        <button type="button" class="btn compact" (click)="toggleStandby()">{{ scheduler?.status === 'PAUSED' ? 'Resume' : 'Standby' }}</button>
+        <button type="button" class="btn compact" (click)="jumpToScheduler()">Scheduler</button>
+      </div>
+    </header>
+
+    <section class="content">
+      <div class="page" [class.active]="activePage === 'dashboard'">
+        <div class="dashboard-grid">
+          <section class="card span-12">
+            <div class="card-header"><h2 class="card-title">Scheduler Command Center</h2><span class="caption">Supported lifecycle commands call the current backend</span></div>
+            <div class="card-body scheduler-command-grid">
+              <div class="command-panel">
+                <div class="command-row" aria-label="Dashboard scheduler actions">
+                  <button type="button" class="btn primary" (click)="startScheduler()">Start</button>
+                  <button type="button" class="btn" (click)="standbyScheduler()">Standby</button>
+                  <button type="button" class="btn" (click)="resumeScheduler()">Resume</button>
+                  <button type="button" class="btn" data-roadmap="Pause all trigger groups is not available in the current backend">Pause All</button>
+                  <button type="button" class="btn danger" data-roadmap="Clear scheduler is not available in the current backend">Clear</button>
+                  <button type="button" class="btn danger" (click)="shutdownScheduler()">Shutdown</button>
+                </div>
+                <div class="help">Global lifecycle operations are centralized here. Group-level and destructive data operations stay visible as roadmap actions until backend endpoints exist.</div>
+              </div>
+              <div class="metadata-grid">
+                <div class="field"><label>Scheduler name</label><strong>{{ scheduler?.name || '-' }}</strong></div>
+                <div class="field"><label>Instance ID</label><strong>{{ scheduler?.instanceId || '-' }}</strong></div>
+                <div class="field"><label>Status</label><strong>{{ scheduler?.status || '-' }}</strong></div>
+                <div class="field"><label>Triggers</label><strong>{{ triggerKeys.length }}</strong></div>
+                <div class="field"><label>Eligible jobs</label><strong>{{ jobs.length }}</strong></div>
+                <button type="button" class="field field-button" data-roadmap="Quartz version and job-store metadata are not exposed by the current backend"><label>Quartz metadata</label><strong>Roadmap</strong></button>
+              </div>
+            </div>
+          </section>
+
+          <article class="card span-3"><div class="card-body metric"><span class="chip running">TRIGGERS</span><div class="metric-value">{{ triggerKeys.length }}</div><div class="metric-label">Trigger keys returned by backend</div><div class="metric-line"><span style="--w: 64%"></span></div></div></article>
+          <article class="card span-3"><div class="card-body metric"><span class="chip blocked">JOBS</span><div class="metric-value">{{ jobs.length }}</div><div class="metric-label">Eligible job classes</div><div class="metric-line"><span style="--w: 48%"></span></div></div></article>
+          <article class="card span-3"><div class="card-body metric"><span class="chip warn">EVENTS</span><div class="metric-value">{{ getExecutionLoadValue() }}</div><div class="metric-label">Logs received for selected trigger</div><div class="metric-line"><span style="--w: 32%"></span></div></div></article>
+          <article class="card span-3"><div class="card-body metric"><span class="chip accent">STATUS</span><div class="metric-value compact-metric">{{ scheduler?.status || '-' }}</div><div class="metric-label">Scheduler lifecycle state</div><div class="metric-line"><span style="--w: 67%"></span></div></div></article>
+
+          <section class="card span-7">
+            <div class="card-header"><h2 class="card-title">Next Scheduled Fires</h2><div class="toolbar"><span class="chip normal">LIVE</span><button type="button" class="btn" (click)="selectPage('triggers')">Open Triggers</button></div></div>
+            <div class="split">
+              <div class="table-wrap">
+                <table>
+                  <thead><tr><th style="width:22%">Trigger</th><th style="width:15%">Group</th><th style="width:18%">Type</th><th style="width:13%">State</th><th style="width:16%">Job</th><th style="width:16%">Next fire</th></tr></thead>
+                  <tbody>
+                    @for (triggerKey of triggerKeys; track triggerKey.name) {
+                      <tr class="selectable" [class.selected]="selectedTriggerKey?.name === triggerKey.name" (click)="selectTrigger(triggerKey)">
+                        <td class="mono">{{ triggerKey.name }}</td>
+                        <td class="mono">{{ getTriggerGroup(triggerKey) }}</td>
+                        <td>{{ getTriggerType(triggerKey) }}</td>
+                        <td><span class="chip" [ngClass]="getTriggerStateClass(triggerKey)">{{ getTriggerState(triggerKey) }}</span></td>
+                        <td class="mono">{{ getTriggerJobName(triggerKey) }}</td>
+                        <td class="mono">{{ getTriggerNextFireLabel(triggerKey) }}</td>
+                      </tr>
+                    } @empty {
+                      <tr><td colspan="6">No triggers returned by the backend. Use the wizard to create a SimpleTrigger.</td></tr>
+                    }
+                  </tbody>
+                </table>
+              </div>
+              <aside class="detail drawer detail-drawer" [class.drawer-open]="detailDrawerOpen && activePage === 'dashboard'" aria-label="Trigger detail drawer">
+                @if (selectedTriggerKey) {
+                  <div class="drawer-title"><div><span class="chip" [ngClass]="getSelectedTriggerStateClass()">{{ getSelectedTriggerState() }}</span><h2>{{ selectedTriggerKey.name }}</h2><div class="caption">{{ getSelectedTriggerGroup() }} / linked to {{ getSelectedJobName() }}</div></div><button type="button" class="drawer-close" (click)="closeDetailDrawer()">Close</button></div>
+                  <div class="tabs"><button type="button" class="tab active">Overview</button><button type="button" class="tab" data-roadmap="Per-trigger execution history is on the roadmap">Executions</button><button type="button" class="tab" (click)="selectPage('events')">Logs</button></div>
+                  <div class="field-grid">
+                    <div class="field"><label>Previous fire</label><strong>{{ selectedTrigger?.timesTriggered ? 'tracked by progress events' : 'not exposed' }}</strong></div>
+                    <div class="field"><label>Next fire</label><strong>{{ formatDateTime(selectedTrigger?.nextFireTime) || '-' }}</strong></div>
+                    <div class="field"><label>Priority</label><strong>{{ selectedTrigger?.priority || '-' }}</strong></div>
+                    <div class="field"><label>Calendar</label><strong>Roadmap</strong></div>
+                    <div class="field"><label>Misfire</label><strong>{{ selectedTrigger?.misfireInstruction || '-' }}</strong></div>
+                    <div class="field"><label>Repeat</label><strong>{{ getSelectedTriggerRepeatSummary() }}</strong></div>
+                  </div>
+                  <div class="progress-card"><div class="caption">Current run progress</div><div class="progress-line"><span [style.width.%]="getProgressPercentage()"></span></div><div class="mono">{{ getProgressLabel() }}</div></div>
+                  <div class="actions"><button type="button" class="btn" data-roadmap="Trigger pause/resume endpoints are not available yet">Pause</button><button type="button" class="btn" (click)="openRescheduleWizard()">Reschedule</button><button type="button" class="btn danger" data-roadmap="Unschedule trigger is on the roadmap">Unschedule</button></div>
+                } @else {
+                  <div class="drawer-title"><div><span class="chip warn">EMPTY</span><h2>No trigger selected</h2><div class="caption">Create a SimpleTrigger or refresh trigger keys.</div></div><button type="button" class="drawer-close" (click)="closeDetailDrawer()">Close</button></div>
+                }
+              </aside>
+            </div>
+          </section>
+
+          <section class="card span-5">
+            <div class="card-header"><h2 class="card-title">Execution Load</h2><span class="caption">Analytics roadmap preview</span></div>
+            <div class="card-body">
+              <div class="mini-chart" data-roadmap="Execution analytics are not exposed by the current backend" aria-label="Execution load chart">
+                <span class="bar" style="--h:34%"></span><span class="bar" style="--h:42%"></span><span class="bar" style="--h:28%"></span><span class="bar" style="--h:62%"></span><span class="bar warn" style="--h:52%"></span><span class="bar" style="--h:38%"></span><span class="bar" style="--h:55%"></span><span class="bar" style="--h:72%"></span><span class="bar error" style="--h:44%"></span><span class="bar" style="--h:67%"></span><span class="bar" style="--h:46%"></span><span class="bar" style="--h:58%"></span><span class="bar warn" style="--h:81%"></span><span class="bar" style="--h:64%"></span><span class="bar" style="--h:35%"></span><span class="bar" style="--h:50%"></span><span class="bar" style="--h:70%"></span><span class="bar" style="--h:40%"></span>
+              </div>
+              <div class="field-grid top-space">
+                <div class="field"><label>Logs received</label><strong>{{ logs.length }}</strong></div>
+                <div class="field"><label>Current progress</label><strong>{{ getProgressPercentage() }}%</strong></div>
+                <button type="button" class="field field-button" data-roadmap="Misfire analytics are on the roadmap"><label>Misfires</label><strong>Roadmap</strong></button>
+                <button type="button" class="field field-button" data-roadmap="Recovering jobs endpoint is on the roadmap"><label>Recovering jobs</label><strong>Roadmap</strong></button>
+              </div>
+            </div>
+          </section>
+
+          <section class="card span-12">
+            <div class="card-header"><h2 class="card-title">Event Stream</h2><div class="toolbar"><input class="search" value="Filter: selected trigger logs" data-roadmap="Event stream filtering is on the roadmap"><span class="chip normal">STREAMING</span><button type="button" class="btn" data-roadmap="Pausing the merged event stream is on the roadmap">Pause</button><button type="button" class="btn" data-roadmap="Event export is on the roadmap">Export</button></div></div>
+            <div class="stream">
+              <div class="stream-row"><span>Time</span><span>Severity</span><span>Type</span><span>Source</span><span>Message</span></div>
+              @for (log of logs; track log.time) {
+                <div class="stream-row"><span class="mono">{{ log.time | date:'HH:mm:ss' }}</span><span class="chip" [ngClass]="log.severity === 'ERROR' ? 'danger' : log.severity === 'WARN' ? 'warn' : 'success'">{{ log.severity }}</span><span>{{ log.type }}</span><span class="mono">{{ log.source }}</span><span>{{ log.message }}</span></div>
+              } @empty {
+                <div class="stream-row muted-row"><span class="mono">--</span><span class="chip warn">WAIT</span><span>JOB_LOG</span><span class="mono">{{ selectedTriggerKey?.name || '-' }}</span><span>Waiting for log messages from the selected trigger.</span></div>
+              }
+            </div>
+          </section>
         </div>
       </div>
-  </div>
+
+      <div class="page" [class.active]="activePage === 'jobs'">
+        <div class="page-kicker">
+          <div><h2>Jobs</h2><p>The current backend exposes eligible Quartz Manager job classes. Full job registry metadata, CRUD, durability, recovery, and group operations remain roadmap features.</p></div>
+          <div class="toolbar"><input class="search" value="Filter jobs, groups, classes" data-roadmap="Job filtering is on the roadmap"><button type="button" class="btn primary" data-roadmap="Creating jobs from the UI is on the roadmap">New Job</button></div>
+        </div>
+        <section class="card">
+          <div class="card-header"><h2 class="card-title">Eligible Job Classes</h2><div class="toolbar"><span class="chip normal">{{ jobs.length }} JOBS</span><button type="button" class="btn" data-roadmap="Pause job group is on the roadmap">Pause Group</button><button type="button" class="btn" data-roadmap="Job export is on the roadmap">Export</button></div></div>
+          <div class="split">
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th style="width:22%">Job key</th><th style="width:48%">Class</th><th style="width:10%">Durable</th><th style="width:10%">Recovery</th><th style="width:10%">Triggers</th></tr></thead>
+                <tbody>
+                  @for (jobClass of getJobClassRows(); track jobClass) {
+                    <tr class="selectable" [class.selected]="selectedJobClass === jobClass" (click)="selectJob(jobClass)"><td class="mono">{{ shortClassName(jobClass) }}</td><td class="mono">{{ jobClass }}</td><td><span class="chip warn">Roadmap</span></td><td><span class="chip warn">Roadmap</span></td><td class="mono">Roadmap</td></tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+            <aside class="detail drawer detail-drawer" [class.drawer-open]="detailDrawerOpen && activePage === 'jobs'" aria-label="Job detail drawer">
+              <div class="drawer-title"><div><span class="chip normal">ELIGIBLE</span><h2>{{ getSelectedJobShortName() }}</h2><div class="caption">{{ selectedJobClass || 'Select a job class' }}</div></div><button type="button" class="drawer-close" (click)="closeDetailDrawer()">Close</button></div>
+              <div class="tabs"><button type="button" class="tab active">Overview</button><button type="button" class="tab" data-roadmap="Job trigger relationships are on the roadmap">Triggers</button><button type="button" class="tab" data-roadmap="JobDataMap editing is on the roadmap">Data Map</button><button type="button" class="tab" data-roadmap="Job execution history is on the roadmap">Executions</button></div>
+              <div class="field-grid">
+                <div class="field"><label>Class</label><strong>{{ getSelectedJobShortName() }}</strong></div>
+                <button type="button" class="field field-button" data-roadmap="Job key/group metadata is on the roadmap"><label>Group</label><strong>Roadmap</strong></button>
+                <button type="button" class="field field-button" data-roadmap="Durability metadata is on the roadmap"><label>Durable</label><strong>Roadmap</strong></button>
+                <button type="button" class="field field-button" data-roadmap="Recovery metadata is on the roadmap"><label>Requests recovery</label><strong>Roadmap</strong></button>
+              </div>
+              <pre class="code-block">Backend contract
+GET /quartz-manager/jobs
+Returns eligible Java job class names.</pre>
+              <div class="actions"><button type="button" class="btn primary" data-roadmap="Manual trigger-now by job key is on the roadmap">Trigger Now</button><button type="button" class="btn" data-roadmap="Pause job is on the roadmap">Pause</button><button type="button" class="btn" (click)="openCreateTriggerWizard(); triggerDraft.jobClass = selectedJobClass">Create SimpleTrigger</button></div>
+              <div class="danger-zone"><strong>Danger zone</strong><span class="help">Interrupt and delete need backend support and explicit confirmation.</span><div class="actions"><button type="button" class="btn danger" data-roadmap="Job interruption is on the roadmap">Interrupt</button><button type="button" class="btn danger" data-roadmap="Job deletion is on the roadmap">Delete Job</button></div></div>
+            </aside>
+          </div>
+        </section>
+      </div>
+
+      <div class="page" [class.active]="activePage === 'triggers'">
+        <div class="page-kicker">
+          <div><h2>Triggers</h2><p>The backend currently supports SimpleTrigger listing, details, creation, and rescheduling. Other trigger families and per-trigger operations are shown with roadmap messaging.</p></div>
+          <div class="toolbar"><input class="search" value="Filter triggers, jobs, groups" data-roadmap="Trigger filtering is on the roadmap"><button type="button" class="btn primary" (click)="openCreateTriggerWizard()">Create Trigger</button></div>
+        </div>
+        <section class="card">
+          <div class="card-header"><h2 class="card-title">Trigger Inventory</h2><div class="toolbar"><span class="chip normal">{{ triggerKeys.length }} TOTAL</span><span class="chip warn" data-roadmap="Trigger state counts are on the roadmap">STATE COUNTS ROADMAP</span></div></div>
+          <div class="split">
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th style="width:18%">Trigger</th><th style="width:12%">Group</th><th style="width:15%">Type</th><th style="width:12%">State</th><th style="width:18%">Job</th><th style="width:15%">Next fire</th><th style="width:10%">Misfire</th></tr></thead>
+                <tbody>
+                  @for (triggerKey of triggerKeys; track triggerKey.name) {
+                    <tr class="selectable" [class.selected]="selectedTriggerKey?.name === triggerKey.name" (click)="selectTrigger(triggerKey)"><td class="mono">{{ triggerKey.name }}</td><td class="mono">{{ getTriggerGroup(triggerKey) }}</td><td>{{ getTriggerType(triggerKey) }}</td><td><span class="chip" [ngClass]="getTriggerStateClass(triggerKey)">{{ getTriggerState(triggerKey) }}</span></td><td class="mono">{{ getTriggerJobName(triggerKey) }}</td><td class="mono">{{ getTriggerNextFireLabel(triggerKey) }}</td><td class="mono">{{ getTriggerDetail(triggerKey)?.misfireInstruction || '-' }}</td></tr>
+                  } @empty {
+                    <tr><td colspan="7">No triggers returned by the backend.</td></tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+            <aside class="detail drawer detail-drawer" [class.drawer-open]="detailDrawerOpen && activePage === 'triggers'" aria-label="Trigger detail drawer">
+              <div class="drawer-title"><div><span class="chip" [ngClass]="getSelectedTriggerStateClass()">{{ getSelectedTriggerState() }}</span><h2>{{ selectedTriggerKey?.name || 'No trigger' }}</h2><div class="caption">SimpleTrigger / {{ getSelectedTriggerGroup() }}</div></div><button type="button" class="drawer-close" (click)="closeDetailDrawer()">Close</button></div>
+              <div class="tabs"><button type="button" class="tab active">Overview</button><button type="button" class="tab">Schedule</button><button type="button" class="tab" data-roadmap="Quartz calendars are on the roadmap">Calendar</button><button type="button" class="tab" data-roadmap="Trigger execution history is on the roadmap">Executions</button></div>
+              <div class="field-grid">
+                <div class="field"><label>Linked job</label><strong>{{ getSelectedJobName() }}</strong></div>
+                <div class="field"><label>Priority</label><strong>{{ selectedTrigger?.priority || '-' }}</strong></div>
+                <div class="field"><label>Final fire</label><strong>{{ formatDateTime(selectedTrigger?.finalFireTime) || 'none' }}</strong></div>
+                <button type="button" class="field field-button" data-roadmap="Timezone metadata is on the roadmap"><label>Timezone</label><strong>Roadmap</strong></button>
+                <div class="field"><label>Repeat interval</label><strong>{{ selectedTrigger?.repeatInterval ? formatDuration(selectedTrigger.repeatInterval) : '-' }}</strong></div>
+                <button type="button" class="field field-button" data-roadmap="Calendar attachment is on the roadmap"><label>Calendar</label><strong>Roadmap</strong></button>
+              </div>
+              <section class="preview"><h4>Schedule summary</h4><div>{{ getSelectedTriggerRepeatSummary() }}. Next fire: {{ formatDateTime(selectedTrigger?.nextFireTime) || 'not available' }}.</div></section>
+              <div class="actions"><button type="button" class="btn" data-roadmap="Trigger pause endpoint is on the roadmap">Pause</button><button type="button" class="btn" (click)="openRescheduleWizard()">Reschedule</button><button type="button" class="btn" data-roadmap="Trigger duplication is on the roadmap">Duplicate</button></div>
+              <div class="danger-zone"><strong>Danger zone</strong><span class="help">Unschedule and reset-error require backend endpoints that are still on the roadmap.</span><div class="actions"><button type="button" class="btn danger" data-roadmap="Unschedule trigger is on the roadmap">Unschedule</button><button type="button" class="btn danger" data-roadmap="Reset error trigger is on the roadmap">Reset Error</button></div></div>
+            </aside>
+          </div>
+        </section>
+      </div>
+
+      <div class="page" [class.active]="activePage === 'calendars'">
+        <div class="page-kicker">
+          <div><h2>Calendars</h2><p>Quartz calendar registry, rule editing, trigger usage, and next included time testing are not exposed by the backend yet.</p></div>
+          <div class="toolbar"><input class="search" value="Filter calendars" data-roadmap="Calendar filtering is on the roadmap"><button type="button" class="btn primary" data-roadmap="Calendar creation is on the roadmap">New Calendar</button></div>
+        </div>
+        <section class="card roadmap-card" data-roadmap="Quartz calendar management is on the roadmap">
+          <div class="card-header"><h2 class="card-title">Calendar Registry</h2><span class="chip warn">ROADMAP</span></div>
+          <div class="card-body two-column compact-roadmap">
+            <div>
+              <p class="roadmap-copy">This UI is ready for WeeklyCalendar, HolidayCalendar, MonthlyCalendar, DailyCalendar, and CronCalendar once the API surface is added.</p>
+              <div class="calendar-grid" aria-label="Calendar exclusion preview"><div class="calendar-cell">Mon</div><div class="calendar-cell">Tue</div><div class="calendar-cell">Wed</div><div class="calendar-cell">Thu</div><div class="calendar-cell">Fri</div><div class="calendar-cell excluded">Sat</div><div class="calendar-cell excluded">Sun</div></div>
+            </div>
+            <aside class="filter-panel"><h3>Planned backend</h3><div class="help">List calendars, inspect calendar type/base calendar, attach calendars to triggers, test included time, and edit exclusion rules.</div><button type="button" class="btn" data-roadmap="Calendar trigger usage is on the roadmap">Show Triggers</button><button type="button" class="btn danger" data-roadmap="Calendar deletion is on the roadmap">Delete Calendar</button></aside>
+          </div>
+        </section>
+      </div>
+
+      <div class="page" [class.active]="activePage === 'executions'">
+        <div class="page-kicker">
+          <div><h2>Executions</h2><p>Currently executing jobs, fire instance IDs, refire counts, execution history, and interruption by fire instance are roadmap backend features.</p></div>
+          <div class="toolbar"><input class="search" value="Filter running jobs" data-roadmap="Execution filtering is on the roadmap"><button type="button" class="btn" data-roadmap="Execution refresh endpoint is on the roadmap">Refresh</button></div>
+        </div>
+        <section class="card roadmap-card" data-roadmap="Currently executing jobs endpoint is on the roadmap">
+          <div class="card-header"><h2 class="card-title">Currently Executing Jobs</h2><div class="toolbar"><span class="chip warn">ROADMAP</span></div></div>
+          <div class="split">
+            <div class="table-wrap"><table><thead><tr><th>Fire instance</th><th>Job</th><th>Trigger</th><th>Run time</th><th>Node</th></tr></thead><tbody><tr class="selectable" (click)="openDetailDrawer()"><td class="mono">Roadmap</td><td class="mono">{{ getSelectedJobName() }}</td><td class="mono">{{ selectedTriggerKey?.name || '-' }}</td><td class="mono">Roadmap</td><td class="mono">Roadmap</td></tr></tbody></table></div>
+            <aside class="detail drawer detail-drawer" [class.drawer-open]="detailDrawerOpen && activePage === 'executions'" aria-label="Execution detail drawer"><div class="drawer-title"><div><span class="chip warn">ROADMAP</span><h2>Execution Inspector</h2><div class="caption">Live progress remains available through the selected trigger websocket.</div></div><button type="button" class="drawer-close" (click)="closeDetailDrawer()">Close</button></div><div class="progress-card"><div class="caption">Selected trigger progress</div><div class="progress-line"><span [style.width.%]="getProgressPercentage()"></span></div><div class="mono">{{ getProgressLabel() }}</div></div><div class="warning-box"><strong>Interrupt confirmation</strong><span>Interrupt operations need backend support and explicit operator confirmation.</span></div><div class="actions"><button type="button" class="btn danger" data-roadmap="Interrupt by fire instance is on the roadmap">Interrupt Fire Instance</button><button type="button" class="btn danger" data-roadmap="Interrupt by job key is on the roadmap">Interrupt Job Key</button></div></aside>
+          </div>
+        </section>
+      </div>
+
+      <div class="page" [class.active]="activePage === 'events'">
+        <div class="page-kicker">
+          <div><h2>Event Stream</h2><p>The current backend exposes per-trigger log and progress websocket topics. Global event aggregation, filters, saved views, and export are roadmap features.</p></div>
+          <div class="toolbar"><input class="search" value="Search messages, job keys, fire ids" data-roadmap="Event searching is on the roadmap"><button type="button" class="btn" data-roadmap="Pause global stream is on the roadmap">Pause Stream</button><button type="button" class="btn" data-roadmap="Export CSV is on the roadmap">Export CSV</button></div>
+        </div>
+        <div class="two-column">
+          <section class="card">
+            <div class="card-header"><h2 class="card-title">Live Events</h2><div class="toolbar"><span class="chip normal">TRIGGER STREAM</span><span class="chip accent">{{ logs.length }} EVENTS</span></div></div>
+            <div class="stream tall-stream">
+              <div class="stream-row"><span>Time</span><span>Severity</span><span>Type</span><span>Source</span><span>Message</span></div>
+              @for (log of logs; track log.time) {
+                <div class="stream-row"><span class="mono">{{ log.time | date:'HH:mm:ss' }}</span><span class="chip" [ngClass]="log.severity === 'ERROR' ? 'danger' : log.severity === 'WARN' ? 'warn' : 'success'">{{ log.severity }}</span><span>{{ log.type }}</span><span class="mono">{{ log.source }}</span><span>{{ log.message }}</span></div>
+              } @empty {
+                <div class="stream-row muted-row"><span class="mono">--</span><span class="chip warn">WAIT</span><span>JOB_LOG</span><span class="mono">{{ selectedTriggerKey?.name || '-' }}</span><span>Select or fire a trigger to receive backend log messages.</span></div>
+              }
+            </div>
+          </section>
+          <aside class="filter-panel">
+            <h3>Filters</h3>
+            <div class="control"><label>Severity</label><select class="select" data-roadmap="Severity filtering is on the roadmap"><option>INFO, WARN, ERROR</option></select></div>
+            <div class="control"><label>Event type</label><select class="select" data-roadmap="Event type filtering is on the roadmap"><option>All event types</option></select></div>
+            <div class="control"><label>Job / trigger / group</label><input class="input" [value]="selectedTriggerKey?.name || ''" data-roadmap="Event text filtering is on the roadmap"></div>
+            <section class="preview"><h4>Supported now</h4><div>Per-trigger logs and progress through existing websocket topics.</div></section>
+          </aside>
+        </div>
+      </div>
+
+      <div class="page" [class.active]="activePage === 'scheduler'">
+        <div class="page-kicker">
+          <div><h2>Scheduler / Settings</h2><p>Supported lifecycle actions are wired to the backend. Cluster metadata, clear, delayed start, and state analytics are roadmap-gated.</p></div>
+          <div class="toolbar"><span class="chip" [ngClass]="getSchedulerStatusClass()">{{ scheduler?.status || 'LOADING' }}</span><button type="button" class="btn" (click)="refreshScheduler()">Refresh Metadata</button></div>
+        </div>
+        <div class="dashboard-grid">
+          <section class="card span-12">
+            <div class="card-header"><h2 class="card-title">Lifecycle Controls</h2><span class="caption">Global actions affect the scheduler instance</span></div>
+            <div class="card-body command-panel"><div class="command-row"><button type="button" class="btn primary" (click)="startScheduler()">Start</button><button type="button" class="btn" data-roadmap="Delayed start is on the roadmap">Delayed Start 60s</button><button type="button" class="btn" (click)="standbyScheduler()">Standby</button><button type="button" class="btn" (click)="resumeScheduler()">Resume</button><button type="button" class="btn" data-roadmap="Pause all trigger groups is on the roadmap">Pause All</button><button type="button" class="btn danger" (click)="shutdownScheduler()">Shutdown</button><button type="button" class="btn danger" data-roadmap="Clear scheduler is on the roadmap">Clear Scheduler</button></div><div class="warning-box"><strong>Strong confirmation required</strong><span>Shutdown is supported and prompts before calling the backend. Clear remains roadmap-gated.</span></div></div>
+          </section>
+          <section class="card span-8">
+            <div class="card-header"><h2 class="card-title">Scheduler Metadata</h2><span class="chip accent">CURRENT API</span></div>
+            <div class="card-body summary-grid"><div class="field"><label>Scheduler name</label><strong>{{ scheduler?.name || '-' }}</strong></div><div class="field"><label>Instance ID</label><strong>{{ scheduler?.instanceId || '-' }}</strong></div><div class="field"><label>Status</label><strong>{{ scheduler?.status || '-' }}</strong></div><div class="field"><label>Trigger keys</label><strong>{{ triggerKeys.length }}</strong></div><button type="button" class="field field-button" data-roadmap="Quartz version metadata is on the roadmap"><label>Quartz version</label><strong>Roadmap</strong></button><button type="button" class="field field-button" data-roadmap="Thread pool metadata is on the roadmap"><label>Thread pool</label><strong>Roadmap</strong></button><button type="button" class="field field-button" data-roadmap="Job store metadata is on the roadmap"><label>Job store</label><strong>Roadmap</strong></button><button type="button" class="field field-button" data-roadmap="Cluster mode support is on the roadmap"><label>Clustered</label><strong>Roadmap</strong></button></div>
+          </section>
+          <section class="card span-4">
+            <div class="card-header"><h2 class="card-title">Cluster Nodes</h2><span class="chip warn">ROADMAP</span></div>
+            <div class="card-body node-list" data-roadmap="Cluster node visibility is on the roadmap"><div class="node-row"><div><strong class="mono">{{ scheduler?.instanceId || 'local' }}</strong><div class="caption">local scheduler instance</div></div><span class="chip running">LOCAL</span></div><div class="node-row"><div><strong class="mono">remote nodes</strong><div class="caption">not exposed by backend</div></div><span class="chip warn">ROADMAP</span></div></div>
+          </section>
+          <section class="card span-12">
+            <div class="card-header"><h2 class="card-title">Global State Overview</h2><div class="toolbar"><span class="chip normal">{{ triggerKeys.length }} TRIGGERS</span><span class="chip warn">ANALYTICS ROADMAP</span></div></div>
+            <div class="table-wrap"><table><thead><tr><th>Area</th><th>Current state</th><th>Count</th><th>Representative key</th><th>Recommended action</th></tr></thead><tbody><tr><td>Scheduler</td><td><span class="chip" [ngClass]="getSchedulerStatusClass()">{{ scheduler?.status || '-' }}</span></td><td class="mono">1</td><td class="mono">{{ scheduler?.instanceId || '-' }}</td><td>Use lifecycle controls above.</td></tr><tr><td>Triggers</td><td><span class="chip normal">LISTED</span></td><td class="mono">{{ triggerKeys.length }}</td><td class="mono">{{ selectedTriggerKey?.name || '-' }}</td><td>Open Triggers for details or reschedule SimpleTriggers.</td></tr><tr data-roadmap="Misfire and error trigger analytics are on the roadmap"><td>Misfires / errors</td><td><span class="chip warn">ROADMAP</span></td><td class="mono">Roadmap</td><td class="mono">Roadmap</td><td>Backend analytics needed.</td></tr></tbody></table></div>
+          </section>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  @if (wizardOpen || detailDrawerOpen) {
+    <button type="button" class="drawer-backdrop" aria-label="Close drawer" (click)="closeDrawers()"></button>
+  }
+
+  @if (roadmapNotice || operationNotice || operationError) {
+    <section class="toast-overlay" [class.error]="operationError" [class.success]="operationNotice && !operationError">
+      <div class="toast-kicker">{{ operationError ? 'Action failed' : roadmapNotice ? 'Roadmap reminder' : 'Updated' }}</div>
+      <div class="toast-message">{{ operationError || roadmapNotice || operationNotice }}</div>
+      <button type="button" class="toast-close" (click)="dismissNotice()">Dismiss</button>
+    </section>
+  }
+
+  <aside class="wizard drawer" [class.drawer-open]="wizardOpen" aria-label="Trigger creation wizard">
+    <div class="wizard-header"><div><h2>{{ getWizardTitle() }}</h2><div class="caption">SimpleTrigger is supported now. Other trigger types are roadmap-gated.</div></div><button type="button" class="drawer-close" (click)="closeWizardDrawer()">Close</button></div>
+    <div class="stepper"><div class="step done"><span></span><span>Identity</span></div><div class="step active"><span></span><span>Type</span></div><div class="step done"><span></span><span>Schedule</span></div><div class="step done"><span></span><span>Advanced</span></div><div class="step active"><span></span><span>Preview</span></div></div>
+    <form class="wizard-form" (ngSubmit)="submitTriggerWizard()">
+      <div class="wizard-scroll">
+        @if (wizardError) { <div class="warning-box"><strong>Unable to save</strong><span>{{ wizardError }}</span></div> }
+        <section class="form-card"><h3>Identity</h3><div class="form-section"><div class="control"><label>Trigger key</label><div class="input-row"><input class="input" name="triggerName" [(ngModel)]="triggerDraft.triggerName" [readonly]="wizardMode === 'edit'" required><input class="input mono" name="group" [(ngModel)]="triggerDraft.group" readonly data-roadmap="Trigger group editing is on the roadmap"></div><div class="help">The current backend schedules SimpleTriggers by name. Group editing is tracked in the roadmap.</div></div><div class="control"><label>Target job</label><select class="select" name="jobClass" [(ngModel)]="triggerDraft.jobClass" required>@for (job of jobs; track job) { <option [value]="job">{{ job }}</option> }</select><div class="help">Loaded from GET /quartz-manager/jobs.</div></div></div></section>
+        <section class="form-card"><h3>Trigger Type</h3><div class="form-section"><div class="radio-grid"><div class="type-option active"><strong>Simple</strong><span class="help">Repeat every fixed interval. Supported now.</span></div><button type="button" class="type-option" data-roadmap="CronTrigger support is on the roadmap"><strong>Cron</strong><span class="help">Calendar expression builder.</span></button><button type="button" class="type-option" data-roadmap="DailyTimeIntervalTrigger support is on the roadmap"><strong>Daily Time</strong><span class="help">Run in a daily time window.</span></button><button type="button" class="type-option" data-roadmap="CalendarIntervalTrigger support is on the roadmap"><strong>Calendar Interval</strong><span class="help">Every N days, weeks, months.</span></button></div></div></section>
+        <section class="form-card"><h3>Schedule Editor</h3><div class="form-section"><div class="control"><label>Start</label><input class="input mono" type="datetime-local" name="startDate" [(ngModel)]="triggerDraft.startDate"></div><div class="control"><label>Repeat interval</label><div class="input-row"><input class="input mono" type="number" min="1" name="repeatIntervalAmount" [(ngModel)]="triggerDraft.repeatIntervalAmount" required><select class="select" name="repeatIntervalUnit" [(ngModel)]="triggerDraft.repeatIntervalUnit"><option value="milliseconds">milliseconds</option><option value="seconds">seconds</option><option value="minutes">minutes</option><option value="hours">hours</option><option value="days">days</option></select></div><div class="help">The UI edits operational units and persists the current backend repeatInterval in milliseconds.</div></div><div class="control"><label>Repeat count</label><input class="input mono" type="number" name="repeatCount" [(ngModel)]="triggerDraft.repeatCount" required><div class="help">Use -1 to repeat indefinitely.</div></div><div class="control"><label>End</label><input class="input mono" type="datetime-local" name="endDate" [(ngModel)]="triggerDraft.endDate"></div></div></section>
+        <section class="form-card"><h3>Advanced</h3><div class="form-section"><div class="control"><label>Misfire policy</label><select class="select" name="misfireInstruction" [(ngModel)]="triggerDraft.misfireInstruction" required><option value="MISFIRE_INSTRUCTION_FIRE_NOW">MISFIRE_INSTRUCTION_FIRE_NOW</option><option value="MISFIRE_INSTRUCTION_RESCHEDULE_NOW_WITH_EXISTING_REPEAT_COUNT">RESCHEDULE_NOW_WITH_EXISTING_REPEAT_COUNT</option><option value="MISFIRE_INSTRUCTION_RESCHEDULE_NOW_WITH_REMAINING_REPEAT_COUNT">RESCHEDULE_NOW_WITH_REMAINING_REPEAT_COUNT</option><option value="MISFIRE_INSTRUCTION_RESCHEDULE_NEXT_WITH_REMAINING_COUNT">RESCHEDULE_NEXT_WITH_REMAINING_COUNT</option><option value="MISFIRE_INSTRUCTION_RESCHEDULE_NEXT_WITH_EXISTING_COUNT">RESCHEDULE_NEXT_WITH_EXISTING_COUNT</option></select></div><div class="control"><label>Job data map override</label><textarea class="textarea mono" readonly data-roadmap="JobDataMap editing is on the roadmap">{}</textarea></div></div></section>
+        <section class="preview"><h4>Plain-language summary</h4><div>Run <strong>{{ shortClassName(triggerDraft.jobClass) || 'selected job' }}</strong> every <strong>{{ triggerDraft.repeatIntervalAmount }} {{ triggerDraft.repeatIntervalUnit }}</strong>, starting at <strong>{{ triggerDraft.startDate || 'backend default start time' }}</strong>.</div><div class="fire-list">@for (fireTime of getFirePreview(); track fireTime) { <span>{{ fireTime }}</span> }</div></section>
+        <div class="warning-box"><strong>Backend support boundary</strong><span>Only SimpleTrigger create/reschedule is submitted. Trigger groups, calendars, job data maps, and other trigger families will show roadmap reminders.</span></div>
+      </div>
+      <div class="wizard-footer"><button type="button" class="btn" (click)="resetWizard()">Reset</button><button type="submit" class="btn primary" [disabled]="wizardSubmitting || !canSubmitTrigger()">{{ wizardSubmitting ? 'Saving...' : getWizardCta() }}</button></div>
+    </form>
+  </aside>
 </div>
