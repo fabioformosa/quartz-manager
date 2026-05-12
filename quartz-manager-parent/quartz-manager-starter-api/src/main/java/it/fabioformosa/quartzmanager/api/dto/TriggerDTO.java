@@ -21,6 +21,10 @@ public class TriggerDTO {
   private Date finalFireTime;
   private int misfireInstruction;
   private Date nextFireTime;
+  private Date previousFireTime;
+  private String type;
+  private String state;
+  private String calendarName;
   private JobKeyDTO jobKeyDTO;
   private JobDetailDTO jobDetailDTO;
   private boolean mayFireAgain;

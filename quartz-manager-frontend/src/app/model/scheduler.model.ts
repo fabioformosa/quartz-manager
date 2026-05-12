@@ -5,6 +5,14 @@ export class Scheduler {
   instanceId: string;
   status: string;
   triggerKeys: TriggerKey[];
+  quartzVersion: string;
+  jobStoreClass: string;
+  jobStoreSupportsPersistence: boolean;
+  clustered: boolean;
+  threadPoolClass: string;
+  threadPoolSize: number;
+  runningSince: string;
+  numberOfJobsExecuted: number;
 
   constructor(name: string, instanceId: string, status: string, triggerKeys: TriggerKey[]) {
     this.name = name;

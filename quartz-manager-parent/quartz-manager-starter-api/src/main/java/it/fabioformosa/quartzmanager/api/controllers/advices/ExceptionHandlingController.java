@@ -1,8 +1,10 @@
 package it.fabioformosa.quartzmanager.api.controllers.advices;
 
 import it.fabioformosa.quartzmanager.api.exceptions.ExceptionResponse;
+import it.fabioformosa.quartzmanager.api.exceptions.JobNotFoundException;
 import it.fabioformosa.quartzmanager.api.exceptions.ResourceConflictException;
 import it.fabioformosa.quartzmanager.api.exceptions.TriggerNotFoundException;
+import it.fabioformosa.quartzmanager.api.exceptions.UnsupportedTriggerTypeException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -26,6 +28,22 @@ public class ExceptionHandlingController {
   @ResponseBody
   public ExceptionResponse triggerNotFound(TriggerNotFoundException ex){
     return ExceptionResponse.builder().errorCode(HttpStatus.NOT_FOUND.toString()).errorMessage(ex.getMessage()).build();
+  }
+
+  @ExceptionHandler(JobNotFoundException.class)
+  @ResponseStatus(HttpStatus.NOT_FOUND)
+  @ResponseBody
+  public ExceptionResponse jobNotFound(JobNotFoundException ex){
+    return ExceptionResponse.builder().errorCode(HttpStatus.NOT_FOUND.toString()).errorMessage(ex.getMessage()).build();
+  }
+
+  @ExceptionHandler(UnsupportedTriggerTypeException.class)
+  public ResponseEntity<ExceptionResponse> unsupportedTriggerType(UnsupportedTriggerTypeException ex) {
+    ExceptionResponse response = ExceptionResponse.builder()
+      .errorCode(HttpStatus.CONFLICT.toString())
+      .errorMessage(ex.getMessage())
+      .build();
+    return new ResponseEntity<>(response, HttpStatus.CONFLICT);
   }
 
 }

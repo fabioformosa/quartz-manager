@@ -9,6 +9,7 @@ import {ProgressRxWebsocketService} from '../../services/progress.rx-websocket.s
 import {Scheduler} from '../../model/scheduler.model';
 import {SimpleTriggerCommand} from '../../model/simple-trigger.command';
 import {SimpleTrigger} from '../../model/simple-trigger.model';
+import {ScheduledJob} from '../../model/scheduled-job.model';
 import {TriggerKey} from '../../model/triggerKey.model';
 import TriggerFiredBundle from '../../model/trigger-fired-bundle.model';
 
@@ -54,7 +55,9 @@ export class ManagerComponent implements OnInit, OnDestroy {
   selectedTriggerKey: TriggerKey;
   selectedTrigger: SimpleTrigger;
   selectedJobClass: string;
+  selectedScheduledJob: ScheduledJob;
   jobs: string[] = [];
+  scheduledJobs: ScheduledJob[] = [];
   logs: ConsoleLogRecord[] = [];
   progress: TriggerFiredBundle;
   roadmapNotice: string;
@@ -87,6 +90,7 @@ export class ManagerComponent implements OnInit, OnDestroy {
     this.refreshScheduler();
     this.fetchTriggers();
     this.fetchJobs();
+    this.fetchScheduledJobs();
   }
 
   ngOnDestroy() {
@@ -179,7 +183,7 @@ export class ManagerComponent implements OnInit, OnDestroy {
   }
 
   standbyScheduler() {
-    const subscription = this.schedulerService.pauseScheduler().subscribe({
+    const subscription = this.schedulerService.standbyScheduler().subscribe({
       next: () => this.setSchedulerStatus('PAUSED', 'Scheduler moved to standby.'),
       error: () => this.operationError = 'Unable to move the scheduler to standby.'
     });
@@ -198,7 +202,7 @@ export class ManagerComponent implements OnInit, OnDestroy {
     if (!window.confirm('Shutdown the scheduler instance?')) {
       return;
     }
-    const subscription = this.schedulerService.stopScheduler().subscribe({
+    const subscription = this.schedulerService.shutdownScheduler().subscribe({
       next: () => this.setSchedulerStatus('STOPPED', 'Scheduler shut down.'),
       error: () => this.operationError = 'Unable to shut down the scheduler.'
     });
@@ -243,12 +247,23 @@ export class ManagerComponent implements OnInit, OnDestroy {
     this.subscriptions.push(subscription);
   }
 
+  fetchScheduledJobs() {
+    const subscription = this.jobService.fetchScheduledJobs().subscribe({
+      next: scheduledJobs => {
+        this.scheduledJobs = scheduledJobs || [];
+        this.selectedScheduledJob = this.scheduledJobs[0];
+      },
+      error: () => this.operationError = 'Unable to load scheduled jobs.'
+    });
+    this.subscriptions.push(subscription);
+  }
+
   fetchTriggerDetails(triggerKeys: TriggerKey[]) {
     triggerKeys.forEach(triggerKey => {
-      const subscription = this.schedulerService.getSimpleTriggerConfig(triggerKey.name).subscribe({
-        next: trigger => this.triggerDetailsByName[triggerKey.name] = trigger as SimpleTrigger,
+      const subscription = this.schedulerService.getSimpleTriggerConfig(triggerKey.name, this.getTriggerGroup(triggerKey)).subscribe({
+        next: trigger => this.triggerDetailsByName[this.getTriggerDetailKey(triggerKey)] = trigger as SimpleTrigger,
         error: () => {
-          this.triggerDetailsByName[triggerKey.name] = null;
+          this.triggerDetailsByName[this.getTriggerDetailKey(triggerKey)] = null;
         }
       });
       this.subscriptions.push(subscription);
@@ -264,12 +279,12 @@ export class ManagerComponent implements OnInit, OnDestroy {
       this.openDetailDrawer();
     }
     this.triggerLoading = true;
-    this.selectedTrigger = this.triggerDetailsByName[triggerKey.name] || null;
+    this.selectedTrigger = this.triggerDetailsByName[this.getTriggerDetailKey(triggerKey)] || null;
     this.subscribeToTriggerTopics(this.selectedTriggerKey);
-    const subscription = this.schedulerService.getSimpleTriggerConfig(triggerKey.name).subscribe({
+    const subscription = this.schedulerService.getSimpleTriggerConfig(triggerKey.name, this.getTriggerGroup(triggerKey)).subscribe({
       next: trigger => {
         this.selectedTrigger = trigger as SimpleTrigger;
-        this.triggerDetailsByName[triggerKey.name] = trigger as SimpleTrigger;
+        this.triggerDetailsByName[this.getTriggerDetailKey(triggerKey)] = trigger as SimpleTrigger;
         this.triggerLoading = false;
       },
       error: () => {
@@ -283,6 +298,88 @@ export class ManagerComponent implements OnInit, OnDestroy {
   selectJob(jobClass: string) {
     this.selectedJobClass = jobClass;
     this.openDetailDrawer();
+  }
+
+  selectScheduledJob(job: ScheduledJob) {
+    this.selectedScheduledJob = job;
+    this.selectedJobClass = job?.jobClassName || this.selectedJobClass;
+    this.openDetailDrawer();
+  }
+
+  triggerSelectedJobNow() {
+    if (!this.selectedScheduledJob) {
+      this.showRoadmapNotice('Trigger-now requires a scheduled job key returned by the backend');
+      return;
+    }
+    const subscription = this.jobService.triggerJob(this.selectedScheduledJob).subscribe({
+      next: () => this.operationNotice = 'Job triggered.',
+      error: () => this.operationError = 'Unable to trigger the selected job.'
+    });
+    this.subscriptions.push(subscription);
+  }
+
+  deleteSelectedJob() {
+    if (!this.selectedScheduledJob) {
+      this.showRoadmapNotice('Delete requires a scheduled job key returned by the backend');
+      return;
+    }
+    if (!window.confirm(`Delete job ${this.selectedScheduledJob.jobKeyDTO.group}.${this.selectedScheduledJob.jobKeyDTO.name}?`)) {
+      return;
+    }
+    const subscription = this.jobService.deleteJob(this.selectedScheduledJob).subscribe({
+      next: () => {
+        this.operationNotice = 'Job deleted.';
+        this.scheduledJobs = this.scheduledJobs.filter(job => !this.sameJob(job, this.selectedScheduledJob));
+        this.selectedScheduledJob = this.scheduledJobs[0];
+      },
+      error: () => this.operationError = 'Unable to delete the selected job.'
+    });
+    this.subscriptions.push(subscription);
+  }
+
+  pauseSelectedTrigger() {
+    if (!this.selectedTriggerKey) {
+      return;
+    }
+    const subscription = this.triggerService.pauseTrigger(this.selectedTriggerKey).subscribe({
+      next: () => this.setSelectedTriggerState('PAUSED', 'Trigger paused.'),
+      error: () => this.operationError = 'Unable to pause the selected trigger.'
+    });
+    this.subscriptions.push(subscription);
+  }
+
+  resumeSelectedTrigger() {
+    if (!this.selectedTriggerKey) {
+      return;
+    }
+    const subscription = this.triggerService.resumeTrigger(this.selectedTriggerKey).subscribe({
+      next: () => this.setSelectedTriggerState('NORMAL', 'Trigger resumed.'),
+      error: () => this.operationError = 'Unable to resume the selected trigger.'
+    });
+    this.subscriptions.push(subscription);
+  }
+
+  unscheduleSelectedTrigger() {
+    if (!this.selectedTriggerKey) {
+      return;
+    }
+    if (!window.confirm(`Unschedule trigger ${this.getSelectedTriggerGroup()}.${this.selectedTriggerKey.name}?`)) {
+      return;
+    }
+    const triggerKey = {...this.selectedTriggerKey};
+    const subscription = this.triggerService.unscheduleTrigger(triggerKey).subscribe({
+      next: () => {
+        this.operationNotice = 'Trigger unscheduled.';
+        this.triggerKeys = this.triggerKeys.filter(currentTriggerKey => !this.sameTriggerKey(currentTriggerKey, triggerKey));
+        delete this.triggerDetailsByName[this.getTriggerDetailKey(triggerKey)];
+        this.selectedTriggerKey = this.triggerKeys[0];
+        this.selectedTrigger = this.selectedTriggerKey
+          ? this.triggerDetailsByName[this.getTriggerDetailKey(this.selectedTriggerKey)]
+          : null;
+      },
+      error: () => this.operationError = 'Unable to unschedule the selected trigger.'
+    });
+    this.subscriptions.push(subscription);
   }
 
   openCreateTriggerWizard() {
@@ -302,7 +399,7 @@ export class ManagerComponent implements OnInit, OnDestroy {
       return;
     }
 
-    const trigger = this.selectedTrigger || this.triggerDetailsByName[this.selectedTriggerKey.name];
+    const trigger = this.selectedTrigger || this.triggerDetailsByName[this.getTriggerDetailKey(this.selectedTriggerKey)];
     const repeatInterval = this.splitRepeatInterval(trigger?.repeatInterval || 60000);
     this.wizardMode = 'edit';
     this.wizardOpen = true;
@@ -337,6 +434,7 @@ export class ManagerComponent implements OnInit, OnDestroy {
 
     const command = new SimpleTriggerCommand();
     command.triggerName = this.triggerDraft.triggerName.trim();
+    command.triggerGroup = this.triggerDraft.group || 'DEFAULT';
     command.jobClass = this.triggerDraft.jobClass;
     command.startDate = this.fromDatetimeLocalValue(this.triggerDraft.startDate);
     command.endDate = this.fromDatetimeLocalValue(this.triggerDraft.endDate);
@@ -352,7 +450,7 @@ export class ManagerComponent implements OnInit, OnDestroy {
     const subscription = request.subscribe({
       next: trigger => {
         this.wizardSubmitting = false;
-        this.triggerDetailsByName[trigger.triggerKeyDTO.name] = trigger as SimpleTrigger;
+        this.triggerDetailsByName[this.getTriggerDetailKey(trigger.triggerKeyDTO)] = trigger as SimpleTrigger;
         this.upsertTriggerKey(trigger.triggerKeyDTO);
         this.selectTrigger(trigger.triggerKeyDTO);
         this.wizardOpen = false;
@@ -380,7 +478,7 @@ export class ManagerComponent implements OnInit, OnDestroy {
   }
 
   getTriggerDetail(triggerKey: TriggerKey): SimpleTrigger {
-    return triggerKey?.name ? this.triggerDetailsByName[triggerKey.name] : null;
+    return triggerKey?.name ? this.triggerDetailsByName[this.getTriggerDetailKey(triggerKey)] : null;
   }
 
   getTriggerGroup(triggerKey: TriggerKey): string {
@@ -388,13 +486,16 @@ export class ManagerComponent implements OnInit, OnDestroy {
   }
 
   getTriggerType(triggerKey: TriggerKey): string {
-    return this.getTriggerDetail(triggerKey) ? 'SimpleTrigger' : 'SimpleTrigger';
+    return this.getTriggerDetail(triggerKey)?.type || 'SimpleTrigger';
   }
 
   getTriggerState(triggerKey: TriggerKey): string {
     const trigger = this.getTriggerDetail(triggerKey);
     if (!trigger) {
       return 'UNKNOWN';
+    }
+    if (trigger.state) {
+      return trigger.state;
     }
     if (!trigger.mayFireAgain) {
       return 'COMPLETE';
@@ -421,7 +522,10 @@ export class ManagerComponent implements OnInit, OnDestroy {
 
   getTriggerJobName(triggerKey: TriggerKey): string {
     const trigger = this.getTriggerDetail(triggerKey);
-    return trigger?.jobKeyDTO?.name || this.shortClassName(trigger?.jobDetailDTO?.jobClassName) || 'Roadmap';
+    const jobGroup = trigger?.jobKeyDTO?.group ? `${trigger.jobKeyDTO.group}.` : '';
+    return trigger?.jobKeyDTO?.name
+      ? `${jobGroup}${trigger.jobKeyDTO.name}`
+      : this.shortClassName(trigger?.jobDetailDTO?.jobClassName) || 'Roadmap';
   }
 
   getTriggerNextFireLabel(triggerKey: TriggerKey): string {
@@ -481,7 +585,18 @@ export class ManagerComponent implements OnInit, OnDestroy {
   }
 
   getSelectedJobShortName(): string {
-    return this.shortClassName(this.selectedJobClass) || '-';
+    return this.shortClassName(this.selectedScheduledJob?.jobClassName || this.selectedJobClass) || '-';
+  }
+
+  getSelectedJobKeyLabel(): string {
+    if (!this.selectedScheduledJob?.jobKeyDTO) {
+      return '-';
+    }
+    return `${this.selectedScheduledJob.jobKeyDTO.group}.${this.selectedScheduledJob.jobKeyDTO.name}`;
+  }
+
+  getScheduledJobRows(): ScheduledJob[] {
+    return this.scheduledJobs || [];
   }
 
   getWizardTitle(): string {
@@ -561,6 +676,16 @@ export class ManagerComponent implements OnInit, OnDestroy {
     this.roadmapNotice = null;
   }
 
+  private setSelectedTriggerState(state: string, notice: string) {
+    if (this.selectedTrigger) {
+      this.selectedTrigger.state = state;
+    }
+    if (this.selectedTriggerKey?.name && this.triggerDetailsByName[this.getTriggerDetailKey(this.selectedTriggerKey)]) {
+      this.triggerDetailsByName[this.getTriggerDetailKey(this.selectedTriggerKey)].state = state;
+    }
+    this.operationNotice = notice;
+  }
+
   private subscribeToTriggerTopics(triggerKey: TriggerKey) {
     this.unsubscribeFromTriggerTopics();
     this.logs = [];
@@ -598,9 +723,21 @@ export class ManagerComponent implements OnInit, OnDestroy {
   }
 
   private upsertTriggerKey(triggerKey: TriggerKey) {
-    if (!this.triggerKeys.some(currentTriggerKey => currentTriggerKey.name === triggerKey.name)) {
+    if (!this.triggerKeys.some(currentTriggerKey => this.sameTriggerKey(currentTriggerKey, triggerKey))) {
       this.triggerKeys = [triggerKey, ...this.triggerKeys];
     }
+  }
+
+  private sameTriggerKey(first: TriggerKey, second: TriggerKey): boolean {
+    return first?.name === second?.name && this.getTriggerGroup(first) === this.getTriggerGroup(second);
+  }
+
+  private getTriggerDetailKey(triggerKey: TriggerKey): string {
+    return `${this.getTriggerGroup(triggerKey)}.${triggerKey.name}`;
+  }
+
+  private sameJob(first: ScheduledJob, second: ScheduledJob): boolean {
+    return first?.jobKeyDTO?.name === second?.jobKeyDTO?.name && first?.jobKeyDTO?.group === second?.jobKeyDTO?.group;
   }
 
   private buildEmptyDraft(): TriggerDraft {

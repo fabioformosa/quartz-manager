@@ -12,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.quartz.SchedulerException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
@@ -51,21 +52,21 @@ public class SchedulerController {
     return schedulerService.getScheduler();
   }
 
-  @GetMapping("/pause")
-  @Operation(summary = "Get paused the scheduler")
+  @PostMapping("/standby")
+  @Operation(summary = "Put the scheduler in standby mode")
   @ApiResponses(value = {
-    @ApiResponse(responseCode = "204", description = "Got paused successfully")
+    @ApiResponse(responseCode = "204", description = "Scheduler moved to standby successfully")
   })
   @ResponseStatus(HttpStatus.NO_CONTENT)
-  public void pause() throws SchedulerException {
-    log.info("SCHEDULER - PAUSE COMMAND");
+  public void standby() throws SchedulerException {
+    log.info("SCHEDULER - STANDBY COMMAND");
     schedulerService.standby();
   }
 
-  @GetMapping("/resume")
-  @Operation(summary = "Get resumed the scheduler")
+  @PostMapping("/resume")
+  @Operation(summary = "Resume the scheduler from standby mode")
   @ApiResponses(value = {
-    @ApiResponse(responseCode = "204", description = "Got resumed successfully")
+    @ApiResponse(responseCode = "204", description = "Scheduler resumed successfully")
   })
   @ResponseStatus(HttpStatus.NO_CONTENT)
   public void resume() throws SchedulerException {
@@ -73,25 +74,25 @@ public class SchedulerController {
     schedulerService.start();
   }
 
-  @GetMapping("/run")
+  @PostMapping("/start")
   @Operation(summary = "Start the scheduler")
   @ApiResponses(value = {
-    @ApiResponse(responseCode = "204", description = "Got started successfully")
+    @ApiResponse(responseCode = "204", description = "Scheduler started successfully")
   })
   @ResponseStatus(HttpStatus.NO_CONTENT)
-  public void run() throws SchedulerException {
+  public void start() throws SchedulerException {
     log.info("SCHEDULER - START COMMAND");
     schedulerService.start();
   }
 
-  @GetMapping("/stop")
-  @Operation(summary = "Stop the scheduler")
+  @PostMapping("/shutdown")
+  @Operation(summary = "Shutdown the scheduler terminally")
   @ApiResponses(value = {
-    @ApiResponse(responseCode = "204", description = "Got stopped successfully")
+    @ApiResponse(responseCode = "204", description = "Scheduler shut down successfully")
   })
   @ResponseStatus(HttpStatus.NO_CONTENT)
-  public void stop() throws SchedulerException {
-    log.info("SCHEDULER - STOP COMMAND");
+  public void shutdown() throws SchedulerException {
+    log.info("SCHEDULER - SHUTDOWN COMMAND");
     schedulerService.shutdown();
   }
 

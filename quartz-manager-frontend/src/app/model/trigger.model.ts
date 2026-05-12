@@ -11,6 +11,10 @@ export class Trigger {
   finalFireTime: Date;
   misfireInstruction: number;
   nextFireTime: Date;
+  previousFireTime: Date;
+  type: string;
+  state: string;
+  calendarName: string;
   jobKeyDTO: JobKeyModel;
   jobDetailDTO: JobDetail = new JobDetail();
   mayFireAgain: boolean;

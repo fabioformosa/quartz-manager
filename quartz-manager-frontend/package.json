@@ -8,8 +8,8 @@
     "build": "ng build --configuration production",
     "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
     "lint": "ng lint",
-    "lint:sonar": "eslint --no-eslintrc -c .eslintrc.sonar.json \"src/**/*.ts\"",
-    "lint:sonar:fix": "eslint --no-eslintrc -c .eslintrc.sonar.json \"src/**/*.ts\" --fix"
+    "lint:sonar": "eslint -c eslint.sonar.config.mjs \"src/**/*.ts\"",
+    "lint:sonar:fix": "eslint -c eslint.sonar.config.mjs \"src/**/*.ts\" --fix"
   },
   "private": true,
   "dependencies": {

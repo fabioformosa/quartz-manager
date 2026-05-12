@@ -47,7 +47,7 @@
         </div>
         <span class="chip" [ngClass]="getSchedulerStatusClass()">{{ scheduler?.status || 'LOADING' }}</span>
         <div class="kv"><span>Instance ID</span><span>{{ scheduler?.instanceId || '-' }}</span></div>
-        <button type="button" class="kv kv-button" data-roadmap="Cluster metadata is not exposed by the current backend"><span>Cluster</span><span>Roadmap</span></button>
+        <div class="kv"><span>Cluster</span><span>{{ scheduler?.clustered ? 'YES' : 'NO' }}</span></div>
         <div class="kv"><span>WebSocket</span><span>OPEN</span></div>
       </div>
       <div class="actions compact-actions" aria-label="Compact scheduler status actions">
@@ -79,7 +79,7 @@
                 <div class="field"><label>Status</label><strong>{{ scheduler?.status || '-' }}</strong></div>
                 <div class="field"><label>Triggers</label><strong>{{ triggerKeys.length }}</strong></div>
                 <div class="field"><label>Eligible jobs</label><strong>{{ jobs.length }}</strong></div>
-                <button type="button" class="field field-button" data-roadmap="Quartz version and job-store metadata are not exposed by the current backend"><label>Quartz metadata</label><strong>Roadmap</strong></button>
+                <div class="field"><label>Quartz metadata</label><strong>{{ scheduler?.quartzVersion || '-' }}</strong></div>
               </div>
             </div>
           </section>
@@ -119,12 +119,12 @@
                     <div class="field"><label>Previous fire</label><strong>{{ selectedTrigger?.timesTriggered ? 'tracked by progress events' : 'not exposed' }}</strong></div>
                     <div class="field"><label>Next fire</label><strong>{{ formatDateTime(selectedTrigger?.nextFireTime) || '-' }}</strong></div>
                     <div class="field"><label>Priority</label><strong>{{ selectedTrigger?.priority || '-' }}</strong></div>
-                    <div class="field"><label>Calendar</label><strong>Roadmap</strong></div>
+                    <div class="field"><label>Calendar</label><strong>{{ selectedTrigger?.calendarName || 'none' }}</strong></div>
                     <div class="field"><label>Misfire</label><strong>{{ selectedTrigger?.misfireInstruction || '-' }}</strong></div>
                     <div class="field"><label>Repeat</label><strong>{{ getSelectedTriggerRepeatSummary() }}</strong></div>
                   </div>
                   <div class="progress-card"><div class="caption">Current run progress</div><div class="progress-line"><span [style.width.%]="getProgressPercentage()"></span></div><div class="mono">{{ getProgressLabel() }}</div></div>
-                  <div class="actions"><button type="button" class="btn" data-roadmap="Trigger pause/resume endpoints are not available yet">Pause</button><button type="button" class="btn" (click)="openRescheduleWizard()">Reschedule</button><button type="button" class="btn danger" data-roadmap="Unschedule trigger is on the roadmap">Unschedule</button></div>
+                  <div class="actions"><button type="button" class="btn" (click)="pauseSelectedTrigger()">Pause</button><button type="button" class="btn" (click)="resumeSelectedTrigger()">Resume</button><button type="button" class="btn" (click)="openRescheduleWizard()">Reschedule</button><button type="button" class="btn danger" (click)="unscheduleSelectedTrigger()">Unschedule</button></div>
                 } @else {
                   <div class="drawer-title"><div><span class="chip warn">EMPTY</span><h2>No trigger selected</h2><div class="caption">Create a SimpleTrigger or refresh trigger keys.</div></div><button type="button" class="drawer-close" (click)="closeDetailDrawer()">Close</button></div>
                 }
@@ -163,36 +163,38 @@
 
       <div class="page" [class.active]="activePage === 'jobs'">
         <div class="page-kicker">
-          <div><h2>Jobs</h2><p>The current backend exposes eligible Quartz Manager job classes. Full job registry metadata, CRUD, durability, recovery, and group operations remain roadmap features.</p></div>
+          <div><h2>Jobs</h2><p>The backend exposes scheduled Quartz jobs plus eligible job classes for SimpleTrigger creation. Durability, recovery, data map, and related trigger keys are read-only in this release.</p></div>
           <div class="toolbar"><input class="search" value="Filter jobs, groups, classes" data-roadmap="Job filtering is on the roadmap"><button type="button" class="btn primary" data-roadmap="Creating jobs from the UI is on the roadmap">New Job</button></div>
         </div>
         <section class="card">
-          <div class="card-header"><h2 class="card-title">Eligible Job Classes</h2><div class="toolbar"><span class="chip normal">{{ jobs.length }} JOBS</span><button type="button" class="btn" data-roadmap="Pause job group is on the roadmap">Pause Group</button><button type="button" class="btn" data-roadmap="Job export is on the roadmap">Export</button></div></div>
+          <div class="card-header"><h2 class="card-title">Scheduled Jobs</h2><div class="toolbar"><span class="chip normal">{{ scheduledJobs.length }} JOBS</span><button type="button" class="btn" data-roadmap="Pause job group is on the roadmap">Pause Group</button><button type="button" class="btn" data-roadmap="Job export is on the roadmap">Export</button></div></div>
           <div class="split">
             <div class="table-wrap">
               <table>
                 <thead><tr><th style="width:22%">Job key</th><th style="width:48%">Class</th><th style="width:10%">Durable</th><th style="width:10%">Recovery</th><th style="width:10%">Triggers</th></tr></thead>
                 <tbody>
-                  @for (jobClass of getJobClassRows(); track jobClass) {
-                    <tr class="selectable" [class.selected]="selectedJobClass === jobClass" (click)="selectJob(jobClass)"><td class="mono">{{ shortClassName(jobClass) }}</td><td class="mono">{{ jobClass }}</td><td><span class="chip warn">Roadmap</span></td><td><span class="chip warn">Roadmap</span></td><td class="mono">Roadmap</td></tr>
+                  @for (job of getScheduledJobRows(); track job.jobKeyDTO.group + '.' + job.jobKeyDTO.name) {
+                    <tr class="selectable" [class.selected]="selectedScheduledJob?.jobKeyDTO?.name === job.jobKeyDTO.name && selectedScheduledJob?.jobKeyDTO?.group === job.jobKeyDTO.group" (click)="selectScheduledJob(job)"><td class="mono">{{ job.jobKeyDTO.group }}.{{ job.jobKeyDTO.name }}</td><td class="mono">{{ job.jobClassName }}</td><td><span class="chip" [ngClass]="job.durable ? 'normal' : 'warn'">{{ job.durable ? 'YES' : 'NO' }}</span></td><td><span class="chip" [ngClass]="job.requestsRecovery ? 'normal' : 'warn'">{{ job.requestsRecovery ? 'YES' : 'NO' }}</span></td><td class="mono">{{ job.triggerKeys?.length || 0 }}</td></tr>
+                  } @empty {
+                    <tr><td colspan="5">No scheduled jobs returned by the backend. Create a SimpleTrigger from an eligible job class.</td></tr>
                   }
                 </tbody>
               </table>
             </div>
             <aside class="detail drawer detail-drawer" [class.drawer-open]="detailDrawerOpen && activePage === 'jobs'" aria-label="Job detail drawer">
-              <div class="drawer-title"><div><span class="chip normal">ELIGIBLE</span><h2>{{ getSelectedJobShortName() }}</h2><div class="caption">{{ selectedJobClass || 'Select a job class' }}</div></div><button type="button" class="drawer-close" (click)="closeDetailDrawer()">Close</button></div>
+              <div class="drawer-title"><div><span class="chip normal">SCHEDULED</span><h2>{{ getSelectedJobShortName() }}</h2><div class="caption">{{ getSelectedJobKeyLabel() }}</div></div><button type="button" class="drawer-close" (click)="closeDetailDrawer()">Close</button></div>
               <div class="tabs"><button type="button" class="tab active">Overview</button><button type="button" class="tab" data-roadmap="Job trigger relationships are on the roadmap">Triggers</button><button type="button" class="tab" data-roadmap="JobDataMap editing is on the roadmap">Data Map</button><button type="button" class="tab" data-roadmap="Job execution history is on the roadmap">Executions</button></div>
               <div class="field-grid">
                 <div class="field"><label>Class</label><strong>{{ getSelectedJobShortName() }}</strong></div>
-                <button type="button" class="field field-button" data-roadmap="Job key/group metadata is on the roadmap"><label>Group</label><strong>Roadmap</strong></button>
-                <button type="button" class="field field-button" data-roadmap="Durability metadata is on the roadmap"><label>Durable</label><strong>Roadmap</strong></button>
-                <button type="button" class="field field-button" data-roadmap="Recovery metadata is on the roadmap"><label>Requests recovery</label><strong>Roadmap</strong></button>
+                <div class="field"><label>Group</label><strong>{{ selectedScheduledJob?.jobKeyDTO?.group || '-' }}</strong></div>
+                <div class="field"><label>Durable</label><strong>{{ selectedScheduledJob?.durable ? 'YES' : 'NO' }}</strong></div>
+                <div class="field"><label>Requests recovery</label><strong>{{ selectedScheduledJob?.requestsRecovery ? 'YES' : 'NO' }}</strong></div>
               </div>
               <pre class="code-block">Backend contract
 GET /quartz-manager/jobs
-Returns eligible Java job class names.</pre>
-              <div class="actions"><button type="button" class="btn primary" data-roadmap="Manual trigger-now by job key is on the roadmap">Trigger Now</button><button type="button" class="btn" data-roadmap="Pause job is on the roadmap">Pause</button><button type="button" class="btn" (click)="openCreateTriggerWizard(); triggerDraft.jobClass = selectedJobClass">Create SimpleTrigger</button></div>
-              <div class="danger-zone"><strong>Danger zone</strong><span class="help">Interrupt and delete need backend support and explicit confirmation.</span><div class="actions"><button type="button" class="btn danger" data-roadmap="Job interruption is on the roadmap">Interrupt</button><button type="button" class="btn danger" data-roadmap="Job deletion is on the roadmap">Delete Job</button></div></div>
+Returns scheduled Quartz jobs.</pre>
+              <div class="actions"><button type="button" class="btn primary" (click)="triggerSelectedJobNow()">Trigger Now</button><button type="button" class="btn" data-roadmap="Pause job is on the roadmap">Pause</button><button type="button" class="btn" (click)="openCreateTriggerWizard(); triggerDraft.jobClass = selectedScheduledJob?.jobClassName || selectedJobClass">Create SimpleTrigger</button></div>
+              <div class="danger-zone"><strong>Danger zone</strong><span class="help">Interrupt remains roadmap-gated. Delete uses the scheduled job endpoint.</span><div class="actions"><button type="button" class="btn danger" data-roadmap="Job interruption is on the roadmap">Interrupt</button><button type="button" class="btn danger" (click)="deleteSelectedJob()">Delete Job</button></div></div>
             </aside>
           </div>
         </section>
@@ -227,11 +229,11 @@ Returns eligible Java job class names.</pre>
                 <div class="field"><label>Final fire</label><strong>{{ formatDateTime(selectedTrigger?.finalFireTime) || 'none' }}</strong></div>
                 <button type="button" class="field field-button" data-roadmap="Timezone metadata is on the roadmap"><label>Timezone</label><strong>Roadmap</strong></button>
                 <div class="field"><label>Repeat interval</label><strong>{{ selectedTrigger?.repeatInterval ? formatDuration(selectedTrigger.repeatInterval) : '-' }}</strong></div>
-                <button type="button" class="field field-button" data-roadmap="Calendar attachment is on the roadmap"><label>Calendar</label><strong>Roadmap</strong></button>
+                <div class="field"><label>Calendar</label><strong>{{ selectedTrigger?.calendarName || 'none' }}</strong></div>
               </div>
               <section class="preview"><h4>Schedule summary</h4><div>{{ getSelectedTriggerRepeatSummary() }}. Next fire: {{ formatDateTime(selectedTrigger?.nextFireTime) || 'not available' }}.</div></section>
-              <div class="actions"><button type="button" class="btn" data-roadmap="Trigger pause endpoint is on the roadmap">Pause</button><button type="button" class="btn" (click)="openRescheduleWizard()">Reschedule</button><button type="button" class="btn" data-roadmap="Trigger duplication is on the roadmap">Duplicate</button></div>
-              <div class="danger-zone"><strong>Danger zone</strong><span class="help">Unschedule and reset-error require backend endpoints that are still on the roadmap.</span><div class="actions"><button type="button" class="btn danger" data-roadmap="Unschedule trigger is on the roadmap">Unschedule</button><button type="button" class="btn danger" data-roadmap="Reset error trigger is on the roadmap">Reset Error</button></div></div>
+              <div class="actions"><button type="button" class="btn" (click)="pauseSelectedTrigger()">Pause</button><button type="button" class="btn" (click)="resumeSelectedTrigger()">Resume</button><button type="button" class="btn" (click)="openRescheduleWizard()">Reschedule</button><button type="button" class="btn" data-roadmap="Trigger duplication is on the roadmap">Duplicate</button></div>
+              <div class="danger-zone"><strong>Danger zone</strong><span class="help">Unschedule uses the trigger lifecycle endpoint. Reset-error remains roadmap-gated.</span><div class="actions"><button type="button" class="btn danger" (click)="unscheduleSelectedTrigger()">Unschedule</button><button type="button" class="btn danger" data-roadmap="Reset error trigger is on the roadmap">Reset Error</button></div></div>
             </aside>
           </div>
         </section>
@@ -307,7 +309,7 @@ Returns eligible Java job class names.</pre>
           </section>
           <section class="card span-8">
             <div class="card-header"><h2 class="card-title">Scheduler Metadata</h2><span class="chip accent">CURRENT API</span></div>
-            <div class="card-body summary-grid"><div class="field"><label>Scheduler name</label><strong>{{ scheduler?.name || '-' }}</strong></div><div class="field"><label>Instance ID</label><strong>{{ scheduler?.instanceId || '-' }}</strong></div><div class="field"><label>Status</label><strong>{{ scheduler?.status || '-' }}</strong></div><div class="field"><label>Trigger keys</label><strong>{{ triggerKeys.length }}</strong></div><button type="button" class="field field-button" data-roadmap="Quartz version metadata is on the roadmap"><label>Quartz version</label><strong>Roadmap</strong></button><button type="button" class="field field-button" data-roadmap="Thread pool metadata is on the roadmap"><label>Thread pool</label><strong>Roadmap</strong></button><button type="button" class="field field-button" data-roadmap="Job store metadata is on the roadmap"><label>Job store</label><strong>Roadmap</strong></button><button type="button" class="field field-button" data-roadmap="Cluster mode support is on the roadmap"><label>Clustered</label><strong>Roadmap</strong></button></div>
+            <div class="card-body summary-grid"><div class="field"><label>Scheduler name</label><strong>{{ scheduler?.name || '-' }}</strong></div><div class="field"><label>Instance ID</label><strong>{{ scheduler?.instanceId || '-' }}</strong></div><div class="field"><label>Status</label><strong>{{ scheduler?.status || '-' }}</strong></div><div class="field"><label>Trigger keys</label><strong>{{ triggerKeys.length }}</strong></div><div class="field"><label>Quartz version</label><strong>{{ scheduler?.quartzVersion || '-' }}</strong></div><div class="field"><label>Thread pool</label><strong>{{ scheduler?.threadPoolSize || '-' }}</strong></div><div class="field"><label>Job store</label><strong>{{ scheduler?.jobStoreClass || '-' }}</strong></div><div class="field"><label>Clustered</label><strong>{{ scheduler?.clustered ? 'YES' : 'NO' }}</strong></div></div>
           </section>
           <section class="card span-4">
             <div class="card-header"><h2 class="card-title">Cluster Nodes</h2><span class="chip warn">ROADMAP</span></div>

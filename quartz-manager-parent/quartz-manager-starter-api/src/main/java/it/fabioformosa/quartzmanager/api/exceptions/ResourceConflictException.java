@@ -12,4 +12,8 @@ public class ResourceConflictException extends RuntimeException {
     super("Conflict on resourceID " + resourceId + " " + message);
   }
 
+  public ResourceConflictException(String message) {
+    super(message);
+  }
+
 }

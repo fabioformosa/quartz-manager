@@ -16,5 +16,20 @@ export class TriggerService {
     return this.apiService.get(getBaseUrl() + `${CONTEXT_PATH}/triggers`);
   }
 
+  getTrigger = (triggerKey: TriggerKey): Observable<Trigger> => {
+    return this.apiService.get(getBaseUrl() + `${CONTEXT_PATH}/triggers/${triggerKey.group || 'DEFAULT'}/${triggerKey.name}`);
+  }
+
+  pauseTrigger = (triggerKey: TriggerKey): Observable<void> => {
+    return this.apiService.post(getBaseUrl() + `${CONTEXT_PATH}/triggers/${triggerKey.group || 'DEFAULT'}/${triggerKey.name}/pause`, {});
+  }
+
+  resumeTrigger = (triggerKey: TriggerKey): Observable<void> => {
+    return this.apiService.post(getBaseUrl() + `${CONTEXT_PATH}/triggers/${triggerKey.group || 'DEFAULT'}/${triggerKey.name}/resume`, {});
+  }
+
+  unscheduleTrigger = (triggerKey: TriggerKey): Observable<void> => {
+    return this.apiService.delete(getBaseUrl() + `${CONTEXT_PATH}/triggers/${triggerKey.group || 'DEFAULT'}/${triggerKey.name}`);
+  }
 
 }

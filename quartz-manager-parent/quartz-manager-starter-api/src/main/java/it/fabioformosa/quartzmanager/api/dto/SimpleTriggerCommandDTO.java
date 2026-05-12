@@ -9,5 +9,6 @@ import lombok.*;
 @ToString
 public class SimpleTriggerCommandDTO {
   private String triggerName;
+  private String triggerGroup;
   private SimpleTriggerInputDTO simpleTriggerInputDTO;
 }
