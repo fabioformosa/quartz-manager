@@ -72,7 +72,7 @@ class SimpleTriggerServiceTest {
 
     SimpleTriggerDTO expectedTriggerDTO = SimpleTriggerDTO.builder()
       .startTime(triggerInputDTO.getStartDate())
-      .repeatInterval(1000)
+      .repeatInterval(1000L)
       .repeatCount(10)
       .mayFireAgain(true)
       .finalFireTime(triggerInputDTO.getEndDate())
@@ -110,7 +110,7 @@ class SimpleTriggerServiceTest {
 
     SimpleTriggerDTO expectedTriggerDTO = SimpleTriggerDTO.builder()
       .startTime(triggerInputDTO.getStartDate())
-      .repeatInterval(1000)
+      .repeatInterval(1000L)
       .repeatCount(10)
       .mayFireAgain(true)
       .finalFireTime(triggerInputDTO.getEndDate())

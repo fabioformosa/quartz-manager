@@ -10,6 +10,7 @@ describe('TriggerService', () => {
     apiService = {
       get: jest.fn(),
       post: jest.fn(),
+      put: jest.fn(),
       delete: jest.fn()
     };
     triggerService = new TriggerService(apiService);
@@ -27,5 +28,15 @@ describe('TriggerService', () => {
     expect(apiService.post).toHaveBeenCalledWith('/quartz-manager/triggers/DEFAULT/sampleTrigger/pause', {});
     expect(apiService.post).toHaveBeenCalledWith('/quartz-manager/triggers/DEFAULT/sampleTrigger/resume', {});
     expect(apiService.delete).toHaveBeenCalledWith('/quartz-manager/triggers/DEFAULT/sampleTrigger');
+  });
+
+  it('uses generic trigger create and update endpoints', () => {
+    const command: any = {triggerType: 'CRON', cronExpression: '0 0/5 * * * ?'};
+
+    triggerService.saveTrigger('OPS', 'cronTrigger', command);
+    triggerService.updateTrigger('OPS', 'cronTrigger', command);
+
+    expect(apiService.post).toHaveBeenCalledWith('/quartz-manager/triggers/OPS/cronTrigger', command);
+    expect(apiService.put).toHaveBeenCalledWith('/quartz-manager/triggers/OPS/cronTrigger', command);
   });
 });

@@ -1,6 +1,7 @@
 package it.fabioformosa.quartzmanager.api.controllers.advices;
 
 import it.fabioformosa.quartzmanager.api.exceptions.ExceptionResponse;
+import it.fabioformosa.quartzmanager.api.exceptions.CalendarNotFoundException;
 import it.fabioformosa.quartzmanager.api.exceptions.JobNotFoundException;
 import it.fabioformosa.quartzmanager.api.exceptions.ResourceConflictException;
 import it.fabioformosa.quartzmanager.api.exceptions.TriggerNotFoundException;
@@ -34,6 +35,13 @@ public class ExceptionHandlingController {
   @ResponseStatus(HttpStatus.NOT_FOUND)
   @ResponseBody
   public ExceptionResponse jobNotFound(JobNotFoundException ex){
+    return ExceptionResponse.builder().errorCode(HttpStatus.NOT_FOUND.toString()).errorMessage(ex.getMessage()).build();
+  }
+
+  @ExceptionHandler(CalendarNotFoundException.class)
+  @ResponseStatus(HttpStatus.NOT_FOUND)
+  @ResponseBody
+  public ExceptionResponse calendarNotFound(CalendarNotFoundException ex){
     return ExceptionResponse.builder().errorCode(HttpStatus.NOT_FOUND.toString()).errorMessage(ex.getMessage()).build();
   }
 

@@ -53,7 +53,8 @@ import {
   getHtmlBaseUrl,
   LogsRxWebsocketService,
   ProgressRxWebsocketService,
-  TriggerService
+  TriggerService,
+  CalendarService
 } from './services';
 import { ForbiddenComponent } from './views/forbidden/forbidden.component';
 import { APP_BASE_HREF } from '@angular/common';
@@ -135,6 +136,7 @@ export function jwtOptionsFactory(apiService: ApiService) {
         SchedulerService,
         JobService,
         TriggerService,
+        CalendarService,
         ProgressRxWebsocketService,
         LogsRxWebsocketService,
         AuthService,

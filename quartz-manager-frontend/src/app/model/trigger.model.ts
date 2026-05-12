@@ -19,4 +19,14 @@ export class Trigger {
   jobDetailDTO: JobDetail = new JobDetail();
   mayFireAgain: boolean;
   jobDataMap: {[key: string]: unknown};
+  cronExpression: string;
+  timeZone: string;
+  repeatInterval: number;
+  repeatCount: number;
+  repeatIntervalUnit: string;
+  startTimeOfDay: string;
+  endTimeOfDay: string;
+  daysOfWeek: number[];
+  preserveHourOfDayAcrossDaylightSavings: boolean;
+  skipDayIfHourDoesNotExist: boolean;
 }

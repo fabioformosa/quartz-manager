@@ -7,6 +7,7 @@ import lombok.experimental.SuperBuilder;
 import org.quartz.JobDataMap;
 
 import java.util.Date;
+import java.util.Set;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -29,4 +30,14 @@ public class TriggerDTO {
   private JobDetailDTO jobDetailDTO;
   private boolean mayFireAgain;
   private JobDataMap jobDataMap;
+  private String cronExpression;
+  private String timeZone;
+  private Long repeatInterval;
+  private Integer repeatCount;
+  private String repeatIntervalUnit;
+  private String startTimeOfDay;
+  private String endTimeOfDay;
+  private Set<Integer> daysOfWeek;
+  private Boolean preserveHourOfDayAcrossDaylightSavings;
+  private Boolean skipDayIfHourDoesNotExist;
 }

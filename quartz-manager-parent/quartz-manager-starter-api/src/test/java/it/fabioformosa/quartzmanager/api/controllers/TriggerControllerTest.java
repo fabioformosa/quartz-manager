@@ -3,7 +3,9 @@ package it.fabioformosa.quartzmanager.api.controllers;
 import it.fabioformosa.quartzmanager.api.QuartManagerApplicationTests;
 import it.fabioformosa.quartzmanager.api.controllers.utils.TestUtils;
 import it.fabioformosa.quartzmanager.api.dto.TriggerDTO;
+import it.fabioformosa.quartzmanager.api.dto.TriggerInputDTO;
 import it.fabioformosa.quartzmanager.api.dto.TriggerKeyDTO;
+import it.fabioformosa.quartzmanager.api.dto.TriggerType;
 import it.fabioformosa.quartzmanager.api.services.TriggerService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -21,6 +23,7 @@ import java.util.List;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 
 @ContextConfiguration(classes = {QuartManagerApplicationTests.class})
 @WebMvcTest(controllers = TriggerController.class, properties = {
@@ -59,6 +62,49 @@ class TriggerControllerTest {
     Mockito.when(triggerService.getTrigger("DEFAULT", "sampleTrigger")).thenReturn(triggerDTO);
 
     mockMvc.perform(get(TriggerController.TRIGGER_CONTROLLER_BASE_URL + "/DEFAULT/sampleTrigger").contentType(MediaType.APPLICATION_JSON))
+      .andExpect(MockMvcResultMatchers.status().isOk())
+      .andExpect(MockMvcResultMatchers.content().json(TestUtils.toJson(triggerDTO)));
+  }
+
+  @Test
+  void givenATriggerInputDTO_whenPosted_thenTriggerIsCreated() throws Exception {
+    TriggerInputDTO triggerInputDTO = TriggerInputDTO.builder()
+      .triggerType(TriggerType.CRON)
+      .jobClass("it.fabioformosa.quartzmanager.api.jobs.SampleJob")
+      .cronExpression("0 0/5 * * * ?")
+      .misfireInstruction("FIRE_AND_PROCEED")
+      .build();
+    TriggerDTO triggerDTO = TriggerDTO.builder()
+      .triggerKeyDTO(TriggerKeyDTO.builder().name("cronTrigger").group("DEFAULT").build())
+      .type("CronTriggerImpl")
+      .build();
+    Mockito.when(triggerService.scheduleTrigger("DEFAULT", "cronTrigger", triggerInputDTO)).thenReturn(triggerDTO);
+
+    mockMvc.perform(post(TriggerController.TRIGGER_CONTROLLER_BASE_URL + "/DEFAULT/cronTrigger")
+        .contentType(MediaType.APPLICATION_JSON)
+        .content(TestUtils.toJson(triggerInputDTO)))
+      .andExpect(MockMvcResultMatchers.status().isCreated())
+      .andExpect(MockMvcResultMatchers.content().json(TestUtils.toJson(triggerDTO)));
+  }
+
+  @Test
+  void givenATriggerInputDTO_whenPut_thenTriggerIsRescheduled() throws Exception {
+    TriggerInputDTO triggerInputDTO = TriggerInputDTO.builder()
+      .triggerType(TriggerType.CALENDAR_INTERVAL)
+      .jobClass("it.fabioformosa.quartzmanager.api.jobs.SampleJob")
+      .repeatInterval(2L)
+      .repeatIntervalUnit("DAY")
+      .misfireInstruction("DO_NOTHING")
+      .build();
+    TriggerDTO triggerDTO = TriggerDTO.builder()
+      .triggerKeyDTO(TriggerKeyDTO.builder().name("calendarTrigger").group("DEFAULT").build())
+      .type("CalendarIntervalTriggerImpl")
+      .build();
+    Mockito.when(triggerService.rescheduleTrigger("DEFAULT", "calendarTrigger", triggerInputDTO)).thenReturn(triggerDTO);
+
+    mockMvc.perform(put(TriggerController.TRIGGER_CONTROLLER_BASE_URL + "/DEFAULT/calendarTrigger")
+        .contentType(MediaType.APPLICATION_JSON)
+        .content(TestUtils.toJson(triggerInputDTO)))
       .andExpect(MockMvcResultMatchers.status().isOk())
       .andExpect(MockMvcResultMatchers.content().json(TestUtils.toJson(triggerDTO)));
   }

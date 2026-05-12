@@ -2,13 +2,14 @@ import {Component, NgZone, OnDestroy, OnInit} from '@angular/core';
 import {Subscription} from 'rxjs';
 import {map} from 'rxjs/operators';
 
-import {SchedulerService, TriggerService} from '../../services';
+import {CalendarService, SchedulerService, TriggerService} from '../../services';
 import JobService from '../../services/job.service';
 import {LogsRxWebsocketService} from '../../services/logs.rx-websocket.service';
 import {ProgressRxWebsocketService} from '../../services/progress.rx-websocket.service';
 import {Scheduler} from '../../model/scheduler.model';
-import {SimpleTriggerCommand} from '../../model/simple-trigger.command';
-import {SimpleTrigger} from '../../model/simple-trigger.model';
+import {Trigger} from '../../model/trigger.model';
+import {TriggerCommand, TriggerType} from '../../model/trigger-command.model';
+import {CalendarType, QuartzCalendar} from '../../model/calendar.model';
 import {ScheduledJob} from '../../model/scheduled-job.model';
 import {ScheduledJobCommand} from '../../model/scheduled-job.command';
 import {TriggerKey} from '../../model/triggerKey.model';
@@ -18,6 +19,7 @@ type ConsolePage = 'dashboard' | 'jobs' | 'triggers' | 'calendars' | 'executions
 type WizardMode = 'create' | 'edit';
 type JobTargetType = 'stored' | 'class';
 type JobDataMapType = 'string' | 'number' | 'boolean' | 'json' | 'null';
+type CalendarRuleMode = 'dates' | 'weekdays' | 'monthdays' | 'timeRange' | 'cron';
 
 interface ConsoleLogRecord {
   time: Date;
@@ -30,6 +32,7 @@ interface ConsoleLogRecord {
 interface TriggerDraft {
   triggerName: string;
   group: string;
+  triggerType: TriggerType;
   jobTargetType: JobTargetType;
   storedJobKey: string;
   jobClass: string;
@@ -39,7 +42,30 @@ interface TriggerDraft {
   repeatIntervalUnit: string;
   repeatCount: number;
   misfireInstruction: string;
+  cronExpression: string;
+  timeZone: string;
+  startTimeOfDay: string;
+  endTimeOfDay: string;
+  daysOfWeek: number[];
+  preserveHourOfDayAcrossDaylightSavings: boolean;
+  skipDayIfHourDoesNotExist: boolean;
+  calendarName: string;
   jobDataMapEntries: JobDataMapEntry[];
+}
+
+interface CalendarDraft {
+  name: string;
+  type: CalendarType;
+  description: string;
+  cronExpression: string;
+  timeZone: string;
+  rangeStartingTime: string;
+  rangeEndingTime: string;
+  invertTimeRange: boolean;
+  excludedDaysOfWeek: number[];
+  excludedDaysOfMonth: number[];
+  excludedDates: string[];
+  includedTime: string;
 }
 
 interface JobDraft {
@@ -73,9 +99,9 @@ export class ManagerComponent implements OnInit, OnDestroy {
   scheduler: Scheduler;
   schedulerLoading = false;
   triggerKeys: TriggerKey[] = [];
-  triggerDetailsByName: {[triggerName: string]: SimpleTrigger} = {};
+  triggerDetailsByName: {[triggerName: string]: Trigger} = {};
   selectedTriggerKey: TriggerKey;
-  selectedTrigger: SimpleTrigger;
+  selectedTrigger: Trigger;
   selectedJobClass: string;
   selectedScheduledJob: ScheduledJob;
   jobs: string[] = [];
@@ -95,14 +121,23 @@ export class ManagerComponent implements OnInit, OnDestroy {
   wizardError: string;
   jobWizardError: string;
   triggerDraft: TriggerDraft = this.buildEmptyDraft();
+  calendarDraft: CalendarDraft = this.buildEmptyCalendarDraft();
   jobDraft: JobDraft = this.buildEmptyJobDraft();
   jobWizardMode: WizardMode = 'create';
   jobGroupFilter = 'ALL';
   triggerGroupFilter = 'ALL';
   jobSearch = '';
   triggerSearch = '';
+  calendarSearch = '';
+  calendars: QuartzCalendar[] = [];
+  selectedCalendar: QuartzCalendar;
+  calendarWizardOpen = false;
+  calendarWizardMode: WizardMode = 'create';
+  calendarWizardSubmitting = false;
+  calendarWizardError: string;
+  calendarIncludedTimeResult: string;
 
-  private readonly roadmapPages = new Set<ConsolePage>(['calendars', 'executions']);
+  private readonly roadmapPages = new Set<ConsolePage>(['executions']);
   private readonly subscriptions: Subscription[] = [];
   private logsSubscription: Subscription;
   private progressSubscription: Subscription;
@@ -111,6 +146,7 @@ export class ManagerComponent implements OnInit, OnDestroy {
   constructor(
     private schedulerService: SchedulerService,
     private triggerService: TriggerService,
+    private calendarService: CalendarService,
     private jobService: JobService,
     private logsRxWebsocketService: LogsRxWebsocketService,
     private progressRxWebsocketService: ProgressRxWebsocketService,
@@ -122,6 +158,7 @@ export class ManagerComponent implements OnInit, OnDestroy {
     this.fetchTriggers();
     this.fetchJobs();
     this.fetchScheduledJobs();
+    this.fetchCalendars();
   }
 
   ngOnDestroy() {
@@ -189,10 +226,15 @@ export class ManagerComponent implements OnInit, OnDestroy {
     this.jobWizardOpen = false;
   }
 
+  closeCalendarWizardDrawer() {
+    this.calendarWizardOpen = false;
+  }
+
   closeDrawers() {
     this.detailDrawerOpen = false;
     this.wizardOpen = false;
     this.jobWizardOpen = false;
+    this.calendarWizardOpen = false;
   }
 
   refreshScheduler() {
@@ -294,10 +336,21 @@ export class ManagerComponent implements OnInit, OnDestroy {
     this.subscriptions.push(subscription);
   }
 
+  fetchCalendars() {
+    const subscription = this.calendarService.fetchCalendars().subscribe({
+      next: calendars => {
+        this.calendars = calendars || [];
+        this.selectedCalendar = this.selectedCalendar || this.calendars[0];
+      },
+      error: () => this.operationError = 'Unable to load calendars.'
+    });
+    this.subscriptions.push(subscription);
+  }
+
   fetchTriggerDetails(triggerKeys: TriggerKey[]) {
     triggerKeys.forEach(triggerKey => {
-      const subscription = this.schedulerService.getSimpleTriggerConfig(triggerKey.name, this.getTriggerGroup(triggerKey)).subscribe({
-        next: trigger => this.triggerDetailsByName[this.getTriggerDetailKey(triggerKey)] = trigger as SimpleTrigger,
+      const subscription = this.triggerService.getTrigger(triggerKey).subscribe({
+        next: trigger => this.triggerDetailsByName[this.getTriggerDetailKey(triggerKey)] = trigger,
         error: () => {
           this.triggerDetailsByName[this.getTriggerDetailKey(triggerKey)] = null;
         }
@@ -317,15 +370,15 @@ export class ManagerComponent implements OnInit, OnDestroy {
     this.triggerLoading = true;
     this.selectedTrigger = this.triggerDetailsByName[this.getTriggerDetailKey(triggerKey)] || null;
     this.subscribeToTriggerTopics(this.selectedTriggerKey);
-    const subscription = this.schedulerService.getSimpleTriggerConfig(triggerKey.name, this.getTriggerGroup(triggerKey)).subscribe({
+    const subscription = this.triggerService.getTrigger(triggerKey).subscribe({
       next: trigger => {
-        this.selectedTrigger = trigger as SimpleTrigger;
-        this.triggerDetailsByName[this.getTriggerDetailKey(triggerKey)] = trigger as SimpleTrigger;
+        this.selectedTrigger = trigger;
+        this.triggerDetailsByName[this.getTriggerDetailKey(triggerKey)] = trigger;
         this.triggerLoading = false;
       },
       error: () => {
         this.triggerLoading = false;
-        this.showRoadmapNotice('Only SimpleTrigger details are supported by the current backend');
+        this.operationError = 'Unable to load trigger details.';
       }
     });
     this.subscriptions.push(subscription);
@@ -452,6 +505,95 @@ export class ManagerComponent implements OnInit, OnDestroy {
     this.subscriptions.push(subscription);
   }
 
+  selectCalendar(calendar: QuartzCalendar) {
+    this.selectedCalendar = calendar;
+    this.openDetailDrawer();
+  }
+
+  openCreateCalendarWizard() {
+    this.calendarWizardMode = 'create';
+    this.calendarWizardError = null;
+    this.calendarDraft = this.buildEmptyCalendarDraft();
+    this.calendarWizardOpen = true;
+    this.detailDrawerOpen = false;
+    this.selectPage('calendars');
+    this.calendarWizardOpen = true;
+  }
+
+  openEditCalendarWizard() {
+    if (!this.selectedCalendar) {
+      return;
+    }
+    this.calendarWizardMode = 'edit';
+    this.calendarWizardError = null;
+    this.calendarDraft = this.fromCalendarToDraft(this.selectedCalendar);
+    this.calendarWizardOpen = true;
+    this.detailDrawerOpen = false;
+    this.selectPage('calendars');
+    this.calendarWizardOpen = true;
+  }
+
+  submitCalendarWizard() {
+    this.calendarWizardError = null;
+    if (!this.canSubmitCalendar()) {
+      this.calendarWizardError = 'Calendar name, type, and rule fields are required.';
+      return;
+    }
+
+    const calendar = this.fromCalendarDraftToCommand();
+    const name = this.calendarDraft.name.trim();
+    this.calendarWizardSubmitting = true;
+    const request = this.calendarWizardMode === 'edit'
+      ? this.calendarService.updateCalendar(name, calendar)
+      : this.calendarService.createCalendar(name, calendar);
+
+    const subscription = request.subscribe({
+      next: savedCalendar => {
+        this.calendarWizardSubmitting = false;
+        this.upsertCalendar(savedCalendar);
+        this.selectedCalendar = savedCalendar;
+        this.calendarWizardOpen = false;
+        this.detailDrawerOpen = true;
+        this.operationNotice = this.calendarWizardMode === 'edit' ? 'Calendar updated.' : 'Calendar created.';
+      },
+      error: () => {
+        this.calendarWizardSubmitting = false;
+        this.calendarWizardError = 'Unable to save the calendar.';
+      }
+    });
+    this.subscriptions.push(subscription);
+  }
+
+  deleteSelectedCalendar() {
+    if (!this.selectedCalendar || !window.confirm(`Delete calendar ${this.selectedCalendar.name}?`)) {
+      return;
+    }
+    const calendarName = this.selectedCalendar.name;
+    const subscription = this.calendarService.deleteCalendar(calendarName).subscribe({
+      next: () => {
+        this.calendars = this.calendars.filter(calendar => calendar.name !== calendarName);
+        this.selectedCalendar = this.calendars[0];
+        this.operationNotice = 'Calendar deleted.';
+      },
+      error: () => this.operationError = 'Unable to delete the selected calendar.'
+    });
+    this.subscriptions.push(subscription);
+  }
+
+  testSelectedCalendarTime() {
+    if (!this.selectedCalendar) {
+      return;
+    }
+    const testTime = this.fromDatetimeLocalValue(this.calendarDraft.includedTime) || new Date();
+    const subscription = this.calendarService.testIncludedTime(this.selectedCalendar.name, testTime).subscribe({
+      next: result => this.calendarIncludedTimeResult = result.included
+        ? 'Included at the tested time.'
+        : `Excluded. Next included time: ${this.formatDateTime(result.nextIncludedTime) || '-'}`,
+      error: () => this.operationError = 'Unable to test the selected calendar.'
+    });
+    this.subscriptions.push(subscription);
+  }
+
   pauseSelectedTrigger() {
     if (!this.selectedTriggerKey) {
       return;
@@ -501,7 +643,7 @@ export class ManagerComponent implements OnInit, OnDestroy {
     this.resetWizard();
     this.wizardOpen = true;
     this.detailDrawerOpen = false;
-    this.selectPage('dashboard');
+    this.selectPage('triggers');
     this.wizardOpen = true;
   }
 
@@ -510,7 +652,7 @@ export class ManagerComponent implements OnInit, OnDestroy {
       this.selectTrigger(triggerKey, false);
     }
     if (!this.selectedTrigger && !this.selectedTriggerKey) {
-      this.showRoadmapNotice('Reschedule requires a SimpleTrigger loaded from the backend');
+      this.showRoadmapNotice('Reschedule requires a trigger loaded from the backend');
       return;
     }
 
@@ -522,18 +664,29 @@ export class ManagerComponent implements OnInit, OnDestroy {
     this.triggerDraft = {
       triggerName: this.selectedTriggerKey.name,
       group: this.selectedTriggerKey.group || 'DEFAULT',
+      triggerType: this.getTriggerTypeValue(trigger),
       jobTargetType: trigger?.jobKeyDTO ? 'stored' : 'class',
-      storedJobKey: trigger?.jobKeyDTO ? this.getJobOptionValue(trigger.jobKeyDTO.group, trigger.jobKeyDTO.name) : this.getDefaultStoredJobKey(),
+      storedJobKey: trigger?.jobKeyDTO
+        ? this.getJobOptionValue(trigger.jobKeyDTO.group, trigger.jobKeyDTO.name)
+        : this.getDefaultStoredJobKey(),
       jobClass: trigger?.jobDetailDTO?.jobClassName || this.jobs[0] || '',
       startDate: this.toDatetimeLocalValue(trigger?.startTime),
       endDate: this.toDatetimeLocalValue(trigger?.endTime),
       repeatIntervalAmount: repeatInterval.amount,
       repeatIntervalUnit: repeatInterval.unit,
       repeatCount: trigger?.repeatCount ?? -1,
-      misfireInstruction: this.getMisfireInstructionName(trigger?.misfireInstruction),
+      misfireInstruction: this.getMisfireInstructionName(trigger?.misfireInstruction, this.getTriggerTypeValue(trigger)),
+      cronExpression: trigger?.cronExpression || '0 0/5 * * * ?',
+      timeZone: trigger?.timeZone || Intl.DateTimeFormat().resolvedOptions().timeZone,
+      startTimeOfDay: trigger?.startTimeOfDay || '08:00:00',
+      endTimeOfDay: trigger?.endTimeOfDay || '18:00:00',
+      daysOfWeek: trigger?.daysOfWeek || [2, 3, 4, 5, 6],
+      preserveHourOfDayAcrossDaylightSavings: !!trigger?.preserveHourOfDayAcrossDaylightSavings,
+      skipDayIfHourDoesNotExist: !!trigger?.skipDayIfHourDoesNotExist,
+      calendarName: trigger?.calendarName || '',
       jobDataMapEntries: this.toJobDataMapEntries(trigger?.jobDataMap)
     };
-    this.selectPage('dashboard');
+    this.selectPage('triggers');
     this.wizardOpen = true;
   }
 
@@ -546,20 +699,32 @@ export class ManagerComponent implements OnInit, OnDestroy {
   submitTriggerWizard() {
     this.wizardError = null;
     if (!this.canSubmitTrigger()) {
-      this.wizardError = 'Trigger name, job class, misfire policy, and both repeat fields are required for the current backend.';
+      this.wizardError = 'Trigger name, target job, type, and schedule fields are required.';
       return;
     }
 
-    const command = new SimpleTriggerCommand();
-    command.triggerName = this.triggerDraft.triggerName.trim();
-    command.triggerGroup = this.triggerDraft.group || 'DEFAULT';
+    const command = new TriggerCommand();
+    command.triggerType = this.triggerDraft.triggerType;
     command.jobClass = this.triggerDraft.jobTargetType === 'class' ? this.triggerDraft.jobClass : null;
     command.jobKey = this.triggerDraft.jobTargetType === 'stored' ? this.parseJobOptionValue(this.triggerDraft.storedJobKey) : null;
     command.startDate = this.fromDatetimeLocalValue(this.triggerDraft.startDate);
     command.endDate = this.fromDatetimeLocalValue(this.triggerDraft.endDate);
-    command.repeatInterval = this.getRepeatIntervalMs();
-    command.repeatCount = this.triggerDraft.repeatCount;
+    command.repeatInterval = this.getTriggerCommandRepeatInterval();
+    command.repeatCount = this.triggerDraft.triggerType === 'SIMPLE' ? this.triggerDraft.repeatCount : null;
+    command.repeatIntervalUnit = this.getTriggerCommandRepeatIntervalUnit();
     command.misfireInstruction = this.triggerDraft.misfireInstruction;
+    command.cronExpression = this.triggerDraft.triggerType === 'CRON' ? this.triggerDraft.cronExpression : null;
+    command.timeZone = this.triggerDraft.timeZone;
+    command.startTimeOfDay = this.triggerDraft.triggerType === 'DAILY_TIME_INTERVAL' ? this.triggerDraft.startTimeOfDay : null;
+    command.endTimeOfDay = this.triggerDraft.triggerType === 'DAILY_TIME_INTERVAL' ? this.triggerDraft.endTimeOfDay : null;
+    command.daysOfWeek = this.triggerDraft.triggerType === 'DAILY_TIME_INTERVAL' ? this.triggerDraft.daysOfWeek : null;
+    command.preserveHourOfDayAcrossDaylightSavings = this.triggerDraft.triggerType === 'CALENDAR_INTERVAL'
+      ? this.triggerDraft.preserveHourOfDayAcrossDaylightSavings
+      : null;
+    command.skipDayIfHourDoesNotExist = this.triggerDraft.triggerType === 'CALENDAR_INTERVAL'
+      ? this.triggerDraft.skipDayIfHourDoesNotExist
+      : null;
+    command.calendarName = this.triggerDraft.calendarName || null;
     try {
       command.jobDataMap = this.serializeJobDataMap(this.triggerDraft.jobDataMapEntries);
     } catch (err) {
@@ -568,26 +733,28 @@ export class ManagerComponent implements OnInit, OnDestroy {
     }
 
     this.wizardSubmitting = true;
+    const group = this.triggerDraft.group || 'DEFAULT';
+    const name = this.triggerDraft.triggerName.trim();
     const request = this.wizardMode === 'edit'
-      ? this.schedulerService.updateSimpleTriggerConfig(command)
-      : this.schedulerService.saveSimpleTriggerConfig(command);
+      ? this.triggerService.updateTrigger(group, name, command)
+      : this.triggerService.saveTrigger(group, name, command);
 
     const subscription = request.subscribe({
       next: trigger => {
         this.wizardSubmitting = false;
-        this.triggerDetailsByName[this.getTriggerDetailKey(trigger.triggerKeyDTO)] = trigger as SimpleTrigger;
+        this.triggerDetailsByName[this.getTriggerDetailKey(trigger.triggerKeyDTO)] = trigger;
         this.upsertTriggerKey(trigger.triggerKeyDTO);
         this.selectTrigger(trigger.triggerKeyDTO);
         this.wizardOpen = false;
         this.detailDrawerOpen = true;
-        this.operationNotice = this.wizardMode === 'edit' ? 'SimpleTrigger rescheduled.' : 'SimpleTrigger created.';
+        this.operationNotice = this.wizardMode === 'edit' ? 'Trigger rescheduled.' : 'Trigger created.';
         if (this.wizardMode === 'create') {
           this.resetWizard();
         }
       },
       error: () => {
         this.wizardSubmitting = false;
-        this.wizardError = 'Unable to save the SimpleTrigger with the current backend.';
+        this.wizardError = 'Unable to save the trigger.';
       }
     });
     this.subscriptions.push(subscription);
@@ -602,7 +769,7 @@ export class ManagerComponent implements OnInit, OnDestroy {
     }
   }
 
-  getTriggerDetail(triggerKey: TriggerKey): SimpleTrigger {
+  getTriggerDetail(triggerKey: TriggerKey): Trigger {
     return triggerKey?.name ? this.triggerDetailsByName[this.getTriggerDetailKey(triggerKey)] : null;
   }
 
@@ -611,7 +778,7 @@ export class ManagerComponent implements OnInit, OnDestroy {
   }
 
   getTriggerType(triggerKey: TriggerKey): string {
-    return this.getTriggerDetail(triggerKey)?.type || 'SimpleTrigger';
+    return this.getTriggerDetail(triggerKey)?.type || 'Trigger';
   }
 
   getTriggerState(triggerKey: TriggerKey): string {
@@ -779,30 +946,81 @@ export class ManagerComponent implements OnInit, OnDestroy {
   }
 
   getWizardTitle(): string {
-    return this.wizardMode === 'edit' ? 'Reschedule SimpleTrigger' : 'Create SimpleTrigger';
+    return this.wizardMode === 'edit' ? 'Reschedule Trigger' : 'Create Trigger';
   }
 
   getWizardCta(): string {
-    return this.wizardMode === 'edit' ? 'Save Reschedule' : 'Create SimpleTrigger';
+    return this.wizardMode === 'edit' ? 'Save Reschedule' : 'Create Trigger';
   }
 
   canSubmitTrigger(): boolean {
     const hasTarget = this.triggerDraft.jobTargetType === 'stored'
       ? !!this.triggerDraft.storedJobKey
       : !!this.triggerDraft.jobClass;
-    return !!(
-      this.triggerDraft.triggerName?.trim()
+    return !!(this.triggerDraft.triggerName?.trim()
       && hasTarget
-      && this.triggerDraft.misfireInstruction
-      && this.triggerDraft.repeatCount !== null
-      && this.triggerDraft.repeatCount !== undefined
-      && this.triggerDraft.repeatIntervalAmount
-      && this.triggerDraft.repeatIntervalUnit
-    );
+      && this.triggerDraft.triggerType
+      && this.hasValidTriggerSchedule());
+  }
+
+  hasValidTriggerSchedule(): boolean {
+    switch (this.triggerDraft.triggerType) {
+      case 'CRON': return !!this.triggerDraft.cronExpression?.trim();
+      case 'DAILY_TIME_INTERVAL': return !!(this.triggerDraft.repeatIntervalAmount
+        && this.triggerDraft.repeatIntervalUnit
+        && this.triggerDraft.startTimeOfDay
+        && this.triggerDraft.endTimeOfDay);
+      case 'CALENDAR_INTERVAL': return !!(this.triggerDraft.repeatIntervalAmount && this.triggerDraft.repeatIntervalUnit);
+      default: return this.triggerDraft.repeatCount !== null
+        && this.triggerDraft.repeatCount !== undefined
+        && !!this.triggerDraft.repeatIntervalAmount;
+    }
   }
 
   canSubmitJob(): boolean {
     return !!(this.jobDraft.name?.trim() && this.jobDraft.group?.trim() && this.jobDraft.jobClass);
+  }
+
+  canSubmitCalendar(): boolean {
+    if (!this.calendarDraft.name?.trim() || !this.calendarDraft.type) {
+      return false;
+    }
+    switch (this.calendarDraft.type) {
+      case 'CRON': return !!this.calendarDraft.cronExpression?.trim();
+      case 'DAILY': return !!(this.calendarDraft.rangeStartingTime && this.calendarDraft.rangeEndingTime);
+      default: return true;
+    }
+  }
+
+  getCalendarRows(): QuartzCalendar[] {
+    const search = this.calendarSearch?.trim().toLowerCase();
+    return (this.calendars || []).filter(calendar => !search || `${calendar.name} ${calendar.type}`.toLowerCase().includes(search));
+  }
+
+  getCalendarRuleMode(): CalendarRuleMode {
+    switch (this.calendarDraft.type) {
+      case 'WEEKLY': return 'weekdays';
+      case 'MONTHLY': return 'monthdays';
+      case 'DAILY': return 'timeRange';
+      case 'CRON': return 'cron';
+      default: return 'dates';
+    }
+  }
+
+  toggleCalendarWeekday(day: number) {
+    this.calendarDraft.excludedDaysOfWeek = this.toggleNumberValue(this.calendarDraft.excludedDaysOfWeek, day);
+  }
+
+  toggleCalendarMonthday(day: number) {
+    this.calendarDraft.excludedDaysOfMonth = this.toggleNumberValue(this.calendarDraft.excludedDaysOfMonth, day);
+  }
+
+  addCalendarDate() {
+    this.calendarDraft.excludedDates = [...(this.calendarDraft.excludedDates || []), this.toDatetimeLocalValue(new Date())];
+  }
+
+  removeCalendarDate(index: number) {
+    this.calendarDraft.excludedDates.splice(index, 1);
   }
 
   addJobDataMapEntry(entries: JobDataMapEntry[]) {
@@ -814,6 +1032,9 @@ export class ManagerComponent implements OnInit, OnDestroy {
   }
 
   getFirePreview(): string[] {
+    if (this.triggerDraft.triggerType === 'CRON') {
+      return [`Cron expression: ${this.triggerDraft.cronExpression || '-'}`];
+    }
     const start = this.fromDatetimeLocalValue(this.triggerDraft.startDate) || new Date();
     const repeatInterval = this.getRepeatIntervalMs();
     if (!repeatInterval || repeatInterval <= 0) {
@@ -824,6 +1045,43 @@ export class ManagerComponent implements OnInit, OnDestroy {
       const fireTime = new Date(start.getTime() + repeatInterval * index);
       return `${index + 1}. ${this.formatDateTime(fireTime)}`;
     });
+  }
+
+  getTriggerTypeValue(trigger: Trigger): TriggerType {
+    const type = trigger?.type || '';
+    if (type.includes('Cron')) {
+      return 'CRON';
+    }
+    if (type.includes('DailyTimeInterval')) {
+      return 'DAILY_TIME_INTERVAL';
+    }
+    if (type.includes('CalendarInterval')) {
+      return 'CALENDAR_INTERVAL';
+    }
+    return 'SIMPLE';
+  }
+
+  selectTriggerType(triggerType: TriggerType) {
+    this.triggerDraft.triggerType = triggerType;
+    this.triggerDraft.misfireInstruction = this.getDefaultMisfireInstruction(triggerType);
+  }
+
+  toggleDayOfWeek(day: number) {
+    const days = new Set(this.triggerDraft.daysOfWeek || []);
+    if (days.has(day)) {
+      days.delete(day);
+    } else {
+      days.add(day);
+    }
+    this.triggerDraft.daysOfWeek = Array.from(days).sort((first, second) => first - second);
+  }
+
+  isDayOfWeekSelected(day: number): boolean {
+    return (this.triggerDraft.daysOfWeek || []).includes(day);
+  }
+
+  getCalendarOptions(): string[] {
+    return this.calendars.map(calendar => calendar.name);
   }
 
   shortClassName(className: string): string {
@@ -927,6 +1185,11 @@ export class ManagerComponent implements OnInit, OnDestroy {
     this.scheduledJobs = [job, ...otherJobs];
   }
 
+  private upsertCalendar(calendar: QuartzCalendar) {
+    const otherCalendars = this.calendars.filter(currentCalendar => currentCalendar.name !== calendar.name);
+    this.calendars = [calendar, ...otherCalendars];
+  }
+
   private sameTriggerKey(first: TriggerKey, second: TriggerKey): boolean {
     return first?.name === second?.name && this.getTriggerGroup(first) === this.getTriggerGroup(second);
   }
@@ -943,6 +1206,7 @@ export class ManagerComponent implements OnInit, OnDestroy {
     return {
       triggerName: '',
       group: 'DEFAULT',
+      triggerType: 'SIMPLE',
       jobTargetType: this.scheduledJobs.length > 0 ? 'stored' : 'class',
       storedJobKey: this.getDefaultStoredJobKey(),
       jobClass: this.jobs[0] || '',
@@ -952,7 +1216,32 @@ export class ManagerComponent implements OnInit, OnDestroy {
       repeatIntervalUnit: 'minutes',
       repeatCount: -1,
       misfireInstruction: 'MISFIRE_INSTRUCTION_RESCHEDULE_NOW_WITH_EXISTING_REPEAT_COUNT',
+      cronExpression: '0 0/5 * * * ?',
+      timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+      startTimeOfDay: '08:00:00',
+      endTimeOfDay: '18:00:00',
+      daysOfWeek: [2, 3, 4, 5, 6],
+      preserveHourOfDayAcrossDaylightSavings: false,
+      skipDayIfHourDoesNotExist: false,
+      calendarName: '',
       jobDataMapEntries: []
+    };
+  }
+
+  private buildEmptyCalendarDraft(): CalendarDraft {
+    return {
+      name: '',
+      type: 'WEEKLY',
+      description: '',
+      cronExpression: '0 0 0 ? * SAT,SUN',
+      timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+      rangeStartingTime: '22:00:00',
+      rangeEndingTime: '06:00:00',
+      invertTimeRange: false,
+      excludedDaysOfWeek: [1, 7],
+      excludedDaysOfMonth: [],
+      excludedDates: [],
+      includedTime: this.toDatetimeLocalValue(new Date())
     };
   }
 
@@ -982,8 +1271,53 @@ export class ManagerComponent implements OnInit, OnDestroy {
     return name ? {group: group || 'DEFAULT', name} : null;
   }
 
+  private fromCalendarToDraft(calendar: QuartzCalendar): CalendarDraft {
+    return {
+      name: calendar.name,
+      type: calendar.type,
+      description: calendar.description || '',
+      cronExpression: calendar.cronExpression || '0 0 0 ? * SAT,SUN',
+      timeZone: calendar.timeZone || Intl.DateTimeFormat().resolvedOptions().timeZone,
+      rangeStartingTime: calendar.rangeStartingTime || '22:00:00',
+      rangeEndingTime: calendar.rangeEndingTime || '06:00:00',
+      invertTimeRange: !!calendar.invertTimeRange,
+      excludedDaysOfWeek: calendar.excludedDaysOfWeek || [],
+      excludedDaysOfMonth: calendar.excludedDaysOfMonth || [],
+      excludedDates: (calendar.excludedDates || []).map(date => this.toDatetimeLocalValue(date)),
+      includedTime: this.toDatetimeLocalValue(new Date())
+    };
+  }
+
+  private fromCalendarDraftToCommand(): QuartzCalendar {
+    const calendar = new QuartzCalendar();
+    calendar.name = this.calendarDraft.name.trim();
+    calendar.type = this.calendarDraft.type;
+    calendar.description = this.calendarDraft.description;
+    calendar.cronExpression = this.calendarDraft.type === 'CRON' ? this.calendarDraft.cronExpression : null;
+    calendar.timeZone = this.calendarDraft.timeZone;
+    calendar.rangeStartingTime = this.calendarDraft.type === 'DAILY' ? this.calendarDraft.rangeStartingTime : null;
+    calendar.rangeEndingTime = this.calendarDraft.type === 'DAILY' ? this.calendarDraft.rangeEndingTime : null;
+    calendar.invertTimeRange = this.calendarDraft.type === 'DAILY' ? this.calendarDraft.invertTimeRange : null;
+    calendar.excludedDaysOfWeek = this.calendarDraft.type === 'WEEKLY' ? this.calendarDraft.excludedDaysOfWeek : null;
+    calendar.excludedDaysOfMonth = this.calendarDraft.type === 'MONTHLY' ? this.calendarDraft.excludedDaysOfMonth : null;
+    calendar.excludedDates = ['ANNUAL', 'HOLIDAY'].includes(this.calendarDraft.type)
+      ? (this.calendarDraft.excludedDates || []).map(value => this.fromDatetimeLocalValue(value)).filter(Boolean)
+      : null;
+    return calendar;
+  }
+
+  private toggleNumberValue(values: number[], value: number): number[] {
+    const set = new Set(values || []);
+    if (set.has(value)) {
+      set.delete(value);
+    } else {
+      set.add(value);
+    }
+    return Array.from(set).sort((first, second) => first - second);
+  }
+
   private getUniqueGroups(groups: string[]): string[] {
-    return Array.from(new Set((groups || []).filter(Boolean))).sort();
+    return Array.from(new Set((groups || []).filter(Boolean))).sort((first, second) => first.localeCompare(second));
   }
 
   private toJobDataMapEntries(jobDataMap: {[key: string]: unknown}): JobDataMapEntry[] {
@@ -1052,7 +1386,7 @@ export class ManagerComponent implements OnInit, OnDestroy {
         try {
           return JSON.parse(entry.value || 'null');
         } catch (err) {
-          throw new Error(`JobDataMap key "${entry.key}" contains invalid JSON.`);
+          throw new Error(`JobDataMap key "${entry.key}" contains invalid JSON: ${this.getErrorMessage(err, 'Invalid JSON')}`);
         }
       case 'null':
         return null;
@@ -1077,6 +1411,30 @@ export class ManagerComponent implements OnInit, OnDestroy {
       case 'hours': return amount * 3600000;
       case 'days': return amount * 86400000;
       default: return amount;
+    }
+  }
+
+  private getTriggerCommandRepeatInterval(): number {
+    if (this.triggerDraft.triggerType === 'SIMPLE') {
+      return this.getRepeatIntervalMs();
+    }
+    return Number(this.triggerDraft.repeatIntervalAmount || 0);
+  }
+
+  private getTriggerCommandRepeatIntervalUnit(): string {
+    if (this.triggerDraft.triggerType === 'SIMPLE' || this.triggerDraft.triggerType === 'CRON') {
+      return null;
+    }
+    const unit = this.triggerDraft.repeatIntervalUnit || 'minutes';
+    switch (unit) {
+      case 'seconds': return 'SECOND';
+      case 'minutes': return 'MINUTE';
+      case 'hours': return 'HOUR';
+      case 'days': return 'DAY';
+      case 'weeks': return 'WEEK';
+      case 'months': return 'MONTH';
+      case 'years': return 'YEAR';
+      default: return unit.toUpperCase();
     }
   }
 
@@ -1116,7 +1474,15 @@ export class ManagerComponent implements OnInit, OnDestroy {
     return offsetDate.toISOString().slice(0, 16);
   }
 
-  private getMisfireInstructionName(misfireInstruction: number): string {
+  private getMisfireInstructionName(misfireInstruction: number, triggerType: TriggerType = 'SIMPLE'): string {
+    if (triggerType !== 'SIMPLE') {
+      switch (misfireInstruction) {
+        case 1: return 'IGNORE_MISFIRES';
+        case 2: return 'FIRE_AND_PROCEED';
+        case 3: return 'DO_NOTHING';
+        default: return 'FIRE_AND_PROCEED';
+      }
+    }
     switch (misfireInstruction) {
       case 1: return 'MISFIRE_INSTRUCTION_FIRE_NOW';
       case 2: return 'MISFIRE_INSTRUCTION_RESCHEDULE_NOW_WITH_EXISTING_REPEAT_COUNT';
@@ -1125,6 +1491,12 @@ export class ManagerComponent implements OnInit, OnDestroy {
       case 5: return 'MISFIRE_INSTRUCTION_RESCHEDULE_NEXT_WITH_EXISTING_COUNT';
       default: return 'MISFIRE_INSTRUCTION_RESCHEDULE_NOW_WITH_EXISTING_REPEAT_COUNT';
     }
+  }
+
+  private getDefaultMisfireInstruction(triggerType: TriggerType): string {
+    return triggerType === 'SIMPLE'
+      ? 'MISFIRE_INSTRUCTION_RESCHEDULE_NOW_WITH_EXISTING_REPEAT_COUNT'
+      : 'FIRE_AND_PROCEED';
   }
 
   private getPageTitle(page: ConsolePage): string {
