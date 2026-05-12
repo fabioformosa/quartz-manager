@@ -18,4 +18,5 @@ export class Trigger {
   jobKeyDTO: JobKeyModel;
   jobDetailDTO: JobDetail = new JobDetail();
   mayFireAgain: boolean;
+  jobDataMap: {[key: string]: unknown};
 }

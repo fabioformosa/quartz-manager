@@ -22,4 +22,7 @@ public class SimpleTriggerInputDTO extends TriggerCommandDTO implements TriggerR
 
   @Nullable
   private Map<String, ?> jobDataMap;
+
+  @Nullable
+  private JobKeyDTO jobKey;
 }

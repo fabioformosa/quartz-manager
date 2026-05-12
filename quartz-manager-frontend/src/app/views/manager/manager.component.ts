@@ -10,11 +10,14 @@ import {Scheduler} from '../../model/scheduler.model';
 import {SimpleTriggerCommand} from '../../model/simple-trigger.command';
 import {SimpleTrigger} from '../../model/simple-trigger.model';
 import {ScheduledJob} from '../../model/scheduled-job.model';
+import {ScheduledJobCommand} from '../../model/scheduled-job.command';
 import {TriggerKey} from '../../model/triggerKey.model';
 import TriggerFiredBundle from '../../model/trigger-fired-bundle.model';
 
 type ConsolePage = 'dashboard' | 'jobs' | 'triggers' | 'calendars' | 'executions' | 'events' | 'scheduler';
 type WizardMode = 'create' | 'edit';
+type JobTargetType = 'stored' | 'class';
+type JobDataMapType = 'string' | 'number' | 'boolean' | 'json' | 'null';
 
 interface ConsoleLogRecord {
   time: Date;
@@ -27,6 +30,8 @@ interface ConsoleLogRecord {
 interface TriggerDraft {
   triggerName: string;
   group: string;
+  jobTargetType: JobTargetType;
+  storedJobKey: string;
   jobClass: string;
   startDate: string;
   endDate: string;
@@ -34,6 +39,23 @@ interface TriggerDraft {
   repeatIntervalUnit: string;
   repeatCount: number;
   misfireInstruction: string;
+  jobDataMapEntries: JobDataMapEntry[];
+}
+
+interface JobDraft {
+  name: string;
+  group: string;
+  jobClass: string;
+  description: string;
+  durable: boolean;
+  requestsRecovery: boolean;
+  jobDataMapEntries: JobDataMapEntry[];
+}
+
+interface JobDataMapEntry {
+  key: string;
+  type: JobDataMapType;
+  value: string;
 }
 
 @Component({
@@ -66,10 +88,19 @@ export class ManagerComponent implements OnInit, OnDestroy {
   triggerLoading = false;
   wizardMode: WizardMode = 'create';
   wizardOpen = false;
+  jobWizardOpen = false;
   detailDrawerOpen = false;
   wizardSubmitting = false;
+  jobWizardSubmitting = false;
   wizardError: string;
+  jobWizardError: string;
   triggerDraft: TriggerDraft = this.buildEmptyDraft();
+  jobDraft: JobDraft = this.buildEmptyJobDraft();
+  jobWizardMode: WizardMode = 'create';
+  jobGroupFilter = 'ALL';
+  triggerGroupFilter = 'ALL';
+  jobSearch = '';
+  triggerSearch = '';
 
   private readonly roadmapPages = new Set<ConsolePage>(['calendars', 'executions']);
   private readonly subscriptions: Subscription[] = [];
@@ -154,9 +185,14 @@ export class ManagerComponent implements OnInit, OnDestroy {
     this.wizardOpen = false;
   }
 
+  closeJobWizardDrawer() {
+    this.jobWizardOpen = false;
+  }
+
   closeDrawers() {
     this.detailDrawerOpen = false;
     this.wizardOpen = false;
+    this.jobWizardOpen = false;
   }
 
   refreshScheduler() {
@@ -306,6 +342,85 @@ export class ManagerComponent implements OnInit, OnDestroy {
     this.openDetailDrawer();
   }
 
+  openCreateJobWizard() {
+    this.jobWizardMode = 'create';
+    this.jobDraft = this.buildEmptyJobDraft();
+    this.jobWizardError = null;
+    this.jobWizardOpen = true;
+    this.detailDrawerOpen = false;
+    this.selectPage('jobs');
+    this.jobWizardOpen = true;
+  }
+
+  openEditJobWizard() {
+    if (!this.selectedScheduledJob?.jobKeyDTO) {
+      this.showRoadmapNotice('Editing requires a stored job returned by the backend');
+      return;
+    }
+    this.jobWizardMode = 'edit';
+    this.jobWizardError = null;
+    this.jobDraft = {
+      name: this.selectedScheduledJob.jobKeyDTO.name,
+      group: this.selectedScheduledJob.jobKeyDTO.group || 'DEFAULT',
+      jobClass: this.selectedScheduledJob.jobClassName,
+      description: this.selectedScheduledJob.description || '',
+      durable: this.selectedScheduledJob.durable,
+      requestsRecovery: this.selectedScheduledJob.requestsRecovery,
+      jobDataMapEntries: this.toJobDataMapEntries(this.selectedScheduledJob.jobDataMap)
+    };
+    this.jobWizardOpen = true;
+    this.detailDrawerOpen = false;
+    this.selectPage('jobs');
+    this.jobWizardOpen = true;
+  }
+
+  submitJobWizard() {
+    this.jobWizardError = null;
+    if (!this.canSubmitJob()) {
+      this.jobWizardError = 'Job name, group, and class are required.';
+      return;
+    }
+
+    let jobDataMap: {[key: string]: unknown};
+    try {
+      jobDataMap = this.serializeJobDataMap(this.jobDraft.jobDataMapEntries);
+    } catch (err) {
+      this.jobWizardError = this.getErrorMessage(err, 'JobDataMap contains invalid values.');
+      return;
+    }
+
+    const command = new ScheduledJobCommand();
+    command.jobClass = this.jobDraft.jobClass;
+    command.description = this.jobDraft.description;
+    command.durable = this.jobDraft.durable;
+    command.requestsRecovery = this.jobDraft.requestsRecovery;
+    command.jobDataMap = jobDataMap;
+
+    this.jobWizardSubmitting = true;
+    const group = this.jobDraft.group || 'DEFAULT';
+    const name = this.jobDraft.name.trim();
+    const request = this.jobWizardMode === 'edit'
+      ? this.jobService.updateJob(group, name, command)
+      : this.jobService.createJob(group, name, command);
+
+    const subscription = request.subscribe({
+      next: job => {
+        this.jobWizardSubmitting = false;
+        this.upsertScheduledJob(job);
+        this.selectedScheduledJob = job;
+        this.selectedJobClass = job.jobClassName;
+        this.jobWizardOpen = false;
+        this.detailDrawerOpen = true;
+        this.operationNotice = this.jobWizardMode === 'edit' ? 'Stored job updated.' : 'Stored job created.';
+      },
+      error: () => {
+        this.jobWizardSubmitting = false;
+        this.jobWizardError = 'Unable to save the stored job.';
+      }
+    });
+    this.subscriptions.push(subscription);
+  }
+
   triggerSelectedJobNow() {
     if (!this.selectedScheduledJob) {
       this.showRoadmapNotice('Trigger-now requires a scheduled job key returned by the backend');
@@ -407,13 +522,16 @@ export class ManagerComponent implements OnInit, OnDestroy {
     this.triggerDraft = {
       triggerName: this.selectedTriggerKey.name,
       group: this.selectedTriggerKey.group || 'DEFAULT',
+      jobTargetType: trigger?.jobKeyDTO ? 'stored' : 'class',
+      storedJobKey: trigger?.jobKeyDTO ? this.getJobOptionValue(trigger.jobKeyDTO.group, trigger.jobKeyDTO.name) : this.getDefaultStoredJobKey(),
       jobClass: trigger?.jobDetailDTO?.jobClassName || this.jobs[0] || '',
       startDate: this.toDatetimeLocalValue(trigger?.startTime),
       endDate: this.toDatetimeLocalValue(trigger?.endTime),
       repeatIntervalAmount: repeatInterval.amount,
       repeatIntervalUnit: repeatInterval.unit,
       repeatCount: trigger?.repeatCount ?? -1,
-      misfireInstruction: this.getMisfireInstructionName(trigger?.misfireInstruction)
+      misfireInstruction: this.getMisfireInstructionName(trigger?.misfireInstruction),
+      jobDataMapEntries: this.toJobDataMapEntries(trigger?.jobDataMap)
     };
     this.selectPage('dashboard');
     this.wizardOpen = true;
@@ -435,12 +553,19 @@ export class ManagerComponent implements OnInit, OnDestroy {
     const command = new SimpleTriggerCommand();
     command.triggerName = this.triggerDraft.triggerName.trim();
     command.triggerGroup = this.triggerDraft.group || 'DEFAULT';
-    command.jobClass = this.triggerDraft.jobClass;
+    command.jobClass = this.triggerDraft.jobTargetType === 'class' ? this.triggerDraft.jobClass : null;
+    command.jobKey = this.triggerDraft.jobTargetType === 'stored' ? this.parseJobOptionValue(this.triggerDraft.storedJobKey) : null;
     command.startDate = this.fromDatetimeLocalValue(this.triggerDraft.startDate);
     command.endDate = this.fromDatetimeLocalValue(this.triggerDraft.endDate);
     command.repeatInterval = this.getRepeatIntervalMs();
     command.repeatCount = this.triggerDraft.repeatCount;
     command.misfireInstruction = this.triggerDraft.misfireInstruction;
+    try {
+      command.jobDataMap = this.serializeJobDataMap(this.triggerDraft.jobDataMapEntries);
+    } catch (err) {
+      this.wizardError = this.getErrorMessage(err, 'JobDataMap contains invalid values.');
+      return;
+    }
 
     this.wizardSubmitting = true;
     const request = this.wizardMode === 'edit'
@@ -596,7 +721,61 @@ export class ManagerComponent implements OnInit, OnDestroy {
   }
 
   getScheduledJobRows(): ScheduledJob[] {
-    return this.scheduledJobs || [];
+    const search = this.jobSearch?.trim().toLowerCase();
+    return (this.scheduledJobs || []).filter(job => {
+      const groupMatches = this.jobGroupFilter === 'ALL' || job.jobKeyDTO?.group === this.jobGroupFilter;
+      const searchable = `${job.jobKeyDTO?.group}.${job.jobKeyDTO?.name} ${job.jobClassName}`.toLowerCase();
+      return groupMatches && (!search || searchable.includes(search));
+    });
+  }
+
+  getTriggerRows(): TriggerKey[] {
+    const search = this.triggerSearch?.trim().toLowerCase();
+    return (this.triggerKeys || []).filter(triggerKey => {
+      const group = this.getTriggerGroup(triggerKey);
+      const groupMatches = this.triggerGroupFilter === 'ALL' || group === this.triggerGroupFilter;
+      const searchable = `${group}.${triggerKey.name} ${this.getTriggerJobName(triggerKey)}`.toLowerCase();
+      return groupMatches && (!search || searchable.includes(search));
+    });
+  }
+
+  getJobGroups(): string[] {
+    return this.getUniqueGroups(this.scheduledJobs.map(job => job.jobKeyDTO?.group));
+  }
+
+  getTriggerGroups(): string[] {
+    return this.getUniqueGroups(this.triggerKeys.map(triggerKey => this.getTriggerGroup(triggerKey)));
+  }
+
+  getStoredJobOptions(): {label: string; value: string}[] {
+    return this.scheduledJobs.map(job => ({
+      label: `${job.jobKeyDTO.group}.${job.jobKeyDTO.name}`,
+      value: this.getJobOptionValue(job.jobKeyDTO.group, job.jobKeyDTO.name)
+    }));
+  }
+
+  getSelectedJobDataMapPreview(): string {
+    return this.formatJson(this.selectedScheduledJob?.jobDataMap || {});
+  }
+
+  getSelectedTriggerDataMapPreview(): string {
+    return this.formatJson(this.selectedTrigger?.jobDataMap || {});
+  }
+
+  getJobDraftDataMapPreview(): string {
+    try {
+      return this.formatJson(this.serializeJobDataMap(this.jobDraft.jobDataMapEntries));
+    } catch (err) {
+      return this.getErrorMessage(err, 'Invalid JobDataMap');
+    }
+  }
+
+  getTriggerDraftDataMapPreview(): string {
+    try {
+      return this.formatJson(this.serializeJobDataMap(this.triggerDraft.jobDataMapEntries));
+    } catch (err) {
+      return this.getErrorMessage(err, 'Invalid JobDataMap');
+    }
   }
 
   getWizardTitle(): string {
@@ -608,15 +787,30 @@ export class ManagerComponent implements OnInit, OnDestroy {
   }
 
   canSubmitTrigger(): boolean {
+    const hasTarget = this.triggerDraft.jobTargetType === 'stored'
+      ? !!this.triggerDraft.storedJobKey
+      : !!this.triggerDraft.jobClass;
     return !!(
       this.triggerDraft.triggerName?.trim()
-      && this.triggerDraft.jobClass
+      && hasTarget
       && this.triggerDraft.misfireInstruction
       && this.triggerDraft.repeatCount !== null
       && this.triggerDraft.repeatCount !== undefined
       && this.triggerDraft.repeatIntervalAmount
       && this.triggerDraft.repeatIntervalUnit
     );
+  }
+
+  canSubmitJob(): boolean {
+    return !!(this.jobDraft.name?.trim() && this.jobDraft.group?.trim() && this.jobDraft.jobClass);
+  }
+
+  addJobDataMapEntry(entries: JobDataMapEntry[]) {
+    entries.push({key: '', type: 'string', value: ''});
+  }
+
+  removeJobDataMapEntry(entries: JobDataMapEntry[], index: number) {
+    entries.splice(index, 1);
   }
 
   getFirePreview(): string[] {
@@ -728,6 +922,11 @@ export class ManagerComponent implements OnInit, OnDestroy {
     }
   }
 
+  private upsertScheduledJob(job: ScheduledJob) {
+    const otherJobs = this.scheduledJobs.filter(currentJob => !this.sameJob(currentJob, job));
+    this.scheduledJobs = [job, ...otherJobs];
+  }
+
   private sameTriggerKey(first: TriggerKey, second: TriggerKey): boolean {
     return first?.name === second?.name && this.getTriggerGroup(first) === this.getTriggerGroup(second);
   }
@@ -744,14 +943,130 @@ export class ManagerComponent implements OnInit, OnDestroy {
     return {
       triggerName: '',
       group: 'DEFAULT',
+      jobTargetType: this.scheduledJobs.length > 0 ? 'stored' : 'class',
+      storedJobKey: this.getDefaultStoredJobKey(),
       jobClass: this.jobs[0] || '',
       startDate: this.toDatetimeLocalValue(new Date()),
       endDate: '',
       repeatIntervalAmount: 1,
       repeatIntervalUnit: 'minutes',
       repeatCount: -1,
-      misfireInstruction: 'MISFIRE_INSTRUCTION_RESCHEDULE_NOW_WITH_EXISTING_REPEAT_COUNT'
+      misfireInstruction: 'MISFIRE_INSTRUCTION_RESCHEDULE_NOW_WITH_EXISTING_REPEAT_COUNT',
+      jobDataMapEntries: []
     };
+  }
+
+  private buildEmptyJobDraft(): JobDraft {
+    return {
+      name: '',
+      group: 'DEFAULT',
+      jobClass: this.jobs[0] || '',
+      description: '',
+      durable: true,
+      requestsRecovery: false,
+      jobDataMapEntries: []
+    };
+  }
+
+  private getDefaultStoredJobKey(): string {
+    const job = this.scheduledJobs[0];
+    return job?.jobKeyDTO ? this.getJobOptionValue(job.jobKeyDTO.group, job.jobKeyDTO.name) : '';
+  }
+
+  private getJobOptionValue(group: string, name: string): string {
+    return `${group || 'DEFAULT'}::${name}`;
+  }
+
+  private parseJobOptionValue(value: string): {group: string; name: string} {
+    const [group, name] = (value || '').split('::');
+    return name ? {group: group || 'DEFAULT', name} : null;
+  }
+
+  private getUniqueGroups(groups: string[]): string[] {
+    return Array.from(new Set((groups || []).filter(Boolean))).sort();
+  }
+
+  private toJobDataMapEntries(jobDataMap: {[key: string]: unknown}): JobDataMapEntry[] {
+    return Object.entries(jobDataMap || {}).map(([key, value]) => ({
+      key,
+      type: this.getJobDataMapType(value),
+      value: this.getJobDataMapEntryValue(value)
+    }));
+  }
+
+  private getJobDataMapType(value: unknown): JobDataMapType {
+    if (value === null) {
+      return 'null';
+    }
+    if (typeof value === 'number') {
+      return 'number';
+    }
+    if (typeof value === 'boolean') {
+      return 'boolean';
+    }
+    if (typeof value === 'object') {
+      return 'json';
+    }
+    return 'string';
+  }
+
+  private getJobDataMapEntryValue(value: unknown): string {
+    if (value === null) {
+      return '';
+    }
+    if (typeof value === 'object') {
+      return JSON.stringify(value);
+    }
+    return `${value ?? ''}`;
+  }
+
+  private serializeJobDataMap(entries: JobDataMapEntry[]): {[key: string]: unknown} {
+    return (entries || []).reduce((dataMap, entry) => {
+      const key = entry.key?.trim();
+      if (!key) {
+        throw new Error('JobDataMap keys cannot be blank.');
+      }
+      if (Object.prototype.hasOwnProperty.call(dataMap, key)) {
+        throw new Error(`JobDataMap key "${key}" is duplicated.`);
+      }
+      dataMap[key] = this.serializeJobDataMapValue(entry);
+      return dataMap;
+    }, {} as {[key: string]: unknown});
+  }
+
+  private serializeJobDataMapValue(entry: JobDataMapEntry): unknown {
+    switch (entry.type) {
+      case 'number': {
+        const value = Number(entry.value);
+        if (Number.isNaN(value)) {
+          throw new Error(`JobDataMap key "${entry.key}" must be a number.`);
+        }
+        return value;
+      }
+      case 'boolean':
+        if (entry.value !== 'true' && entry.value !== 'false') {
+          throw new Error(`JobDataMap key "${entry.key}" must be true or false.`);
+        }
+        return entry.value === 'true';
+      case 'json':
+        try {
+          return JSON.parse(entry.value || 'null');
+        } catch (err) {
+          throw new Error(`JobDataMap key "${entry.key}" contains invalid JSON.`);
+        }
+      case 'null':
+        return null;
+      default:
+        return entry.value || '';
+    }
+  }
+
+  private formatJson(value: unknown): string {
+    return JSON.stringify(value || {}, null, 2);
+  }
+
+  private getErrorMessage(err: unknown, fallback: string): string {
+    return err instanceof Error ? err.message : fallback;
   }
 
   private getRepeatIntervalMs(): number {

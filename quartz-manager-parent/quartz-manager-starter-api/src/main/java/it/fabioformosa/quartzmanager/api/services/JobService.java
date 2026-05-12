@@ -2,13 +2,18 @@ package it.fabioformosa.quartzmanager.api.services;
 
 import it.fabioformosa.quartzmanager.api.dto.JobKeyDTO;
 import it.fabioformosa.quartzmanager.api.dto.ScheduledJobDTO;
+import it.fabioformosa.quartzmanager.api.dto.ScheduledJobInputDTO;
 import it.fabioformosa.quartzmanager.api.dto.TriggerKeyDTO;
 import it.fabioformosa.quartzmanager.api.exceptions.JobNotFoundException;
+import it.fabioformosa.quartzmanager.api.exceptions.ResourceConflictException;
 import it.fabioformosa.quartzmanager.api.jobs.AbstractQuartzManagerJob;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.quartz.JobDetail;
+import org.quartz.Job;
+import org.quartz.JobBuilder;
+import org.quartz.JobDataMap;
 import org.quartz.JobKey;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
@@ -83,6 +88,23 @@ public class JobService {
     return convertJob(jobKey);
   }
 
+  public ScheduledJobDTO createJob(String group, String name, ScheduledJobInputDTO scheduledJobInputDTO) throws SchedulerException, ClassNotFoundException {
+    JobKey jobKey = JobKey.jobKey(name, group);
+    if (scheduler.checkExists(jobKey))
+      throw new ResourceConflictException("Job " + jobKey + " already exists");
+
+    JobDetail jobDetail = buildJobDetail(jobKey, scheduledJobInputDTO);
+    scheduler.addJob(jobDetail, false);
+    return convertJob(jobKey);
+  }
+
+  public ScheduledJobDTO updateJob(String group, String name, ScheduledJobInputDTO scheduledJobInputDTO) throws SchedulerException, ClassNotFoundException, JobNotFoundException {
+    JobKey jobKey = requireJob(group, name);
+    JobDetail jobDetail = buildJobDetail(jobKey, scheduledJobInputDTO);
+    scheduler.addJob(jobDetail, true);
+    return convertJob(jobKey);
+  }
+
   public void triggerJob(String group, String name) throws SchedulerException, JobNotFoundException {
     JobKey jobKey = requireJob(group, name);
     scheduler.triggerJob(jobKey);
@@ -98,6 +120,19 @@ public class JobService {
     if (!scheduler.checkExists(jobKey))
       throw new JobNotFoundException(group, name);
     return jobKey;
+  }
+
+  private JobDetail buildJobDetail(JobKey jobKey, ScheduledJobInputDTO scheduledJobInputDTO) throws ClassNotFoundException {
+    Class<? extends Job> jobClass = Class.forName(scheduledJobInputDTO.getJobClass()).asSubclass(Job.class);
+    JobBuilder jobBuilder = JobBuilder.newJob(jobClass)
+      .withIdentity(jobKey)
+      .storeDurably(scheduledJobInputDTO.isDurable())
+      .requestRecovery(scheduledJobInputDTO.isRequestsRecovery());
+    if (scheduledJobInputDTO.getDescription() != null)
+      jobBuilder.withDescription(scheduledJobInputDTO.getDescription());
+    if (scheduledJobInputDTO.getJobDataMap() != null)
+      jobBuilder.usingJobData(new JobDataMap(scheduledJobInputDTO.getJobDataMap()));
+    return jobBuilder.build();
   }
 
   private ScheduledJobDTO convertJob(JobKey jobKey) {

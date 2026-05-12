@@ -37,14 +37,25 @@ public class SimpleTriggerService extends AbstractSchedulerService {
     if (scheduler.checkExists(triggerKey))
       throw new ResourceConflictException("Trigger " + triggerKey + " already exists");
 
-    Class<? extends Job> jobClass = Class.forName(simpleTriggerCommandDTO.getSimpleTriggerInputDTO().getJobClass()).asSubclass(Job.class);
-    JobDetail jobDetail = JobBuilder.newJob()
-      .ofType(jobClass)
-      .storeDurably(false)
-      .build();
-
     SimpleTrigger newSimpleTrigger = conversionService.convert(simpleTriggerCommandDTO, SimpleTrigger.class);
-    scheduler.scheduleJob(jobDetail, newSimpleTrigger);
+    if (simpleTriggerCommandDTO.getSimpleTriggerInputDTO().getJobKey() != null) {
+      JobKey jobKey = JobKey.jobKey(
+        simpleTriggerCommandDTO.getSimpleTriggerInputDTO().getJobKey().getName(),
+        simpleTriggerCommandDTO.getSimpleTriggerInputDTO().getJobKey().getGroup()
+      );
+      if (!scheduler.checkExists(jobKey))
+        throw new ResourceConflictException("Job " + jobKey + " does not exist");
+      newSimpleTrigger = newSimpleTrigger.getTriggerBuilder().forJob(jobKey).build();
+      scheduler.scheduleJob(newSimpleTrigger);
+    }
+    else {
+      Class<? extends Job> jobClass = Class.forName(simpleTriggerCommandDTO.getSimpleTriggerInputDTO().getJobClass()).asSubclass(Job.class);
+      JobDetail jobDetail = JobBuilder.newJob()
+        .ofType(jobClass)
+        .storeDurably(false)
+        .build();
+      scheduler.scheduleJob(jobDetail, newSimpleTrigger);
+    }
 
     return conversionService.convert(newSimpleTrigger, SimpleTriggerDTO.class);
   }
