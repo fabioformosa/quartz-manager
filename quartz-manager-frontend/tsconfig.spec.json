@@ -3,6 +3,7 @@
   "compilerOptions": {
     "outDir": "../out-tsc/spec",
     "baseUrl": "",
+    "importHelpers": false,
     "types": [
       "jasmine",
       "node"

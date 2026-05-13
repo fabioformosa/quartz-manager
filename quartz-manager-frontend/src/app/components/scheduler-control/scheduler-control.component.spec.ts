@@ -74,7 +74,7 @@ describe('SchedulerControlComponent', () => {
     expect(playIconDe).toBeTruthy();
 
     schedulerBtnDe.nativeElement.click();
-    const startSchedulerReq = httpTestingController.expectOne('/quartz-manager/scheduler/run');
+    const startSchedulerReq = httpTestingController.expectOne('/quartz-manager/scheduler/start');
     startSchedulerReq.flush(null);
     fixture.detectChanges();
 
@@ -98,7 +98,7 @@ describe('SchedulerControlComponent', () => {
     expect(pauseIconDe).toBeTruthy();
 
     schedulerBtnDe.nativeElement.click();
-    const startSchedulerReq = httpTestingController.expectOne('/quartz-manager/scheduler/pause');
+    const startSchedulerReq = httpTestingController.expectOne('/quartz-manager/scheduler/standby');
     startSchedulerReq.flush(null);
     fixture.detectChanges();
 
