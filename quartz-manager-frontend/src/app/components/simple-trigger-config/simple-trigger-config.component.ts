@@ -3,16 +3,16 @@ import {SchedulerService} from '../../services';
 import {Scheduler} from '../../model/scheduler.model';
 import {SimpleTriggerCommand} from '../../model/simple-trigger.command';
 import {SimpleTrigger} from '../../model/simple-trigger.model';
-import * as moment from 'moment';
 import {TriggerKey} from '../../model/triggerKey.model';
 import JobService from '../../services/job.service';
 import {MisfireInstruction, MisfireInstructionCaption} from '../../model/misfire-instruction.model';
 import {AbstractControl, UntypedFormBuilder, UntypedFormGroup, ValidationErrors, Validators} from '@angular/forms';
 
 @Component({
-  selector: 'qrzmng-simple-trigger-config',
-  templateUrl: './simple-trigger-config.component.html',
-  styleUrls: ['./simple-trigger-config.component.scss']
+    selector: 'qrzmng-simple-trigger-config',
+    templateUrl: './simple-trigger-config.component.html',
+    styleUrls: ['./simple-trigger-config.component.scss'],
+    standalone: false
 })
 export class SimpleTriggerConfigComponent implements OnInit {
 
@@ -22,8 +22,8 @@ export class SimpleTriggerConfigComponent implements OnInit {
     triggerName: [this.trigger?.triggerKeyDTO.name, Validators.required],
     jobClass: [this.trigger?.jobDetailDTO.jobClassName, Validators.required],
     triggerPeriod: this.formBuilder.group({
-      startDate: [this.trigger?.startTime && moment(this.trigger?.startTime)],
-      endDate: [this.trigger?.endTime && moment(this.trigger?.endTime)]
+      startDate: [this.trigger?.startTime && new Date(this.trigger.startTime)],
+      endDate: [this.trigger?.endTime && new Date(this.trigger.endTime)]
     }, {validators: this._triggerPeriodValidator}),
     triggerRecurrence: this.formBuilder.group({
       repeatCount: [this.trigger?.repeatCount],
@@ -42,13 +42,14 @@ export class SimpleTriggerConfigComponent implements OnInit {
 
   private jobs: Array<String>;
 
-  enabledTriggerForm = false;
-
   @Output()
   onNewTrigger = new EventEmitter<SimpleTrigger>();
 
   @Output()
   triggerFormOpenChange = new EventEmitter<boolean>();
+
+  @Output()
+  onTriggerSubmitting = new EventEmitter<TriggerKey>();
 
   constructor(
     private formBuilder: UntypedFormBuilder,
@@ -58,6 +59,7 @@ export class SimpleTriggerConfigComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.simpleTriggerReactiveForm.disable();
     this.fetchJobs();
   }
 
@@ -66,24 +68,24 @@ export class SimpleTriggerConfigComponent implements OnInit {
   }
 
   openTriggerForm() {
-    this.enabledTriggerForm = true;
-    this.triggerFormOpenChange.emit(this.enabledTriggerForm);
+    this.simpleTriggerReactiveForm.enable();
+    this.triggerFormOpenChange.emit(true);
   }
 
   private closeTriggerForm() {
-    this.enabledTriggerForm = false;
-    this.triggerFormOpenChange.emit(this.enabledTriggerForm);
+    this.simpleTriggerReactiveForm.disable();
+    this.triggerFormOpenChange.emit(false);
   }
 
   @Input()
   set triggerKey(triggerKey: TriggerKey) {
     if (!triggerKey) {
-      this.openNewTriggerForm();
+      return;
     } else if (!this.selectedTriggerKey || this.selectedTriggerKey.name !== triggerKey.name) {
       this._resetTheTrigger();
       this.selectedTriggerKey = {...triggerKey} as TriggerKey;
       this.fetchSelectedTrigger();
-      this.closeTriggerForm();
+      this.simpleTriggerReactiveForm.disable();
     }
   }
 
@@ -107,10 +109,11 @@ export class SimpleTriggerConfigComponent implements OnInit {
         this.simpleTriggerReactiveForm.setValue(this._fromTriggerToReactiveForm(retTrigger))
         this.triggerLoading = false;
         this.triggerInProgress = this.trigger.mayFireAgain;
+        this.simpleTriggerReactiveForm.disable();
       })
   }
 
-  shouldShowTheTriggerCardContent = (): boolean => this.trigger !== null || this.enabledTriggerForm;
+  shouldShowTheTriggerCardContent = (): boolean => this.trigger !== null || this.simpleTriggerReactiveForm.enabled;
 
   existsATriggerInProgress = (): boolean => this.trigger && this.triggerInProgress;
 
@@ -128,6 +131,17 @@ export class SimpleTriggerConfigComponent implements OnInit {
       this.schedulerService.updateSimpleTriggerConfig : this.schedulerService.saveSimpleTriggerConfig;
 
     const simpleTriggerCommand = this._fromReactiveFormToCommand();
+    if (!this.trigger) {
+      this.onTriggerSubmitting.emit(new TriggerKey(simpleTriggerCommand.triggerName, null));
+      setTimeout(() => this.submitTriggerConfig(schedulerServiceCall, simpleTriggerCommand));
+      return;
+    }
+
+    this.submitTriggerConfig(schedulerServiceCall, simpleTriggerCommand);
+
+  }
+
+  private submitTriggerConfig(schedulerServiceCall, simpleTriggerCommand: SimpleTriggerCommand) {
     this.triggerLoading = true;
     schedulerServiceCall(simpleTriggerCommand)
       .subscribe((retTrigger: SimpleTrigger) => {
@@ -148,16 +162,15 @@ export class SimpleTriggerConfigComponent implements OnInit {
         }
         this.triggerLoading = false;
       }, () => {
-this.triggerLoading = false
-});
-
+        this.triggerLoading = false;
+      });
   }
 
   private _triggerPeriodValidator(control: AbstractControl): ValidationErrors | null {
     const startDate = control.get('startDate');
     const endDate = control.get('endDate');
     if (startDate.value && endDate.value) {
-      return endDate.value.isBefore(startDate.value) ?
+      return endDate.value < startDate.value ?
         <ValidationErrors>{invalidTriggerPeriod: true} : null;
     }
     return null;
@@ -183,22 +196,23 @@ this.triggerLoading = false
     simpleTriggerReactiveForm.jobClass = simpleTrigger.jobDetailDTO.jobClassName;
     simpleTriggerReactiveForm.triggerRecurrence.repeatCount = simpleTrigger.repeatCount || null;
     simpleTriggerReactiveForm.triggerRecurrence.repeatInterval = simpleTrigger.repeatInterval || null;
-    simpleTriggerReactiveForm.triggerPeriod.startDate = (simpleTrigger.startTime && moment(simpleTrigger.startTime)) || null;
-    simpleTriggerReactiveForm.triggerPeriod.endDate = (simpleTrigger.endTime && moment(simpleTrigger.endTime)) || null;
+    simpleTriggerReactiveForm.triggerPeriod.startDate = (simpleTrigger.startTime && new Date(simpleTrigger.startTime)) || null;
+    simpleTriggerReactiveForm.triggerPeriod.endDate = (simpleTrigger.endTime && new Date(simpleTrigger.endTime)) || null;
     simpleTriggerReactiveForm.misfireInstruction = (simpleTrigger.misfireInstruction
       && MisfireInstruction[simpleTrigger.misfireInstruction]) || null;
     return simpleTriggerReactiveForm;
   };
 
   private _fromReactiveFormToCommand = (): SimpleTriggerCommand => {
-    const reactiveFormValue = this.simpleTriggerReactiveForm.value;
+    const reactiveFormValue = this.simpleTriggerReactiveForm.getRawValue();
     const simpleTriggerCommand = new SimpleTriggerCommand();
     simpleTriggerCommand.triggerName = reactiveFormValue.triggerName;
+    simpleTriggerCommand.triggerGroup = this.selectedTriggerKey?.group || 'DEFAULT';
     simpleTriggerCommand.jobClass = reactiveFormValue.jobClass;
     simpleTriggerCommand.repeatCount = reactiveFormValue.triggerRecurrence.repeatCount;
     simpleTriggerCommand.repeatInterval = reactiveFormValue.triggerRecurrence.repeatInterval;
-    simpleTriggerCommand.startDate = reactiveFormValue.triggerPeriod.startDate?.toDate();
-    simpleTriggerCommand.endDate = reactiveFormValue.triggerPeriod.endDate?.toDate();
+    simpleTriggerCommand.startDate = reactiveFormValue.triggerPeriod.startDate;
+    simpleTriggerCommand.endDate = reactiveFormValue.triggerPeriod.endDate;
     simpleTriggerCommand.misfireInstruction = reactiveFormValue.misfireInstruction;
     return simpleTriggerCommand;
   }

@@ -5,16 +5,20 @@ import {jest} from '@jest/globals';
 
 describe('LogsPanelComponent', () => {
 
+  const ngZone = {run: jest.fn((fn: () => void) => fn())};
+
+  beforeEach(() => ngZone.run.mockClear());
+
   it('should subscribe to the selected trigger logs topic', () => {
     const messages = new Subject<any>();
     const logsRxWebsocketService = {
       watch: jest.fn(() => messages.asObservable())
     };
-    const component = new LogsPanelComponent(logsRxWebsocketService as any, null);
+    const component = new LogsPanelComponent(logsRxWebsocketService as any, null, ngZone as any);
 
     component.triggerKey = new TriggerKey('trigger-1', null);
 
-    expect(logsRxWebsocketService.watch).toHaveBeenCalledWith('/topic/logs/trigger-1');
+    expect(logsRxWebsocketService.watch.mock.calls[0]).toEqual(['/topic/logs/trigger-1']);
     expect(component.selectedTriggerName).toEqual('trigger-1');
     expect(component.isWaitingForLogs()).toBeTruthy();
 
@@ -26,6 +30,7 @@ describe('LogsPanelComponent', () => {
     };
     messages.next({body: JSON.stringify(logRecord)});
 
+    expect(ngZone.run).toHaveBeenCalled();
     expect(component.logs[0]).toEqual({
       time: logRecord.date.toISOString(),
       type: 'INFO',
@@ -43,7 +48,7 @@ describe('LogsPanelComponent', () => {
         .mockReturnValueOnce(firstMessages.asObservable())
         .mockReturnValueOnce(secondMessages.asObservable())
     };
-    const component = new LogsPanelComponent(logsRxWebsocketService as any, null);
+    const component = new LogsPanelComponent(logsRxWebsocketService as any, null, ngZone as any);
 
     component.triggerKey = new TriggerKey('trigger-1', null);
     const firstSubscription = component.topicSubscription;
@@ -52,7 +57,7 @@ describe('LogsPanelComponent', () => {
     component.triggerKey = new TriggerKey('trigger-2', null);
 
     expect(firstSubscription.unsubscribe).toHaveBeenCalled();
-    expect(logsRxWebsocketService.watch).toHaveBeenCalledWith('/topic/logs/trigger-2');
+    expect(logsRxWebsocketService.watch.mock.calls[1]).toEqual(['/topic/logs/trigger-2']);
   });
 
   it('should clear logs when the trigger changes', () => {
@@ -64,7 +69,7 @@ describe('LogsPanelComponent', () => {
         .mockReturnValueOnce(secondMessages.asObservable())
         .mockReturnValueOnce(firstMessages.asObservable())
     };
-    const component = new LogsPanelComponent(logsRxWebsocketService as any, null);
+    const component = new LogsPanelComponent(logsRxWebsocketService as any, null, ngZone as any);
 
     component.triggerKey = new TriggerKey('trigger-1', null);
     firstMessages.next({body: JSON.stringify({date: new Date(), type: 'INFO', message: 'first log', threadName: 'worker-1'})});
@@ -89,7 +94,7 @@ describe('LogsPanelComponent', () => {
     const logsRxWebsocketService = {
       watch: jest.fn(() => messages.asObservable())
     };
-    const component = new LogsPanelComponent(logsRxWebsocketService as any, null);
+    const component = new LogsPanelComponent(logsRxWebsocketService as any, null, ngZone as any);
 
     component.triggerKey = new TriggerKey('trigger-1', null);
     messages.next({body: JSON.stringify({date: new Date(), type: 'INFO', message: 'first log', threadName: 'worker-1'})});
@@ -105,7 +110,7 @@ describe('LogsPanelComponent', () => {
     const logsRxWebsocketService = {
       watch: jest.fn()
     };
-    const component = new LogsPanelComponent(logsRxWebsocketService as any, null);
+    const component = new LogsPanelComponent(logsRxWebsocketService as any, null, ngZone as any);
 
     expect(() => component.ngOnDestroy()).not.toThrow();
   });

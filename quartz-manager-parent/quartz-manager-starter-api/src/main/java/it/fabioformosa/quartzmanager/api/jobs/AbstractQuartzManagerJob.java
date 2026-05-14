@@ -9,7 +9,7 @@ import org.quartz.JobExecutionContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 /**
  * Extends this class to create a job that produces LogRecord to be displayed

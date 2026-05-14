@@ -1,11 +1,8 @@
 package it.fabioformosa.quartzmanager.api.security.helpers.impl;
 
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.annotation.SecurityConfigurerAdapter;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configurers.LogoutConfigurer;
-import org.springframework.security.web.DefaultSecurityFilterChain;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.security.web.servlet.util.matcher.PathPatternRequestMatcher;
 
 import it.fabioformosa.quartzmanager.api.security.helpers.LoginConfigurer;
 
@@ -13,11 +10,10 @@ import it.fabioformosa.quartzmanager.api.security.helpers.LoginConfigurer;
  * It wraps the httpSecurity to provide new function as login and logout
  *
  */
-public class QuartzManagerHttpSecurity extends SecurityConfigurerAdapter<DefaultSecurityFilterChain, HttpSecurity> {
+public class QuartzManagerHttpSecurity {
 
     public static QuartzManagerHttpSecurity from(HttpSecurity httpSecurity){
         QuartzManagerHttpSecurity newInstance = new QuartzManagerHttpSecurity(httpSecurity);
-        newInstance.setBuilder(httpSecurity);
         return newInstance;
     }
 
@@ -39,13 +35,14 @@ public class QuartzManagerHttpSecurity extends SecurityConfigurerAdapter<Default
     }
 
 
-    public LogoutConfigurer<HttpSecurity> logout(String logoutPath) throws Exception {
-        LogoutConfigurer<HttpSecurity> logoutConfigurer = httpSecurity.logout().logoutRequestMatcher(new AntPathRequestMatcher(logoutPath))
-                .logoutSuccessHandler(logoutSuccess);
+    public HttpSecurity logout(String logoutPath) throws Exception {
         String cookie = loginConfigurer.cookieMustBeDeletedAtLogout();
-        if(cookie != null)
-            logoutConfigurer.deleteCookies(cookie);
-        return logoutConfigurer;
+        return httpSecurity.logout(logout -> {
+            logout.logoutRequestMatcher(PathPatternRequestMatcher.withDefaults().matcher(logoutPath));
+            logout.logoutSuccessHandler(logoutSuccess);
+            if(cookie != null)
+                logout.deleteCookies(cookie);
+        });
     }
 
     public QuartzManagerHttpSecurity withLoginConfigurer(LoginConfigurer loginConfigurer, LogoutSuccess logoutSuccess) {

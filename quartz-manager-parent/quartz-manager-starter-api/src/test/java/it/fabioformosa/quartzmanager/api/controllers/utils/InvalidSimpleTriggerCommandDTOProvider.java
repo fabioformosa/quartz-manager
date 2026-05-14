@@ -5,13 +5,14 @@ import it.fabioformosa.quartzmanager.api.dto.SimpleTriggerInputDTO;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.ArgumentsProvider;
+import org.junit.jupiter.params.support.ParameterDeclarations;
 
 import java.util.Date;
 import java.util.stream.Stream;
 
 public class InvalidSimpleTriggerCommandDTOProvider implements ArgumentsProvider {
   @Override
-  public Stream<? extends Arguments> provideArguments(ExtensionContext extensionContext) {
+  public Stream<? extends Arguments> provideArguments(ParameterDeclarations parameters, ExtensionContext extensionContext) {
     return Stream.of(
       Arguments.of(buildSimpleTriggerWithBlankMandatoryFields()),
       Arguments.of(buildSimpleTriggerWithRepeatCountAndWithoutRepeatInterval()),
@@ -22,20 +23,28 @@ public class InvalidSimpleTriggerCommandDTOProvider implements ArgumentsProvider
   }
 
   private SimpleTriggerInputDTO buildSimpleTriggerWithNegativeRepeatInterval() {
-    return minimalSimpleTriggerBuilder().repeatInterval(-2000L).repeatCount(10).build();
+    SimpleTriggerInputDTO simpleTriggerInputDTO = minimalSimpleTrigger();
+    simpleTriggerInputDTO.setRepeatInterval(-2000L);
+    simpleTriggerInputDTO.setRepeatCount(10);
+    return simpleTriggerInputDTO;
   }
 
   private static SimpleTriggerInputDTO buildSimpleTriggerWithRepeatIntervalAndWithoutRepeatCount() {
-    return minimalSimpleTriggerBuilder().repeatInterval(1L).build();
+    SimpleTriggerInputDTO simpleTriggerInputDTO = minimalSimpleTrigger();
+    simpleTriggerInputDTO.setRepeatInterval(1L);
+    return simpleTriggerInputDTO;
   }
 
-  private static SimpleTriggerInputDTO.SimpleTriggerInputDTOBuilder<?, ?> minimalSimpleTriggerBuilder() {
-    return SimpleTriggerInputDTO.builder()
-      .jobClass("it.fabioformosa.quartzmanager.api.jobs.SampleJob");
+  private static SimpleTriggerInputDTO minimalSimpleTrigger() {
+    SimpleTriggerInputDTO simpleTriggerInputDTO = new SimpleTriggerInputDTO();
+    simpleTriggerInputDTO.setJobClass("it.fabioformosa.quartzmanager.api.jobs.SampleJob");
+    return simpleTriggerInputDTO;
   }
 
   private static SimpleTriggerInputDTO buildSimpleTriggerWithRepeatCountAndWithoutRepeatInterval() {
-    return minimalSimpleTriggerBuilder().repeatCount(1).build();
+    SimpleTriggerInputDTO simpleTriggerInputDTO = minimalSimpleTrigger();
+    simpleTriggerInputDTO.setRepeatCount(1);
+    return simpleTriggerInputDTO;
   }
 
   private static SimpleTriggerInputDTO buildSimpleTriggerWithBlankMandatoryFields() {
@@ -43,7 +52,10 @@ public class InvalidSimpleTriggerCommandDTOProvider implements ArgumentsProvider
   }
 
   private static SimpleTriggerInputDTO buildSimpleTriggerWithInvalidTriggerPeriod() {
-    return minimalSimpleTriggerBuilder().endDate(new Date()).startDate(DateUtils.addHoursToNow(1)).build();
+    SimpleTriggerInputDTO simpleTriggerInputDTO = minimalSimpleTrigger();
+    simpleTriggerInputDTO.setEndDate(new Date());
+    simpleTriggerInputDTO.setStartDate(DateUtils.addHoursToNow(1));
+    return simpleTriggerInputDTO;
   }
 
 }

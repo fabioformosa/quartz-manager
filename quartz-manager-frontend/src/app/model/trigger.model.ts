@@ -11,7 +11,22 @@ export class Trigger {
   finalFireTime: Date;
   misfireInstruction: number;
   nextFireTime: Date;
+  previousFireTime: Date;
+  type: string;
+  state: string;
+  calendarName: string;
   jobKeyDTO: JobKeyModel;
   jobDetailDTO: JobDetail = new JobDetail();
   mayFireAgain: boolean;
+  jobDataMap: {[key: string]: unknown};
+  cronExpression: string;
+  timeZone: string;
+  repeatInterval: number;
+  repeatCount: number;
+  repeatIntervalUnit: string;
+  startTimeOfDay: string;
+  endTimeOfDay: string;
+  daysOfWeek: number[];
+  preserveHourOfDayAcrossDaylightSavings: boolean;
+  skipDayIfHourDoesNotExist: boolean;
 }

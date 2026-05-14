@@ -1,20 +1,23 @@
 package it.fabioformosa.quartzmanager.api.dto;
 
 import it.fabioformosa.quartzmanager.api.validators.ValidTriggerRepetition;
+import it.fabioformosa.quartzmanager.api.validators.JobTargetDTO;
+import it.fabioformosa.quartzmanager.api.validators.ValidJobTarget;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
-import javax.annotation.Nullable;
-import javax.validation.constraints.Positive;
+import jakarta.annotation.Nullable;
+import jakarta.validation.constraints.Positive;
 import java.util.Map;
 
 @ValidTriggerRepetition
+@ValidJobTarget
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @Data
 @ToString(callSuper = true)
-public class SimpleTriggerInputDTO extends TriggerCommandDTO implements TriggerRepetitionDTO {
+public class SimpleTriggerInputDTO extends TriggerCommandDTO implements TriggerRepetitionDTO, JobTargetDTO {
   private Integer repeatCount;
 
   @Positive
@@ -22,4 +25,7 @@ public class SimpleTriggerInputDTO extends TriggerCommandDTO implements TriggerR
 
   @Nullable
   private Map<String, ?> jobDataMap;
+
+  @Nullable
+  private JobKeyDTO jobKey;
 }

@@ -25,6 +25,9 @@ public class TriggerToTriggerDTO<S extends Trigger, T extends TriggerDTO> extend
     target.setFinalFireTime(source.getFinalFireTime());
     target.setMisfireInstruction(source.getMisfireInstruction());
     target.setNextFireTime(source.getNextFireTime());
+    target.setPreviousFireTime(source.getPreviousFireTime());
+    target.setCalendarName(source.getCalendarName());
+    target.setType(source.getClass().getSimpleName());
     target.setPriority(source.getPriority());
     target.setMayFireAgain(source.mayFireAgain());
 

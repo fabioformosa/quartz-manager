@@ -1,7 +1,7 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule, APP_INITIALIZER} from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { HttpClientModule } from '@angular/common/http';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 
 import {JWT_OPTIONS, JwtModule} from '@auth0/angular-jwt';
 
@@ -17,17 +17,14 @@ import {MatToolbarModule} from '@angular/material/toolbar';
 import {MatIconModule} from '@angular/material/icon';
 import {MatButtonModule} from '@angular/material/button';
 import {MatCardModule} from '@angular/material/card';
-import {MatDatepickerModule} from '@angular/material/datepicker';
 import {MatSelectModule} from '@angular/material/select';
 import {MatListModule} from '@angular/material/list';
 import {MatSidenavModule} from '@angular/material/sidenav';
+import {MatDialogModule} from '@angular/material/dialog';
 
-import {MatNativeDateModule} from '@angular/material/core';
-import { NgxMatTimepickerModule, NgxMatDatetimePickerModule} from '@angular-material-components/datetime-picker';
-import { NgxMatMomentModule } from '@angular-material-components/moment-adapter';
+import {OwlDateTimeModule, OwlNativeDateTimeModule} from '@danielmoncada/angular-datetime-picker';
 
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { FlexLayoutModule } from '@angular/flex-layout';
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 import { ManagerComponent } from './views/manager';
@@ -56,7 +53,8 @@ import {
   getHtmlBaseUrl,
   LogsRxWebsocketService,
   ProgressRxWebsocketService,
-  TriggerService
+  TriggerService,
+  CalendarService
 } from './services';
 import { ForbiddenComponent } from './views/forbidden/forbidden.component';
 import { APP_BASE_HREF } from '@angular/common';
@@ -72,85 +70,80 @@ export function jwtOptionsFactory(apiService: ApiService) {
     tokenGetter: () => {
       return apiService.getToken();
     },
-    whitelistedDomains: ['localhost:8080', 'localhost:4200']
+    allowedDomains: ['localhost:8080', 'localhost:4200']
   }
 }
 
-@NgModule({
-  declarations: [
-    AppComponent,
-    HeaderComponent,
-    FooterComponent,
-    ManagerComponent,
-    GithubComponent,
-    LoginComponent,
-    NotFoundComponent,
-    AccountMenuComponent,
-    SimpleTriggerConfigComponent,
-    SchedulerControlComponent,
-    LogsPanelComponent,
-    ProgressPanelComponent,
-    ForbiddenComponent,
-    GenericErrorComponent,
-    TriggerListComponent
-  ],
-  imports: [
-    BrowserAnimationsModule,
-    BrowserModule,
-    FormsModule,
-    ReactiveFormsModule,
-    HttpClientModule,
-    AppRoutingModule,
-    JwtModule.forRoot({
-      jwtOptionsProvider: {
-        provide: JWT_OPTIONS,
-        useFactory: jwtOptionsFactory,
-        deps: [ApiService]
-      }
-    }),
-    MatMenuModule,
-    MatTooltipModule,
-    MatButtonModule,
-    MatChipsModule,
-    MatIconModule,
-    MatInputModule,
-    MatSelectModule,
-    MatToolbarModule,
-    MatCardModule,
-    MatListModule,
-    MatProgressSpinnerModule,
-    MatProgressBarModule,
-    MatDatepickerModule, MatNativeDateModule,
-    NgxMatMomentModule,
-    NgxMatDatetimePickerModule,
-    MatSidenavModule,
-    FlexLayoutModule
-  ],
-  providers: [
-    {
-      provide: APP_BASE_HREF,
-      useValue: getHtmlBaseUrl()
-    },
-    {
-      'provide': APP_INITIALIZER,
-      'useFactory': initUserFactory,
-      'deps': [UserService],
-      'multi': true
-    },
-    LoginGuard,
-    GuestGuard,
-    AdminGuard,
-    SchedulerService,
-    JobService,
-    TriggerService,
-    ProgressRxWebsocketService,
-    LogsRxWebsocketService,
-    AuthService,
-    ApiService,
-    UserService,
-    ConfigService,
-    MatIconRegistry
-  ],
-  bootstrap: [AppComponent]
-})
+@NgModule({ declarations: [
+        AppComponent,
+        HeaderComponent,
+        FooterComponent,
+        ManagerComponent,
+        GithubComponent,
+        LoginComponent,
+        NotFoundComponent,
+        AccountMenuComponent,
+        SimpleTriggerConfigComponent,
+        SchedulerControlComponent,
+        LogsPanelComponent,
+        ProgressPanelComponent,
+        ForbiddenComponent,
+        GenericErrorComponent,
+        TriggerListComponent
+    ],
+    bootstrap: [AppComponent], imports: [BrowserAnimationsModule,
+        BrowserModule,
+        FormsModule,
+        ReactiveFormsModule,
+        AppRoutingModule,
+        JwtModule.forRoot({
+            jwtOptionsProvider: {
+                provide: JWT_OPTIONS,
+                useFactory: jwtOptionsFactory,
+                deps: [ApiService]
+            }
+        }),
+        MatDialogModule,
+        MatMenuModule,
+        MatTooltipModule,
+        MatButtonModule,
+        MatChipsModule,
+        MatIconModule,
+        MatInputModule,
+        MatSelectModule,
+        MatToolbarModule,
+        MatCardModule,
+        MatListModule,
+        MatProgressSpinnerModule,
+        MatProgressBarModule,
+        OwlDateTimeModule,
+        OwlNativeDateTimeModule,
+        MatSidenavModule,
+    ], providers: [
+        {
+            provide: APP_BASE_HREF,
+            useValue: getHtmlBaseUrl()
+        },
+        {
+            'provide': APP_INITIALIZER,
+            'useFactory': initUserFactory,
+            'deps': [UserService],
+            'multi': true
+        },
+        LoginGuard,
+        GuestGuard,
+        AdminGuard,
+        SchedulerService,
+        JobService,
+        TriggerService,
+        CalendarService,
+        ProgressRxWebsocketService,
+        LogsRxWebsocketService,
+        AuthService,
+        ApiService,
+        UserService,
+        ConfigService,
+        MatIconRegistry,
+        provideHttpClient(withInterceptorsFromDi())
+    ] })
 export class AppModule { }

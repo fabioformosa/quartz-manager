@@ -1,4 +1,4 @@
-import {Component, Input, OnDestroy, OnInit} from '@angular/core';
+import {Component, Input, NgZone, OnDestroy, OnInit} from '@angular/core';
 
 import {ApiService} from '../../services';
 import {LogsRxWebsocketService} from '../../services/logs.rx-websocket.service';
@@ -7,9 +7,10 @@ import {TriggerKey} from '../../model/triggerKey.model';
 
 
 @Component({
-  selector: 'logs-panel',
-  templateUrl: './logs-panel.component.html',
-  styleUrls: ['./logs-panel.component.scss']
+    selector: 'logs-panel',
+    templateUrl: './logs-panel.component.html',
+    styleUrls: ['./logs-panel.component.scss'],
+    standalone: false
 })
 export class LogsPanelComponent implements OnInit, OnDestroy {
 
@@ -25,7 +26,8 @@ export class LogsPanelComponent implements OnInit, OnDestroy {
 
   constructor(
     private logsRxWebsocketService: LogsRxWebsocketService,
-    private apiService: ApiService
+    private apiService: ApiService,
+    private ngZone: NgZone
   ) {
   }
 
@@ -58,7 +60,7 @@ export class LogsPanelComponent implements OnInit, OnDestroy {
     this._unsubscribeFromTopic();
     this.topicSubscription = this.logsRxWebsocketService.watch(`/topic/logs/${triggerKey.name}`)
       .pipe(map((msg: any) => JSON.parse(msg.body)))
-      .subscribe(this._showNewLog, (err) => {
+      .subscribe(logRecord => this.ngZone.run(() => this._showNewLog(logRecord)), (err) => {
         console.log(err);
         // TODO in case of 401
         // this.apiService.get('/quartz-manager/session/refresh');

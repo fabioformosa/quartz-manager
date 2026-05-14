@@ -5,7 +5,7 @@
   <parent>
     <groupId>it.fabioformosa.quartz-manager</groupId>
     <artifactId>quartz-manager-parent</artifactId>
-    <version>4.1.1</version>
+    <version>5.0.0-SNAPSHOT</version>
   </parent>
 
   <artifactId>quartz-manager-starter-api</artifactId>
@@ -18,8 +18,8 @@
     <main.basedir>${basedir}/../..</main.basedir>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <springdoc-openapi.version>1.5.12</springdoc-openapi.version>
-    <java.version>9</java.version>
+    <springdoc-openapi.version>3.0.3</springdoc-openapi.version>
+    <java.version>21</java.version>
     <sonar.exclusions>**/QuartManagerApplicationTests.java, **/OpenApiConfig.java</sonar.exclusions>
   </properties>
 
@@ -61,6 +61,11 @@
       <artifactId>spring-boot-starter-test</artifactId>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-webmvc-test</artifactId>
+      <scope>test</scope>
+    </dependency>
 
     <!-- MISC -->
     <dependency>
@@ -84,22 +89,7 @@
     <dependency>
       <groupId>it.fabioformosa</groupId>
       <artifactId>metamorphosis-core</artifactId>
-      <version>3.0.0</version>
-    </dependency>
-    <dependency>
-      <groupId>javax.validation</groupId>
-      <artifactId>validation-api</artifactId>
-      <version>2.0.1.Final</version>
-    </dependency>
-    <dependency>
-      <groupId>org.hibernate.validator</groupId>
-      <artifactId>hibernate-validator</artifactId>
-      <version>6.0.2.Final</version>
-    </dependency>
-    <dependency>
-      <groupId>org.glassfish</groupId>
-      <artifactId>javax.el</artifactId>
-      <version>3.0.0</version>
+      <version>4.0.2</version>
     </dependency>
     <dependency>
       <groupId>org.reflections</groupId>
@@ -125,14 +115,9 @@
     <!-- OAS -->
     <dependency>
       <groupId>org.springdoc</groupId>
-      <artifactId>springdoc-openapi-ui</artifactId>
+      <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
       <version>${springdoc-openapi.version}</version>
       <optional>true</optional>
-    </dependency>
-    <dependency>
-      <groupId>org.springdoc</groupId>
-      <artifactId>springdoc-openapi-common</artifactId>
-      <version>${springdoc-openapi.version}</version>
     </dependency>
 
     <!-- TEST -->

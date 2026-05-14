@@ -13,7 +13,7 @@ import it.fabioformosa.quartzmanager.api.common.config.QuartzManagerPaths;
 import it.fabioformosa.quartzmanager.api.security.properties.JwtSecurityProperties;
 import lombok.Generated;
 import lombok.extern.slf4j.Slf4j;
-import org.springdoc.core.customizers.OpenApiCustomiser;
+import org.springdoc.core.customizers.OpenApiCustomizer;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -29,23 +29,24 @@ import java.util.Arrays;
 public class SecurityOpenApiConfig {
 
   @Order(Ordered.HIGHEST_PRECEDENCE)
-  @Bean("quartzManagerOpenApiCustomiser")
-  public OpenApiCustomiser configureQuartzManagerOpenAPI(JwtSecurityProperties jwtSecurityProps) {
+  @Bean("quartzManagerOpenApiCustomizer")
+  public OpenApiCustomizer configureQuartzManagerOpenAPI(JwtSecurityProperties jwtSecurityProps) {
     return openAPI -> {
       if (!jwtSecurityProps.getCookieStrategy().isEnabled())
         openAPI
           .components(new Components().addSecuritySchemes(OpenAPIConfigConsts.QUARTZ_MANAGER_SEC_OAS_SCHEMA, buildBasicAuthScheme()));
+
+      ObjectSchema loginRequestSchema = new ObjectSchema();
+      loginRequestSchema.addProperty("username", new StringSchema());
+      loginRequestSchema.addProperty("password", new PasswordSchema());
+      loginRequestSchema.required(Arrays.asList("username", "password"));
 
       openAPI.path(QuartzManagerPaths.QUARTZ_MANAGER_LOGIN_PATH,
         new PathItem().post(new Operation()
           .operationId("login")
           .tags(Arrays.asList("auth"))
           .requestBody(new RequestBody().content(
-            new Content().addMediaType("application/x-www-form-urlencoded", new MediaType().schema(new Schema().type("object")
-              .addProperties("username", new StringSchema())
-              .addProperties("password", new PasswordSchema())
-              .required(Arrays.asList("username", "password"))
-            ))))
+            new Content().addMediaType("application/x-www-form-urlencoded", new MediaType().schema(loginRequestSchema))))
           .responses(new ApiResponses().addApiResponse("200", new ApiResponse().description("JWT Token to authenticate the next requests")))
           .responses(new ApiResponses().addApiResponse("401", new ApiResponse().description("Unauthorized - Username or password are incorrect!")))
         ));

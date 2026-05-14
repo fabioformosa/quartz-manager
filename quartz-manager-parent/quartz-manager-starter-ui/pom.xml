@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>it.fabioformosa.quartz-manager</groupId>
 		<artifactId>quartz-manager-parent</artifactId>
-        <version>4.1.1</version>
+        <version>5.0.0-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>quartz-manager-starter-ui</artifactId>
@@ -17,7 +17,7 @@
 		<main.basedir>${basedir}/../..</main.basedir>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <java.version>9</java.version>
+        <java.version>21</java.version>
         <frontend.folderName>quartz-manager-frontend</frontend.folderName>
         <node.version>v16.14.1</node.version>
         <npm.version>8.19.3</npm.version>

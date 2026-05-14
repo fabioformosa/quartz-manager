@@ -2,7 +2,7 @@ quartz:
   enabled: true
 
 quartz-manager:
-  jobClassPackages: it.fabioformosa.quartzmanager.api.jobs
+  jobClassPackages: it.fabioformosa.quartzmanager.api.jobs, it.fabioformosa.samplepackage
 
 logging:
   level:

@@ -3,6 +3,7 @@ package it.fabioformosa.quartzmanager.api.services;
 import it.fabioformosa.quartzmanager.api.common.utils.DateUtils;
 import it.fabioformosa.quartzmanager.api.dto.*;
 import it.fabioformosa.quartzmanager.api.exceptions.TriggerNotFoundException;
+import it.fabioformosa.quartzmanager.api.jobs.SampleJob;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -29,9 +30,13 @@ class SimpleTriggerServiceTest {
   @Mock
   private ConversionService conversionService;
 
+  @Mock
+  private JobService jobService;
+
   @BeforeEach
-  void setUp() {
+  void setUp() throws ClassNotFoundException {
     openMocks(this);
+    Mockito.doReturn(SampleJob.class).when(jobService).getEligibleJobClass(SampleJob.class.getName());
   }
 
   @Test
@@ -47,7 +52,8 @@ class SimpleTriggerServiceTest {
   void givenAnExistingTrigger_whenGetSimplerTriggerByNameIsCalled_thenTheDtoIsReturned() throws SchedulerException, TriggerNotFoundException {
     String existing_trigger = "existing_trigger";
     Mockito.when(scheduler.getTrigger(any(TriggerKey.class)))
-      .thenReturn(TriggerBuilder.newTrigger().withIdentity(existing_trigger).build());
+      .thenReturn(TriggerBuilder.newTrigger().withIdentity(existing_trigger).withSchedule(SimpleScheduleBuilder.simpleSchedule()).build());
+    Mockito.when(scheduler.getTriggerState(any(TriggerKey.class))).thenReturn(Trigger.TriggerState.NORMAL);
     Mockito.when(conversionService.convert(any(SimpleTrigger.class), eq(SimpleTriggerDTO.class)))
       .thenReturn(SimpleTriggerDTO.builder()
         .triggerKeyDTO(TriggerKeyDTO.builder().name(existing_trigger).build())
@@ -61,7 +67,7 @@ class SimpleTriggerServiceTest {
   @Test
   void givenASimpleTriggerCommandDTO_whenASimpleTriggerIsScheduled_thenATriggerDTOIsReturned() throws SchedulerException, ClassNotFoundException {
     SimpleTriggerInputDTO triggerInputDTO = SimpleTriggerInputDTO.builder()
-      .jobClass("it.fabioformosa.quartzmanager.api.jobs.SampleJob")
+      .jobClass(SampleJob.class.getName())
       .startDate(new Date())
       .repeatInterval(5000L).repeatCount(5)
       .endDate(DateUtils.addHoursToNow(1))
@@ -71,7 +77,7 @@ class SimpleTriggerServiceTest {
 
     SimpleTriggerDTO expectedTriggerDTO = SimpleTriggerDTO.builder()
       .startTime(triggerInputDTO.getStartDate())
-      .repeatInterval(1000)
+      .repeatInterval(1000L)
       .repeatCount(10)
       .mayFireAgain(true)
       .finalFireTime(triggerInputDTO.getEndDate())
@@ -81,10 +87,14 @@ class SimpleTriggerServiceTest {
       .build();
 
     Mockito.when(scheduler.scheduleJob(any(), any())).thenReturn(new Date());
+    Mockito.when(scheduler.checkExists(any(TriggerKey.class))).thenReturn(false);
+    Mockito.when(conversionService.convert(any(SimpleTriggerCommandDTO.class), eq(SimpleTrigger.class)))
+      .thenReturn(TriggerBuilder.newTrigger().withIdentity(simpleTriggerName, "DEFAULT").withSchedule(SimpleScheduleBuilder.simpleSchedule()).build());
     Mockito.when(conversionService.convert(any(), eq(SimpleTriggerDTO.class))).thenReturn(expectedTriggerDTO);
 
     SimpleTriggerCommandDTO simpleTriggerCommandDTO = SimpleTriggerCommandDTO.builder()
       .triggerName(simpleTriggerName)
+      .triggerGroup("DEFAULT")
       .simpleTriggerInputDTO(triggerInputDTO)
       .build();
     SimpleTriggerDTO simpleTrigger = simpleSchedulerService.scheduleSimpleTrigger(simpleTriggerCommandDTO);
@@ -93,7 +103,7 @@ class SimpleTriggerServiceTest {
   }
 
   @Test
-  void givenASimpleTriggerCommandDTO_whenASimpleTriggerIsRecheduled_thenATriggerDTOIsReturned() throws SchedulerException, ClassNotFoundException {
+  void givenASimpleTriggerCommandDTO_whenASimpleTriggerIsRecheduled_thenATriggerDTOIsReturned() throws SchedulerException, TriggerNotFoundException {
     SimpleTriggerInputDTO triggerInputDTO = SimpleTriggerInputDTO.builder()
       .jobClass("it.fabioformosa.quartzmanager.api.jobs.SampleJob")
       .startDate(new Date())
@@ -105,7 +115,7 @@ class SimpleTriggerServiceTest {
 
     SimpleTriggerDTO expectedTriggerDTO = SimpleTriggerDTO.builder()
       .startTime(triggerInputDTO.getStartDate())
-      .repeatInterval(1000)
+      .repeatInterval(1000L)
       .repeatCount(10)
       .mayFireAgain(true)
       .finalFireTime(triggerInputDTO.getEndDate())
@@ -115,10 +125,15 @@ class SimpleTriggerServiceTest {
       .build();
 
     Mockito.when(scheduler.rescheduleJob(any(), any())).thenReturn(new Date());
+    Mockito.when(scheduler.getTrigger(any(TriggerKey.class)))
+      .thenReturn(TriggerBuilder.newTrigger().withIdentity(simpleTriggerName, "DEFAULT").forJob(JobKey.jobKey("MyJob", "DEFAULT")).withSchedule(SimpleScheduleBuilder.simpleSchedule()).build());
+    Mockito.when(conversionService.convert(any(SimpleTriggerCommandDTO.class), eq(SimpleTrigger.class)))
+      .thenReturn(TriggerBuilder.newTrigger().withIdentity(simpleTriggerName, "DEFAULT").withSchedule(SimpleScheduleBuilder.simpleSchedule()).build());
     Mockito.when(conversionService.convert(any(), eq(SimpleTriggerDTO.class))).thenReturn(expectedTriggerDTO);
 
     SimpleTriggerCommandDTO simpleTriggerCommandDTO = SimpleTriggerCommandDTO.builder()
       .triggerName(simpleTriggerName)
+      .triggerGroup("DEFAULT")
       .simpleTriggerInputDTO(triggerInputDTO)
       .build();
     SimpleTriggerDTO simpleTrigger = simpleSchedulerService.rescheduleSimpleTrigger(simpleTriggerCommandDTO);

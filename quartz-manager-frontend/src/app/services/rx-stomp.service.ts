@@ -1,5 +1,4 @@
-import {RxStomp} from '@stomp/rx-stomp';
-import {RxStompConfig} from '@stomp/rx-stomp/esm6/rx-stomp-config';
+import {RxStomp, RxStompConfig} from '@stomp/rx-stomp';
 
 export class RxStompService extends RxStomp {
 

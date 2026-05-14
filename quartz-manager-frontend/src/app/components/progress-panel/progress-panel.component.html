@@ -1,43 +1,72 @@
 <!-- <div class="progress" [hidden]="progress.percentage < 0">
-    <div class="progress-bar"
-            role="progressbar"
-            [ngStyle]="{width: percentageStr}">
-        {{percentageStr}}
-    </div>
+<div class="progress-bar"
+  role="progressbar"
+  [ngStyle]="{width: percentageStr}">
+  {{percentageStr}}
+</div>
 </div> -->
 
-<mat-card style="padding-bottom: 0" [ngClass]="{'progress-updated': progressUpdated}">
-    <mat-card-header>
-        <mat-card-subtitle><b>JOB PROGRESS</b></mat-card-subtitle>
-    </mat-card-header>
-    <mat-card-content>
-      <div id="progressBarBox" *ngIf="progress.percentage !== -1">
-          <mat-progress-bar mode="determinate" value="{{progress.percentage}}"></mat-progress-bar>
-          {{percentageStr}}
-      </div>
+<mat-card
+  style="padding-bottom: 0"
+  [ngClass]="{ 'progress-updated': progressUpdated }">
+  <mat-card-header style="padding-bottom: 16px">
+    <mat-card-subtitle><b>JOB PROGRESS</b></mat-card-subtitle>
+  </mat-card-header>
+  <mat-card-content>
+    @if (progress.percentage !== -1) {
+    <div id="progressBarBox">
+      <mat-progress-bar
+        mode="determinate"
+        value="{{ progress.percentage }}"></mat-progress-bar>
+      {{ percentageStr }}
+    </div>
+    } @if (progress.timesTriggered) {
+    <div id="counterBox" class="flex flex-row justify-center">
+      <span id="timesTriggeredCounter" class="animated pulse">{{
+        progress.timesTriggered
+      }}</span>
+      @if (progress.repeatCount > 0) {
+      <span id="totCounter">&nbsp;/&nbsp;{{ progress.repeatCount }} </span>
+      }
+    </div>
+    } @if (progress.timesTriggered) {
+    <mat-divider></mat-divider>
+    }
 
-      <div id="counterBox" fxLayout="row" fxLayoutAlign="center" *ngIf="progress.timesTriggered">
-        <span id="timesTriggeredCounter" class="animated pulse">{{progress.timesTriggered}}</span>
-        <span id="totCounter" *ngIf="progress.repeatCount > 0">&nbsp;/&nbsp;{{progress.repeatCount}} </span>
+    <div class="flex flex-row align-items-center justify-space-around">
+      <div class="fireBox">
+        <div class="fireBoxHeader">prev fire time</div>
+        <div class="fireBoxContent">
+          <span class="animated pulse">{{
+            progress.previousFireTime | date : 'dd-MM-yyyy HH:mm:ss'
+          }}</span>
+        </div>
+        <div class="fireBoxContent" [hidden]="progress.previousFireTime">
+          <span>-</span>
+        </div>
       </div>
-      <mat-divider *ngIf="progress.timesTriggered"></mat-divider>
-
-      <div fxLayout="row" fxLayoutAlign="space-around center">
-          <div class="fireBox">
-            <div class="fireBoxHeader">prev fire time</div>
-            <div class="fireBoxContent"><span class="animated pulse">{{progress.previousFireTime|date:'dd-MM-yyyy HH:mm:ss'}}</span></div>
-            <div class="fireBoxContent" [hidden]="progress.previousFireTime"><span>-</span></div>
-          </div>
-          <div class="fireBox">
-            <div class="fireBoxHeader">next fire time</div>
-            <div class="fireBoxContent"><span class="animated pulse">{{progress.nextFireTime|date:'dd-MM-yyyy HH:mm:ss'}}</span></div>
-            <div class="fireBoxContent" [hidden]="progress.nextFireTime"><span>-</span></div>
-          </div>
-          <div class="fireBox">
-            <div class="fireBoxHeader">final fire time</div>
-            <div class="fireBoxContent"><span class="animated pulse">{{progress.finalFireTime|date:'dd-MM-yyyy HH:mm:ss'}}</span></div>
-            <div class="fireBoxContent" [hidden]="progress.finalFireTime"><span>-</span></div>
-          </div>
-       </div>
-    </mat-card-content>
+      <div class="fireBox">
+        <div class="fireBoxHeader">next fire time</div>
+        <div class="fireBoxContent">
+          <span class="animated pulse">{{
+            progress.nextFireTime | date : 'dd-MM-yyyy HH:mm:ss'
+          }}</span>
+        </div>
+        <div class="fireBoxContent" [hidden]="progress.nextFireTime">
+          <span>-</span>
+        </div>
+      </div>
+      <div class="fireBox">
+        <div class="fireBoxHeader">final fire time</div>
+        <div class="fireBoxContent">
+          <span class="animated pulse">{{
+            progress.finalFireTime | date : 'dd-MM-yyyy HH:mm:ss'
+          }}</span>
+        </div>
+        <div class="fireBoxContent" [hidden]="progress.finalFireTime">
+          <span>-</span>
+        </div>
+      </div>
+    </div>
+  </mat-card-content>
 </mat-card>

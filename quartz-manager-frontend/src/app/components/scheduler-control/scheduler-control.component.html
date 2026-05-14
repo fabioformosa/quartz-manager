@@ -1,26 +1,40 @@
 <mat-card>
-	<mat-card-content>
-    <div fxLayout="row" fxLayoutAlign="left stretch" fxLayoutGap="30px">
-      <button id="schedulerControllerBtn" mat-raised-button class="btn btn-default large-btn" (click)="startOrPause()">
-        <span *ngIf = "scheduler?.status === 'RUNNING'">
+  <mat-card-content>
+    <div class="flex flex-row align-items-stretch gap-30">
+      <button
+        id="schedulerControllerBtn"
+        mat-raised-button
+        class="btn btn-default large-btn"
+        (click)="startOrPause()">
+        @if (scheduler?.status === 'RUNNING') {
+        <span>
           <i class="fas fa-pause red"></i>
         </span>
-        <span *ngIf = "scheduler?.status === 'STOPPED' || scheduler?.status === 'PAUSED'">
+        } @if (scheduler?.status === 'STOPPED' || scheduler?.status ===
+        'PAUSED') {
+        <span>
           <i class="fas fa-play green"></i>
         </span>
+        }
       </button>
-      <div fxLayout="column center">
-        <mat-card-subtitle style="margin: auto;"><b>SCHEDULER</b></mat-card-subtitle>
+      <div class="flex flex-column align-items-center">
+        <mat-card-subtitle style="margin: auto"
+          ><b>SCHEDULER</b></mat-card-subtitle
+        >
       </div>
       <mat-divider [vertical]="true"></mat-divider>
-      <div fxLayout="column">
+      <div class="flex flex-column justify-space-between">
         <div><label>Name</label></div>
-        <div><span id="scheduler-name">{{scheduler?.name}}</span></div>
+        <div>
+          <span id="scheduler-name">{{ scheduler?.name }}</span>
+        </div>
       </div>
-      <div fxLayout="column">
+      <div class="flex flex-column justify-space-between">
         <div><label>Instance ID</label></div>
-        <div><span id="scheduler-instance">{{scheduler?.instanceId}}</span></div>
+        <div>
+          <span id="scheduler-instance">{{ scheduler?.instanceId }}</span>
+        </div>
       </div>
     </div>
-	</mat-card-content>
+  </mat-card-content>
 </mat-card>

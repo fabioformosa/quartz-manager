@@ -3,9 +3,10 @@ import {SchedulerService, UserService} from '../../services';
 import {Scheduler} from '../../model/scheduler.model';
 
 @Component({
-  selector: 'qrzmng-scheduler-control',
-  templateUrl: './scheduler-control.component.html',
-  styleUrls: ['./scheduler-control.component.scss']
+    selector: 'qrzmng-scheduler-control',
+    templateUrl: './scheduler-control.component.html',
+    styleUrls: ['./scheduler-control.component.scss'],
+    standalone: false
 })
 export class SchedulerControlComponent implements OnInit {
 
@@ -35,7 +36,7 @@ export class SchedulerControlComponent implements OnInit {
   };
 
   stopScheduler = function () {
-    this.schedulerService.stopScheduler().subscribe((res) => {
+    this.schedulerService.shutdownScheduler().subscribe((res) => {
       this.scheduler.status = 'STOPPED'
     }, (res) => {
       console.log(JSON.stringify(res))
@@ -43,7 +44,7 @@ export class SchedulerControlComponent implements OnInit {
   };
 
   pauseScheduler = function () {
-    this.schedulerService.pauseScheduler().subscribe((res) => {
+    this.schedulerService.standbyScheduler().subscribe((res) => {
       this.scheduler.status = 'PAUSED'
     }, (res) => {
       console.log(JSON.stringify(res))

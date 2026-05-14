@@ -14,8 +14,8 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ArgumentsSource;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
@@ -35,7 +35,7 @@ class SimpleTriggerControllerValidationTest {
   @Autowired
   private MockMvc mockMvc;
 
-  @MockBean
+  @MockitoBean
   private SimpleTriggerService simpleTriggerService;
 
   @AfterEach
@@ -46,9 +46,9 @@ class SimpleTriggerControllerValidationTest {
 
   @Test
   void givenANotExistingTrigger_whenGetIsCalled_then404IsReturned() throws Exception {
-    Mockito.when(simpleTriggerService.getSimpleTriggerByName("not_existing_trigger_name")).thenThrow(new TriggerNotFoundException("not_existing_trigger_name"));
+    Mockito.when(simpleTriggerService.getSimpleTrigger("DEFAULT", "not_existing_trigger_name")).thenThrow(new TriggerNotFoundException("DEFAULT", "not_existing_trigger_name"));
 
-    mockMvc.perform(get(SimpleTriggerController.SIMPLE_TRIGGER_CONTROLLER_BASE_URL + "/not_existing_trigger_name")
+    mockMvc.perform(get(SimpleTriggerController.SIMPLE_TRIGGER_CONTROLLER_BASE_URL + "/DEFAULT/not_existing_trigger_name")
         .contentType(MediaType.APPLICATION_JSON)).andExpect(MockMvcResultMatchers.status().isNotFound());
   }
 
@@ -59,7 +59,7 @@ class SimpleTriggerControllerValidationTest {
     SimpleTriggerDTO expectedSimpleTriggerDTO = TriggerUtils.getSimpleTriggerInstance("my-minimal-trigger");
     Mockito.when(simpleTriggerService.scheduleSimpleTrigger(any())).thenReturn(expectedSimpleTriggerDTO);
     mockMvc.perform(
-        post(SimpleTriggerController.SIMPLE_TRIGGER_CONTROLLER_BASE_URL + "/my-minimal-trigger")
+        post(SimpleTriggerController.SIMPLE_TRIGGER_CONTROLLER_BASE_URL + "/DEFAULT/my-minimal-trigger")
           .contentType(MediaType.APPLICATION_JSON)
           .content(TestUtils.toJson(simpleTriggerInputDTO))
       )
@@ -83,7 +83,7 @@ class SimpleTriggerControllerValidationTest {
     SimpleTriggerDTO expectedSimpleTriggerDTO = TriggerUtils.getSimpleTriggerInstance("my-puntual-trigger");
     Mockito.when(simpleTriggerService.scheduleSimpleTrigger(any())).thenReturn(expectedSimpleTriggerDTO);
     mockMvc.perform(
-        post(SimpleTriggerController.SIMPLE_TRIGGER_CONTROLLER_BASE_URL + "/my-puntual-trigger")
+        post(SimpleTriggerController.SIMPLE_TRIGGER_CONTROLLER_BASE_URL + "/DEFAULT/my-puntual-trigger")
           .contentType(MediaType.APPLICATION_JSON)
           .content(TestUtils.toJson(simpleTriggerInputDTO))
       )
@@ -95,7 +95,7 @@ class SimpleTriggerControllerValidationTest {
   @ParameterizedTest
   @ArgumentsSource(InvalidSimpleTriggerCommandDTOProvider.class)
   void givenAnInvalidSimpleTriggerCommandDTO_whenPostedANewTrigger_thenAnErrorIsReturned(SimpleTriggerInputDTO invalidSimpleTriggerComandDTO) throws Exception {
-    mockMvc.perform(post(SimpleTriggerController.SIMPLE_TRIGGER_CONTROLLER_BASE_URL + "/mytrigger")
+    mockMvc.perform(post(SimpleTriggerController.SIMPLE_TRIGGER_CONTROLLER_BASE_URL + "/DEFAULT/mytrigger")
       .contentType(MediaType.APPLICATION_JSON)
       .content(TestUtils.toJson(invalidSimpleTriggerComandDTO)))
       .andExpect(MockMvcResultMatchers.status().is4xxClientError());
@@ -104,7 +104,7 @@ class SimpleTriggerControllerValidationTest {
   @ParameterizedTest
   @ArgumentsSource(InvalidSimpleTriggerCommandDTOProvider.class)
   void givenAnInvalidSimpleTriggerCommandDTO_whenATriggerIsRescheduled_thenAnErrorIsReturned(SimpleTriggerInputDTO invalidSimpleTriggerCommandTO) throws Exception {
-    mockMvc.perform(put(SimpleTriggerController.SIMPLE_TRIGGER_CONTROLLER_BASE_URL + "/mytrigger")
+    mockMvc.perform(put(SimpleTriggerController.SIMPLE_TRIGGER_CONTROLLER_BASE_URL + "/DEFAULT/mytrigger")
         .contentType(MediaType.APPLICATION_JSON)
         .content(TestUtils.toJson(invalidSimpleTriggerCommandTO)))
       .andExpect(MockMvcResultMatchers.status().is4xxClientError());

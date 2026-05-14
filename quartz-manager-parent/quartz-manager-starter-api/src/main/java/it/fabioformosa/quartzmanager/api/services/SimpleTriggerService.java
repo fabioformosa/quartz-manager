@@ -2,7 +2,9 @@ package it.fabioformosa.quartzmanager.api.services;
 
 import it.fabioformosa.quartzmanager.api.dto.SimpleTriggerCommandDTO;
 import it.fabioformosa.quartzmanager.api.dto.SimpleTriggerDTO;
+import it.fabioformosa.quartzmanager.api.exceptions.ResourceConflictException;
 import it.fabioformosa.quartzmanager.api.exceptions.TriggerNotFoundException;
+import it.fabioformosa.quartzmanager.api.exceptions.UnsupportedTriggerTypeException;
 import org.quartz.*;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.convert.ConversionService;
@@ -11,32 +13,67 @@ import org.springframework.stereotype.Service;
 @Service
 public class SimpleTriggerService extends AbstractSchedulerService {
 
-  public SimpleTriggerService(@Qualifier("quartzManagerScheduler") Scheduler scheduler, ConversionService conversionService) {
+  private final JobService jobService;
+
+  public SimpleTriggerService(@Qualifier("quartzManagerScheduler") Scheduler scheduler, ConversionService conversionService, JobService jobService) {
     super(scheduler, conversionService);
+    this.jobService = jobService;
   }
 
   public SimpleTriggerDTO getSimpleTriggerByName(String name) throws SchedulerException, TriggerNotFoundException {
-    Trigger trigger = getTriggerByName(name);
-    return conversionService.convert(trigger, SimpleTriggerDTO.class);
+    return getSimpleTrigger("DEFAULT", name);
+  }
+
+  public SimpleTriggerDTO getSimpleTrigger(String group, String name) throws SchedulerException, TriggerNotFoundException {
+    Trigger trigger = scheduler.getTrigger(TriggerKey.triggerKey(name, group));
+    if (trigger == null)
+      throw new TriggerNotFoundException(group, name);
+    if (!(trigger instanceof SimpleTrigger simpleTrigger))
+      throw new UnsupportedTriggerTypeException(group, name);
+    SimpleTriggerDTO simpleTriggerDTO = conversionService.convert(simpleTrigger, SimpleTriggerDTO.class);
+    simpleTriggerDTO.setState(scheduler.getTriggerState(simpleTrigger.getKey()).name());
+    return simpleTriggerDTO;
   }
 
   public SimpleTriggerDTO scheduleSimpleTrigger(SimpleTriggerCommandDTO simpleTriggerCommandDTO) throws SchedulerException, ClassNotFoundException {
-    Class<? extends Job> jobClass = (Class<? extends Job>) Class.forName(simpleTriggerCommandDTO.getSimpleTriggerInputDTO().getJobClass());
-    JobDetail jobDetail = JobBuilder.newJob()
-      .ofType(jobClass)
-      .storeDurably(false)
-      .build();
+    TriggerKey triggerKey = TriggerKey.triggerKey(simpleTriggerCommandDTO.getTriggerName(), simpleTriggerCommandDTO.getTriggerGroup());
+    if (scheduler.checkExists(triggerKey))
+      throw new ResourceConflictException("Trigger " + triggerKey + " already exists");
 
     SimpleTrigger newSimpleTrigger = conversionService.convert(simpleTriggerCommandDTO, SimpleTrigger.class);
-    scheduler.scheduleJob(jobDetail, newSimpleTrigger);
+    if (simpleTriggerCommandDTO.getSimpleTriggerInputDTO().getJobKey() != null) {
+      JobKey jobKey = JobKey.jobKey(
+        simpleTriggerCommandDTO.getSimpleTriggerInputDTO().getJobKey().getName(),
+        simpleTriggerCommandDTO.getSimpleTriggerInputDTO().getJobKey().getGroup()
+      );
+      if (!scheduler.checkExists(jobKey))
+        throw new ResourceConflictException("Job " + jobKey + " does not exist");
+      newSimpleTrigger = newSimpleTrigger.getTriggerBuilder().forJob(jobKey).build();
+      scheduler.scheduleJob(newSimpleTrigger);
+    }
+    else {
+      Class<? extends Job> jobClass = jobService.getEligibleJobClass(simpleTriggerCommandDTO.getSimpleTriggerInputDTO().getJobClass());
+      JobDetail jobDetail = JobBuilder.newJob()
+        .ofType(jobClass)
+        .storeDurably(false)
+        .build();
+      scheduler.scheduleJob(jobDetail, newSimpleTrigger);
+    }
 
     return conversionService.convert(newSimpleTrigger, SimpleTriggerDTO.class);
   }
 
-  public SimpleTriggerDTO rescheduleSimpleTrigger(SimpleTriggerCommandDTO triggerCommandDTO) throws SchedulerException {
-    SimpleTrigger newSimpleTrigger = conversionService.convert(triggerCommandDTO, SimpleTrigger.class);
+  public SimpleTriggerDTO rescheduleSimpleTrigger(SimpleTriggerCommandDTO triggerCommandDTO) throws SchedulerException, TriggerNotFoundException {
+    TriggerKey triggerKey = TriggerKey.triggerKey(triggerCommandDTO.getTriggerName(), triggerCommandDTO.getTriggerGroup());
+    Trigger existingTrigger = scheduler.getTrigger(triggerKey);
+    if (existingTrigger == null)
+      throw new TriggerNotFoundException(triggerCommandDTO.getTriggerGroup(), triggerCommandDTO.getTriggerName());
 
-    TriggerKey triggerKey = TriggerKey.triggerKey(triggerCommandDTO.getTriggerName());
+    SimpleTrigger newSimpleTrigger = conversionService.convert(triggerCommandDTO, SimpleTrigger.class);
+    newSimpleTrigger = newSimpleTrigger.getTriggerBuilder()
+      .forJob(existingTrigger.getJobKey())
+      .build();
+
     scheduler.rescheduleJob(triggerKey, newSimpleTrigger);
 
     return conversionService.convert(newSimpleTrigger, SimpleTriggerDTO.class);

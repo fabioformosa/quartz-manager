@@ -35,7 +35,7 @@ public class SimpleTriggerCommandDTOToSimpleTrigger implements Converter<SimpleT
     return triggerTriggerBuilder.withSchedule(
         scheduleBuilder
       )
-      .withIdentity(triggerCommandDTO.getTriggerName()).build();
+      .withIdentity(triggerCommandDTO.getTriggerName(), triggerCommandDTO.getTriggerGroup()).build();
   }
 
   private static void setTheMisfireInstruction(SimpleTriggerCommandDTO triggerCommandDTO, SimpleScheduleBuilder scheduleBuilder) {

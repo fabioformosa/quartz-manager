@@ -18,4 +18,12 @@ public class SchedulerDTO {
   private String instanceId;
   private SchedulerStatus status;
   private Set<TriggerKey> triggerKeys;
+  private String quartzVersion;
+  private String jobStoreClass;
+  private boolean jobStoreSupportsPersistence;
+  private boolean clustered;
+  private String threadPoolClass;
+  private int threadPoolSize;
+  private String runningSince;
+  private int numberOfJobsExecuted;
 }

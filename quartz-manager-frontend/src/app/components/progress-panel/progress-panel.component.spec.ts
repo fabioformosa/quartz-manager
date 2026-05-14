@@ -5,21 +5,26 @@ import {jest} from '@jest/globals';
 
 describe('ProgressPanelComponent', () => {
 
+  const ngZone = {run: jest.fn((fn: () => void) => fn())};
+
+  beforeEach(() => ngZone.run.mockClear());
+
   it('should subscribe to the selected trigger progress topic', () => {
     jest.useFakeTimers();
     const messages = new Subject<any>();
     const progressRxWebsocketService = {
       watch: jest.fn(() => messages.asObservable())
     };
-    const component = new ProgressPanelComponent(progressRxWebsocketService as any);
+    const component = new ProgressPanelComponent(progressRxWebsocketService as any, ngZone as any);
 
     component.triggerKey = new TriggerKey('trigger-1', null);
 
-    expect(progressRxWebsocketService.watch).toHaveBeenCalledWith('/topic/progress/trigger-1');
+    expect(progressRxWebsocketService.watch.mock.calls[0]).toEqual(['/topic/progress/trigger-1']);
 
     messages.next({body: JSON.stringify({percentage: 75, timesTriggered: 3})});
     jest.runOnlyPendingTimers();
 
+    expect(ngZone.run).toHaveBeenCalled();
     expect(component.progress.percentage).toEqual(75);
     expect(component.percentageStr).toEqual('75%');
     expect(component.progressUpdated).toBeTruthy();
@@ -34,7 +39,7 @@ describe('ProgressPanelComponent', () => {
         .mockReturnValueOnce(firstMessages.asObservable())
         .mockReturnValueOnce(secondMessages.asObservable())
     };
-    const component = new ProgressPanelComponent(progressRxWebsocketService as any);
+    const component = new ProgressPanelComponent(progressRxWebsocketService as any, ngZone as any);
 
     component.triggerKey = new TriggerKey('trigger-1', null);
     const firstSubscription = component.topicSubscription;
@@ -43,7 +48,7 @@ describe('ProgressPanelComponent', () => {
     component.triggerKey = new TriggerKey('trigger-2', null);
 
     expect(firstSubscription.unsubscribe).toHaveBeenCalled();
-    expect(progressRxWebsocketService.watch).toHaveBeenCalledWith('/topic/progress/trigger-2');
+    expect(progressRxWebsocketService.watch.mock.calls[1]).toEqual(['/topic/progress/trigger-2']);
   });
 
   it('should reset progress when the trigger changes', () => {
@@ -55,7 +60,7 @@ describe('ProgressPanelComponent', () => {
         .mockReturnValueOnce(secondMessages.asObservable())
         .mockReturnValueOnce(firstMessages.asObservable())
     };
-    const component = new ProgressPanelComponent(progressRxWebsocketService as any);
+    const component = new ProgressPanelComponent(progressRxWebsocketService as any, ngZone as any);
 
     component.triggerKey = new TriggerKey('trigger-1', null);
     firstMessages.next({body: JSON.stringify({percentage: 75, timesTriggered: 3})});
@@ -78,7 +83,7 @@ describe('ProgressPanelComponent', () => {
     const progressRxWebsocketService = {
       watch: jest.fn(() => messages.asObservable())
     };
-    const component = new ProgressPanelComponent(progressRxWebsocketService as any);
+    const component = new ProgressPanelComponent(progressRxWebsocketService as any, ngZone as any);
 
     component.triggerKey = new TriggerKey('trigger-1', null);
     messages.next({body: JSON.stringify({percentage: 75, timesTriggered: 3})});
@@ -94,7 +99,7 @@ describe('ProgressPanelComponent', () => {
     const progressRxWebsocketService = {
       watch: jest.fn()
     };
-    const component = new ProgressPanelComponent(progressRxWebsocketService as any);
+    const component = new ProgressPanelComponent(progressRxWebsocketService as any, ngZone as any);
 
     expect(() => component.ngOnDestroy()).not.toThrow();
   });

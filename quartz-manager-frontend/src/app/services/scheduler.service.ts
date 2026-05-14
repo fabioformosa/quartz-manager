@@ -15,19 +15,19 @@ export class SchedulerService {
   ) { }
 
   startScheduler = (): Observable<void> => {
-    return this.apiService.get(getBaseUrl() + `${CONTEXT_PATH}/scheduler/run`);
+    return this.apiService.post(getBaseUrl() + `${CONTEXT_PATH}/scheduler/start`, {});
   }
 
-  stopScheduler = (): Observable<void> => {
-    return this.apiService.get(getBaseUrl() + `${CONTEXT_PATH}/scheduler/stop`);
+  shutdownScheduler = (): Observable<void> => {
+    return this.apiService.post(getBaseUrl() + `${CONTEXT_PATH}/scheduler/shutdown`, {});
   }
 
-  pauseScheduler = (): Observable<void> => {
-    return this.apiService.get(getBaseUrl() + `${CONTEXT_PATH}/scheduler/pause`);
+  standbyScheduler = (): Observable<void> => {
+    return this.apiService.post(getBaseUrl() + `${CONTEXT_PATH}/scheduler/standby`, {});
   }
 
   resumeScheduler = (): Observable<void> => {
-    return this.apiService.get(getBaseUrl() + `${CONTEXT_PATH}/scheduler/resume`);
+    return this.apiService.post(getBaseUrl() + `${CONTEXT_PATH}/scheduler/resume`, {});
   }
 
   getStatus = () => {
@@ -38,16 +38,16 @@ export class SchedulerService {
     return this.apiService.get(getBaseUrl() + `${CONTEXT_PATH}/scheduler`);
   }
 
-  getSimpleTriggerConfig = (triggerName: string): Observable<Trigger> => {
-    return this.apiService.get(getBaseUrl() + `${CONTEXT_PATH}/simple-triggers/${triggerName}`);
+  getSimpleTriggerConfig = (triggerName: string, triggerGroup = 'DEFAULT'): Observable<Trigger> => {
+    return this.apiService.get(getBaseUrl() + `${CONTEXT_PATH}/simple-triggers/${triggerGroup}/${triggerName}`);
   }
 
   saveSimpleTriggerConfig = (config: SimpleTriggerCommand) => {
-    return this.apiService.post(getBaseUrl() + `${CONTEXT_PATH}/simple-triggers/${config.triggerName}`, config)
+    return this.apiService.post(getBaseUrl() + `${CONTEXT_PATH}/simple-triggers/${config.triggerGroup}/${config.triggerName}`, config)
   }
 
   updateSimpleTriggerConfig = (config: SimpleTriggerCommand) => {
-    return this.apiService.put(getBaseUrl() + `${CONTEXT_PATH}/simple-triggers/${config.triggerName}`, config)
+    return this.apiService.put(getBaseUrl() + `${CONTEXT_PATH}/simple-triggers/${config.triggerGroup}/${config.triggerName}`, config)
   }
 
 

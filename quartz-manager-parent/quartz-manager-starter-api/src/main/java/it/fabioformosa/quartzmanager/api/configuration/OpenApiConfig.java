@@ -6,8 +6,8 @@ import io.swagger.v3.oas.models.info.License;
 import it.fabioformosa.quartzmanager.api.common.config.QuartzManagerPaths;
 import lombok.Generated;
 import lombok.extern.slf4j.Slf4j;
-import org.springdoc.core.GroupedOpenApi;
-import org.springdoc.core.customizers.OpenApiCustomiser;
+import org.springdoc.core.customizers.OpenApiCustomizer;
+import org.springdoc.core.models.GroupedOpenApi;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -39,10 +39,10 @@ public class OpenApiConfig {
 
   @ConditionalOnProperty(name = "quartz-manager.oas.enabled")
   @Bean
-  public GroupedOpenApi quartzManagerStoreOpenApi(@Autowired(required = false) @Qualifier("quartzManagerOpenApiCustomiser") Optional<OpenApiCustomiser> openApiCustomiser) {
+  public GroupedOpenApi quartzManagerStoreOpenApi(@Autowired(required = false) @Qualifier("quartzManagerOpenApiCustomizer") Optional<OpenApiCustomizer> openApiCustomizer) {
     String[] paths = {QuartzManagerPaths.QUARTZ_MANAGER_BASE_CONTEXT_PATH + "/**"};
     GroupedOpenApi.Builder groupedOpenApiBuilder = GroupedOpenApi.builder().group("quartz-manager").pathsToMatch(paths);
-    openApiCustomiser.ifPresent(groupedOpenApiBuilder::addOpenApiCustomiser);
+    openApiCustomizer.ifPresent(groupedOpenApiBuilder::addOpenApiCustomizer);
     return groupedOpenApiBuilder.build();
   }
 

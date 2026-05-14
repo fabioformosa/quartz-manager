@@ -1,13 +1,14 @@
-import {Component, Input, OnDestroy, OnInit} from '@angular/core'
+import {Component, Input, NgZone, OnDestroy, OnInit} from '@angular/core'
 import TriggerFiredBundle from '../../model/trigger-fired-bundle.model';
 import {TriggerKey} from '../../model/triggerKey.model';
 import {ProgressRxWebsocketService} from '../../services/progress.rx-websocket.service';
 import {map} from 'rxjs/operators';
 
 @Component({
-  selector: 'progress-panel',
-  templateUrl: './progress-panel.component.html',
-  styleUrls: ['./progress-panel.component.scss']
+    selector: 'progress-panel',
+    templateUrl: './progress-panel.component.html',
+    styleUrls: ['./progress-panel.component.scss'],
+    standalone: false
 })
 export class ProgressPanelComponent implements OnInit, OnDestroy {
 
@@ -19,7 +20,8 @@ export class ProgressPanelComponent implements OnInit, OnDestroy {
   private selectedTriggerKey: TriggerKey;
 
   constructor(
-    private progressRxWebsocketService: ProgressRxWebsocketService
+    private progressRxWebsocketService: ProgressRxWebsocketService,
+    private ngZone: NgZone
   ) { }
 
   @Input()
@@ -44,7 +46,7 @@ export class ProgressPanelComponent implements OnInit, OnDestroy {
     this._unsubscribeFromTopic();
     this.topicSubscription = this.progressRxWebsocketService.watch(`/topic/progress/${triggerKey.name}`)
       .pipe(map((msg: any) => JSON.parse(msg.body)))
-      .subscribe(this.onNewProgressMsg, (err) => {
+      .subscribe(progress => this.ngZone.run(() => this.onNewProgressMsg(progress)), (err) => {
         console.log(err);
         // TODO in case of 401
         // this.apiService.get('/quartz-manager/session/refresh');

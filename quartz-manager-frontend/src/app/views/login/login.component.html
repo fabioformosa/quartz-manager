@@ -1,32 +1,76 @@
-<div class="content" fxLayout="row" fxLayoutAlign="center" style="padding-bottom:160px;">
+<section class="login-shell">
+  <div class="login-hero" aria-hidden="true">
+    <div class="brand">
+      <span class="brand-mark">QM</span>
+      <div>
+        <h1>Quartz Manager</h1>
+        <p>Scheduler operations console</p>
+      </div>
+    </div>
 
-    <mat-card elevation="5" fxFlex>
+    <div class="hero-card">
+      <span class="card-title">Operational View</span>
+      <div class="status-row">
+        <span class="pulse"></span>
+        <span>Jobs, triggers, logs and live execution state</span>
+      </div>
+      <div class="metric-grid">
+        <div>
+          <strong>01</strong>
+          <span>Secure entry</span>
+        </div>
+        <div>
+          <strong>24/7</strong>
+          <span>Runtime visibility</span>
+        </div>
+      </div>
+    </div>
+  </div>
 
-      <mat-card-subtitle>
-        <h2>Quartz Manager</h2>
-      </mat-card-subtitle>
+  <mat-card class="login-card">
+    <mat-card-content>
+      <div class="form-header">
+        <span class="eyebrow">Welcome back</span>
+        <h2>{{ title }}</h2>
+        <p>Sign in to manage scheduler activity and inspect runtime signals.</p>
+      </div>
 
-      <mat-card-title>
-        <h2>{{title}}</h2>
-      </mat-card-title>
-
-      <mat-card-content>
-
-        <p [class]="notification.msgType" *ngIf="notification">{{notification.msgBody}}</p>
-
-        <form *ngIf="!submitted" [formGroup]="form" (ngSubmit)="onSubmit()" #loginForm="ngForm">
-          <mat-form-field>
-            <input matInput formControlName="username" required placeholder="user">
-          </mat-form-field>
-          <mat-form-field>
-            <input matInput formControlName="password" required type="password" placeholder="password">
-          </mat-form-field>
-          <button type="submit" [disabled]="!loginForm.form.valid" mat-raised-button color="primary">Login</button>
-        </form>
-
-        <mat-spinner *ngIf="submitted" mode="indeterminate"></mat-spinner>
-      </mat-card-content>
-
-    </mat-card>
-
-</div>
+      @if (notification) {
+      <p class="notification {{ notification.msgType }}">{{ notification.msgBody }}</p>
+      } @if (!submitted) {
+      <form [formGroup]="form" (ngSubmit)="onSubmit()" #loginForm="ngForm">
+        <mat-form-field appearance="outline">
+          <mat-label>Username</mat-label>
+          <input
+            matInput
+            formControlName="username"
+            required
+            autocomplete="username" />
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Password</mat-label>
+          <input
+            matInput
+            formControlName="password"
+            required
+            type="password"
+            autocomplete="current-password" />
+        </mat-form-field>
+        <button
+          class="login-button"
+          type="submit"
+          [disabled]="!loginForm.form.valid"
+          mat-raised-button
+          color="primary">
+          Login
+        </button>
+      </form>
+      } @if (submitted) {
+      <div class="loading-state">
+        <mat-spinner mode="indeterminate"></mat-spinner>
+        <span>Checking credentials...</span>
+      </div>
+      }
+    </mat-card-content>
+  </mat-card>
+</section>

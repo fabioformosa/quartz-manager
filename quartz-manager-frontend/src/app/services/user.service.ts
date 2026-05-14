@@ -3,8 +3,9 @@ import {ApiService} from './api.service';
 import {ConfigService} from './config.service';
 
 import {map} from 'rxjs/operators'
-import {HttpErrorResponse} from '@angular/common/http';
+import { HttpErrorResponse } from '@angular/common/http';
 import {Router} from '@angular/router';
+import {firstValueFrom} from 'rxjs';
 
 @Injectable()
 export class UserService {
@@ -22,7 +23,7 @@ export class UserService {
   refreshToken() {
     this.apiService.get(this.config.refresh_token_url).subscribe(res => {
         if (res.accessToken !== null) {
-          return this.getUserInfo().toPromise()
+          return firstValueFrom(this.getUserInfo())
             .then(user => {
               this.currentUser = user;
             });

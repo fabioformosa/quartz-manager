@@ -1,3 +1,23 @@
+:host {
+  display: flex;
+  height: 100%;
+  min-height: 0;
+  width: 100%;
+}
+
+.trigger-config-card {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.trigger-config-content {
+  flex: 1;
+  min-height: 0;
+  position: relative;
+}
+
 .small{
     font-size: 0.8em;
 }
@@ -5,6 +25,22 @@
 .full-size-input{
   width: 100%;
 }
+
+:host ::ng-deep .trigger-config-form .mat-mdc-form-field {
+  font-size: 13px;
+}
+
+:host ::ng-deep .trigger-config-form .mat-mdc-select-value,
+:host ::ng-deep .trigger-config-form .mat-mdc-select-value-text,
+:host ::ng-deep .trigger-config-form .mat-mdc-input-element,
+:host ::ng-deep .trigger-config-form .mdc-floating-label {
+  font-size: 13px;
+}
+
+:host ::ng-deep .trigger-config-form .mat-mdc-select-trigger {
+  min-height: 20px;
+}
+
 /* ===== Scrollbar CSS ===== */
 /* Firefox */
 * {

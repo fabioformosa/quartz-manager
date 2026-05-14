@@ -1,8 +1,11 @@
-<div fxLayout="column" fxLayoutAlign="space-between stretch" fxFill>
-  <app-header fxFlex="0 0 auto"></app-header>
-  <div class="content" fxFlex="100" fxFill>
-    <router-outlet></router-outlet>
+@if (isOperationsConsoleRoute()) {
+  <router-outlet></router-outlet>
+} @else {
+  <div class="app-shell flex flex-column justify-space-between h-100">
+    <app-header class="flex-none"></app-header>
+    <div class="content flex h-100">
+      <router-outlet></router-outlet>
+    </div>
+    <app-footer class="flex-none"></app-footer>
   </div>
-  <app-footer fxFlex="0 0 auto"></app-footer>
-</div>
-
+}
