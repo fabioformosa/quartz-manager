@@ -1,3 +1,27 @@
+## **v5.0.1**
+
+### New Features
+* Added full job management: list eligible job classes, create stored jobs, update jobs, delete jobs, and trigger jobs on demand.
+* Added trigger management APIs and UI flows to inspect, create, reschedule, pause, resume, and unschedule triggers.
+* Added support for Quartz trigger types beyond simple triggers: cron, daily time interval, and calendar interval triggers.
+* Added Quartz calendar management for annual, cron, daily, holiday, monthly, and weekly calendars.
+* Added calendar-aware scheduling support, including calendar assignment to triggers and included-time checks.
+* Redesigned the Quartz Manager dashboard with a broader operations view for scheduler, jobs, triggers, calendars, progress, and logs.
+* Updated the embedded UI to Angular 21.
+* Added support for Spring Boot 4 applications.
+
+### Breaking Changes
+* Quartz Manager now requires Java 21+ and Spring Boot 4.x.
+* Applications using Quartz Manager APIs must migrate from `javax.*` validation/annotation dependencies to `jakarta.*` equivalents through the Spring Boot 4 stack.
+* Scheduler command endpoints now use `POST` operations and clearer action names: `/scheduler/start`, `/scheduler/standby`, `/scheduler/resume`, and `/scheduler/shutdown` replace the previous `GET` command endpoints.
+* Simple trigger endpoints now include the trigger group in the path: `/simple-triggers/{group}/{name}`.
+* New trigger creation should use the generalized `/triggers/{group}/{name}` API when working with cron, daily time interval, or calendar interval triggers.
+
+### Fixes
+* Fixed WebSocket log retrieval for job execution logs.
+* Fixed UI style regressions and improved readability in the dashboard, login page, job class display, and misfire instruction display.
+* Improved API error handling for missing jobs, missing triggers, missing calendars, unsupported trigger types, and scheduling conflicts.
+
 ## **v4.1.1**
 **NEW FEATURE** support for multiple triggers
 
