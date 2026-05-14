@@ -3,6 +3,7 @@ package it.fabioformosa.quartzmanager.api.services;
 import it.fabioformosa.quartzmanager.api.common.utils.DateUtils;
 import it.fabioformosa.quartzmanager.api.dto.*;
 import it.fabioformosa.quartzmanager.api.exceptions.TriggerNotFoundException;
+import it.fabioformosa.quartzmanager.api.jobs.SampleJob;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -29,9 +30,13 @@ class SimpleTriggerServiceTest {
   @Mock
   private ConversionService conversionService;
 
+  @Mock
+  private JobService jobService;
+
   @BeforeEach
-  void setUp() {
+  void setUp() throws ClassNotFoundException {
     openMocks(this);
+    Mockito.doReturn(SampleJob.class).when(jobService).getEligibleJobClass(SampleJob.class.getName());
   }
 
   @Test
@@ -62,7 +67,7 @@ class SimpleTriggerServiceTest {
   @Test
   void givenASimpleTriggerCommandDTO_whenASimpleTriggerIsScheduled_thenATriggerDTOIsReturned() throws SchedulerException, ClassNotFoundException {
     SimpleTriggerInputDTO triggerInputDTO = SimpleTriggerInputDTO.builder()
-      .jobClass("it.fabioformosa.quartzmanager.api.jobs.SampleJob")
+      .jobClass(SampleJob.class.getName())
       .startDate(new Date())
       .repeatInterval(5000L).repeatCount(5)
       .endDate(DateUtils.addHoursToNow(1))
@@ -98,7 +103,7 @@ class SimpleTriggerServiceTest {
   }
 
   @Test
-  void givenASimpleTriggerCommandDTO_whenASimpleTriggerIsRecheduled_thenATriggerDTOIsReturned() throws SchedulerException, ClassNotFoundException, TriggerNotFoundException {
+  void givenASimpleTriggerCommandDTO_whenASimpleTriggerIsRecheduled_thenATriggerDTOIsReturned() throws SchedulerException, TriggerNotFoundException {
     SimpleTriggerInputDTO triggerInputDTO = SimpleTriggerInputDTO.builder()
       .jobClass("it.fabioformosa.quartzmanager.api.jobs.SampleJob")
       .startDate(new Date())

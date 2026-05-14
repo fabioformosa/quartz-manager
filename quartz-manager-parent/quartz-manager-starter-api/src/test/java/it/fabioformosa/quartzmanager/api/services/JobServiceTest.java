@@ -47,6 +47,7 @@ class JobServiceTest {
   void setUp() {
     MockitoAnnotations.openMocks(this);
     schedulerBackedJobService = new JobService("", scheduler, conversionService);
+    schedulerBackedJobService.getJobClasses().add(SampleJob.class);
   }
 
   @Test
@@ -106,7 +107,7 @@ class JobServiceTest {
     Assertions.assertThat(scheduledJobs.get(0).getDescription()).isEqualTo("sample");
     Assertions.assertThat(scheduledJobs.get(0).isDurable()).isTrue();
     Assertions.assertThat(scheduledJobs.get(0).isRequestsRecovery()).isTrue();
-    Assertions.assertThat(scheduledJobs.get(0).getJobDataMap().get("key")).isEqualTo("value");
+    Assertions.assertThat((Map<String, Object>) scheduledJobs.get(0).getJobDataMap()).containsEntry("key", "value");
     Assertions.assertThat(scheduledJobs.get(0).getTriggerKeys()).hasSize(1);
   }
 

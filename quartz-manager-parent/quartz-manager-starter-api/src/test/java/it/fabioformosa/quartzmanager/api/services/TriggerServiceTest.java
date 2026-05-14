@@ -50,9 +50,13 @@ class TriggerServiceTest {
   @Mock
   private ConversionService conversionService;
 
+  @Mock
+  private JobService jobService;
+
   @BeforeEach
-  void setUp(){
+  void setUp() throws ClassNotFoundException {
     MockitoAnnotations.openMocks(this);
+    Mockito.doReturn(SampleJob.class).when(jobService).getEligibleJobClass(SampleJob.class.getName());
   }
 
   @Test

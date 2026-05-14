@@ -15,7 +15,6 @@ import org.quartz.CronTrigger;
 import org.quartz.DailyTimeIntervalScheduleBuilder;
 import org.quartz.DailyTimeIntervalTrigger;
 import org.quartz.DateBuilder;
-import org.quartz.Job;
 import org.quartz.JobBuilder;
 import org.quartz.JobDataMap;
 import org.quartz.JobDetail;
@@ -43,13 +42,17 @@ import java.util.TimeZone;
 public class TriggerService {
 
   private static final int DEFAULT_PRIORITY = Trigger.DEFAULT_PRIORITY;
+  private static final String MISFIRE_DO_NOTHING = "DO_NOTHING";
+  private static final String MISFIRE_IGNORE_MISFIRES = "IGNORE_MISFIRES";
 
   private final Scheduler scheduler;
   private final ConversionService conversionService;
+  private final JobService jobService;
 
-  public TriggerService(@Qualifier("quartzManagerScheduler") Scheduler scheduler, ConversionService conversionService) {
+  public TriggerService(@Qualifier("quartzManagerScheduler") Scheduler scheduler, ConversionService conversionService, JobService jobService) {
     this.scheduler = scheduler;
     this.conversionService = conversionService;
+    this.jobService = jobService;
   }
 
   public List<TriggerKeyDTO> fetchTriggers() throws SchedulerException {
@@ -83,7 +86,7 @@ public class TriggerService {
     }
     else {
       JobDetail jobDetail = JobBuilder.newJob()
-        .ofType(Class.forName(triggerInputDTO.getJobClass()).asSubclass(Job.class))
+        .ofType(jobService.getEligibleJobClass(triggerInputDTO.getJobClass()))
         .storeDurably(false)
         .build();
       scheduler.scheduleJob(jobDetail, newTrigger);
@@ -262,24 +265,24 @@ public class TriggerService {
 
   private CronScheduleBuilder applyCronMisfireInstruction(CronScheduleBuilder scheduleBuilder, String misfireInstruction) {
     return switch (normalizeMisfireInstruction(misfireInstruction)) {
-      case "DO_NOTHING" -> scheduleBuilder.withMisfireHandlingInstructionDoNothing();
-      case "IGNORE_MISFIRES" -> scheduleBuilder.withMisfireHandlingInstructionIgnoreMisfires();
+      case MISFIRE_DO_NOTHING -> scheduleBuilder.withMisfireHandlingInstructionDoNothing();
+      case MISFIRE_IGNORE_MISFIRES -> scheduleBuilder.withMisfireHandlingInstructionIgnoreMisfires();
       default -> scheduleBuilder.withMisfireHandlingInstructionFireAndProceed();
     };
   }
 
   private DailyTimeIntervalScheduleBuilder applyDailyMisfireInstruction(DailyTimeIntervalScheduleBuilder scheduleBuilder, String misfireInstruction) {
     return switch (normalizeMisfireInstruction(misfireInstruction)) {
-      case "DO_NOTHING" -> scheduleBuilder.withMisfireHandlingInstructionDoNothing();
-      case "IGNORE_MISFIRES" -> scheduleBuilder.withMisfireHandlingInstructionIgnoreMisfires();
+      case MISFIRE_DO_NOTHING -> scheduleBuilder.withMisfireHandlingInstructionDoNothing();
+      case MISFIRE_IGNORE_MISFIRES -> scheduleBuilder.withMisfireHandlingInstructionIgnoreMisfires();
       default -> scheduleBuilder.withMisfireHandlingInstructionFireAndProceed();
     };
   }
 
   private CalendarIntervalScheduleBuilder applyCalendarIntervalMisfireInstruction(CalendarIntervalScheduleBuilder scheduleBuilder, String misfireInstruction) {
     return switch (normalizeMisfireInstruction(misfireInstruction)) {
-      case "DO_NOTHING" -> scheduleBuilder.withMisfireHandlingInstructionDoNothing();
-      case "IGNORE_MISFIRES" -> scheduleBuilder.withMisfireHandlingInstructionIgnoreMisfires();
+      case MISFIRE_DO_NOTHING -> scheduleBuilder.withMisfireHandlingInstructionDoNothing();
+      case MISFIRE_IGNORE_MISFIRES -> scheduleBuilder.withMisfireHandlingInstructionIgnoreMisfires();
       default -> scheduleBuilder.withMisfireHandlingInstructionFireAndProceed();
     };
   }

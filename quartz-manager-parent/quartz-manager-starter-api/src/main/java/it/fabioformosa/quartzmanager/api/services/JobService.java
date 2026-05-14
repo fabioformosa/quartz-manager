@@ -115,6 +115,13 @@ public class JobService {
     scheduler.deleteJob(jobKey);
   }
 
+  public Class<? extends Job> getEligibleJobClass(String jobClassName) throws ClassNotFoundException {
+    return jobClasses.stream()
+      .filter(jobClass -> jobClass.getName().equals(jobClassName))
+      .findFirst()
+      .orElseThrow(() -> new ClassNotFoundException("Job class " + jobClassName + " is not eligible"));
+  }
+
   private JobKey requireJob(String group, String name) throws SchedulerException, JobNotFoundException {
     JobKey jobKey = JobKey.jobKey(name, group);
     if (!scheduler.checkExists(jobKey))
@@ -123,7 +130,7 @@ public class JobService {
   }
 
   private JobDetail buildJobDetail(JobKey jobKey, ScheduledJobInputDTO scheduledJobInputDTO) throws ClassNotFoundException {
-    Class<? extends Job> jobClass = Class.forName(scheduledJobInputDTO.getJobClass()).asSubclass(Job.class);
+    Class<? extends Job> jobClass = getEligibleJobClass(scheduledJobInputDTO.getJobClass());
     JobBuilder jobBuilder = JobBuilder.newJob(jobClass)
       .withIdentity(jobKey)
       .storeDurably(scheduledJobInputDTO.isDurable())

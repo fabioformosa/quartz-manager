@@ -20,7 +20,6 @@ import org.quartz.TriggerBuilder;
 import org.quartz.TriggerKey;
 import org.quartz.impl.calendar.AnnualCalendar;
 import org.quartz.impl.calendar.CronCalendar;
-import org.quartz.impl.calendar.DailyCalendar;
 import org.quartz.impl.calendar.HolidayCalendar;
 import org.quartz.impl.calendar.MonthlyCalendar;
 import org.quartz.impl.calendar.WeeklyCalendar;

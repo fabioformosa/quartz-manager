@@ -13,8 +13,11 @@ import org.springframework.stereotype.Service;
 @Service
 public class SimpleTriggerService extends AbstractSchedulerService {
 
-  public SimpleTriggerService(@Qualifier("quartzManagerScheduler") Scheduler scheduler, ConversionService conversionService) {
+  private final JobService jobService;
+
+  public SimpleTriggerService(@Qualifier("quartzManagerScheduler") Scheduler scheduler, ConversionService conversionService, JobService jobService) {
     super(scheduler, conversionService);
+    this.jobService = jobService;
   }
 
   public SimpleTriggerDTO getSimpleTriggerByName(String name) throws SchedulerException, TriggerNotFoundException {
@@ -49,7 +52,7 @@ public class SimpleTriggerService extends AbstractSchedulerService {
       scheduler.scheduleJob(newSimpleTrigger);
     }
     else {
-      Class<? extends Job> jobClass = Class.forName(simpleTriggerCommandDTO.getSimpleTriggerInputDTO().getJobClass()).asSubclass(Job.class);
+      Class<? extends Job> jobClass = jobService.getEligibleJobClass(simpleTriggerCommandDTO.getSimpleTriggerInputDTO().getJobClass());
       JobDetail jobDetail = JobBuilder.newJob()
         .ofType(jobClass)
         .storeDurably(false)
