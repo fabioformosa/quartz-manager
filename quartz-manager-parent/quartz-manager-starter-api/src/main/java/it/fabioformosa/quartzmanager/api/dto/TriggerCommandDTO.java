@@ -5,7 +5,6 @@ import it.fabioformosa.quartzmanager.api.validators.ValidTriggerPeriod;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
-import jakarta.validation.constraints.NotBlank;
 import java.util.Date;
 
 @ValidTriggerPeriod
@@ -16,7 +15,6 @@ import java.util.Date;
 @ToString
 @Data
 public class TriggerCommandDTO implements TriggerPeriodDTO {
-  @NotBlank
   private String jobClass;
 
   @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")

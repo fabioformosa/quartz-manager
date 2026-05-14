@@ -35,7 +35,7 @@ public class SimpleTriggerController {
     this.simpleSchedulerService = simpleSchedulerService;
   }
 
-  @GetMapping("/{name}")
+  @GetMapping("/{group}/{name}")
   @Operation(summary = "Get a simple trigger by name")
   @ApiResponses(value = {
     @ApiResponse(responseCode = "200", description = "Got the trigger by its name",
@@ -44,11 +44,11 @@ public class SimpleTriggerController {
     @ApiResponse(responseCode = "404", description = "Trigger not found",
       content = @Content)
   })
-  public SimpleTriggerDTO getSimpleTrigger(@PathVariable String name) throws SchedulerException, TriggerNotFoundException {
-    return simpleSchedulerService.getSimpleTriggerByName(name);
+  public SimpleTriggerDTO getSimpleTrigger(@PathVariable String group, @PathVariable String name) throws SchedulerException, TriggerNotFoundException {
+    return simpleSchedulerService.getSimpleTrigger(group, name);
   }
 
-  @PostMapping("/{name}")
+  @PostMapping("/{group}/{name}")
   @ResponseStatus(HttpStatus.CREATED)
   @Operation(summary = "Schedule a new simple trigger")
   @ApiResponses(value = {
@@ -58,10 +58,11 @@ public class SimpleTriggerController {
     @ApiResponse(responseCode = "400", description = "Invalid trigger configuration",
       content = @Content)
   })
-  public SimpleTriggerDTO postSimpleTrigger(@PathVariable String name, @Valid @RequestBody SimpleTriggerInputDTO simpleTriggerInputDTO) throws SchedulerException, ClassNotFoundException {
+  public SimpleTriggerDTO postSimpleTrigger(@PathVariable String group, @PathVariable String name, @Valid @RequestBody SimpleTriggerInputDTO simpleTriggerInputDTO) throws SchedulerException, ClassNotFoundException {
     log.info("SIMPLE TRIGGER - CREATING a SimpleTrigger {} {}", name, simpleTriggerInputDTO);
     SimpleTriggerCommandDTO simpleTriggerCommandDTO = SimpleTriggerCommandDTO.builder()
       .triggerName(name)
+      .triggerGroup(group)
       .simpleTriggerInputDTO(simpleTriggerInputDTO)
       .build();
     SimpleTriggerDTO newTriggerDTO = simpleSchedulerService.scheduleSimpleTrigger(simpleTriggerCommandDTO);
@@ -69,7 +70,7 @@ public class SimpleTriggerController {
     return newTriggerDTO;
   }
 
-  @PutMapping("/{name}")
+  @PutMapping("/{group}/{name}")
   @Operation(summary = "Reschedule a simple trigger")
   @ApiResponses(value = {
     @ApiResponse(responseCode = "200", description = "Rescheduled a simple trigger",
@@ -78,10 +79,11 @@ public class SimpleTriggerController {
     @ApiResponse(responseCode = "400", description = "Invalid trigger configuration",
       content = @Content)
   })
-  public TriggerDTO rescheduleSimpleTrigger(@PathVariable String name, @Valid @RequestBody SimpleTriggerInputDTO simpleTriggerInputDTO) throws SchedulerException {
+  public TriggerDTO rescheduleSimpleTrigger(@PathVariable String group, @PathVariable String name, @Valid @RequestBody SimpleTriggerInputDTO simpleTriggerInputDTO) throws SchedulerException, TriggerNotFoundException {
     log.info("SIMPLE TRIGGER - RESCHEDULING the trigger {} {}", name, simpleTriggerInputDTO);
     SimpleTriggerCommandDTO simpleTriggerCommandDTO = SimpleTriggerCommandDTO.builder()
       .triggerName(name)
+      .triggerGroup(group)
       .simpleTriggerInputDTO(simpleTriggerInputDTO)
       .build();
     TriggerDTO triggerDTO = simpleSchedulerService.rescheduleSimpleTrigger(simpleTriggerCommandDTO);

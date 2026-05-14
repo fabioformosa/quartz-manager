@@ -6,8 +6,12 @@ import it.fabioformosa.quartzmanager.api.enums.SchedulerStatus;
 import lombok.SneakyThrows;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
+import org.quartz.SchedulerMetaData;
 import org.quartz.impl.matchers.GroupMatcher;
 import org.springframework.stereotype.Component;
+
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
 
 @Component
 public class SchedulerToSchedulerDTO extends AbstractBaseConverterToDTO<Scheduler, SchedulerDTO> {
@@ -20,6 +24,16 @@ public class SchedulerToSchedulerDTO extends AbstractBaseConverterToDTO<Schedule
     if(!source.isShutdown())
       target.setTriggerKeys(source.getTriggerKeys(GroupMatcher.anyTriggerGroup()));
     target.setStatus(buildTheSchedulerStatus(source));
+    SchedulerMetaData metaData = source.getMetaData();
+    target.setQuartzVersion(metaData.getVersion());
+    target.setJobStoreClass(metaData.getJobStoreClass().getName());
+    target.setJobStoreSupportsPersistence(metaData.isJobStoreSupportsPersistence());
+    target.setClustered(metaData.isJobStoreClustered());
+    target.setThreadPoolClass(metaData.getThreadPoolClass().getName());
+    target.setThreadPoolSize(metaData.getThreadPoolSize());
+    target.setNumberOfJobsExecuted(metaData.getNumberOfJobsExecuted());
+    if (metaData.getRunningSince() != null)
+      target.setRunningSince(DateTimeFormatter.ISO_OFFSET_DATE_TIME.format(metaData.getRunningSince().toInstant().atOffset(ZoneOffset.UTC)));
   }
 
   private SchedulerStatus buildTheSchedulerStatus(Scheduler scheduler) throws SchedulerException {

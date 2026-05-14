@@ -16,9 +16,10 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
 @ContextConfiguration(classes = {QuartManagerApplicationTests.class})
-@WebMvcTest(controllers = SimpleTriggerController.class, properties = {
+@WebMvcTest(controllers = SchedulerController.class, properties = {
   "quartz-manager.jobClassPackages=it.fabioformosa.quartzmanager.jobs"
 })
 class SchedulerControllerTest {
@@ -47,8 +48,8 @@ class SchedulerControllerTest {
   }
 
   @Test
-  void givenAScheduler_whenTheGetPausedIsCalled_then2xxReturned() throws Exception {
-    mockMvc.perform(get(SchedulerController.SCHEDULER_CONTROLLER_BASE_URL + "/pause")
+  void givenAScheduler_whenStandbyIsCalled_then2xxReturned() throws Exception {
+    mockMvc.perform(post(SchedulerController.SCHEDULER_CONTROLLER_BASE_URL + "/standby")
         .contentType(MediaType.APPLICATION_JSON))
       .andExpect(MockMvcResultMatchers.status().isNoContent())
       .andExpect(MockMvcResultMatchers.content().string(""));
@@ -57,8 +58,8 @@ class SchedulerControllerTest {
   }
 
   @Test
-  void givenAScheduler_whenTheGetResumedIsCalled_then2xxReturned() throws Exception {
-    mockMvc.perform(get(SchedulerController.SCHEDULER_CONTROLLER_BASE_URL + "/resume")
+  void givenAScheduler_whenResumeIsCalled_then2xxReturned() throws Exception {
+    mockMvc.perform(post(SchedulerController.SCHEDULER_CONTROLLER_BASE_URL + "/resume")
         .contentType(MediaType.APPLICATION_JSON))
       .andExpect(MockMvcResultMatchers.status().isNoContent())
       .andExpect(MockMvcResultMatchers.content().string(""));
@@ -67,8 +68,8 @@ class SchedulerControllerTest {
   }
 
   @Test
-  void givenAScheduler_whenTheGetRunIsCalled_then2xxReturned() throws Exception {
-    mockMvc.perform(get(SchedulerController.SCHEDULER_CONTROLLER_BASE_URL + "/run")
+  void givenAScheduler_whenStartIsCalled_then2xxReturned() throws Exception {
+    mockMvc.perform(post(SchedulerController.SCHEDULER_CONTROLLER_BASE_URL + "/start")
         .contentType(MediaType.APPLICATION_JSON))
       .andExpect(MockMvcResultMatchers.status().isNoContent())
       .andExpect(MockMvcResultMatchers.content().string(""));
@@ -77,8 +78,8 @@ class SchedulerControllerTest {
   }
 
   @Test
-  void givenAScheduler_whenTheGetStoppedIsCalled_then2xxReturned() throws Exception {
-    mockMvc.perform(get(SchedulerController.SCHEDULER_CONTROLLER_BASE_URL + "/stop")
+  void givenAScheduler_whenShutdownIsCalled_then2xxReturned() throws Exception {
+    mockMvc.perform(post(SchedulerController.SCHEDULER_CONTROLLER_BASE_URL + "/shutdown")
         .contentType(MediaType.APPLICATION_JSON))
       .andExpect(MockMvcResultMatchers.status().isNoContent())
       .andExpect(MockMvcResultMatchers.content().string(""));

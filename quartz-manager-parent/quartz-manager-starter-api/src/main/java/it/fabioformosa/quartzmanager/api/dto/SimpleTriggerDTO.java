@@ -9,8 +9,8 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 public class SimpleTriggerDTO extends TriggerDTO{
 
-  private int repeatCount;
-  private long repeatInterval;
-  private int timesTriggered;
+  private Integer repeatCount;
+  private Long repeatInterval;
+  private Integer timesTriggered;
 
 }

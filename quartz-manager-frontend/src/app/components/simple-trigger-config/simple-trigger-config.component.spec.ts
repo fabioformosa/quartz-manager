@@ -56,7 +56,7 @@ describe('SimpleTriggerConfig', () => {
 
   it('should fetch no triggers at the init', () => {
     expect(component).toBeTruthy();
-    httpTestingController.expectNone(`${CONTEXT_PATH}/simple-triggers/my-simple-trigger`);
+    httpTestingController.expectNone(`${CONTEXT_PATH}/simple-triggers/DEFAULT/my-simple-trigger`);
   });
 
   function setInputValue(componentDe: DebugElement, inputSelector: string, value: string) {
@@ -95,7 +95,7 @@ describe('SimpleTriggerConfig', () => {
     component.openTriggerForm();
     fixture.detectChanges();
 
-    const getJobsReq = httpTestingController.expectOne(`${CONTEXT_PATH}/jobs`);
+    const getJobsReq = httpTestingController.expectOne(`${CONTEXT_PATH}/job-classes`);
     getJobsReq.flush([testJobName]);
 
     const componentDe: DebugElement = fixture.debugElement;
@@ -150,7 +150,7 @@ describe('SimpleTriggerConfig', () => {
     expect(submittedTriggerKey).toEqual(new TriggerKey(testTriggerName, null));
     flush();
 
-    const postSimpleTriggerReq = httpTestingController.expectOne(`${CONTEXT_PATH}/simple-triggers/${testTriggerName}`);
+    const postSimpleTriggerReq = httpTestingController.expectOne(`${CONTEXT_PATH}/simple-triggers/DEFAULT/${testTriggerName}`);
     postSimpleTriggerReq.flush(mockTrigger);
 
     expect(actualNewTrigger).toEqual(mockTrigger);
@@ -166,7 +166,7 @@ describe('SimpleTriggerConfig', () => {
     mockTrigger.jobDetailDTO = <JobDetail>{jobClassName: testJobName, description: null};
     mockTrigger.mayFireAgain = true;
     mockTrigger.misfireInstruction = MisfireInstruction.MISFIRE_INSTRUCTION_FIRE_NOW;
-    const getSimpleTriggerReq = httpTestingController.expectOne(`${CONTEXT_PATH}/simple-triggers/${testTriggerName}`);
+    const getSimpleTriggerReq = httpTestingController.expectOne(`${CONTEXT_PATH}/simple-triggers/DEFAULT/${testTriggerName}`);
     getSimpleTriggerReq.flush(mockTrigger);
 
     component.simpleTriggerReactiveForm.setValue({
@@ -198,7 +198,7 @@ describe('SimpleTriggerConfig', () => {
 
     submitButton.nativeElement.click();
 
-    const putSimpleTriggerReq = httpTestingController.expectOne(`${CONTEXT_PATH}/simple-triggers/${testTriggerName}`);
+    const putSimpleTriggerReq = httpTestingController.expectOne(`${CONTEXT_PATH}/simple-triggers/DEFAULT/${testTriggerName}`);
     putSimpleTriggerReq.flush(mockTrigger);
 
     expect(actualNewTrigger).toBeUndefined();
@@ -214,7 +214,7 @@ describe('SimpleTriggerConfig', () => {
     const mockTrigger = new Trigger();
     mockTrigger.triggerKeyDTO = mockTriggerKey;
     mockTrigger.jobDetailDTO = <JobDetail>{jobClassName: 'TestJob', description: null};
-    const getSimpleTriggerReq = httpTestingController.expectOne(`${CONTEXT_PATH}/simple-triggers/my-simple-trigger`);
+    const getSimpleTriggerReq = httpTestingController.expectOne(`${CONTEXT_PATH}/simple-triggers/DEFAULT/my-simple-trigger`);
     getSimpleTriggerReq.flush(mockTrigger);
 
     fixture.detectChanges();
@@ -246,7 +246,7 @@ describe('SimpleTriggerConfig', () => {
     mockTrigger.mayFireAgain = true;
     mockTrigger.misfireInstruction = MisfireInstruction.MISFIRE_INSTRUCTION_FIRE_NOW;
 
-    const getSimpleTriggerReq = httpTestingController.expectOne(`${CONTEXT_PATH}/simple-triggers/${testTriggerName}`);
+    const getSimpleTriggerReq = httpTestingController.expectOne(`${CONTEXT_PATH}/simple-triggers/DEFAULT/${testTriggerName}`);
     getSimpleTriggerReq.flush(mockTrigger);
 
     expect(component.simpleTriggerReactiveForm.value.triggerName).toEqual(testTriggerName);
@@ -271,7 +271,7 @@ describe('SimpleTriggerConfig', () => {
 
   it('should display the warning if there are no eligible jobs', () => {
     fixture.detectChanges();
-    const getJobsReq = httpTestingController.expectOne(`${CONTEXT_PATH}/jobs`);
+    const getJobsReq = httpTestingController.expectOne(`${CONTEXT_PATH}/job-classes`);
     getJobsReq.flush([]);
     fixture.detectChanges();
 
@@ -285,7 +285,7 @@ describe('SimpleTriggerConfig', () => {
 
   it('should not display the warning if there are eligible jobs', () => {
     fixture.detectChanges();
-    const getJobsReq = httpTestingController.expectOne(`${CONTEXT_PATH}/jobs`);
+    const getJobsReq = httpTestingController.expectOne(`${CONTEXT_PATH}/job-classes`);
     getJobsReq.flush(['sampleJob']);
     fixture.detectChanges();
 

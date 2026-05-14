@@ -207,6 +207,7 @@ export class SimpleTriggerConfigComponent implements OnInit {
     const reactiveFormValue = this.simpleTriggerReactiveForm.getRawValue();
     const simpleTriggerCommand = new SimpleTriggerCommand();
     simpleTriggerCommand.triggerName = reactiveFormValue.triggerName;
+    simpleTriggerCommand.triggerGroup = this.selectedTriggerKey?.group || 'DEFAULT';
     simpleTriggerCommand.jobClass = reactiveFormValue.jobClass;
     simpleTriggerCommand.repeatCount = reactiveFormValue.triggerRecurrence.repeatCount;
     simpleTriggerCommand.repeatInterval = reactiveFormValue.triggerRecurrence.repeatInterval;

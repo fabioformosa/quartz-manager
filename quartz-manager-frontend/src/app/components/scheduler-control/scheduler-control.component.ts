@@ -36,7 +36,7 @@ export class SchedulerControlComponent implements OnInit {
   };
 
   stopScheduler = function () {
-    this.schedulerService.stopScheduler().subscribe((res) => {
+    this.schedulerService.shutdownScheduler().subscribe((res) => {
       this.scheduler.status = 'STOPPED'
     }, (res) => {
       console.log(JSON.stringify(res))
@@ -44,7 +44,7 @@ export class SchedulerControlComponent implements OnInit {
   };
 
   pauseScheduler = function () {
-    this.schedulerService.pauseScheduler().subscribe((res) => {
+    this.schedulerService.standbyScheduler().subscribe((res) => {
       this.scheduler.status = 'PAUSED'
     }, (res) => {
       console.log(JSON.stringify(res))
