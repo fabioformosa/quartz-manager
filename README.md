@@ -174,7 +174,7 @@ http://localhost:8080/quartz-manager-ui/index.html
 Open Swagger UI when OpenAPI is enabled:
 
 ```text
-http://localhost:8080/swagger-ui.html
+http://localhost:8080/swagger-ui/index.html
 ```
 
 Default showcase credentials:
