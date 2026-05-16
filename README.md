@@ -11,7 +11,7 @@
 [![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=fabioformosa_quartz-manager&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=fabioformosa_quartz-manager)
 [![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=fabioformosa_quartz-manager&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=fabioformosa_quartz-manager)
 
-[Choose Your Path](#choose-your-path) • [Features](#features) • [Quick Start](#quick-start) • [REST API](#rest-api) • [Security](#security) • [Persistence](#persistence) • [Roadmap](#roadmap)
+[Choose Your Path](#choose-your-path) • [Features](#features) • [Quick Start](#quick-start) • [REST API](#rest-api) • [Scheduler Configuration](#scheduler-configuration) • [Security](#security) • [Persistence](#persistence) • [Roadmap](#roadmap)
 
 </div>
 
@@ -226,12 +226,75 @@ quartz-manager.oas.enabled=true
 Then open:
 
 ```text
-http://localhost:8080/swagger-ui.html
+http://localhost:8080/swagger-ui/index.html
 ```
+
+## Scheduler Configuration
+
+Quartz Manager APIs always operate on a scheduler bean named `quartzManagerScheduler`.
+
+### Managed Scheduler
+
+By default, Quartz Manager creates that scheduler for you when `quartz-manager-starter-api` is on the classpath.
+
+Default managed Quartz properties:
+
+```properties
+org.quartz.scheduler.instanceName=quartz-manager-scheduler
+org.quartz.threadPool.threadCount=1
+```
+
+The managed scheduler is created through Spring's `SchedulerFactoryBean` with a job factory that autowires Spring beans into Quartz jobs.
+
+To customize the managed scheduler, add a `managed-quartz.properties` file to your application classpath. Any property in that file is merged into the Quartz Manager scheduler configuration and can override the defaults.
+
+Example:
+
+```properties
+org.quartz.scheduler.instanceName=my-managed-scheduler
+org.quartz.threadPool.threadCount=5
+org.quartz.scheduler.isAutoStartup=true
+```
+
+Quartz Manager sets `SchedulerFactoryBean.setAutoStartup(true)` only when `org.quartz.scheduler.isAutoStartup=true` is present in the merged Quartz properties.
+
+When `quartz-manager-starter-persistence` is imported, persistence-related Quartz properties are also contributed to the managed scheduler. Application-level `managed-quartz.properties` remains the place for scheduler-specific overrides.
+
+### Existing Scheduler
+
+If your application already has a Quartz scheduler and you want Quartz Manager to operate on that scheduler, disable Quartz Manager's managed scheduler creation:
+
+```properties
+quartz-manager.quartz.enabled=false
+```
+
+Then expose a compatible `Scheduler` bean named `quartzManagerScheduler`:
+
+```java
+@Bean("quartzManagerScheduler")
+public Scheduler quartzManagerScheduler() {
+  return existingScheduler;
+}
+```
+
+Quartz Manager services inject that bean by name. The scheduler must be fully configured by the host application, including its job factory, datasource, job store, thread pool, startup behavior, clustering settings, and any Spring Boot Quartz properties.
+
+This is the current integration point for existing schedulers. First-class automatic discovery and management of arbitrary existing scheduler instances is planned on the roadmap.
 
 ## Security
 
-Add the security starter when you want Quartz Manager API and UI protected by JWT authentication:
+Security is optional and depends on how you want Quartz Manager to be embedded.
+
+There are two main models:
+
+| Model | Use When | Owner Of Authentication |
+| --- | --- | --- |
+| Quartz Manager security starter | You want Quartz Manager to provide login, JWT generation, and API protection | Quartz Manager |
+| Host application security | Your app already has Spring Security, OIDC, SSO, or another enterprise security layer | Host application |
+
+### Quartz Manager Security Starter
+
+Add the security starter when you want Quartz Manager API calls protected by Quartz Manager's own JWT flow:
 
 ```xml
 <dependency>
@@ -239,6 +302,57 @@ Add the security starter when you want Quartz Manager API and UI protected by JW
   <artifactId>quartz-manager-starter-security</artifactId>
   <version>VERSION</version>
 </dependency>
+```
+
+With this starter, Quartz Manager registers a high-priority Spring Security filter chain for:
+
+```text
+/quartz-manager/**
+```
+
+The static UI webjar path is ignored by that filter chain:
+
+```text
+/quartz-manager-ui/**
+```
+
+The UI itself is served as static content, but its API calls to `/quartz-manager/**` require authentication.
+
+Quartz Manager UI is not integrated into the hosting application's frontend. It is a dedicated UI exposed by the backend because `quartz-manager-starter-ui` provides it as a webjar at:
+
+```text
+/quartz-manager-ui/index.html
+```
+
+When `quartz-manager-starter-security` is enabled, that UI uses Quartz Manager's own login and JWT flow. This JWT is independent from any SSO, OIDC, or OAuth2 access token used by the hosting application.
+
+The security starter provides these auth endpoints:
+
+| Endpoint | Purpose |
+| --- | --- |
+| `POST /quartz-manager/auth/login` | Authenticates username/password and returns a Quartz Manager JWT |
+| `GET /quartz-manager/auth/whoami` | Returns the current authenticated principal from the Spring Security context |
+| `POST /quartz-manager/auth/logout` | Runs Quartz Manager logout handling and clears the auth cookie when cookie transport is enabled |
+
+The default login model is Spring Security form login posted to `/quartz-manager/auth/login` with `application/x-www-form-urlencoded` credentials:
+
+```text
+username=admin&password=admin
+```
+NB: customize admin credentials through the in-memory accounts configuration or provide your own user details service.
+
+On success, Quartz Manager generates a JWT. The JWT can be transported through an HTTP header or through a cookie.
+
+Default transport:
+
+```text
+Authorization: Bearer <jwt>
+```
+
+Cookie transport is also available:
+
+```text
+AUTH-TOKEN=<jwt>
 ```
 
 Example configuration:
@@ -265,7 +379,46 @@ quartz-manager:
               - ADMIN
 ```
 
-Security is applied to `/quartz-manager/**`. The UI webjar path is ignored by the security filter chain, while API calls require authentication.
+Header-based JWT login is the default shape:
+
+```properties
+quartz-manager.security.jwt.header-strategy.enabled=true
+quartz-manager.security.jwt.header-strategy.header=Authorization
+quartz-manager.security.jwt.cookie-strategy.enabled=false
+```
+
+Cookie-based JWT login can be enabled when you want the browser to carry the JWT as an HTTP-only cookie:
+
+```properties
+quartz-manager.security.jwt.header-strategy.enabled=false
+quartz-manager.security.jwt.cookie-strategy.enabled=true
+quartz-manager.security.jwt.cookie-strategy.cookie=AUTH-TOKEN
+```
+
+Quartz Manager can also switch from form-login configuration to a username/password authentication filter:
+
+```properties
+quartz-manager.security.login-model.form-login-enabled=false
+quartz-manager.security.login-model.userpwd-filter-enabled=true
+```
+
+### Host Application Security
+
+If you do not import `quartz-manager-starter-security`, Quartz Manager does not install its own Spring Security filter chain.
+
+In that setup, the REST API endpoints exposed by `quartz-manager-starter-api` under `/quartz-manager/**` are regular Spring MVC endpoints. They can be protected by the hosting application's own Spring Security configuration, just like any other controller in the host application.
+
+The UI is different. `quartz-manager-starter-ui` does not integrate Quartz Manager screens into the hosting application's frontend. It exposes a dedicated Quartz Manager UI from the backend as a webjar:
+
+```text
+/quartz-manager-ui/index.html
+```
+
+If the hosting application uses cookie/session-based security, the browser may be able to access both `/quartz-manager-ui/**` and `/quartz-manager/**` through the host application's existing cookies, depending on the host Spring Security configuration.
+
+Modern applications are commonly stateless and rely on OIDC/OAuth2 bearer tokens. The current Quartz Manager UI does not integrate with the hosting application's OIDC client and does not automatically obtain or attach a host-issued access token to Quartz Manager API calls.
+
+This is a known UI integration limitation. A change request is tracked to make Quartz Manager UI integrable with the hosting application's security layer, for example through an OIDC-client-aware mode or an external token provider: [#141](https://github.com/fabioformosa/quartz-manager/issues/141).
 
 ## Persistence
 
@@ -319,6 +472,7 @@ Planned improvements include:
 - Cluster mode support.
 - Additional persistence targets beyond PostgreSQL.
 - OAuth2 client support.
+- Quartz Manager UI integration with host application security layers, including OIDC/OAuth2 client-based applications.
 - Continued UI improvements.
 
 ## Development
