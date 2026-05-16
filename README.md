@@ -17,6 +17,8 @@
 
 [Quartz Scheduler](https://www.quartz-scheduler.org/) is powerful, but it does not ship with a REST API or an operations dashboard. Quartz Manager fills that gap for Spring Boot applications and can also run as a standalone scheduler web app.
 
+Compatibility note: Quartz Manager targets Java 21 and is compatible with Spring Boot `3.5.x` and `4.0.x`.
+
 Use it to start and stop a scheduler, create jobs, schedule triggers, manage calendars, inspect executions, and monitor job progress from HTTP endpoints or from a browser UI.
 
 ![Quartz Manager dashboard](https://github.com/fabioformosa/quartz-manager/blob/master/docs/assets/quartz-manager-dashboard.png)
@@ -452,7 +454,9 @@ The persistence module configures Quartz `JobStoreTX`, uses the PostgreSQL deleg
 
 Example integrations are available in [quartz-manager-use-cases](https://github.com/fabioformosa/quartz-manager-use-cases).
 
-The use cases cover simple Spring applications, secured and unsecured setups, existing application security, existing Quartz scenarios, and persistence.
+Spring Boot compatibility checks are available in [quartz-manager-compatibility-cases](https://github.com/fabioformosa/quartz-manager-compatibility-cases).
+
+The use cases cover simple Spring applications, secured and unsecured setups, existing application security, existing Quartz scenarios, and persistence. The compatibility cases keep Spring Boot 3.5.x checks separate while the main use cases track Spring Boot 4.0.x.
 
 ## Current Limitations
 
