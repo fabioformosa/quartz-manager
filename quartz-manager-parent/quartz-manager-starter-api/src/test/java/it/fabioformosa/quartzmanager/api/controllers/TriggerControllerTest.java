@@ -126,6 +126,14 @@ class TriggerControllerTest {
   }
 
   @Test
+  void whenResetTriggerFromErrorStateIsCalled_thenNoContentIsReturned() throws Exception {
+    mockMvc.perform(post(TriggerController.TRIGGER_CONTROLLER_BASE_URL + "/DEFAULT/sampleTrigger/reset-error").contentType(MediaType.APPLICATION_JSON))
+      .andExpect(MockMvcResultMatchers.status().isNoContent());
+
+    Mockito.verify(triggerService).resetTriggerFromErrorState("DEFAULT", "sampleTrigger");
+  }
+
+  @Test
   void whenUnscheduleTriggerIsCalled_thenNoContentIsReturned() throws Exception {
     mockMvc.perform(delete(TriggerController.TRIGGER_CONTROLLER_BASE_URL + "/DEFAULT/sampleTrigger").contentType(MediaType.APPLICATION_JSON))
       .andExpect(MockMvcResultMatchers.status().isNoContent());

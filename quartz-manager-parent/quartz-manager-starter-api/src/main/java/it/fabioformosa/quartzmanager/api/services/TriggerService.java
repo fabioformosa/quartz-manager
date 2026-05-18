@@ -118,6 +118,11 @@ public class TriggerService {
     scheduler.resumeTrigger(triggerKey);
   }
 
+  public void resetTriggerFromErrorState(String group, String name) throws SchedulerException, TriggerNotFoundException {
+    TriggerKey triggerKey = requireTrigger(group, name);
+    scheduler.resetTriggerFromErrorState(triggerKey);
+  }
+
   public void unscheduleTrigger(String group, String name) throws SchedulerException, TriggerNotFoundException {
     TriggerKey triggerKey = requireTrigger(group, name);
     scheduler.unscheduleJob(triggerKey);

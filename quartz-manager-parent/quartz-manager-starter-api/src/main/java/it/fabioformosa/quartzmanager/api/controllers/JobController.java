@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import it.fabioformosa.quartzmanager.api.common.config.OpenAPIConfigConsts;
 import it.fabioformosa.quartzmanager.api.common.config.QuartzManagerPaths;
+import it.fabioformosa.quartzmanager.api.dto.InterruptResultDTO;
 import it.fabioformosa.quartzmanager.api.dto.ScheduledJobDTO;
 import it.fabioformosa.quartzmanager.api.dto.ScheduledJobInputDTO;
 import it.fabioformosa.quartzmanager.api.exceptions.JobNotFoundException;
@@ -87,6 +88,26 @@ public class JobController {
   @Operation(summary = "Trigger a job now")
   public void triggerJob(@PathVariable String group, @PathVariable String name) throws SchedulerException, JobNotFoundException {
     jobService.triggerJob(group, name);
+  }
+
+  @PostMapping("/jobs/{group}/{name}/pause")
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  @Operation(summary = "Pause a job")
+  public void pauseJob(@PathVariable String group, @PathVariable String name) throws SchedulerException, JobNotFoundException {
+    jobService.pauseJob(group, name);
+  }
+
+  @PostMapping("/jobs/groups/{group}/pause")
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  @Operation(summary = "Pause all jobs in a group")
+  public void pauseJobGroup(@PathVariable String group) throws SchedulerException {
+    jobService.pauseJobGroup(group);
+  }
+
+  @PostMapping("/jobs/{group}/{name}/interrupt")
+  @Operation(summary = "Interrupt a running job by job key")
+  public InterruptResultDTO interruptJob(@PathVariable String group, @PathVariable String name) throws SchedulerException, JobNotFoundException {
+    return jobService.interruptJob(group, name);
   }
 
   @DeleteMapping("/jobs/{group}/{name}")

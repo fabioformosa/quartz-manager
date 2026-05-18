@@ -4,6 +4,7 @@ import {CONTEXT_PATH, getBaseUrl} from './config.service';
 import {Observable} from 'rxjs';
 import {ScheduledJob} from '../model/scheduled-job.model';
 import {ScheduledJobCommand} from '../model/scheduled-job.command';
+import {InterruptResult} from '../model/interrupt-result.model';
 
 @Injectable()
 export default class JobService {
@@ -35,6 +36,22 @@ export default class JobService {
 
   triggerJob = (job: ScheduledJob): Observable<void> => {
     return this.apiService.post(getBaseUrl() + `${CONTEXT_PATH}/jobs/${job.jobKeyDTO.group}/${job.jobKeyDTO.name}/trigger`, {})
+  }
+
+  pauseJob = (job: ScheduledJob): Observable<void> => {
+    return this.apiService.post(getBaseUrl() + `${CONTEXT_PATH}/jobs/${job.jobKeyDTO.group}/${job.jobKeyDTO.name}/pause`, {})
+  }
+
+  pauseJobGroup = (group: string): Observable<void> => {
+    return this.apiService.post(getBaseUrl() + `${CONTEXT_PATH}/jobs/groups/${group || 'DEFAULT'}/pause`, {})
+  }
+
+  interruptJob = (job: ScheduledJob): Observable<InterruptResult> => {
+    return this.apiService.post(getBaseUrl() + `${CONTEXT_PATH}/jobs/${job.jobKeyDTO.group}/${job.jobKeyDTO.name}/interrupt`, {})
+  }
+
+  interruptJobKey = (group: string, name: string): Observable<InterruptResult> => {
+    return this.apiService.post(getBaseUrl() + `${CONTEXT_PATH}/jobs/${group || 'DEFAULT'}/${name}/interrupt`, {})
   }
 
   deleteJob = (job: ScheduledJob): Observable<void> => {

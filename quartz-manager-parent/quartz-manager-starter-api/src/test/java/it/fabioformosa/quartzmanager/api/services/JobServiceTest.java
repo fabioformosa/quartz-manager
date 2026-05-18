@@ -186,6 +186,23 @@ class JobServiceTest {
   }
 
   @Test
+  void givenExistingJob_whenPaused_thenDelegatesToScheduler() throws SchedulerException, JobNotFoundException {
+    JobKey jobKey = JobKey.jobKey("job", "group");
+    Mockito.when(scheduler.checkExists(jobKey)).thenReturn(true);
+
+    schedulerBackedJobService.pauseJob("group", "job");
+
+    Mockito.verify(scheduler).pauseJob(jobKey);
+  }
+
+  @Test
+  void givenJobGroup_whenPaused_thenDelegatesToScheduler() throws SchedulerException {
+    schedulerBackedJobService.pauseJobGroup("group");
+
+    Mockito.verify(scheduler).pauseJobs(any());
+  }
+
+  @Test
   void givenMissingJob_whenDeleted_thenThrowsNotFound() throws SchedulerException {
     JobKey jobKey = JobKey.jobKey("job", "group");
     Mockito.when(scheduler.checkExists(jobKey)).thenReturn(false);

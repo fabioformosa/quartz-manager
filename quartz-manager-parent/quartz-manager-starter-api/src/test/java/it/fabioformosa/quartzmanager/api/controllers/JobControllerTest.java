@@ -2,6 +2,7 @@ package it.fabioformosa.quartzmanager.api.controllers;
 
 import it.fabioformosa.quartzmanager.api.QuartManagerApplicationTests;
 import it.fabioformosa.quartzmanager.api.controllers.utils.TestUtils;
+import it.fabioformosa.quartzmanager.api.dto.InterruptResultDTO;
 import it.fabioformosa.quartzmanager.api.dto.JobKeyDTO;
 import it.fabioformosa.quartzmanager.api.dto.ScheduledJobDTO;
 import it.fabioformosa.quartzmanager.api.dto.ScheduledJobInputDTO;
@@ -70,6 +71,37 @@ class JobControllerTest {
       .andExpect(MockMvcResultMatchers.status().isNoContent());
 
     Mockito.verify(jobService).triggerJob("DEFAULT", "sampleJob");
+  }
+
+  @Test
+  void whenPauseJobIsCalled_thenNoContentIsReturned() throws Exception {
+    mockMvc.perform(post(JobController.JOB_CONTROLLER_BASE_URL + "/DEFAULT/sampleJob/pause")
+        .contentType(MediaType.APPLICATION_JSON))
+      .andExpect(MockMvcResultMatchers.status().isNoContent());
+
+    Mockito.verify(jobService).pauseJob("DEFAULT", "sampleJob");
+  }
+
+  @Test
+  void whenPauseJobGroupIsCalled_thenNoContentIsReturned() throws Exception {
+    mockMvc.perform(post(JobController.JOB_CONTROLLER_BASE_URL + "/groups/DEFAULT/pause")
+        .contentType(MediaType.APPLICATION_JSON))
+      .andExpect(MockMvcResultMatchers.status().isNoContent());
+
+    Mockito.verify(jobService).pauseJobGroup("DEFAULT");
+  }
+
+  @Test
+  void whenInterruptJobIsCalled_thenInterruptResultIsReturned() throws Exception {
+    InterruptResultDTO interruptResultDTO = InterruptResultDTO.builder().interrupted(true).build();
+    Mockito.when(jobService.interruptJob("DEFAULT", "sampleJob")).thenReturn(interruptResultDTO);
+
+    mockMvc.perform(post(JobController.JOB_CONTROLLER_BASE_URL + "/DEFAULT/sampleJob/interrupt")
+        .contentType(MediaType.APPLICATION_JSON))
+      .andExpect(MockMvcResultMatchers.status().isOk())
+      .andExpect(MockMvcResultMatchers.content().json(TestUtils.toJson(interruptResultDTO)));
+
+    Mockito.verify(jobService).interruptJob("DEFAULT", "sampleJob");
   }
 
   @Test

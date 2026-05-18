@@ -1,6 +1,7 @@
 package it.fabioformosa.quartzmanager.api.services;
 
 import it.fabioformosa.quartzmanager.api.dto.JobKeyDTO;
+import it.fabioformosa.quartzmanager.api.dto.InterruptResultDTO;
 import it.fabioformosa.quartzmanager.api.dto.ScheduledJobDTO;
 import it.fabioformosa.quartzmanager.api.dto.ScheduledJobInputDTO;
 import it.fabioformosa.quartzmanager.api.dto.TriggerKeyDTO;
@@ -108,6 +109,22 @@ public class JobService {
   public void triggerJob(String group, String name) throws SchedulerException, JobNotFoundException {
     JobKey jobKey = requireJob(group, name);
     scheduler.triggerJob(jobKey);
+  }
+
+  public void pauseJob(String group, String name) throws SchedulerException, JobNotFoundException {
+    JobKey jobKey = requireJob(group, name);
+    scheduler.pauseJob(jobKey);
+  }
+
+  public void pauseJobGroup(String group) throws SchedulerException {
+    scheduler.pauseJobs(GroupMatcher.jobGroupEquals(group));
+  }
+
+  public InterruptResultDTO interruptJob(String group, String name) throws SchedulerException, JobNotFoundException {
+    JobKey jobKey = requireJob(group, name);
+    return InterruptResultDTO.builder()
+      .interrupted(scheduler.interrupt(jobKey))
+      .build();
   }
 
   public void deleteJob(String group, String name) throws SchedulerException, JobNotFoundException {

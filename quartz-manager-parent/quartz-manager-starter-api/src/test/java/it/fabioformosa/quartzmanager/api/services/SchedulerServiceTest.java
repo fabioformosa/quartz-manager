@@ -60,4 +60,22 @@ class SchedulerServiceTest {
     Mockito.verify(scheduler).start();
   }
 
+  @Test
+  void givenASchedulerService_whenStartedDelayed_thenTheSchedulerIsStartedDelayed() throws SchedulerException {
+    schedulerService.startDelayed(60);
+    Mockito.verify(scheduler).startDelayed(60);
+  }
+
+  @Test
+  void givenASchedulerService_whenPauseAllIsCalled_thenThePauseAllIsPropagated() throws SchedulerException {
+    schedulerService.pauseAll();
+    Mockito.verify(scheduler).pauseAll();
+  }
+
+  @Test
+  void givenASchedulerService_whenClearIsCalled_thenTheClearIsPropagated() throws SchedulerException {
+    schedulerService.clear();
+    Mockito.verify(scheduler).clear();
+  }
+
 }

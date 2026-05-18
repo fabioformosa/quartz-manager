@@ -217,6 +217,26 @@ h2 { margin: 0; }
 .chip.blocked { color: var(--info); background: oklch(58% 0.18 255 / 0.08); border-color: oklch(58% 0.18 255 / 0.25); }
 .chip.accent { color: var(--accent); background: oklch(56% 0.19 302 / 0.08); border-color: oklch(56% 0.19 302 / 0.25); }
 
+.soon-marker {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  border: 1px solid oklch(56% 0.19 302 / 0.20);
+  border-radius: 999px;
+  padding: 2px 7px;
+  background: oklch(56% 0.19 302 / 0.06);
+  color: var(--accent);
+  font: 700 10px 'JetBrains Mono', 'IBM Plex Mono', ui-monospace, Menlo, monospace;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.tab .soon-marker { margin-left: 6px; transform: translateY(-1px); }
+.field .soon-marker { margin-top: 3px; }
+.soon-row { color: var(--muted); background: oklch(56% 0.19 302 / 0.025); }
+.soon-note { display: inline-flex; align-items: center; gap: 6px; color: var(--muted); font-size: 12px; }
+
 .table-wrap { overflow: auto; }
 table { width: 100%; border-collapse: collapse; table-layout: fixed; font-size: 12px; }
 th, td { border-bottom: 1px solid var(--border); padding: 10px; text-align: left; vertical-align: middle; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }

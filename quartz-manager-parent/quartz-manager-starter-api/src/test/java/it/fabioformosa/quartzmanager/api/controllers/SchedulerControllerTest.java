@@ -16,6 +16,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
 @ContextConfiguration(classes = {QuartManagerApplicationTests.class})
@@ -75,6 +76,36 @@ class SchedulerControllerTest {
       .andExpect(MockMvcResultMatchers.content().string(""));
 
     Mockito.verify(schedulerService).start();
+  }
+
+  @Test
+  void givenAScheduler_whenStartDelayedIsCalled_then2xxReturned() throws Exception {
+    mockMvc.perform(post(SchedulerController.SCHEDULER_CONTROLLER_BASE_URL + "/start-delayed/60")
+        .contentType(MediaType.APPLICATION_JSON))
+      .andExpect(MockMvcResultMatchers.status().isNoContent())
+      .andExpect(MockMvcResultMatchers.content().string(""));
+
+    Mockito.verify(schedulerService).startDelayed(60);
+  }
+
+  @Test
+  void givenAScheduler_whenPauseAllIsCalled_then2xxReturned() throws Exception {
+    mockMvc.perform(post(SchedulerController.SCHEDULER_CONTROLLER_BASE_URL + "/pause-all")
+        .contentType(MediaType.APPLICATION_JSON))
+      .andExpect(MockMvcResultMatchers.status().isNoContent())
+      .andExpect(MockMvcResultMatchers.content().string(""));
+
+    Mockito.verify(schedulerService).pauseAll();
+  }
+
+  @Test
+  void givenAScheduler_whenClearIsCalled_then2xxReturned() throws Exception {
+    mockMvc.perform(delete(SchedulerController.SCHEDULER_CONTROLLER_BASE_URL)
+        .contentType(MediaType.APPLICATION_JSON))
+      .andExpect(MockMvcResultMatchers.status().isNoContent())
+      .andExpect(MockMvcResultMatchers.content().string(""));
+
+    Mockito.verify(schedulerService).clear();
   }
 
   @Test

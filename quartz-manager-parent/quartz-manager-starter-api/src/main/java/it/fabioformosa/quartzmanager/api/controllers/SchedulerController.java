@@ -11,7 +11,9 @@ import it.fabioformosa.quartzmanager.api.services.SchedulerService;
 import lombok.extern.slf4j.Slf4j;
 import org.quartz.SchedulerException;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -83,6 +85,39 @@ public class SchedulerController {
   public void start() throws SchedulerException {
     log.info("SCHEDULER - START COMMAND");
     schedulerService.start();
+  }
+
+  @PostMapping("/start-delayed/{seconds}")
+  @Operation(summary = "Start the scheduler after a delay")
+  @ApiResponses(value = {
+    @ApiResponse(responseCode = "204", description = "Scheduler delayed start scheduled successfully")
+  })
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  public void startDelayed(@PathVariable int seconds) throws SchedulerException {
+    log.info("SCHEDULER - START DELAYED COMMAND: {} seconds", seconds);
+    schedulerService.startDelayed(seconds);
+  }
+
+  @PostMapping("/pause-all")
+  @Operation(summary = "Pause all scheduler triggers")
+  @ApiResponses(value = {
+    @ApiResponse(responseCode = "204", description = "All triggers paused successfully")
+  })
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  public void pauseAll() throws SchedulerException {
+    log.info("SCHEDULER - PAUSE ALL COMMAND");
+    schedulerService.pauseAll();
+  }
+
+  @DeleteMapping
+  @Operation(summary = "Clear all scheduler data")
+  @ApiResponses(value = {
+    @ApiResponse(responseCode = "204", description = "Scheduler cleared successfully")
+  })
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  public void clear() throws SchedulerException {
+    log.info("SCHEDULER - CLEAR COMMAND");
+    schedulerService.clear();
   }
 
   @PostMapping("/shutdown")

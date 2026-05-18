@@ -37,6 +37,10 @@ export class TriggerService {
     return this.apiService.post(getBaseUrl() + `${CONTEXT_PATH}/triggers/${triggerKey.group || 'DEFAULT'}/${triggerKey.name}/resume`, {});
   }
 
+  resetTriggerFromErrorState = (triggerKey: TriggerKey): Observable<void> => {
+    return this.apiService.post(getBaseUrl() + `${CONTEXT_PATH}/triggers/${triggerKey.group || 'DEFAULT'}/${triggerKey.name}/reset-error`, {});
+  }
+
   unscheduleTrigger = (triggerKey: TriggerKey): Observable<void> => {
     return this.apiService.delete(getBaseUrl() + `${CONTEXT_PATH}/triggers/${triggerKey.group || 'DEFAULT'}/${triggerKey.name}`);
   }

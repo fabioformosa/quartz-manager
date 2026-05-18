@@ -18,6 +18,18 @@ export class SchedulerService {
     return this.apiService.post(getBaseUrl() + `${CONTEXT_PATH}/scheduler/start`, {});
   }
 
+  startSchedulerDelayed = (seconds: number): Observable<void> => {
+    return this.apiService.post(getBaseUrl() + `${CONTEXT_PATH}/scheduler/start-delayed/${seconds}`, {});
+  }
+
+  pauseAll = (): Observable<void> => {
+    return this.apiService.post(getBaseUrl() + `${CONTEXT_PATH}/scheduler/pause-all`, {});
+  }
+
+  clearScheduler = (): Observable<void> => {
+    return this.apiService.delete(getBaseUrl() + `${CONTEXT_PATH}/scheduler`);
+  }
+
   shutdownScheduler = (): Observable<void> => {
     return this.apiService.post(getBaseUrl() + `${CONTEXT_PATH}/scheduler/shutdown`, {});
   }

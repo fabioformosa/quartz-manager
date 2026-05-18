@@ -8,5 +8,6 @@ export * from './logs.rx-websocket.service';
 export * from './trigger.service'
 export * from './calendar.service'
 export * from './job.service'
+export * from './execution.service'
 
 

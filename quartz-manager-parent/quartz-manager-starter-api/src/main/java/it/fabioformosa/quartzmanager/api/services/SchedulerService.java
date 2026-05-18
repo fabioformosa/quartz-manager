@@ -24,6 +24,15 @@ public class SchedulerService extends AbstractSchedulerService{
   public void start() throws SchedulerException {
     scheduler.start();
   }
+  public void startDelayed(int seconds) throws SchedulerException {
+    scheduler.startDelayed(seconds);
+  }
+  public void pauseAll() throws SchedulerException {
+    scheduler.pauseAll();
+  }
+  public void clear() throws SchedulerException {
+    scheduler.clear();
+  }
   public void shutdown() throws SchedulerException {
     scheduler.shutdown(true);
   }

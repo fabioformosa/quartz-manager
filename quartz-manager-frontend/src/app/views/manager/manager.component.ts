@@ -2,7 +2,7 @@ import {Component, NgZone, OnDestroy, OnInit} from '@angular/core';
 import {Subscription} from 'rxjs';
 import {map} from 'rxjs/operators';
 
-import {CalendarService, SchedulerService, TriggerService} from '../../services';
+import {CalendarService, ExecutionService, SchedulerService, TriggerService} from '../../services';
 import JobService from '../../services/job.service';
 import {LogsRxWebsocketService} from '../../services/logs.rx-websocket.service';
 import {ProgressRxWebsocketService} from '../../services/progress.rx-websocket.service';
@@ -14,6 +14,7 @@ import {ScheduledJob} from '../../model/scheduled-job.model';
 import {ScheduledJobCommand} from '../../model/scheduled-job.command';
 import {TriggerKey} from '../../model/triggerKey.model';
 import TriggerFiredBundle from '../../model/trigger-fired-bundle.model';
+import {CurrentExecution} from '../../model/current-execution.model';
 
 type ConsolePage = 'dashboard' | 'jobs' | 'triggers' | 'calendars' | 'executions' | 'events' | 'scheduler';
 type WizardMode = 'create' | 'edit';
@@ -23,10 +24,16 @@ type CalendarRuleMode = 'dates' | 'weekdays' | 'monthdays' | 'timeRange' | 'cron
 
 interface ConsoleLogRecord {
   time: Date;
+  receivedAt?: number;
   severity: string;
   type: string;
   source: string;
   message: string;
+}
+
+interface TriggerStateCount {
+  state: string;
+  count: number;
 }
 
 interface TriggerDraft {
@@ -106,6 +113,9 @@ export class ManagerComponent implements OnInit, OnDestroy {
   selectedScheduledJob: ScheduledJob;
   jobs: string[] = [];
   scheduledJobs: ScheduledJob[] = [];
+  currentExecutions: CurrentExecution[] = [];
+  recoveringExecutions: CurrentExecution[] = [];
+  selectedCurrentExecution: CurrentExecution;
   logs: ConsoleLogRecord[] = [];
   progress: TriggerFiredBundle;
   roadmapNotice: string;
@@ -128,6 +138,12 @@ export class ManagerComponent implements OnInit, OnDestroy {
   triggerGroupFilter = 'ALL';
   jobSearch = '';
   triggerSearch = '';
+  streamPaused = false;
+  dashboardEventTextFilter = '';
+  eventSeverityFilter = 'ALL';
+  eventTypeFilter = 'ALL';
+  eventTextFilter = '';
+  executionSearch = '';
   calendarSearch = '';
   calendars: QuartzCalendar[] = [];
   selectedCalendar: QuartzCalendar;
@@ -137,7 +153,7 @@ export class ManagerComponent implements OnInit, OnDestroy {
   calendarWizardError: string;
   calendarIncludedTimeResult: string;
 
-  private readonly roadmapPages = new Set<ConsolePage>(['executions']);
+  private readonly roadmapPages = new Set<ConsolePage>();
   private readonly subscriptions: Subscription[] = [];
   private logsSubscription: Subscription;
   private progressSubscription: Subscription;
@@ -148,6 +164,7 @@ export class ManagerComponent implements OnInit, OnDestroy {
     private triggerService: TriggerService,
     private calendarService: CalendarService,
     private jobService: JobService,
+    private executionService: ExecutionService,
     private logsRxWebsocketService: LogsRxWebsocketService,
     private progressRxWebsocketService: ProgressRxWebsocketService,
     private ngZone: NgZone
@@ -158,6 +175,8 @@ export class ManagerComponent implements OnInit, OnDestroy {
     this.fetchTriggers();
     this.fetchJobs();
     this.fetchScheduledJobs();
+    this.fetchCurrentExecutions(false);
+    this.fetchRecoveringExecutions(false);
     this.fetchCalendars();
   }
 
@@ -260,6 +279,14 @@ export class ManagerComponent implements OnInit, OnDestroy {
     this.subscriptions.push(subscription);
   }
 
+  startSchedulerDelayed(seconds = 60) {
+    const subscription = this.schedulerService.startSchedulerDelayed(seconds).subscribe({
+      next: () => this.operationNotice = `Scheduler will start in ${seconds} seconds.`,
+      error: () => this.operationError = 'Unable to schedule delayed start.'
+    });
+    this.subscriptions.push(subscription);
+  }
+
   standbyScheduler() {
     const subscription = this.schedulerService.standbyScheduler().subscribe({
       next: () => this.setSchedulerStatus('PAUSED', 'Scheduler moved to standby.'),
@@ -283,6 +310,46 @@ export class ManagerComponent implements OnInit, OnDestroy {
     const subscription = this.schedulerService.shutdownScheduler().subscribe({
       next: () => this.setSchedulerStatus('STOPPED', 'Scheduler shut down.'),
       error: () => this.operationError = 'Unable to shut down the scheduler.'
+    });
+    this.subscriptions.push(subscription);
+  }
+
+  pauseAllTriggerGroups() {
+    const subscription = this.schedulerService.pauseAll().subscribe({
+      next: () => {
+        this.triggerKeys.forEach(triggerKey => {
+          const detail = this.triggerDetailsByName[this.getTriggerDetailKey(triggerKey)];
+          if (detail) {
+            detail.state = 'PAUSED';
+          }
+        });
+        if (this.selectedTrigger) {
+          this.selectedTrigger.state = 'PAUSED';
+        }
+        this.operationNotice = 'All triggers paused.';
+      },
+      error: () => this.operationError = 'Unable to pause all triggers.'
+    });
+    this.subscriptions.push(subscription);
+  }
+
+  clearScheduler() {
+    if (!window.confirm('Clear every job, trigger, and calendar from this scheduler? This cannot be undone.')) {
+      return;
+    }
+    const subscription = this.schedulerService.clearScheduler().subscribe({
+      next: () => {
+        this.triggerKeys = [];
+        this.triggerDetailsByName = {};
+        this.selectedTriggerKey = null;
+        this.selectedTrigger = null;
+        this.scheduledJobs = [];
+        this.selectedScheduledJob = null;
+        this.calendars = [];
+        this.selectedCalendar = null;
+        this.operationNotice = 'Scheduler cleared.';
+      },
+      error: () => this.operationError = 'Unable to clear the scheduler.'
     });
     this.subscriptions.push(subscription);
   }
@@ -334,6 +401,39 @@ export class ManagerComponent implements OnInit, OnDestroy {
       error: () => this.operationError = 'Unable to load scheduled jobs.'
     });
     this.subscriptions.push(subscription);
+  }
+
+  fetchCurrentExecutions(showNotice = true) {
+    const subscription = this.executionService.fetchCurrentExecutions().subscribe({
+      next: currentExecutions => {
+        this.currentExecutions = currentExecutions || [];
+        this.selectedCurrentExecution = this.currentExecutions.find(execution => execution.fireInstanceId === this.selectedCurrentExecution?.fireInstanceId)
+          || this.currentExecutions[0];
+        if (showNotice) {
+          this.operationNotice = 'Current executions refreshed.';
+        }
+      },
+      error: () => this.operationError = 'Unable to load current executions.'
+    });
+    this.subscriptions.push(subscription);
+  }
+
+  fetchRecoveringExecutions(showNotice = true) {
+    const subscription = this.executionService.fetchRecoveringExecutions().subscribe({
+      next: recoveringExecutions => {
+        this.recoveringExecutions = recoveringExecutions || [];
+        if (showNotice) {
+          this.operationNotice = `${this.recoveringExecutions.length} recovering job execution${this.recoveringExecutions.length === 1 ? '' : 's'} found.`;
+        }
+      },
+      error: () => this.operationError = 'Unable to load recovering jobs.'
+    });
+    this.subscriptions.push(subscription);
+  }
+
+  selectCurrentExecution(currentExecution: CurrentExecution) {
+    this.selectedCurrentExecution = currentExecution;
+    this.openDetailDrawer();
   }
 
   fetchCalendars() {
@@ -486,6 +586,82 @@ export class ManagerComponent implements OnInit, OnDestroy {
     this.subscriptions.push(subscription);
   }
 
+  pauseSelectedJob() {
+    if (!this.selectedScheduledJob) {
+      this.showRoadmapNotice('Pause requires a scheduled job key returned by the backend');
+      return;
+    }
+    const subscription = this.jobService.pauseJob(this.selectedScheduledJob).subscribe({
+      next: () => {
+        this.operationNotice = 'Job paused.';
+        this.fetchTriggerDetails(this.triggerKeys);
+      },
+      error: () => this.operationError = 'Unable to pause the selected job.'
+    });
+    this.subscriptions.push(subscription);
+  }
+
+  interruptSelectedJob() {
+    if (!this.selectedScheduledJob) {
+      this.showRoadmapNotice('Interrupt requires a scheduled job key returned by the backend');
+      return;
+    }
+    const jobLabel = this.getSelectedJobKeyLabel();
+    if (!window.confirm(`Interrupt running executions of job ${jobLabel}?`)) {
+      return;
+    }
+    const subscription = this.jobService.interruptJob(this.selectedScheduledJob).subscribe({
+      next: result => {
+        this.operationNotice = result?.interrupted ? `Interrupt signal sent to ${jobLabel}.` : `No interruptible execution found for ${jobLabel}.`;
+        this.fetchCurrentExecutions(false);
+      },
+      error: () => this.operationError = 'Unable to interrupt the selected job.'
+    });
+    this.subscriptions.push(subscription);
+  }
+
+  interruptSelectedExecutionJobKey() {
+    const jobKey = this.selectedCurrentExecution?.jobKeyDTO;
+    if (!jobKey?.name) {
+      this.showRoadmapNotice('Select a current execution before interrupting by job key');
+      return;
+    }
+    const jobLabel = this.getCurrentExecutionJobLabel();
+    if (!window.confirm(`Interrupt running executions of job ${jobLabel}?`)) {
+      return;
+    }
+    const subscription = this.jobService.interruptJobKey(jobKey.group, jobKey.name).subscribe({
+      next: result => {
+        this.operationNotice = result?.interrupted ? `Interrupt signal sent to ${jobLabel}.` : `No interruptible execution found for ${jobLabel}.`;
+        this.fetchCurrentExecutions(false);
+        this.fetchRecoveringExecutions(false);
+      },
+      error: () => this.operationError = 'Unable to interrupt the selected execution job key.'
+    });
+    this.subscriptions.push(subscription);
+  }
+
+  pauseCurrentJobGroup() {
+    const group = this.jobGroupFilter !== 'ALL'
+      ? this.jobGroupFilter
+      : this.selectedScheduledJob?.jobKeyDTO?.group;
+    if (!group) {
+      this.showRoadmapNotice('Select a job group or a scheduled job before pausing a group');
+      return;
+    }
+    if (!window.confirm(`Pause all jobs in group ${group}?`)) {
+      return;
+    }
+    const subscription = this.jobService.pauseJobGroup(group).subscribe({
+      next: () => {
+        this.operationNotice = `Job group ${group} paused.`;
+        this.fetchTriggerDetails(this.triggerKeys);
+      },
+      error: () => this.operationError = 'Unable to pause the selected job group.'
+    });
+    this.subscriptions.push(subscription);
+  }
+
   deleteSelectedJob() {
     if (!this.selectedScheduledJob) {
       this.showRoadmapNotice('Delete requires a scheduled job key returned by the backend');
@@ -616,6 +792,25 @@ export class ManagerComponent implements OnInit, OnDestroy {
     this.subscriptions.push(subscription);
   }
 
+  resetSelectedTriggerFromErrorState() {
+    if (!this.selectedTriggerKey) {
+      this.showRoadmapNotice('Reset error requires a trigger key returned by the backend');
+      return;
+    }
+    const triggerLabel = `${this.getSelectedTriggerGroup()}.${this.selectedTriggerKey.name}`;
+    if (!window.confirm(`Reset trigger ${triggerLabel} from ERROR state?`)) {
+      return;
+    }
+    const subscription = this.triggerService.resetTriggerFromErrorState(this.selectedTriggerKey).subscribe({
+      next: () => {
+        this.operationNotice = `Trigger ${triggerLabel} reset from error state.`;
+        this.fetchTriggerDetails(this.triggerKeys);
+      },
+      error: () => this.operationError = 'Unable to reset the selected trigger from error state.'
+    });
+    this.subscriptions.push(subscription);
+  }
+
   unscheduleSelectedTrigger() {
     if (!this.selectedTriggerKey) {
       return;
@@ -688,6 +883,15 @@ export class ManagerComponent implements OnInit, OnDestroy {
     };
     this.selectPage('triggers');
     this.wizardOpen = true;
+  }
+
+  duplicateSelectedTrigger() {
+    if (!this.selectedTriggerKey) {
+      return;
+    }
+    this.openRescheduleWizard(this.selectedTriggerKey);
+    this.wizardMode = 'create';
+    this.triggerDraft.triggerName = `${this.selectedTriggerKey.name}-copy`;
   }
 
   resetWizard() {
@@ -817,7 +1021,7 @@ export class ManagerComponent implements OnInit, OnDestroy {
     const jobGroup = trigger?.jobKeyDTO?.group ? `${trigger.jobKeyDTO.group}.` : '';
     return trigger?.jobKeyDTO?.name
       ? `${jobGroup}${trigger.jobKeyDTO.name}`
-      : this.shortClassName(trigger?.jobDetailDTO?.jobClassName) || 'Roadmap';
+      : this.shortClassName(trigger?.jobDetailDTO?.jobClassName) || 'Pending';
   }
 
   getTriggerNextFireLabel(triggerKey: TriggerKey): string {
@@ -857,6 +1061,10 @@ export class ManagerComponent implements OnInit, OnDestroy {
     return `Every ${this.formatDuration(repeatInterval)}`;
   }
 
+  getSelectedTriggerTimeZone(): string {
+    return this.selectedTrigger?.timeZone || 'not applicable';
+  }
+
   getProgressPercentage(): number {
     return this.progress?.percentage >= 0 ? this.progress.percentage : 0;
   }
@@ -870,6 +1078,104 @@ export class ManagerComponent implements OnInit, OnDestroy {
 
   getExecutionLoadValue(): string {
     return this.logs.length > 0 ? `${this.logs.length}` : '0';
+  }
+
+  getRecoveringExecutionsLabel(): string {
+    return `${this.recoveringExecutions.length} LIVE`;
+  }
+
+  toggleStreamPause() {
+    this.streamPaused = !this.streamPaused;
+    this.operationNotice = this.streamPaused ? 'Event stream paused.' : 'Event stream resumed.';
+  }
+
+  getStreamStatusLabel(): string {
+    return this.streamPaused ? 'PAUSED' : 'STREAMING';
+  }
+
+  getStreamStatusClass(): string {
+    return this.streamPaused ? 'paused' : 'normal';
+  }
+
+  getTriggerStateCounts(): TriggerStateCount[] {
+    const stateCounts = (this.triggerKeys || []).reduce((counts, triggerKey) => {
+      const state = this.getTriggerState(triggerKey);
+      counts[state] = (counts[state] || 0) + 1;
+      return counts;
+    }, {} as {[state: string]: number});
+    return Object.entries(stateCounts)
+      .map(([state, count]) => ({state, count}))
+      .sort((first, second) => first.state.localeCompare(second.state));
+  }
+
+  getEventTypeOptions(): string[] {
+    return Array.from(new Set(this.logs.map(log => log.type).filter(Boolean))).sort((first, second) => first.localeCompare(second));
+  }
+
+  getEventLogRows(): ConsoleLogRecord[] {
+    const textFilter = this.eventTextFilter?.trim().toLowerCase();
+    return (this.logs || []).filter(log => {
+      const severityMatches = this.eventSeverityFilter === 'ALL' || log.severity === this.eventSeverityFilter;
+      const typeMatches = this.eventTypeFilter === 'ALL' || log.type === this.eventTypeFilter;
+      const searchable = `${log.source} ${log.type} ${log.message} ${this.selectedTriggerKey?.group || ''} ${this.selectedTriggerKey?.name || ''}`.toLowerCase();
+      return severityMatches && typeMatches && (!textFilter || searchable.includes(textFilter));
+    });
+  }
+
+  getDashboardLogRows(): ConsoleLogRecord[] {
+    const textFilter = this.dashboardEventTextFilter?.trim().toLowerCase();
+    return (this.logs || []).filter(log => {
+      const searchable = `${log.source} ${log.type} ${log.message} ${this.selectedTriggerKey?.group || ''} ${this.selectedTriggerKey?.name || ''}`.toLowerCase();
+      return !textFilter || searchable.includes(textFilter);
+    });
+  }
+
+  exportDashboardEvents() {
+    this.exportLogs(this.getDashboardLogRows(), 'quartz-manager-dashboard-events.csv');
+  }
+
+  exportEventStream() {
+    this.exportLogs(this.getEventLogRows(), 'quartz-manager-events.csv');
+  }
+
+  exportJobs() {
+    const rows = this.getScheduledJobRows().map(job => [
+      job.jobKeyDTO?.group || 'DEFAULT',
+      job.jobKeyDTO?.name || '',
+      job.jobClassName || '',
+      job.durable ? 'true' : 'false',
+      job.requestsRecovery ? 'true' : 'false',
+      `${job.triggerKeys?.length || 0}`
+    ]);
+    this.downloadCsv('quartz-manager-jobs.csv', ['group', 'name', 'class', 'durable', 'requestsRecovery', 'triggerCount'], rows);
+  }
+
+  getSelectedTriggerCalendar(): QuartzCalendar {
+    const calendarName = this.selectedTrigger?.calendarName;
+    return calendarName ? this.calendars.find(calendar => calendar.name === calendarName) : null;
+  }
+
+  getExecutionRows(): CurrentExecution[] {
+    const textFilter = this.executionSearch?.trim().toLowerCase();
+    return (this.currentExecutions || []).filter(execution => {
+      const searchable = `${execution.fireInstanceId || ''} ${execution.jobKeyDTO?.group || ''} ${execution.jobKeyDTO?.name || ''} ${execution.triggerKeyDTO?.group || ''} ${execution.triggerKeyDTO?.name || ''} ${execution.node || ''}`.toLowerCase();
+      return !textFilter || searchable.includes(textFilter);
+    });
+  }
+
+  getCurrentExecutionJobLabel(currentExecution = this.selectedCurrentExecution): string {
+    return currentExecution?.jobKeyDTO ? `${currentExecution.jobKeyDTO.group}.${currentExecution.jobKeyDTO.name}` : '-';
+  }
+
+  getCurrentExecutionTriggerLabel(currentExecution = this.selectedCurrentExecution): string {
+    return currentExecution?.triggerKeyDTO ? `${currentExecution.triggerKeyDTO.group}.${currentExecution.triggerKeyDTO.name}` : '-';
+  }
+
+  getCurrentExecutionRunTime(currentExecution = this.selectedCurrentExecution): string {
+    if (!currentExecution) {
+      return '-';
+    }
+    return this.formatDuration(currentExecution.runTime);
   }
 
   getJobClassRows(): string[] {
@@ -1164,9 +1470,13 @@ export class ManagerComponent implements OnInit, OnDestroy {
   }
 
   private addLogRecord(logRecord: any) {
+    if (this.streamPaused) {
+      return;
+    }
     const selectedSource = this.selectedTriggerKey?.group || this.selectedTriggerKey?.name || 'trigger';
     this.logs = [{
       time: logRecord.date,
+      receivedAt: Date.now(),
       severity: logRecord.type || 'INFO',
       type: 'JOB_LOG',
       source: logRecord.threadName || selectedSource,
@@ -1397,6 +1707,35 @@ export class ManagerComponent implements OnInit, OnDestroy {
 
   private formatJson(value: unknown): string {
     return JSON.stringify(value || {}, null, 2);
+  }
+
+  private exportLogs(logs: ConsoleLogRecord[], filename: string) {
+    const rows = logs.map(log => [
+      this.formatDateTime(log.time) || '',
+      log.severity || '',
+      log.type || '',
+      log.source || '',
+      log.message || ''
+    ]);
+    this.downloadCsv(filename, ['time', 'severity', 'type', 'source', 'message'], rows);
+  }
+
+  private downloadCsv(filename: string, headers: string[], rows: string[][]) {
+    const csv = [headers, ...rows]
+      .map(row => row.map(value => this.escapeCsvValue(value)).join(','))
+      .join('\n');
+    const blob = new Blob([csv], {type: 'text/csv;charset=utf-8;'});
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = filename;
+    link.click();
+    URL.revokeObjectURL(url);
+  }
+
+  private escapeCsvValue(value: string): string {
+    const normalizedValue = `${value ?? ''}`;
+    return /[",\n]/.test(normalizedValue) ? `"${normalizedValue.replace(/"/g, '""')}"` : normalizedValue;
   }
 
   private getErrorMessage(err: unknown, fallback: string): string {

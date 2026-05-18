@@ -101,6 +101,13 @@ public class TriggerController {
     triggerService.resumeTrigger(group, name);
   }
 
+  @PostMapping("/{group}/{name}/reset-error")
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  @Operation(summary = "Reset a trigger from error state")
+  public void resetTriggerFromErrorState(@PathVariable String group, @PathVariable String name) throws SchedulerException, TriggerNotFoundException {
+    triggerService.resetTriggerFromErrorState(group, name);
+  }
+
   @DeleteMapping("/{group}/{name}")
   @ResponseStatus(HttpStatus.NO_CONTENT)
   @Operation(summary = "Unschedule a trigger")
