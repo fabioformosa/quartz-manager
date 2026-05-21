@@ -37,7 +37,7 @@
     "sockjs-client": "^1.1.1",
     "stompjs": "^2.3.3",
     "tslib": "^2.8.1",
-    "uuid": "^13.0.0",
+    "uuid": "^14.0.0",
     "zone.js": "~0.16.0"
   },
   "devDependencies": {
